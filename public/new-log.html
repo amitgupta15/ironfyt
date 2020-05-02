@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>IronFyt - New Log Entry</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>New Log</h1>
+    <div data-app="new-log"></div>
+    <form id="new-log-form">
+      <div>
+        <label for="log_date" hidden>Date: </label>
+        <input type="text" class="input-textfield" name="log_date" placeholder="Date: mm/dd/yyyy">
+      </div>
+      <div>
+        <label for="log_duration" hidden>Duration: </label>
+        <input type="text" class="input-textfield" name="log_duration" placeholder="Duration: 20 mins">
+      </div>
+      <div>
+        <label for="log_load" hidden>Load: </label>
+        <input type="text" class="input-textfield" name="log_load" placeholder="Load: 135 lbs">
+      </div>
+      <div>
+        <label for="log_rounds" hidden>Rounds: </label>
+        <input type="text" class="input-textfield" name="log_rounds" placeholder="Rounds: 5">
+      </div>
+      <div>
+        <label for="log_notes" hidden>Notes: </label>
+        <textarea name="log_notes" class="input-textarea" placeholder="Notes"></textarea>
+      </div>
+      <div>
+        <button class="btn-submit">Submit</button>
+      </div>
+      <div><button class="btn-cancel" type="reset" onclick="history.back();">Cancel</button></div>
+    </form>
+  </div> 
+  <script src="js/component.js"></script>
+  <script src="js/helper-library.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

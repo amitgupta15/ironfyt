@@ -1,0 +1,247 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  background-color:black;
+  color:white;
+}
+
+.container {
+  margin: 10px auto;
+  padding:0 15px;
+  max-width: 900px;
+}
+
+.container h1 {
+  background: black;
+  color:darkorange;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.container > p {
+  padding-bottom: 20px;
+}
+
+.workout-item {
+  padding: 10px 0;
+  margin: 0 auto;
+  max-width: 100%;
+  border-bottom: 1px solid chocolate;
+}
+
+.workout-item h3 {
+  padding-bottom: 10px;
+  color: rgb(197, 240, 78);
+  font-size: 26px;
+}
+
+.workout-item h3 a {
+  text-decoration: none;
+  display: inline-block;
+  text-transform: capitalize;
+  color: rgb(197, 240, 78);
+}
+.workout-item p {
+  padding-bottom: 10px;
+  font-size: 20px;
+}
+
+.logcount {
+  font-size: 1rem;
+  color: chocolate;
+}
+.log-item {
+  padding: 10px 0;
+  margin: 0 auto;
+  max-width: 100%;
+  min-height: 125px;
+  border-bottom: 1px solid chocolate;
+}
+.log-item .date {
+  color: chocolate;
+  font-weight: bold;
+  padding-bottom: 5px;
+  font-size: 1.2rem;
+}
+
+.log-item .duration {
+  padding-bottom: 5px;
+}
+
+.log-item ul {
+  padding-top: 5px;
+  list-style: none;
+  text-transform: capitalize;
+}
+
+.log-item ul li {
+  padding-bottom: 5px;
+}
+
+.btn {
+  display: inline-block;
+  /* padding-bottom: 15px; */
+  width: 75px;
+  height: 75px;
+  text-align: center;
+  background: green;
+  border-radius: 50%;
+  color:white;
+  text-decoration: none;
+  text-align: center;
+  font-size: 3.3rem;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.user-list {
+  list-style: none;
+  margin-left: 10px;
+  margin-top:10px;
+  font-size: 2rem;
+}
+
+.user-list li {
+  padding-top: 10px;
+}
+
+.user-list li a {
+  display: inline-block;
+  text-decoration: none;
+  color: white;
+}
+
+.user-list li a:hover, .user-list li a:active {
+  text-decoration: none;
+  color: white;
+}
+
+.top-bar {
+  list-style-type: none;
+  overflow: hidden;
+  width: 100%;
+  background: #bbb;
+}
+
+.top-bar li {
+  display: inline-block;
+  padding: 10px 10px;
+  background: #bbb;
+  color: white;
+}
+
+.top-bar li a {
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+}
+
+.top-bar li a:hover {
+  color: white;
+}
+
+#new-log-form {
+  margin: 10px auto;
+  text-align: center;
+}
+.input-textfield {
+  width: 90%;
+  height: 50px;
+  font-size: 28px;
+  margin: 5px 0;
+  padding-left: 5px;
+}
+
+.input-textarea {
+  width: 90%;
+  height: 200px;
+  font-size: 28px;
+  margin: 5px 0;
+  padding-left: 5px;
+}
+
+.btn-submit {
+  width: 90%;
+  height: 50px;
+  background-color: green;
+  font-size: 28px;
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-cancel {
+  margin-top: 5px;
+  width: 90%;
+  height: 50px;
+  background-color: #aaa;
+  font-size: 28px;
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
+.field-has-error {
+  border: 1px solid red;
+}
+.error-div {
+  color: red;
+  font-size: 18px;
+  text-align: left;
+  margin-left: 20px;
+}
+
+.search-box {
+  width: 100%;
+  height: 50px;
+  font-size: 28px;
+  margin: 15px 0;
+  padding-left: 5px;
+}
+
+#search-btn {
+  width: 30%;
+  height: 40px;
+  background-color: green;
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
+  border: none;
+} 
+
+#reset-btn {
+  width: 30%;
+  height: 40px;
+  background-color: blue;
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
+  border: none;
+} 
+
+.show-all-logs {
+  color: white;
+  font-size: 1.3rem;
+  text-decoration: none;
+  margin-left: 20px;
+  padding: 10px 15px;
+  border: 1px solid white;
+  border-radius: 3px;
+  background-color: chocolate;
+  
+}
+
+
