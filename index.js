@@ -11,4 +11,4 @@ const paths = {
 };
 
 server.setAllowedPaths(paths);
-server.init(3000, '192.168.1.148');
+server.init(3000);

@@ -200,9 +200,9 @@ server.setAllowedPaths = paths => {
  * @param {string} host - default value 127.0.0.1
  *
  */
-server.init = (port = 3000, host = '127.0.0.1') => {
-  httpServer.listen(port, host, () => {
-    console.log(`Server is listening at http://${host}:${port}`);
+server.init = (port = 3000) => {
+  httpServer.listen(port, () => {
+    console.log('listening on port: ', port);
   });
 };
 
