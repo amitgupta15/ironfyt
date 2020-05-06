@@ -138,16 +138,16 @@
       return !user.id
         ? ironfyt.signInTemplate()
         : ironfyt.topBarTemplate({ user, page: 'workout-list' }) +
-        '<p>' +
-        ironfyt.searchTemplate({ search: search, id: 'search-workout' }) +
-        '</p>' +
-        (workouts.length === 0
-          ? '<em>No Workouts Found</em>'
-          : workouts
-            .map(function (workout) {
-              return ironfyt.workoutTemplate({ page: 'workout-list', workout: workout, user: user });
-            })
-            .join(''));
+            '<p>' +
+            ironfyt.searchTemplate({ search: search, id: 'search-workout' }) +
+            '</p>' +
+            (workouts.length === 0
+              ? '<em>No Workouts Found</em>'
+              : workouts
+                  .map(function (workout) {
+                    return ironfyt.workoutTemplate({ page: 'workout-list', workout: workout, user: user });
+                  })
+                  .join(''));
     },
   });
 
@@ -240,7 +240,13 @@
         ironfyt.topBarTemplate({ user }) +
         ironfyt.workoutTemplate({ page: 'log', workout: workout, user: user }) +
         '<p>' +
-        '<a href="new-log.html?workout_id=' + workout.id + '&workout_name=' + workout.name + '&user_id=' + user.id + '" class="btn">+</a>' +
+        '<a href="new-log.html?workout_id=' +
+        workout.id +
+        '&workout_name=' +
+        workout.name +
+        '&user_id=' +
+        user.id +
+        '" class="btn">+</a>' +
         '<a class="show-all-logs" href="#">All Logs</a>' +
         '</p>' +
         '<br/>' +
@@ -253,7 +259,9 @@
             var notesString = log.notes ? '<p><strong>Notes: </strong><br/>' + hl.replaceNewLineWithBR(log.notes) + ' </p>' : '';
             htmlString +=
               '<div class="log-item">' +
-              ' <p class="date">' + new Date(log.date).toLocaleDateString() + '</p>' +
+              ' <p class="date">' +
+              new Date(log.date).toLocaleDateString() +
+              '</p>' +
               durationString +
               loadString +
               roundsString +
@@ -299,45 +307,46 @@
     template: function (props) {
       return props && props.user
         ? (function () {
-          return (
-            ironfyt.topBarTemplate({ page: 'new-workout', user: props.user }) +
-            '<br/>' +
-            '<form id="new-workout-form">' +
-            '<div>' +
-            '<label for="workout_name">Name: </label>' +
-            '<input type="text" name="workout_name" autofocus/>' +
-            '</div>' +
-            '<div>' +
-            '<label for="workout_type">Type: </label>' +
-            '<select name="workout_type">' +
-            '<option value=""></option>' +
-            '<option value="AMRAP">AMRAP</option>' +
-            '<option value="For Time">For Time</option>' +
-            '<option value="For Load">For Load</option>' +
-            '<option value="For Reps">For Reps</option>' +
-            '</select>' +
-            '</div>' +
-            '<div>' +
-            '<label for="workout_timecap">Time Cap: </label>' +
-            '<input type="text" name="workout_timecap"/>' +
-            '</div>' +
-            '<div>' +
-            '<label for="workout_rounds">Rounds: </label>' +
-            '<input type="text" name="workout_rounds"/>' +
-            '</div>' +
-            '<div>' +
-            '<label for="workout_reps">Reps: </label>' +
-            '<input type="text" name="workout_reps"/>' +
-            '</div>' +
-            '<div>' +
-            '<label for="workout_description">Description: </label>' +
-            '<textarea name="workout_description" cols="50" rows="10"></textarea>' +
-            '</div>' +
-            '<div>' +
-            '<button>Submit</button>' +
-            '</div>'
-          );
-        })()
+            return (
+              ironfyt.topBarTemplate({ page: 'new-workout', user: props.user }) +
+              '<form id="new-workout-form">' +
+              '<div>' +
+              '<label for="workout_name" hidden>Name: </label>' +
+              '<input class="input-textfield" type="text" name="workout_name" placeholder="Workout Name" autofocus/>' +
+              '</div>' +
+              '<div>' +
+              '<label for="workout_type" hidden>Type: </label>' +
+              '<select name="workout_type" class="input-textfield">' +
+              '<option value="" disabled selected>Select Type</option>' +
+              '<option value=""></option>' +
+              '<option value="AMRAP">AMRAP</option>' +
+              '<option value="For Time">For Time</option>' +
+              '<option value="For Load">For Load</option>' +
+              '<option value="For Reps">For Reps</option>' +
+              '</select>' +
+              '</div>' +
+              '<div>' +
+              '<label for="workout_timecap" hidden>Time Cap: </label>' +
+              '<input class="input-textfield" type="text" name="workout_timecap" placeholder="Time Cap"/>' +
+              '</div>' +
+              '<div>' +
+              '<label for="workout_rounds" hidden>Rounds: </label>' +
+              '<input class="input-textfield" type="text" name="workout_rounds" placeholder="Rounds"/>' +
+              '</div>' +
+              '<div>' +
+              '<label for="workout_reps" hidden>Reps: </label>' +
+              '<input class="input-textfield" type="text" name="workout_reps" placeholder="Reps"/>' +
+              '</div>' +
+              '<div>' +
+              '<label for="workout_description" hidden>Description: </label>' +
+              '<textarea class="input-textarea"  name="workout_description" cols="50" rows="10" placeholder="Description"></textarea>' +
+              '</div>' +
+              '<div>' +
+              '<button class="btn-submit">Submit</button>' +
+              '<div><button class="btn-cancel" type="reset" onclick="history.back();">Cancel</button></div>' +
+              '</div>'
+            );
+          })()
         : ironfyt.signInTemplate();
     },
   });
@@ -502,42 +511,42 @@
     template: function (props) {
       return props && props.user
         ? ironfyt.topBarTemplate({ user: props.user, page: 'log-list', alllogs: props.alllogs }) +
-        ironfyt.searchTemplate({ search: props.search, id: 'search-logs' }) +
-        '<p><a href="new-log.html?user_id=' +
-        props.user.id +
-        '" class="btn">+</a></p><br/><br/>' +
-        props.logs
-          .map(function (log) {
-            return (
-              '<div class="workout-item">' +
-              '<p><strong>User: </strong>' +
-              (log.user !== {} && log.user !== undefined ? log.user.fname : '') +
-              '</p>' +
-              '<p><strong>Date: </strong>' +
-              new Date(log.date).toLocaleDateString() +
-              '</p>' +
-              (log.workout !== {} && log.workout !== undefined
-                ? '<p><strong>Workout: </strong><a href="log.html?workout=' +
-                log.workout.id +
-                '&user=' +
-                props.user.id +
-                '">' +
-                log.workout.name +
-                '</a></p>'
-                : '') +
-              '' +
-              (log.duration !== null && log.duration !== undefined ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '') +
-              '' +
-              (log.load !== undefined && log.load !== null ? '<p><strong>Load: </strong>' + log.load + '</p>' : '') +
-              '' +
-              (log.rounds !== null && log.rounds !== undefined ? '<p><strong>Rounds: </strong>' + log.rounds + '</p>' : '') +
-              '' +
-              (log.notes !== null && log.notes !== undefined ? '<p>' + hl.replaceNewLineWithBR(log.notes) + '</p>' : '') +
-              '</div>'
-            );
-          })
-          .join('') +
-        ''
+            ironfyt.searchTemplate({ search: props.search, id: 'search-logs' }) +
+            '<p><a href="new-log.html?user_id=' +
+            props.user.id +
+            '" class="btn">+</a></p><br/><br/>' +
+            props.logs
+              .map(function (log) {
+                return (
+                  '<div class="workout-item">' +
+                  '<p><strong>User: </strong>' +
+                  (log.user !== {} && log.user !== undefined ? log.user.fname : '') +
+                  '</p>' +
+                  '<p><strong>Date: </strong>' +
+                  new Date(log.date).toLocaleDateString() +
+                  '</p>' +
+                  (log.workout !== {} && log.workout !== undefined
+                    ? '<p><strong>Workout: </strong><a href="log.html?workout=' +
+                      log.workout.id +
+                      '&user=' +
+                      props.user.id +
+                      '">' +
+                      log.workout.name +
+                      '</a></p>'
+                    : '') +
+                  '' +
+                  (log.duration !== null && log.duration !== undefined ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '') +
+                  '' +
+                  (log.load !== undefined && log.load !== null ? '<p><strong>Load: </strong>' + log.load + '</p>' : '') +
+                  '' +
+                  (log.rounds !== null && log.rounds !== undefined ? '<p><strong>Rounds: </strong>' + log.rounds + '</p>' : '') +
+                  '' +
+                  (log.notes !== null && log.notes !== undefined ? '<p>' + hl.replaceNewLineWithBR(log.notes) + '</p>' : '') +
+                  '</div>'
+                );
+              })
+              .join('') +
+            ''
         : ironfyt.signInTemplate();
     },
   });
