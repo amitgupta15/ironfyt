@@ -183,6 +183,10 @@ body {
   border: none;
 }
 
+.btn-submit:hover, .btn-cancel:hover {
+  cursor: pointer;
+}
+
 .btn-cancel {
   margin-top: 5px;
   width: 90%;
