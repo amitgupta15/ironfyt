@@ -1,2 +1,2 @@
-require('./data-service/index.test');
+// require('./data-service/index.test');
 require('./handlers/index.test');
