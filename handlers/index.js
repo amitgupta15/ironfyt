@@ -194,13 +194,13 @@ const _users = {};
 
 _users.get = (payload, callback) => {
   const { query } = payload;
-  if (query.id) {
-    dataService.read('users', query.id, (error, data) => {
+  if (query._id) {
+    dataService.read('users', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
         console.log(error);
-        callback(400, { error: `Error reading data with id - ${query.id}` });
+        callback(400, { error: `Error reading data with id - ${query._id}` });
       }
     });
   } else if (query.filter) {
@@ -247,7 +247,7 @@ _users.post = (payload, callback) => {
 
 _users.put = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
-  const id = buffer.id ? buffer.id : false;
+  const _id = buffer._id ? buffer._id : false;
   const username = typeof buffer.username === 'string' && buffer.username.trim().length > 0 ? buffer.username.trim() : false;
   const password = buffer.password !== undefined ? buffer.password : null;
   const fname = buffer.fname !== undefined ? buffer.fname : null;
@@ -255,8 +255,8 @@ _users.put = (payload, callback) => {
   const logs = buffer.logs !== undefined && buffer.logs instanceof Array ? buffer.logs : [];
   const workouts = buffer.workouts !== undefined && buffer.workouts instanceof Array ? buffer.workouts : [];
 
-  if (id) {
-    dataService.read('users', id, (error, user) => {
+  if (_id) {
+    dataService.read('users', _id, (error, user) => {
       if (!error && user) {
         user.username = username;
         user.password = password;
@@ -265,19 +265,19 @@ _users.put = (payload, callback) => {
         user.logs = logs;
         user.workouts = workouts;
 
-        dataService.update('users', id, user, (error) => {
+        dataService.update('users', _id, user, (error) => {
           if (!error) {
-            callback(200, { message: `User successfully updated, user id : ${id}` });
+            callback(200, { message: `User successfully updated, user _id : ${_id}` });
           } else {
-            callback(500, { error: `Could not update the user with id: ${id}` });
+            callback(500, { error: `Could not update the user with _id: ${_id}` });
           }
         });
       } else {
-        callback(400, { error: `User with id ${id} not found` });
+        callback(400, { error: `User with id ${_id} not found` });
       }
     });
   } else {
-    callback(400, { error: `Please provide a valid id` });
+    callback(400, { error: `Please provide a valid _id` });
   }
 };
 

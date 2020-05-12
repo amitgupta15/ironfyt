@@ -4,12 +4,17 @@ const { assert, it } = require('../js-unit-test-library');
 const handlers = require('../../handlers');
 const dataservice = require('../../data-service');
 
+const tearDown = () => {
+  dataservice.create = (dir, file, data, callback) => {};
+  dataservice.update = (dir, file, data, callback) => {};
+  // dataservice.read = (dir, file, callback) => {};
+  dataservice.delete = (dir, file, callback) => {};
+};
+
 /** Globally stubbing the data services to avoid any unintentional overwrite of data **/
-dataservice.create = (dir, file, data, callback) => {};
-dataservice.update = (dir, file, data, callback) => {};
-// dataservice.read = (dir, file, callback) => {};
-dataservice.delete = (dir, file, callback) => {};
+tearDown();
 /** End Data Service Stub **/
+
 it('should only allow get, post, put, and delete http methods', () => {
   assert.ok(handlers.isMethodAllowed('GET'));
   assert.ok(handlers.isMethodAllowed('POST'));
@@ -167,7 +172,7 @@ it("'api/logs should handle invalid filter criteria", () => {
  *
  */
 
-it("'/api/users' path should have status code 405 for a method that is not allowed", () => {
+it("'/api/users' METHOD NOT ALLOWED - path should have status code 405 for a method that is not allowed", () => {
   let _statusCode, _data;
   handlers.users({ method: 'notallowed' }, (statusCode, data) => {
     _statusCode = statusCode;
@@ -177,29 +182,40 @@ it("'/api/users' path should have status code 405 for a method that is not allow
   assert.strictEqual(_data, 'Method Not Allowed');
 });
 
-it("'/api/users' path should handle 'get' method", () => {
-  let _statusCode, _data;
-  handlers.users({ method: 'get', query: { id: 1 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+it("'/api/users' GET - path should handle 'get' method", () => {
+  const user = { _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+  // setUp - Stub the dataservice methods
+  dataservice.read = (dir, _id, callback) => {
+    _id === 1 ? callback(false, user) : callback('error');
+  };
+  // End setUp
+
+  handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, user);
   });
-  setTimeout(() => {
-    assert.strictEqual(_statusCode, 200);
-    assert.strictEqual(typeof _data, 'object');
-  }, 100);
+
+  //Clean up stub data
+  tearDown();
 });
 
-it("'/api/users' path should handle invalid id in 'get' method", () => {
-  let _statusCode, _data;
+it("'/api/users' INVALID GET - path should handle invalid id in 'get' method", () => {
+  // setUp - Stub the dataservice methods
+  dataservice.read = (dir, _id, callback) => {
+    callback('error'); // Invalid request generates error response
+  };
+  // End setUp
+
   handlers.users({ method: 'get', query: { id: 0 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
   });
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Please provide a valid id' });
+
+  //Clean up stub data
+  tearDown();
 });
 
-it("'/api/users' path should handle invalid post request", () => {
+it("'/api/users' INVALID POST - path should handle invalid post request", () => {
   dataservice.create = (dir, _id, buffer, callback) => {};
   let _statusCode, _data;
   // id is missing in the buffer object, so the request is invalid
@@ -215,7 +231,8 @@ it("'/api/users' path should handle invalid post request", () => {
   assert.deepStrictEqual(_data, { error: 'Missing required fields: _id, username, password, fname, lname, logs, workouts' });
 });
 
-it("'/api/users' path should handle a valid post request", () => {
+it("'/api/users' POST - path should handle a valid post request", () => {
+  // Stub dataservice.create method
   dataservice.create = (dir, _id, buffer, callback) => {
     assert.strictEqual(dir, 'users');
     assert.strictEqual(typeof _id, 'number');
@@ -226,6 +243,7 @@ it("'/api/users' path should handle a valid post request", () => {
     assert.strictEqual(buffer.lname, 'Gupta');
     callback(false);
   };
+  // End Stub
 
   const payload = {
     method: 'post',
@@ -239,20 +257,56 @@ it("'/api/users' path should handle a valid post request", () => {
   });
 });
 
-// it("'/api/users' path should handle an invalid put request", () => {
-//   let _statusCode;
-//   const handlerData = {
-//     method: 'put',
-//     buffer: Buffer.from(JSON.stringify({ id: '15', name: 'something', message: 'Hello World!!!' })),
-//   };
-//   handlers.workouts(handlerData, (statusCode, data) => {
-//     _statusCode = statusCode;
-//   });
+it("'/api/users' INVALID PUT - path should handle an invalid put request", () => {
+  //setUp() - stubs for dataservice methods
+  const user = { _id: 1, username: 'amitgupta15@gmail.com', fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+  dataservice.read = (dir, _id, callback) => {
+    _id === 1 ? callback(false, user) : callback(true);
+  };
+  dataservice.update = (dir, _id, buffer, callback) => {
+    callback('error'); // simulate error callback
+  };
+  // End setUp() - stubs for dataservice methods
 
-//   setTimeout(() => {
-//     assert.strictEqual(_statusCode, 200);
-//   }, 100);
-// });
+  const payload = {
+    method: 'put',
+    buffer: Buffer.from(JSON.stringify({ _id: 1, name: 'something', message: 'Hello World!!!' })),
+  };
+  handlers.users(payload, (statusCode, data) => {
+    assert.deepStrictEqual(data, { error: 'Could not update the user with _id: 1' });
+    assert.strictEqual(statusCode, 500);
+  });
+
+  // Clean up stubs
+  tearDown();
+});
+
+it("'api/users' PUT - path should handle a valid put request", () => {
+  //setUp() - stubs for dataservice methods
+  const user = { _id: 1, username: 'amitgupta15@gmail.com', fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+  dataservice.read = (dir, _id, callback) => {
+    _id === 1 ? callback(false, user) : callback(true);
+  };
+  dataservice.update = (dir, _id, buffer, callback) => {
+    callback();
+  };
+  // End setUp() - stubs for dataservice methods
+
+  const payload = {
+    method: 'put',
+    buffer: Buffer.from(JSON.stringify({ ...user, logs: [1, 2] })),
+  };
+
+  assert.strictEqual(user.logs.length, 0);
+  handlers.users(payload, (statusCode, data) => {
+    assert.deepStrictEqual(data, { message: 'User successfully updated, user _id : 1' });
+    assert.strictEqual(statusCode, 200);
+  });
+  assert.strictEqual(user.logs.length, 2);
+
+  //Clean up stubs
+  tearDown();
+});
 
 /** Helper Functions Tests */
 it('should get the latest id for a directory', () => {
