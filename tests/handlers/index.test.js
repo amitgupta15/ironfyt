@@ -356,6 +356,7 @@ it("'/api/logs' POST - path should handle a valid post request", () => {
   };
   dataservice.create = (dir, _id, buffer, callback) => {
     callback(); // No param means successful operation
+    console.log();
   };
   // End setUp
   const handlerData = {
