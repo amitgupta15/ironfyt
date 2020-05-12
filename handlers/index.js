@@ -9,7 +9,7 @@ const handlers = {};
  * Check for allowed HTTP method
  * @param method
  */
-handlers.isMethodAllowed = method => {
+handlers.isMethodAllowed = (method) => {
   const allowedHttpMethods = ['get', 'post', 'put', 'delete'];
   return allowedHttpMethods.indexOf(method.toLowerCase()) > -1;
 };
@@ -55,7 +55,7 @@ _workouts.get = (payload, callback) => {
     if (filter.toLowerCase() === 'all') {
       const ids = dataService.list('workouts');
       const workoutsArray = [];
-      ids.forEach(id => {
+      ids.forEach((id) => {
         const record = dataService.readSync('workouts', id);
         workoutsArray.push(record);
       });
@@ -72,7 +72,7 @@ _workouts.post = (payload, callback) => {
   let workout = JSON.parse(payload.buffer);
   const id = handlers.getMaxId('workouts') + 1;
   workout.id = id;
-  dataService.create('workouts', workout.id, workout, error => {
+  dataService.create('workouts', workout.id, workout, (error) => {
     if (!error) {
       callback(200, workout);
     } else {
@@ -102,7 +102,7 @@ _workouts.put = (payload, callback) => {
           workout.reps = reps;
           workout.description = description;
 
-          dataService.update('workouts', id, workout, error => {
+          dataService.update('workouts', id, workout, (error) => {
             if (!error) {
               callback(200, { message: `Workout successfully updated, workout id : ${id}` });
             } else {
@@ -152,7 +152,7 @@ _logs.get = (payload, callback) => {
     if (filter.toLowerCase() === 'all') {
       const ids = dataService.list('logs');
       const logsArray = [];
-      ids.forEach(id => {
+      ids.forEach((id) => {
         const record = dataService.readSync('logs', id);
         logsArray.push(record);
       });
@@ -169,7 +169,7 @@ _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
   const id = handlers.getMaxId('logs') + 1;
   log.id = id;
-  dataService.create('logs', log.id, log, error => {
+  dataService.create('logs', log.id, log, (error) => {
     if (!error) {
       callback(200, log);
     } else {
@@ -208,7 +208,7 @@ _users.get = (payload, callback) => {
     if (filter.toLowerCase() === 'all') {
       const ids = dataService.list('users');
       const usersArray = [];
-      ids.forEach(id => {
+      ids.forEach((id) => {
         const record = dataService.readSync('users', id);
         usersArray.push(record);
       });
@@ -224,7 +224,7 @@ _users.get = (payload, callback) => {
 _users.post = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
   if (buffer.id) {
-    dataService.create('users', buffer.id, buffer, error => {
+    dataService.create('users', buffer.id, buffer, (error) => {
       if (!error) {
         callback(200, { message: `New record created, record ID: ${buffer.id}` });
       } else {
@@ -256,7 +256,7 @@ _users.put = (payload, callback) => {
         user.logs = logs;
         user.workouts = workouts;
 
-        dataService.update('users', id, user, error => {
+        dataService.update('users', id, user, (error) => {
           if (!error) {
             callback(200, { message: `User successfully updated, user id : ${id}` });
           } else {
@@ -273,7 +273,7 @@ _users.put = (payload, callback) => {
 };
 
 /** Helper Functions */
-handlers.getMaxId = function(dir) {
+handlers.getMaxId = function (dir) {
   if (dir) {
     var ids = dataService.list(dir);
     return ids.length;
