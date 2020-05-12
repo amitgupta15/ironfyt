@@ -21,7 +21,7 @@ service.create = (dir, file, data, callback) => {
   // Convert data to string
   const stringData = JSON.stringify(data);
 
-  fs.writeFile(`${baseDataDir}/${dir}/${file}.json`, stringData, { flag: 'wx' }, error => {
+  fs.writeFile(`${baseDataDir}/${dir}/${file}.json`, stringData, { flag: 'wx' }, (error) => {
     if (!error) {
       callback(false);
     } else {
@@ -36,11 +36,11 @@ service.update = (dir, file, data, callback) => {
   const stringData = JSON.stringify(data);
   fs.open(`${baseDataDir}/${dir}/${file}.json`, 'r+', (error, fileDescriptor) => {
     if (!error && fileDescriptor) {
-      fs.ftruncate(fileDescriptor, error => {
+      fs.ftruncate(fileDescriptor, (error) => {
         if (!error) {
-          fs.write(fileDescriptor, stringData, error => {
+          fs.write(fileDescriptor, stringData, (error) => {
             if (!error) {
-              fs.close(fileDescriptor, error => {
+              fs.close(fileDescriptor, (error) => {
                 if (!error) {
                   callback(false);
                 } else {
@@ -63,7 +63,7 @@ service.update = (dir, file, data, callback) => {
 
 // Delete a file
 service.delete = (dir, file, callback) => {
-  fs.unlink(`${baseDataDir}/${dir}/${file}.json`, error => {
+  fs.unlink(`${baseDataDir}/${dir}/${file}.json`, (error) => {
     if (!error) {
       callback(false);
     } else {
@@ -73,9 +73,9 @@ service.delete = (dir, file, callback) => {
 };
 
 // Get directory listing
-service.list = dir => {
+service.list = (dir) => {
   let ids = fs.readdirSync(`${baseDataDir}/${dir}`);
-  ids = ids.map(id => id.replace('.json', ''));
+  ids = ids.map((id) => id.replace('.json', ''));
   return ids;
 };
 

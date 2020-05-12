@@ -2,7 +2,14 @@
 
 const { assert, it } = require('../js-unit-test-library');
 const handlers = require('../../handlers');
+const dataservice = require('../../data-service');
 
+/** Globally stubbing the data services to avoid any unintentional overwrite of data **/
+dataservice.create = (dir, file, data, callback) => {};
+dataservice.update = (dir, file, data, callback) => {};
+// dataservice.read = (dir, file, callback) => {};
+dataservice.delete = (dir, file, callback) => {};
+/** End Data Service Stub **/
 it('should only allow get, post, put, and delete http methods', () => {
   assert.ok(handlers.isMethodAllowed('GET'));
   assert.ok(handlers.isMethodAllowed('POST'));
@@ -193,18 +200,59 @@ it("'/api/users' path should handle invalid id in 'get' method", () => {
 });
 
 it("'/api/users' path should handle invalid post request", () => {
+  dataservice.create = (dir, _id, buffer, callback) => {};
   let _statusCode, _data;
   // id is missing in the buffer object, so the request is invalid
-  const handlerData = {
+  const payload = {
     method: 'post',
-    buffer: Buffer.from(JSON.stringify({ message: 'hello world' })),
+    buffer: Buffer.from(JSON.stringify({ message: 'missing fields, invalid data' })),
   };
-  handlers.users(handlerData, (statusCode, data) => {
+  handlers.users(payload, (statusCode, data) => {
     _data = data;
     _statusCode = statusCode;
   });
   assert.strictEqual(_statusCode, 500);
+  assert.deepStrictEqual(_data, { error: 'Missing required fields: _id, username, password, fname, lname, logs, workouts' });
 });
+
+it("'/api/users' path should handle a valid post request", () => {
+  dataservice.create = (dir, _id, buffer, callback) => {
+    assert.strictEqual(dir, 'users');
+    assert.strictEqual(typeof _id, 'number');
+    assert.strictEqual(_id, 1);
+    assert.strictEqual(buffer.username, 'amitgupta15@gmail.com');
+    assert.strictEqual(buffer.password, null);
+    assert.strictEqual(buffer.fname, 'Amit');
+    assert.strictEqual(buffer.lname, 'Gupta');
+    callback(false);
+  };
+
+  const payload = {
+    method: 'post',
+    buffer: Buffer.from(
+      JSON.stringify({ _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] }),
+    ),
+  };
+  handlers.users(payload, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { message: 'New record created, record ID: 1' });
+  });
+});
+
+// it("'/api/users' path should handle an invalid put request", () => {
+//   let _statusCode;
+//   const handlerData = {
+//     method: 'put',
+//     buffer: Buffer.from(JSON.stringify({ id: '15', name: 'something', message: 'Hello World!!!' })),
+//   };
+//   handlers.workouts(handlerData, (statusCode, data) => {
+//     _statusCode = statusCode;
+//   });
+
+//   setTimeout(() => {
+//     assert.strictEqual(_statusCode, 200);
+//   }, 100);
+// });
 
 /** Helper Functions Tests */
 it('should get the latest id for a directory', () => {
@@ -249,17 +297,6 @@ it('should get the latest id for a directory', () => {
 //     buffer: Buffer.from(JSON.stringify({ id: 'test', message: 'hello world' })),
 //   };
 //   handlers.logs(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });
-
-// it("'/api/users' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: '1', username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [] })),
-//   };
-//   handlers.users(handlerData, (statusCode, data) => {
 //     assert.strictEqual(statusCode, 200);
 //   });
 // });

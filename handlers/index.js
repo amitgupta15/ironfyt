@@ -223,16 +223,25 @@ _users.get = (payload, callback) => {
 
 _users.post = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
-  if (buffer.id) {
-    dataService.create('users', buffer.id, buffer, (error) => {
+  const missingRequiredFields = [];
+  if (!buffer.hasOwnProperty('_id')) missingRequiredFields.push('_id');
+  if (!buffer.hasOwnProperty('username')) missingRequiredFields.push('username');
+  if (!buffer.hasOwnProperty('password')) missingRequiredFields.push('password');
+  if (!buffer.hasOwnProperty('fname')) missingRequiredFields.push('fname');
+  if (!buffer.hasOwnProperty('lname')) missingRequiredFields.push('lname');
+  if (!buffer.hasOwnProperty('logs')) missingRequiredFields.push('logs');
+  if (!buffer.hasOwnProperty('workouts')) missingRequiredFields.push('workouts');
+
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
+  } else {
+    dataService.create('users', buffer._id, buffer, (error) => {
       if (!error) {
-        callback(200, { message: `New record created, record ID: ${buffer.id}` });
+        callback(200, { message: `New record created, record ID: ${buffer._id}` });
       } else {
-        callback(400, { error: `Could not create a new record with id ${buffer.id}` });
+        callback(400, { error: `Could not create a new record with id ${buffer._id}` });
       }
     });
-  } else {
-    callback(500, { error: 'Please provide an "id" for the record' });
   }
 };
 
