@@ -288,7 +288,7 @@ it("'api/users' PUT - path should handle a valid put request", () => {
     _id === 1 ? callback(false, user) : callback(true);
   };
   dataservice.update = (dir, _id, buffer, callback) => {
-    callback();
+    callback(); // No param means successful operation
   };
   // End setUp() - stubs for dataservice methods
 
@@ -344,13 +344,30 @@ it('should get the latest id for a directory', () => {
 //   }, 100);
 // });
 
-// it("'/api/logs' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: 'test', message: 'hello world' })),
-//   };
-//   handlers.logs(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });
+it("'/api/logs' POST - path should handle a valid post request", () => {
+  const log = {
+    user_id: '5',
+    date: '2020-05-07T07:00:00.000Z',
+    notes: 'Finished Workout',
+  };
+  // setUp - Stub the dataservices methods
+  handlers.getMaxId = (dir) => {
+    return 0;
+  };
+  dataservice.create = (dir, _id, buffer, callback) => {
+    callback(); // No param means successful operation
+  };
+  // End setUp
+  const handlerData = {
+    method: 'post',
+    buffer: Buffer.from(JSON.stringify(log)),
+  };
+  handlers.logs(handlerData, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { ...log, id: 1 });
+  });
+
+  // Clean up Stubs
+  tearDown();
+  handlers.getMaxId = {};
+});

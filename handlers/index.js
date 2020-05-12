@@ -169,13 +169,21 @@ _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
   const id = handlers.getMaxId('logs') + 1;
   log.id = id;
-  dataService.create('logs', log.id, log, (error) => {
-    if (!error) {
-      callback(200, log);
-    } else {
-      callback(400, { error: `Could not create a new record with id ${log.id}` });
-    }
-  });
+  const missingRequiredFields = [];
+  if (!log.hasOwnProperty('user_id')) missingRequiredFields.push('user_id');
+  if (!log.hasOwnProperty('date')) missingRequiredFields.push('date');
+
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Required fields missing: ${missingRequiredFields}` });
+  } else {
+    dataService.create('logs', log.id, log, (error) => {
+      if (!error) {
+        callback(200, log);
+      } else {
+        callback(400, { error: `Could not create a new record with id ${log.id}` });
+      }
+    });
+  }
 };
 
 /**
