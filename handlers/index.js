@@ -207,12 +207,11 @@ const _users = {};
 
 _users.get = (payload, callback) => {
   const { query } = payload;
-  if (query._id) {
+  if (typeof query._id === 'number') {
     dataService.read('users', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
-        console.log(error);
         callback(400, { error: `Error reading data with id - ${query._id}` });
       }
     });
