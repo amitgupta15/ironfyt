@@ -7,10 +7,10 @@ const dataservice = require('../../data-service');
 const tearDown = () => {
   dataservice.create = (dir, file, data, callback) => {};
   dataservice.update = (dir, file, data, callback) => {};
-  // dataservice.read = (dir, file, callback) => {};
+  dataservice.read = (dir, file, callback) => {};
   dataservice.delete = (dir, file, callback) => {};
-  // dataservice.list = {};
-  // dataservice.readSync = {};
+  dataservice.list = {};
+  dataservice.readSync = {};
 };
 
 /** Globally stubbing the data services to avoid any unintentional overwrite of data **/
@@ -27,13 +27,10 @@ it('should only allow get, post, put, and delete http methods', () => {
 
 it("'/' path should have status code 200 and no data", () => {
   // Create variables here and assign inside callback. This way if the callback is not called, these variables will be undefined and the callback error will get caught.
-  let _statusCode, _data;
   handlers.default('', (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data, undefined);
   });
-  assert.strictEqual(_statusCode, 200);
-  assert.strictEqual(_data, undefined);
 });
 
 /**
@@ -171,6 +168,7 @@ it("'/api/logs' LOGS POST - path should handle a valid post request", () => {
 
 it("'/api/logs' LOGS INVALID POST - path should handle a valid post request", () => {
   // setUp - Stub the dataservices methods
+  dataservice.list = (dir) => [];
   dataservice.create = (dir, _id, buffer, callback) => {
     callback(); // No param means successful operation
   };
