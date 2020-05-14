@@ -41,7 +41,7 @@ const _workouts = {};
  */
 _workouts.get = (payload, callback) => {
   const { query } = payload;
-  if (typeof query._id === 'number') {
+  if (!isNaN(parseInt(query._id))) {
     dataService.read('workouts', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
@@ -144,7 +144,7 @@ const _logs = {};
 
 _logs.get = (payload, callback) => {
   const { query } = payload;
-  if (typeof query._id === 'number') {
+  if (!isNaN(parseInt(query._id))) {
     dataService.read('logs', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
@@ -207,7 +207,7 @@ const _users = {};
 
 _users.get = (payload, callback) => {
   const { query } = payload;
-  if (typeof query._id === 'number') {
+  if (!isNaN(parseInt(query._id))) {
     dataService.read('users', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
