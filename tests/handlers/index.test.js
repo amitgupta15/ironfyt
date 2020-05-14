@@ -10,6 +10,7 @@ const tearDown = () => {
   // dataservice.read = (dir, file, callback) => {};
   dataservice.delete = (dir, file, callback) => {};
   // dataservice.list = {};
+  // dataservice.readSync = {};
 };
 
 /** Globally stubbing the data services to avoid any unintentional overwrite of data **/
@@ -39,7 +40,7 @@ it("'/' path should have status code 200 and no data", () => {
  * ================== '/api/workouts' Tests ==========================
  *
  */
-it("'/api/workouts' path should have status code 405 for a method that is not allowed", () => {
+it("'/api/workouts' WORKOUTS METHODS NOT ALLOWED path should have status code 405 for a method that is not allowed", () => {
   let _statusCode, _data;
   handlers.workouts({ method: 'notallowed' }, (statusCode, data) => {
     _statusCode = statusCode;
@@ -49,56 +50,79 @@ it("'/api/workouts' path should have status code 405 for a method that is not al
   assert.strictEqual(_data, 'Method Not Allowed');
 });
 
-it("'/api/workouts' path should handle 'get' method", () => {
-  let _statusCode, _data;
-  handlers.workouts({ method: 'get', query: { id: 1 }, pathname: '/api/workouts' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
-  });
-  setTimeout(() => {
-    assert.strictEqual(_statusCode, 200);
-    assert.strictEqual(typeof _data, 'object');
-  }, 100);
-});
-
-it("'/api/workouts' path should handle invalid id in 'get' method", () => {
-  let _statusCode, _data;
-  handlers.workouts({ method: 'get', query: { id: 0 }, pathname: '/api/workouts' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
-  });
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Please provide a valid id' });
-});
-
-it("'api/workouts?filter=all should handle a list of all workouts", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'all' },
+it("'/api/workouts' WORKOUTS POST path should handle a valid post request", () => {
+  // setUp - Stub dataservices methods
+  dataservice.list = (dir) => [];
+  dataservice.create = (dir, file, data, callback) => callback('error');
+  // End setUp
+  // id is missing in the buffer object, so the request is invalid
+  const handlerData = {
+    method: 'post',
+    buffer: Buffer.from(JSON.stringify({ message: 'hello world' })),
   };
-  handlers.workouts(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+
+  // Missing required fields
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'hello world' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Missing required fields: name, description' });
   });
 
-  assert.strictEqual(_statusCode, 200);
-  assert.ok(_data instanceof Object);
+  // Server Error
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Could not create a new record with id 1' });
+  });
+
+  // Successfully created workout
+  dataservice.create = (dir, file, data, callback) => callback(false);
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { _id: 1, name: 'workout', description: 'description' });
+  });
+
+  //teardown
+  tearDown();
 });
 
-it("'api/workouts should handle invalid filter criteria", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'blabla' },
-  };
-  handlers.workouts(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+it("'/api/workouts' WORKOUTS GET path should handle 'get' method", () => {
+  // Successful retrieval of data
+  dataservice.read = (dir, file, callback) => callback(false, { _id: 1 });
+  handlers.workouts({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { _id: 1 });
   });
 
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Invalid filter criteria' });
+  //_id does not exist
+  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error'));
+  handlers.workouts({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
+  });
+
+  // Invalid id
+  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error'));
+  handlers.workouts({ method: 'get', query: { id: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  });
+
+  //Invalid filter criteria
+  handlers.workouts({ method: 'get', query: { filter: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Invalid filter criteria' });
+  });
+
+  //Valid filter criteria
+  dataservice.list = (dir) => [1];
+  dataservice.readSync = (dir, file) => ({ _id: file });
+
+  handlers.workouts({ method: 'get', query: { filter: 'all' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { workouts: [{ _id: 1 }] });
+  });
+
+  //tearDown
+  tearDown();
 });
 
 /**
@@ -226,6 +250,9 @@ it("'api/logs?filter=all LOGS GET FILTER should handle a list of all logs", () =
     assert.strictEqual(statusCode, 200);
     assert.deepStrictEqual(data, { logs: [{ _id: 1 }] });
   });
+
+  // teardown
+  tearDown();
 });
 
 /**
@@ -316,6 +343,9 @@ it("'/api/users' USERS POST - path should handle a valid post request", () => {
     assert.strictEqual(statusCode, 200);
     assert.deepStrictEqual(data, { message: 'New record created, record ID: 1' });
   });
+
+  // teardown
+  tearDown();
 });
 
 it("'/api/users' USERS INVALID PUT - path should handle an invalid put request", () => {
@@ -380,18 +410,3 @@ it('should get the latest id for a directory', () => {
   var maxId = handlers.getMaxId('tests');
   assert.strictEqual(maxId, 0);
 });
-/**
- * ======= Create record tests. Isolating these tests so that they don't pollute the data directories.=======
- *
- * */
-
-// it("'/api/workouts' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: 'test', message: 'hello world' })),
-//   };
-//   handlers.workouts(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });

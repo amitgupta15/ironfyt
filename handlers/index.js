@@ -41,13 +41,12 @@ const _workouts = {};
  */
 _workouts.get = (payload, callback) => {
   const { query } = payload;
-  if (query.id) {
-    dataService.read('workouts', query.id, (error, data) => {
+  if (typeof query._id === 'number') {
+    dataService.read('workouts', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
-        console.log(error);
-        callback(400, { error: `Error reading data with id - ${query.id}` });
+        callback(500, { error: `Error reading data with id - ${query._id}` });
       }
     });
   } else if (query.filter) {
@@ -70,15 +69,22 @@ _workouts.get = (payload, callback) => {
 
 _workouts.post = (payload, callback) => {
   let workout = JSON.parse(payload.buffer);
-  const id = handlers.getMaxId('workouts') + 1;
-  workout.id = id;
-  dataService.create('workouts', workout.id, workout, (error) => {
-    if (!error) {
-      callback(200, workout);
-    } else {
-      callback(400, { error: `Could not create a new record with id ${workout.id}` });
-    }
-  });
+  const _id = handlers.getMaxId('workouts') + 1;
+  workout._id = _id;
+  const missingRequiredFields = [];
+  if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
+  if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
+  } else {
+    dataService.create('workouts', workout._id, workout, (error) => {
+      if (!error) {
+        callback(200, workout);
+      } else {
+        callback(400, { error: `Could not create a new record with id ${workout._id}` });
+      }
+    });
+  }
 };
 
 // _workouts.put = (payload, callback) => {
