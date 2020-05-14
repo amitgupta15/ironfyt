@@ -38,27 +38,17 @@ it("'/' path should have status code 200 and no data", () => {
  *
  */
 it("'/api/workouts' WORKOUTS METHODS NOT ALLOWED path should have status code 405 for a method that is not allowed", () => {
-  let _statusCode, _data;
   handlers.workouts({ method: 'notallowed' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 405);
+    assert.strictEqual(data, 'Method Not Allowed');
   });
-  assert.strictEqual(_statusCode, 405);
-  assert.strictEqual(_data, 'Method Not Allowed');
 });
 
 it("'/api/workouts' WORKOUTS POST path should handle a valid post request", () => {
-  // setUp - Stub dataservices methods
   dataservice.list = (dir) => [];
-  dataservice.create = (dir, file, data, callback) => callback('error');
-  // End setUp
-  // id is missing in the buffer object, so the request is invalid
-  const handlerData = {
-    method: 'post',
-    buffer: Buffer.from(JSON.stringify({ message: 'hello world' })),
-  };
 
   // Missing required fields
+  dataservice.create = (dir, file, data, callback) => callback('error');
   handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'hello world' })) }, (statusCode, data) => {
     assert.strictEqual(statusCode, 500);
     assert.deepStrictEqual(data, { error: 'Missing required fields: name, description' });
@@ -128,61 +118,26 @@ it("'/api/workouts' WORKOUTS GET path should handle 'get' method", () => {
  */
 
 it("'/api/logs' LOGS METHODS NOT ALLOWED path should have status code 405 for a method that is not allowed", () => {
-  let _statusCode, _data;
   handlers.logs({ method: 'notallowed' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 405);
+    assert.strictEqual(data, 'Method Not Allowed');
   });
-  assert.strictEqual(_statusCode, 405);
-  assert.strictEqual(_data, 'Method Not Allowed');
 });
 
 it("'/api/logs' LOGS POST - path should handle a valid post request", () => {
-  // setUp - Stub the dataservices methods
-  dataservice.list = function (dir) {
-    return [];
-  };
-  dataservice.create = (dir, _id, buffer, callback) => {
-    callback(); // No param means successful operation
-  };
-  // End setUp
+  const log = { user_id: '5', date: '2020-05-07T07:00:00.000Z', notes: 'Finished Workout' };
 
-  const log = {
-    user_id: '5',
-    date: '2020-05-07T07:00:00.000Z',
-    notes: 'Finished Workout',
-  };
+  dataservice.list = (dir) => [];
+  dataservice.create = (dir, _id, buffer, callback) => callback(); // No param means successful operation
 
-  const handlerData = {
-    method: 'post',
-    buffer: Buffer.from(JSON.stringify(log)),
-  };
-  handlers.logs(handlerData, (statusCode, data) => {
+  //Successful POST
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify(log)) }, (statusCode, data) => {
     assert.strictEqual(statusCode, 200);
     assert.deepStrictEqual(data, { ...log, _id: 1 });
   });
 
-  // Clean up Stubs
-  tearDown();
-});
-
-it("'/api/logs' LOGS INVALID POST - path should handle a valid post request", () => {
-  // setUp - Stub the dataservices methods
-  dataservice.list = (dir) => [];
-  dataservice.create = (dir, _id, buffer, callback) => {
-    callback(); // No param means successful operation
-  };
-  // End setUp
-
-  const log = {
-    notes: 'Finished Workout',
-  };
-  const handlerData = {
-    method: 'post',
-    buffer: Buffer.from(JSON.stringify(log)),
-  };
-
-  handlers.logs(handlerData, (statusCode, data) => {
+  //Invalid POST
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({ notes: 'Finished Workout' })) }, (statusCode, data) => {
     assert.strictEqual(statusCode, 500);
     assert.deepStrictEqual(data, { error: 'Required fields missing: user_id, date' });
   });
