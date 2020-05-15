@@ -16,16 +16,16 @@
       '<ul class="top-bar">' +
       '<li><a href="index.html">Home</a></li>' +
       '<li>' +
-      (page === 'workout-list' ? 'Workouts' : '<a href="workout-list.html?user=' + user.id + '">Workouts</a>') +
+      (page === 'workout-list' ? 'Workouts' : '<a href="workout-list.html?user=' + user._id + '">Workouts</a>') +
       '</li>' +
       '<li>' +
-      (page === 'log-list' && props.alllogs === false ? 'My Logs' : '<a href="log-list.html?user=' + user.id + '">My Logs</a>') +
+      (page === 'log-list' && props.alllogs === false ? 'My Logs' : '<a href="log-list.html?user=' + user._id + '">My Logs</a>') +
       '</li>' +
       '<li>' +
-      (page === 'log-list' && props.alllogs === true ? 'All Logs' : '<a href="log-list.html?user=' + user.id + '&all=true">All Logs</a>') +
+      (page === 'log-list' && props.alllogs === true ? 'All Logs' : '<a href="log-list.html?user=' + user._id + '&all=true">All Logs</a>') +
       '</li>' +
       '<li>' +
-      (page === 'new-workout' ? 'New Workout' : '<a href="new-workout.html?user_id=' + user.id + '">New Workout</a>') +
+      (page === 'new-workout' ? 'New Workout' : '<a href="new-workout.html?user_id=' + user._id + '">New Workout</a>') +
       '</li>' +
       '<li style="float:right;color:blue">' +
       user.fname +
@@ -45,7 +45,7 @@
       return (
         '<div class="workout-item">' +
         '<h3>' +
-        (page === 'log' ? workout.name : '<a href="log.html?workout=' + workout.id + '&user=' + user.id + '">' + workout.name + '</a>') +
+        (page === 'log' ? workout.name : '<a href="log.html?workout=' + workout._id + '&user=' + user._id + '">' + workout.name + '</a>') +
         ' <span class="logcount">(' +
         workout.userlogcount +
         '/' +
@@ -101,11 +101,11 @@
           .map(function (user) {
             return (
               '<li><a href="workout-list.html?user=' +
-              user.id +
+              user._id +
               '">' +
               user.fname +
               '</a>' +
-              (user.logs ? ' (<a href="log-list.html?user=' + user.id + '">' + user.logs.length + '</a>)' : '') +
+              (user.logs ? ' (<a href="log-list.html?user=' + user._id + '">' + user.logs.length + '</a>)' : '') +
               '</li>'
             );
           })
@@ -135,7 +135,7 @@
       var workouts = props.workouts;
       var user = props.user;
       var search = props.search;
-      return !user.id
+      return !user._id
         ? ironfyt.signInTemplate()
         : ironfyt.topBarTemplate({ user, page: 'workout-list' }) +
             '<p>' +
@@ -154,17 +154,17 @@
   var workoutListPage = function () {
     var user_id = hl.getParams().user;
     if (user_id) {
-      hl.fetch.get('/api/users?id=' + user_id, function (user) {
+      hl.fetch.get('/api/users?_id=' + user_id, function (user) {
         hl.fetch.get('/api/workouts?filter=all', function (workoutsResponse) {
           hl.fetch.get('/api/logs?filter=all', function (logsResponse) {
             var workouts = workoutsResponse.workouts;
             var logs = logsResponse.logs;
             workouts.forEach(function (workout) {
               workout.userlogcount = user.logs.filter(function (log) {
-                return parseInt(log.workout_id) === parseInt(workout.id);
+                return parseInt(log.workout_id) === parseInt(workout._id);
               }).length;
               workout.totallogcount = logs.filter(function (log) {
-                return parseInt(log.workout_id) === parseInt(workout.id);
+                return parseInt(log.workout_id) === parseInt(workout._id);
               }).length;
             });
             workouts = hl.sortArray(workoutsResponse.workouts, 'totallogcount', 'desc');
@@ -234,18 +234,18 @@
       var workout = props.workout;
       var logs = props.logs;
       var user = props.user;
-      if (!user.id) return ironfyt.signInTemplate();
-      if (!workout.id) return ironfyt.topBarTemplate({ user }) + '<br/><p><em>Not a valid workout id</em></p>';
+      if (!user._id) return ironfyt.signInTemplate();
+      if (!workout._id) return ironfyt.topBarTemplate({ user }) + '<br/><p><em>Not a valid workout id</em></p>';
       return (
         ironfyt.topBarTemplate({ user }) +
         ironfyt.workoutTemplate({ page: 'log', workout: workout, user: user }) +
         '<p>' +
         '<a href="new-log.html?workout_id=' +
-        workout.id +
+        workout._id +
         '&workout_name=' +
         workout.name +
         '&user_id=' +
-        user.id +
+        user._id +
         '" class="btn">+</a>' +
         '<a class="show-all-logs" href="#">All Logs</a>' +
         '</p>' +
@@ -278,18 +278,18 @@
     var params = hl.getParams();
     var workout_id = params && params.workout ? parseInt(params.workout) : false;
     var user_id = params && params.user ? parseInt(params.user) : false;
-    hl.fetch.get('/api/workouts?id=' + workout_id, function (workout) {
-      hl.fetch.get('/api/users?id=' + user_id, function (user) {
+    hl.fetch.get('/api/workouts?_id=' + workout_id, function (workout) {
+      hl.fetch.get('/api/users?_id=' + user_id, function (user) {
         hl.fetch.get('/api/logs?filter=all', function (logsResponse) {
           var logs = logsResponse.logs
             .filter(function (log) {
-              return parseInt(user.id) === parseInt(log.user_id) && parseInt(workout.id) === parseInt(log.workout_id);
+              return parseInt(user._id) === parseInt(log.user_id) && parseInt(workout._id) === parseInt(log.workout_id);
             })
             .sort(function (a, b) {
               return new Date(b.date) - new Date(a.date);
             });
           var allLogs = logsResponse.logs.filter(function (log) {
-            return parseInt(workout.id) === parseInt(log.workout_id);
+            return parseInt(workout._id) === parseInt(log.workout_id);
           });
           workout.userlogcount = logs.length;
           workout.totallogcount = allLogs.length;
@@ -353,7 +353,7 @@
 
   var newWorkoutPage = function () {
     var user_id = hl.getParams().user_id;
-    hl.fetch.get('/api/users?id=' + user_id, function (response) {
+    hl.fetch.get('/api/users?_id=' + user_id, function (response) {
       ironfyt.newWorkoutComponent.setData({ user: response });
     });
     ironfyt.newWorkoutComponent.render();
@@ -384,7 +384,7 @@
     hl.fetch.post('/api/workouts', data, function (newWorkout) {
       if (newWorkout) {
         if (params.user_id) {
-          hl.fetch.get('/api/users?id=' + params.user_id, function (user) {
+          hl.fetch.get('/api/users?_id=' + params.user_id, function (user) {
             if (!user.workouts) {
               user.workouts = [];
             }
@@ -478,11 +478,11 @@
     };
     hl.fetch.post('/api/logs', data, function (newLog) {
       if (newLog) {
-        hl.fetch.get('/api/users?id=' + user_id, function (user) {
+        hl.fetch.get('/api/users?_id=' + user_id, function (user) {
           if (user.logs === undefined) {
             user.logs = [];
           }
-          user.logs.push({ log_id: newLog.id, workout_id: workout_id });
+          user.logs.push({ log_id: newLog._id, workout_id: workout_id });
           hl.fetch.put('/api/users', user, function (response) {
             if (workout_id) {
               location.assign('log.html?user=' + user_id + '&workout=' + workout_id);
@@ -513,7 +513,7 @@
         ? ironfyt.topBarTemplate({ user: props.user, page: 'log-list', alllogs: props.alllogs }) +
             ironfyt.searchTemplate({ search: props.search, id: 'search-logs' }) +
             '<p><a href="new-log.html?user_id=' +
-            props.user.id +
+            props.user._id +
             '" class="btn">+</a></p><br/><br/>' +
             props.logs
               .map(function (log) {
@@ -527,9 +527,9 @@
                   '</p>' +
                   (log.workout !== {} && log.workout !== undefined
                     ? '<p><strong>Workout: </strong><a href="log.html?workout=' +
-                      log.workout.id +
+                      log.workout._id +
                       '&user=' +
-                      props.user.id +
+                      props.user._id +
                       '">' +
                       log.workout.name +
                       '</a></p>'
@@ -560,7 +560,7 @@
         hl.fetch.get('/api/users?filter=all', function (usersResponse) {
           // Populate the user object
           var user = usersResponse.users.filter(function (user) {
-            return parseInt(user.id) === parseInt(user_id);
+            return parseInt(user._id) === parseInt(user_id);
           })[0];
 
           var logs = logsResponse.logs;
@@ -577,12 +577,12 @@
           // Populate the workout and user fields for each log
           logs.forEach(function (log) {
             workouts.forEach(function (workout) {
-              if (parseInt(workout.id) === parseInt(log.workout_id)) {
+              if (parseInt(workout._id) === parseInt(log.workout_id)) {
                 log.workout = workout;
               }
             });
             users.forEach(function (user) {
-              if (parseInt(user.id) === parseInt(log.user_id)) {
+              if (parseInt(user._id) === parseInt(log.user_id)) {
                 log.user = user;
               }
             });

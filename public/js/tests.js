@@ -150,8 +150,8 @@
     assert(noUsersFoundString.toLowerCase().includes('no user') === true);
     var usersHTMLString = ironfyt.userListComponent.template({
       users: [
-        { id: -1, fname: 'amit' },
-        { id: -2, fname: 'pooja' },
+        { _id: -1, fname: 'amit' },
+        { _id: -2, fname: 'pooja' },
       ],
     });
     assert(
@@ -183,13 +183,13 @@
     assert(typeof ironfyt.workoutListComponent.data['search'] === 'string');
     var notLoggedInHTMLString = ironfyt.workoutListComponent.template({ workouts: [], user: {}, search: '' });
     assert(notLoggedInHTMLString.toLowerCase().includes('please select a user'));
-    var workoutListHTMLString = ironfyt.workoutListComponent.template({ workouts: [], user: { id: -1, fname: 'amit' }, search: '' });
+    var workoutListHTMLString = ironfyt.workoutListComponent.template({ workouts: [], user: { _id: -1, fname: 'amit' }, search: '' });
     assert(workoutListHTMLString.toLowerCase().includes('<ul class="top-bar"'));
     assert(workoutListHTMLString.toLowerCase().includes('<form id="search-workout">'));
     assert(workoutListHTMLString.toLowerCase().includes('no workouts found'));
     workoutListHTMLString = ironfyt.workoutListComponent.template({
-      workouts: [{ id: -1, name: 'workout', description: 'hello' }],
-      user: { id: -1, fname: 'amit' },
+      workouts: [{ _id: -1, name: 'workout', description: 'hello' }],
+      user: { _id: -1, fname: 'amit' },
       search: '',
     });
     assert(workoutListHTMLString.toLowerCase().includes('<div class="workout-item">'));
@@ -203,14 +203,14 @@
       if (str === '/api/workouts?filter=all') {
         callback({
           workouts: [
-            { id: -2, name: 'workout1' },
-            { id: -1, name: 'workout2' },
+            { _id: -2, name: 'workout1' },
+            { _id: -1, name: 'workout2' },
           ],
         });
       }
-      if (str === '/api/users?id=-1') {
+      if (str === '/api/users?_id=-1') {
         callback({
-          id: -1,
+          _id: -1,
           fname: 'amit',
           logs: [
             { log_id: '1', workout_id: '-1' },
@@ -222,10 +222,10 @@
       if (str === '/api/logs?filter=all') {
         callback({
           logs: [
-            { id: '1', workout_id: '-1' },
-            { id: '2', workout_id: '-1' },
-            { id: '3', workout_id: '-1' },
-            { id: '3', workout_id: '-2' },
+            { _id: '1', workout_id: '-1' },
+            { _id: '2', workout_id: '-1' },
+            { _id: '3', workout_id: '-1' },
+            { _id: '3', workout_id: '-2' },
           ],
         });
       }
@@ -239,11 +239,11 @@
     /** test block */
     ironfyt.routes['workout-list']();
     var _data = ironfyt.workoutListComponent.getData();
-    assert(_data.user.id === -1);
+    assert(_data.user._id === -1);
     assert(_data.workouts.length === 2);
     assert(_data.unfilteredList.length === 2);
     // Make sure workouts are sorted in desc order
-    assert(_data.workouts[0].id === -1);
+    assert(_data.workouts[0]._id === -1);
     assert(_data.workouts[0].userlogcount === 2);
     assert(_data.workouts[0].totallogcount === 3);
     /** End Test block */
@@ -257,7 +257,7 @@
   it('should reset the search result of workout list on clicking the reset button', function () {
     var selector = document.getElementById('selector');
     selector.innerHTML = '<form id="search-workout"><button type="reset">Reset</button></form>';
-    ironfyt.workoutListComponent.setData({ unfilteredList: [{ id: -1, name: 'workout' }], workouts: [] });
+    ironfyt.workoutListComponent.setData({ unfilteredList: [{ _id: -1, name: 'workout' }], workouts: [] });
     var _data = ironfyt.workoutListComponent.getData();
 
     assert(_data.workouts.length === 0);
@@ -274,9 +274,9 @@
     var searchInputField = document.querySelector('form[id="search-workout"]').elements['search'];
     searchInputField.value = 'thruster';
     var workouts = [
-      { id: -1, name: 'bench-press', description: '20 bench-press' },
-      { id: -2, name: 'Fran', description: '21-15-9 Thrusters and pull-ups' },
-      { id: -3, name: 'Cindy', description: '20 pull-ups, 30 push-ups, 40 sit-ups and 50 squats' },
+      { _id: -1, name: 'bench-press', description: '20 bench-press' },
+      { _id: -2, name: 'Fran', description: '21-15-9 Thrusters and pull-ups' },
+      { _id: -3, name: 'Cindy', description: '20 pull-ups, 30 push-ups, 40 sit-ups and 50 squats' },
     ];
     ironfyt.workoutListComponent.setData({ unfilteredList: workouts, workouts: workouts });
     var _data = ironfyt.workoutListComponent.getData();
@@ -290,7 +290,7 @@
 
     _data = ironfyt.workoutListComponent.getData();
     assert(_data.workouts.length === 1);
-    assert(_data.workouts[0].id === -2);
+    assert(_data.workouts[0]._id === -2);
     assert(_data.search === 'thruster');
 
     selector.innerHTML = '';
@@ -305,8 +305,8 @@
     assert('logs' in _data);
     assert(ironfyt.logComponent.template(_data).toLowerCase().includes('please select a user'));
     var _template = ironfyt.logComponent.template({
-      workout: { id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' },
-      user: { id: -1, fname: 'amit' },
+      workout: { _id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' },
+      user: { _id: -1, fname: 'amit' },
       logs: [{ duration: '20 minutes', rounds: null, load: '95 lbs', notes: 'finished well' }],
     });
     assert(_template.includes('fran'));
@@ -316,9 +316,9 @@
 
   it('should have log route populate logComponent data object successfully', function () {
     /** setup block */
-    var _workout = { id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' };
+    var _workout = { _id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' };
     var _user = {
-      id: -1,
+      _id: -1,
       fname: 'amit',
       logs: [
         { workout_id: -2, log_id: -1 },
@@ -328,18 +328,18 @@
     };
     // Stub hl.fetch.get()
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/workouts?id=-2') {
+      if (str === '/api/workouts?_id=-2') {
         callback(_workout);
       }
-      if (str === '/api/users?id=-1') {
+      if (str === '/api/users?_id=-1') {
         callback(_user);
       }
       if (str === '/api/logs?filter=all') {
         callback({
           logs: [
-            { id: -1, date: new Date('01/02/2020'), user_id: -1, workout_id: -2 },
-            { id: -2, date: new Date('01/03/2020'), user_id: -1, workout_id: -2 },
-            { id: -3, date: new Date('01/04/2020'), user_id: -1, workout_id: -1 },
+            { _id: -1, date: new Date('01/02/2020'), user_id: -1, workout_id: -2 },
+            { _id: -2, date: new Date('01/03/2020'), user_id: -1, workout_id: -2 },
+            { _id: -3, date: new Date('01/04/2020'), user_id: -1, workout_id: -1 },
           ],
         });
       }
@@ -378,10 +378,10 @@
     };
     ironfyt.routes['log']();
     _data = ironfyt.logComponent.getData();
-    assert(_data.workout.id === _workout.id);
+    assert(_data.workout._id === _workout._id);
     assert(_data.logs.length === 2);
     // logs should be sorted by date in desc order
-    assert(_data.logs[0].id === -2);
+    assert(_data.logs[0]._id === -2);
     /** End Test Block */
 
     /** teardown Block */
@@ -397,7 +397,7 @@
     assert(ironfyt.newWorkoutComponent.template().toLowerCase().includes('please select a user'));
     assert(
       ironfyt.newWorkoutComponent
-        .template({ user: { id: -1, fname: 'amit' } })
+        .template({ user: { _id: -1, fname: 'amit' } })
         .toLowerCase()
         .includes('<form id="new-workout-form">'),
     );
@@ -408,8 +408,8 @@
     /** setup block */
     // Stub hl.fetch.get()
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/users?id=-1') {
-        callback({ id: -1, fname: 'amit' });
+      if (str === '/api/users?_id=-1') {
+        callback({ _id: -1, fname: 'amit' });
       }
     };
     // Stub hl.getParams()
@@ -434,7 +434,7 @@
     var alertCalledCount = 0;
 
     /** setup block */
-    var _user = { id: -1, fname: 'amit' };
+    var _user = { _id: -1, fname: 'amit' };
     // Stub hl.fetch.post() method
     hl.fetch.post = function (str, data, callback) {
       if (str === '/api/workouts') {
@@ -443,7 +443,7 @@
     };
     // Stub hl.fetch.get() method
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/users?id=-1') {
+      if (str === '/api/users?_id=-1') {
         callback(_user);
       }
     };
@@ -527,17 +527,17 @@
   it('should successfully submit a new log form', function () {
     var alertCount = 0;
     /** setup block */
-    var _user = { id: -1, fname: 'amit' };
+    var _user = { _id: -1, fname: 'amit' };
     //Stub the post method
     hl.fetch.post = function (str, data, callback) {
       if (str === '/api/logs') {
-        data.id = -1;
+        data._id = -1;
         callback(data);
       }
     };
     // Stub the get method
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/users?id=-1') {
+      if (str === '/api/users?_id=-1') {
         callback(_user);
       }
     };
@@ -601,7 +601,7 @@
     assert('unfilteredList' in _data);
     assert('alllogs' in _data);
     assert('user' in _data);
-    _data.logs = [{ id: 1, date: null, notes: 'hello' }];
+    _data.logs = [{ _id: 1, date: null, notes: 'hello' }];
     assert(ironfyt.logListComponent.template(_data).includes('hello'));
     assert(ironfyt.routes['log-list'].name === 'logListPage');
 
@@ -615,19 +615,19 @@
     //Stub the get method for all possible queries for this page
     hl.fetch.get = function (str, callback) {
       if (str === '/api/users?filter=all') {
-        callback({ users: [{ id: -1, fname: 'amit' }] });
+        callback({ users: [{ _id: -1, fname: 'amit' }] });
       }
       if (str === '/api/logs?filter=all') {
         callback({
           logs: [
-            { id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1, workout_id: -1 },
-            { id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
-            { id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
+            { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1, workout_id: -1 },
+            { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
+            { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
           ],
         });
       }
       if (str === '/api/workouts?filter=all') {
-        callback({ workouts: [{ id: -1, name: 'some workout' }] });
+        callback({ workouts: [{ _id: -1, name: 'some workout' }] });
       }
     };
     /** end setup block */
@@ -642,10 +642,10 @@
     ironfyt.routes['log-list']();
 
     var _data = ironfyt.logListComponent.getData();
-    assert(_data.user.id === -1);
+    assert(_data.user._id === -1);
     assert(_data.alllogs === false);
     assert(_data.logs.length === 2);
-    assert(_data.logs[0].id === -2);
+    assert(_data.logs[0]._id === -2);
     assert('workout' in _data.logs[0]);
 
     // Stub hl.getParams() method
@@ -666,11 +666,11 @@
 
   it('should reset the search result of log list on clicking the reset button', function () {
     var unfilteredLogs = [
-      { id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1 },
-      { id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
-      { id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
+      { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1 },
+      { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
+      { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
     ];
-    var filteredLogs = [{ id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 }];
+    var filteredLogs = [{ _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 }];
     ironfyt.logListComponent.setData({ logs: filteredLogs, unfilteredList: unfilteredLogs, search: 'testing' });
 
     var _data = ironfyt.logListComponent.getData();
@@ -693,9 +693,9 @@
 
   it('should search logs based on search criteria', function () {
     var logs = [
-      { id: -1, notes: 'thrusters' },
-      { id: -2, notes: 'bench press' },
-      { id: -3, notes: 'bench sit-ups' },
+      { _id: -1, notes: 'thrusters' },
+      { _id: -2, notes: 'bench press' },
+      { _id: -3, notes: 'bench sit-ups' },
     ];
     ironfyt.logListComponent.setData({ logs: logs, unfilteredList: logs });
     var _data = ironfyt.logListComponent.getData();
@@ -733,8 +733,9 @@
   });
 
   it('should render topBarTemplate', function () {
-    var topBarTemplate = ironfyt.topBarTemplate();
+    var topBarTemplate = ironfyt.topBarTemplate({ page: 'log-list', user: { _id: 1 } });
     assert(topBarTemplate.toLowerCase().includes('<ul class="top-bar">'));
+    assert(topBarTemplate.toLowerCase().includes('user=1'));
   });
   it('should render searchTemplate', function () {
     var searchTemplate = ironfyt.searchTemplate({ search: 'aworkout', id: 'search-workout' });
