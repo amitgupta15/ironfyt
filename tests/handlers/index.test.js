@@ -2,8 +2,22 @@
 
 const { assert, it } = require('../js-unit-test-library');
 const handlers = require('../../handlers');
+const dataservice = require('../../data-service');
 
-it('should only allow get, post, put, and delete http methods', () => {
+const tearDown = () => {
+  dataservice.create = (dir, file, data, callback) => {};
+  dataservice.update = (dir, file, data, callback) => {};
+  dataservice.read = (dir, file, callback) => {};
+  dataservice.delete = (dir, file, callback) => {};
+  dataservice.list = {};
+  dataservice.readSync = {};
+};
+
+/** Globally stubbing the data services to avoid any unintentional overwrite of data **/
+tearDown();
+/** End Data Service Stub **/
+
+it('should only allow [get, post, put, and delete] http methods', () => {
   assert.ok(handlers.isMethodAllowed('GET'));
   assert.ok(handlers.isMethodAllowed('POST'));
   assert.ok(handlers.isMethodAllowed('PUT'));
@@ -13,79 +27,89 @@ it('should only allow get, post, put, and delete http methods', () => {
 
 it("'/' path should have status code 200 and no data", () => {
   // Create variables here and assign inside callback. This way if the callback is not called, these variables will be undefined and the callback error will get caught.
-  let _statusCode, _data;
   handlers.default('', (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data, undefined);
   });
-  assert.strictEqual(_statusCode, 200);
-  assert.strictEqual(_data, undefined);
 });
 
 /**
  * ================== '/api/workouts' Tests ==========================
  *
  */
-it("'/api/workouts' path should have status code 405 for a method that is not allowed", () => {
-  let _statusCode, _data;
+it("'/api/workouts' WORKOUTS METHODS NOT ALLOWED path should have status code 405 for a method that is not allowed", () => {
   handlers.workouts({ method: 'notallowed' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 405);
+    assert.strictEqual(data, 'Method Not Allowed');
   });
-  assert.strictEqual(_statusCode, 405);
-  assert.strictEqual(_data, 'Method Not Allowed');
 });
 
-it("'/api/workouts' path should handle 'get' method", () => {
-  let _statusCode, _data;
-  handlers.workouts({ method: 'get', query: { id: 1 }, pathname: '/api/workouts' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+it("'/api/workouts' WORKOUTS POST path should handle a post request", () => {
+  dataservice.list = (dir) => []; // Stub
+
+  // Missing required fields
+  dataservice.create = (dir, file, data, callback) => callback('error'); // Stub
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'hello world' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Missing required fields: name, description' });
   });
-  setTimeout(() => {
-    assert.strictEqual(_statusCode, 200);
-    assert.strictEqual(typeof _data, 'object');
-  }, 100);
+
+  // Server Error
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Could not create a new record with id 1' });
+  });
+
+  // Successfully created workout
+  dataservice.create = (dir, file, data, callback) => callback(false); // Stub
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { _id: 1, name: 'workout', description: 'description' });
+  });
+
+  //teardown
+  tearDown();
 });
 
-it("'/api/workouts' path should handle invalid id in 'get' method", () => {
-  let _statusCode, _data;
-  handlers.workouts({ method: 'get', query: { id: 0 }, pathname: '/api/workouts' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
-  });
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Please provide a valid id' });
-});
-
-it("'api/workouts?filter=all should handle a list of all workouts", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'all' },
-  };
-  handlers.workouts(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+it("'/api/workouts' WORKOUTS GET path should handle a get request", () => {
+  // Successful retrieval of data
+  dataservice.read = (dir, file, callback) => callback(false, { _id: 1 }); // Stub
+  handlers.workouts({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { _id: 1 });
   });
 
-  assert.strictEqual(_statusCode, 200);
-  assert.ok(_data instanceof Object);
-});
-
-it("'api/workouts should handle invalid filter criteria", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'blabla' },
-  };
-  handlers.workouts(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+  //_id does not exist
+  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error')); // Stub
+  handlers.workouts({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
   });
 
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Invalid filter criteria' });
+  // Invalid id
+  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error')); // Stub
+  handlers.workouts({ method: 'get', query: { id: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  });
+
+  //Invalid filter criteria
+  handlers.workouts({ method: 'get', query: { filter: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Invalid filter criteria' });
+  });
+
+  //Valid filter criteria
+  dataservice.list = (dir) => [1]; // Stub
+  dataservice.readSync = (dir, file) => ({ _id: file }); // Stub
+
+  handlers.workouts({ method: 'get', query: { filter: 'all' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { workouts: [{ _id: 1 }] });
+  });
+
+  //tearDown
+  tearDown();
 });
 
 /**
@@ -93,66 +117,73 @@ it("'api/workouts should handle invalid filter criteria", () => {
  *
  */
 
-it("'/api/logs' path should have status code 405 for a method that is not allowed", () => {
-  let _statusCode, _data;
+it("'/api/logs' LOGS METHODS NOT ALLOWED path should have status code 405 for a method that is not allowed", () => {
   handlers.logs({ method: 'notallowed' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 405);
+    assert.strictEqual(data, 'Method Not Allowed');
   });
-  assert.strictEqual(_statusCode, 405);
-  assert.strictEqual(_data, 'Method Not Allowed');
 });
 
-it("'/api/logs' path should handle 'get' method", () => {
-  let _statusCode, _data;
-  handlers.logs({ method: 'get', query: { id: 1 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+it("'/api/logs' LOGS POST - path should handle a post request", () => {
+  const log = { user_id: '5', date: '2020-05-07T07:00:00.000Z', notes: 'Finished Workout' };
+
+  dataservice.list = (dir) => []; // Stub
+  dataservice.create = (dir, _id, buffer, callback) => callback(); // No param means successful operation  // Stub
+
+  //Successful POST
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify(log)) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { ...log, _id: 1 });
   });
-  setTimeout(() => {
-    assert.strictEqual(_statusCode, 200);
-    assert.strictEqual(typeof _data, 'object');
-  }, 100);
+
+  //Invalid POST
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({ notes: 'Finished Workout' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Required fields missing: user_id, date' });
+  });
+
+  // Clean up Stubs
+  tearDown();
 });
 
-it("'/api/logs' path should handle invalid id in 'get' method", () => {
-  let _statusCode, _data;
-  handlers.logs({ method: 'get', query: { id: 0 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
-  });
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Please provide a valid id' });
-});
+it("'/api/logs' LOGS GET path should handle a get request", () => {
+  const log = { _id: 1, user_id: 1 };
+  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, log) : callback('error')); // Stub
 
-it("'api/logs?filter=all should handle a list of all logs", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'all' },
-  };
-  handlers.logs(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+  // Successful GET
+  handlers.logs({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, log);
   });
 
-  assert.strictEqual(_statusCode, 200);
-  assert.ok(_data instanceof Object);
-});
-
-it("'api/logs should handle invalid filter criteria", () => {
-  let _statusCode, _data;
-  const payload = {
-    method: 'get',
-    query: { filter: 'blabla' },
-  };
-  handlers.workouts(payload, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+  // _id does not exist
+  handlers.logs({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
   });
 
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Invalid filter criteria' });
+  // Invalid non numeric id
+  handlers.logs({ method: 'get', query: { _id: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  });
+
+  dataservice.list = (dir) => [1]; // Stub
+  dataservice.readSync = (dir, id) => ({ _id: id }); // Stub
+
+  // Handle invalid filter criteria
+  handlers.logs({ method: 'get', query: { filter: 'invalidfilter' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Invalid filter criteria' });
+  });
+
+  // Handle valid filter criteria
+  handlers.logs({ method: 'get', query: { filter: 'all' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { logs: [{ _id: 1 }] });
+  });
+  //teardown
+  tearDown();
 });
 
 /**
@@ -160,106 +191,85 @@ it("'api/logs should handle invalid filter criteria", () => {
  *
  */
 
-it("'/api/users' path should have status code 405 for a method that is not allowed", () => {
-  let _statusCode, _data;
+it("'/api/users' USERS METHOD NOT ALLOWED - path should have status code 405 for a method that is not allowed", () => {
   handlers.users({ method: 'notallowed' }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+    assert.strictEqual(statusCode, 405);
+    assert.strictEqual(data, 'Method Not Allowed');
   });
-  assert.strictEqual(_statusCode, 405);
-  assert.strictEqual(_data, 'Method Not Allowed');
 });
 
-it("'/api/users' path should handle 'get' method", () => {
-  let _statusCode, _data;
-  handlers.users({ method: 'get', query: { id: 1 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+it("'/api/users' USERS  GET - path should handle get request", () => {
+  const user = { _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+
+  // Successful GET
+  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, user) : callback('error')); // Stub
+  handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, user);
   });
-  setTimeout(() => {
-    assert.strictEqual(_statusCode, 200);
-    assert.strictEqual(typeof _data, 'object');
-  }, 100);
+
+  // _id not found
+  handlers.users({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
+  });
+
+  // Invalid _id
+  handlers.users({ method: 'get', query: { _id: 'abc' } }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 400);
+    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  });
+
+  //Clean up stub data
+  tearDown();
 });
 
-it("'/api/users' path should handle invalid id in 'get' method", () => {
-  let _statusCode, _data;
-  handlers.users({ method: 'get', query: { id: 0 } }, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
+it("'/api/users' USERS POST - path should handle a post request", () => {
+  // Missing required fields
+  handlers.users({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'missing fields, invalid data' })) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 500);
+    assert.deepStrictEqual(data, { error: 'Missing required fields: _id, username, password, fname, lname, logs, workouts' });
   });
-  assert.strictEqual(_statusCode, 400);
-  assert.deepStrictEqual(_data, { error: 'Please provide a valid id' });
+
+  // Successful POST
+  const newUser = { _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+  dataservice.create = (dir, _id, buffer, callback) => callback(false); // Stub
+  handlers.users({ method: 'post', buffer: Buffer.from(JSON.stringify(newUser)) }, (statusCode, data) => {
+    assert.strictEqual(statusCode, 200);
+    assert.deepStrictEqual(data, { message: 'New record created, record ID: 1' });
+  });
+
+  tearDown();
 });
 
-it("'/api/users' path should handle invalid post request", () => {
-  let _statusCode, _data;
-  // id is missing in the buffer object, so the request is invalid
-  const handlerData = {
-    method: 'post',
-    buffer: Buffer.from(JSON.stringify({ message: 'hello world' })),
-  };
-  handlers.users(handlerData, (statusCode, data) => {
-    _data = data;
-    _statusCode = statusCode;
+it("'/api/users' USERS PUT - path should handle a put request", () => {
+  const user = { _id: 1, username: 'amitgupta15@gmail.com', fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+
+  // Invalid PUT
+  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, user) : callback(true)); //Stub
+  dataservice.update = (dir, _id, buffer, callback) => callback('error'); // simulate error callback // Stub
+  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ _id: 1, message: 'Hello World!!!' })) }, (statusCode, data) => {
+    assert.deepStrictEqual(data, { error: 'Could not update the user with _id: 1' });
+    assert.strictEqual(statusCode, 500);
   });
-  assert.strictEqual(_statusCode, 500);
+
+  // Valid PUT
+  dataservice.update = (dir, _id, buffer, callback) => callback(); // No param means successful operation
+  assert.strictEqual(user.logs.length, 0);
+  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ ...user, logs: [1, 2] })) }, (statusCode, data) => {
+    assert.deepStrictEqual(data, { message: 'User successfully updated, user _id : 1' });
+    assert.strictEqual(statusCode, 200);
+  });
+  assert.strictEqual(user.logs.length, 2);
+
+  // Clean up stubs
+  tearDown();
 });
 
 /** Helper Functions Tests */
 it('should get the latest id for a directory', () => {
+  dataservice.list = (dir) => []; // Stub
+
   var maxId = handlers.getMaxId('tests');
-  assert.strictEqual(typeof maxId, 'number');
+  assert.strictEqual(maxId, 0);
 });
-/**
- * ======= Create record tests. Isolating these tests so that they don't pollute the data directories.=======
- *
- * */
-
-// it("'/api/workouts' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: 'test', message: 'hello world' })),
-//   };
-//   handlers.workouts(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });
-
-// it("'/api/workouts' path should hand a valid put request", () => {
-//   let _statusCode;
-//   const handlerData = {
-//     method: 'put',
-//     buffer: Buffer.from(JSON.stringify({ id: '15', name: 'something', message: 'Hello World!!!' })),
-//   };
-//   handlers.workouts(handlerData, (statusCode, data) => {
-//     _statusCode = statusCode;
-//   });
-
-//   setTimeout(() => {
-//     assert.strictEqual(_statusCode, 200);
-//   }, 100);
-// });
-
-// it("'/api/logs' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: 'test', message: 'hello world' })),
-//   };
-//   handlers.logs(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });
-
-// it("'/api/users' path should handle a valid post request", () => {
-//   // id is missing in the buffer object, so the request is invalid
-//   const handlerData = {
-//     method: 'post',
-//     buffer: Buffer.from(JSON.stringify({ id: '1', username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [] })),
-//   };
-//   handlers.users(handlerData, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//   });
-// });

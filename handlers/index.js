@@ -42,13 +42,12 @@ const _workouts = {};
  */
 _workouts.get = (payload, callback) => {
   const { query } = payload;
-  if (query.id) {
-    dataService.read('workouts', query.id, (error, data) => {
+  if (!isNaN(parseInt(query._id))) {
+    dataService.read('workouts', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
-        console.log(error);
-        callback(400, { error: `Error reading data with id - ${query.id}` });
+        callback(500, { error: `Error reading data with id - ${query._id}` });
       }
     });
   } else if (query.filter) {
@@ -71,6 +70,7 @@ _workouts.get = (payload, callback) => {
 
 _workouts.post = (payload, callback) => {
   let workout = JSON.parse(payload.buffer);
+<<<<<<< HEAD
   const id = handlers.getMaxId('workouts') + 1;
   workout.id = id;
   dataService.create('workouts', workout.id, workout, (error) => {
@@ -80,29 +80,48 @@ _workouts.post = (payload, callback) => {
       callback(400, { error: `Could not create a new record with id ${workout.id}` });
     }
   });
+=======
+  const _id = handlers.getMaxId('workouts') + 1;
+  workout._id = _id;
+  const missingRequiredFields = [];
+  if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
+  if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
+  } else {
+    dataService.create('workouts', workout._id, workout, (error) => {
+      if (!error) {
+        callback(200, workout);
+      } else {
+        callback(400, { error: `Could not create a new record with id ${workout._id}` });
+      }
+    });
+  }
+>>>>>>> master
 };
 
-_workouts.put = (payload, callback) => {
-  const buffer = JSON.parse(payload.buffer);
-  const id = buffer.id ? buffer.id : false;
-  const name = typeof buffer.name === 'string' && buffer.name.trim().length > 0 ? buffer.name.trim() : false;
-  const type = buffer.type !== undefined ? buffer.type : null;
-  const timecap = buffer.timecap !== undefined ? buffer.timecap : null;
-  const rounds = buffer.rounds !== undefined ? buffer.rounds : null;
-  const reps = buffer.reps !== undefined ? buffer.reps : null;
-  const description = buffer.description !== undefined ? buffer.description : null;
+// _workouts.put = (payload, callback) => {
+//   const buffer = JSON.parse(payload.buffer);
+//   const id = buffer.id ? buffer.id : false;
+//   const name = typeof buffer.name === 'string' && buffer.name.trim().length > 0 ? buffer.name.trim() : false;
+//   const type = buffer.type !== undefined ? buffer.type : null;
+//   const timecap = buffer.timecap !== undefined ? buffer.timecap : null;
+//   const rounds = buffer.rounds !== undefined ? buffer.rounds : null;
+//   const reps = buffer.reps !== undefined ? buffer.reps : null;
+//   const description = buffer.description !== undefined ? buffer.description : null;
 
-  if (id) {
-    if (name) {
-      dataService.read('workouts', id, (error, workout) => {
-        if (!error && workout) {
-          workout.name = name;
-          workout.type = type;
-          workout.timecap = timecap;
-          workout.rounds = rounds;
-          workout.reps = reps;
-          workout.description = description;
+//   if (id) {
+//     if (name) {
+//       dataService.read('workouts', id, (error, workout) => {
+//         if (!error && workout) {
+//           workout.name = name;
+//           workout.type = type;
+//           workout.timecap = timecap;
+//           workout.rounds = rounds;
+//           workout.reps = reps;
+//           workout.description = description;
 
+<<<<<<< HEAD
           dataService.update('workouts', id, workout, (error) => {
             if (!error) {
               callback(200, { message: `Workout successfully updated, workout id : ${id}` });
@@ -121,6 +140,26 @@ _workouts.put = (payload, callback) => {
     callback(400, { error: `Please provide a valid id` });
   }
 };
+=======
+//           dataService.update('workouts', id, workout, (error) => {
+//             if (!error) {
+//               callback(200, { message: `Workout successfully updated, workout id : ${id}` });
+//             } else {
+//               callback(500, { error: `Could not update the workout with id: ${id}` });
+//             }
+//           });
+//         } else {
+//           callback(400, { error: `Workout with id ${id} not found` });
+//         }
+//       });
+//     } else {
+//       callback(400, { error: `Please provide required fields` });
+//     }
+//   } else {
+//     callback(400, { error: `Please provide a valid id` });
+//   }
+// };
+>>>>>>> master
 
 /**
  *
@@ -139,13 +178,12 @@ const _logs = {};
 
 _logs.get = (payload, callback) => {
   const { query } = payload;
-  if (query.id) {
-    dataService.read('logs', query.id, (error, data) => {
+  if (!isNaN(parseInt(query._id))) {
+    dataService.read('logs', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
-        console.log(error);
-        callback(400, { error: `Error reading data with id - ${query.id}` });
+        callback(400, { error: `Error reading data with id - ${query._id}` });
       }
     });
   } else if (query.filter) {
@@ -168,6 +206,7 @@ _logs.get = (payload, callback) => {
 
 _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
+<<<<<<< HEAD
   const id = handlers.getMaxId('logs') + 1;
   log.id = id;
   dataService.create('logs', log.id, log, (error) => {
@@ -177,6 +216,25 @@ _logs.post = (payload, callback) => {
       callback(400, { error: `Could not create a new record with id ${log.id}` });
     }
   });
+=======
+  const _id = handlers.getMaxId('logs') + 1;
+  log._id = _id;
+  const missingRequiredFields = [];
+  if (!log.hasOwnProperty('user_id')) missingRequiredFields.push('user_id');
+  if (!log.hasOwnProperty('date')) missingRequiredFields.push('date');
+
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Required fields missing: ${missingRequiredFields.join(', ')}` });
+  } else {
+    dataService.create('logs', log._id, log, (error) => {
+      if (!error) {
+        callback(200, log);
+      } else {
+        callback(400, { error: `Could not create a new record with id ${log._id}` });
+      }
+    });
+  }
+>>>>>>> master
 };
 
 /**
@@ -195,13 +253,12 @@ const _users = {};
 
 _users.get = (payload, callback) => {
   const { query } = payload;
-  if (query.id) {
-    dataService.read('users', query.id, (error, data) => {
+  if (!isNaN(parseInt(query._id))) {
+    dataService.read('users', query._id, (error, data) => {
       if (!error) {
         callback(200, data);
       } else {
-        console.log(error);
-        callback(400, { error: `Error reading data with id - ${query.id}` });
+        callback(400, { error: `Error reading data with id - ${query._id}` });
       }
     });
   } else if (query.filter) {
@@ -224,22 +281,36 @@ _users.get = (payload, callback) => {
 
 _users.post = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
+<<<<<<< HEAD
   if (buffer.id) {
     dataService.create('users', buffer.id, buffer, (error) => {
+=======
+  const missingRequiredFields = [];
+  if (!buffer.hasOwnProperty('_id')) missingRequiredFields.push('_id');
+  if (!buffer.hasOwnProperty('username')) missingRequiredFields.push('username');
+  if (!buffer.hasOwnProperty('password')) missingRequiredFields.push('password');
+  if (!buffer.hasOwnProperty('fname')) missingRequiredFields.push('fname');
+  if (!buffer.hasOwnProperty('lname')) missingRequiredFields.push('lname');
+  if (!buffer.hasOwnProperty('logs')) missingRequiredFields.push('logs');
+  if (!buffer.hasOwnProperty('workouts')) missingRequiredFields.push('workouts');
+
+  if (missingRequiredFields.length) {
+    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
+  } else {
+    dataService.create('users', buffer._id, buffer, (error) => {
+>>>>>>> master
       if (!error) {
-        callback(200, { message: `New record created, record ID: ${buffer.id}` });
+        callback(200, { message: `New record created, record ID: ${buffer._id}` });
       } else {
-        callback(400, { error: `Could not create a new record with id ${buffer.id}` });
+        callback(400, { error: `Could not create a new record with id ${buffer._id}` });
       }
     });
-  } else {
-    callback(500, { error: 'Please provide an "id" for the record' });
   }
 };
 
 _users.put = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
-  const id = buffer.id ? buffer.id : false;
+  const _id = buffer._id ? buffer._id : false;
   const username = typeof buffer.username === 'string' && buffer.username.trim().length > 0 ? buffer.username.trim() : false;
   const password = buffer.password !== undefined ? buffer.password : null;
   const fname = buffer.fname !== undefined ? buffer.fname : null;
@@ -247,8 +318,8 @@ _users.put = (payload, callback) => {
   const logs = buffer.logs !== undefined && buffer.logs instanceof Array ? buffer.logs : [];
   const workouts = buffer.workouts !== undefined && buffer.workouts instanceof Array ? buffer.workouts : [];
 
-  if (id) {
-    dataService.read('users', id, (error, user) => {
+  if (_id) {
+    dataService.read('users', _id, (error, user) => {
       if (!error && user) {
         user.username = username;
         user.password = password;
@@ -257,19 +328,23 @@ _users.put = (payload, callback) => {
         user.logs = logs;
         user.workouts = workouts;
 
+<<<<<<< HEAD
         dataService.update('users', id, user, (error) => {
+=======
+        dataService.update('users', _id, user, (error) => {
+>>>>>>> master
           if (!error) {
-            callback(200, { message: `User successfully updated, user id : ${id}` });
+            callback(200, { message: `User successfully updated, user _id : ${_id}` });
           } else {
-            callback(500, { error: `Could not update the user with id: ${id}` });
+            callback(500, { error: `Could not update the user with _id: ${_id}` });
           }
         });
       } else {
-        callback(400, { error: `User with id ${id} not found` });
+        callback(400, { error: `User with id ${_id} not found` });
       }
     });
   } else {
-    callback(400, { error: `Please provide a valid id` });
+    callback(400, { error: `Please provide a valid _id` });
   }
 };
 
