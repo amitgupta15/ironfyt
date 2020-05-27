@@ -70,17 +70,6 @@ _workouts.get = (payload, callback) => {
 
 _workouts.post = (payload, callback) => {
   let workout = JSON.parse(payload.buffer);
-<<<<<<< HEAD
-  const id = handlers.getMaxId('workouts') + 1;
-  workout.id = id;
-  dataService.create('workouts', workout.id, workout, (error) => {
-    if (!error) {
-      callback(200, workout);
-    } else {
-      callback(400, { error: `Could not create a new record with id ${workout.id}` });
-    }
-  });
-=======
   const _id = handlers.getMaxId('workouts') + 1;
   workout._id = _id;
   const missingRequiredFields = [];
@@ -97,7 +86,6 @@ _workouts.post = (payload, callback) => {
       }
     });
   }
->>>>>>> master
 };
 
 // _workouts.put = (payload, callback) => {
@@ -121,26 +109,6 @@ _workouts.post = (payload, callback) => {
 //           workout.reps = reps;
 //           workout.description = description;
 
-<<<<<<< HEAD
-          dataService.update('workouts', id, workout, (error) => {
-            if (!error) {
-              callback(200, { message: `Workout successfully updated, workout id : ${id}` });
-            } else {
-              callback(500, { error: `Could not update the workout with id: ${id}` });
-            }
-          });
-        } else {
-          callback(400, { error: `Workout with id ${id} not found` });
-        }
-      });
-    } else {
-      callback(400, { error: `Please provide required fields` });
-    }
-  } else {
-    callback(400, { error: `Please provide a valid id` });
-  }
-};
-=======
 //           dataService.update('workouts', id, workout, (error) => {
 //             if (!error) {
 //               callback(200, { message: `Workout successfully updated, workout id : ${id}` });
@@ -159,7 +127,6 @@ _workouts.post = (payload, callback) => {
 //     callback(400, { error: `Please provide a valid id` });
 //   }
 // };
->>>>>>> master
 
 /**
  *
@@ -206,17 +173,6 @@ _logs.get = (payload, callback) => {
 
 _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
-<<<<<<< HEAD
-  const id = handlers.getMaxId('logs') + 1;
-  log.id = id;
-  dataService.create('logs', log.id, log, (error) => {
-    if (!error) {
-      callback(200, log);
-    } else {
-      callback(400, { error: `Could not create a new record with id ${log.id}` });
-    }
-  });
-=======
   const _id = handlers.getMaxId('logs') + 1;
   log._id = _id;
   const missingRequiredFields = [];
@@ -234,7 +190,6 @@ _logs.post = (payload, callback) => {
       }
     });
   }
->>>>>>> master
 };
 
 /**
@@ -281,10 +236,6 @@ _users.get = (payload, callback) => {
 
 _users.post = (payload, callback) => {
   const buffer = JSON.parse(payload.buffer);
-<<<<<<< HEAD
-  if (buffer.id) {
-    dataService.create('users', buffer.id, buffer, (error) => {
-=======
   const missingRequiredFields = [];
   if (!buffer.hasOwnProperty('_id')) missingRequiredFields.push('_id');
   if (!buffer.hasOwnProperty('username')) missingRequiredFields.push('username');
@@ -298,7 +249,6 @@ _users.post = (payload, callback) => {
     callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
   } else {
     dataService.create('users', buffer._id, buffer, (error) => {
->>>>>>> master
       if (!error) {
         callback(200, { message: `New record created, record ID: ${buffer._id}` });
       } else {
@@ -328,11 +278,7 @@ _users.put = (payload, callback) => {
         user.logs = logs;
         user.workouts = workouts;
 
-<<<<<<< HEAD
-        dataService.update('users', id, user, (error) => {
-=======
         dataService.update('users', _id, user, (error) => {
->>>>>>> master
           if (!error) {
             callback(200, { message: `User successfully updated, user _id : ${_id}` });
           } else {
