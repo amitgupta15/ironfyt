@@ -126,17 +126,68 @@ it("'/api/logs' LOGS METHODS NOT ALLOWED path should have status code 405 for a 
     assert.strictEqual(data, 'Method Not Allowed');
   });
 });
+it("'/api/logs' LOGS POST path should handle unsuccessful (503) database connection", () => {
+  let _statusCode, _data;
 
-it("'/api/logs' LOGS POST - path should handle a post request", () => {
+  // No connection to the database server
+  handlers.db = undefined;
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
+
+  //tearDown
+  handlers.db = undefined;
+});
+it("'/api/logs' LOGS POST path should handle unsuccessful (400) collection count attempt", () => {
+  let _statusCode, _data;
+  //Stub the call to MongoDB
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        countDocuments: (callback) => {
+          callback(true); //callback with error
+        },
+      };
+    },
+  };
+  //End stub
+
+  handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: true }); // Error
+
+  //tearDown
+  handlers.db = undefined;
+});
+
+it("'/api/logs' LOGS POST - path should handle a successful (200) post request", () => {
   const log = { user_id: '5', date: '2020-05-07T07:00:00.000Z', notes: 'Finished Workout' };
-
-  dataservice.list = (dir) => []; // Stub
-  dataservice.create = (dir, _id, buffer, callback) => callback(); // No param means successful operation  // Stub
+  let _statusCode, _data;
+  // Stub MongoDB call
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        countDocuments: (callback) => {
+          callback(false, 0); //No error, 0 documents
+        },
+        insertOne: (data, callback) => {
+          callback(false, {});
+        },
+      };
+    },
+  };
+  // End Stub
 
   //Successful POST
   handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify(log)) }, (statusCode, data) => {
     assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, { ...log, _id: 1 });
+    assert.deepStrictEqual(data, {});
   });
 
   //Invalid POST

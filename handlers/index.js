@@ -182,22 +182,31 @@ _logs.get = (payload, callback) => {
 
 _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
-  const _id = handlers.getMaxId('logs') + 1;
-  log._id = _id;
-  const missingRequiredFields = [];
-  if (!log.hasOwnProperty('user_id')) missingRequiredFields.push('user_id');
-  if (!log.hasOwnProperty('date')) missingRequiredFields.push('date');
-
-  if (missingRequiredFields.length) {
-    callback(500, { error: `Required fields missing: ${missingRequiredFields.join(', ')}` });
-  } else {
-    dataService.create('logs', log._id, log, (error) => {
-      if (!error) {
-        callback(200, log);
+  if (handlers.db) {
+    handlers.db.collection('logs').countDocuments((error, count) => {
+      if (error) {
+        callback(400, { error: error });
       } else {
-        callback(400, { error: `Could not create a new record with id ${log._id}` });
+        log._id = count + 1;
+        const missingRequiredFields = [];
+        if (!log.hasOwnProperty('user_id')) missingRequiredFields.push('user_id');
+        if (!log.hasOwnProperty('date')) missingRequiredFields.push('date');
+
+        if (missingRequiredFields.length) {
+          callback(500, { error: `Required fields missing: ${missingRequiredFields.join(', ')}` });
+        } else {
+          handlers.db.collection('logs').insertOne(log, (error, result) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, result);
+            }
+          });
+        }
       }
     });
+  } else {
+    callback(503, { error: 'Could not connect to the database server' });
   }
 };
 
