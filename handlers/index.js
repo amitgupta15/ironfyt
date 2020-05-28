@@ -158,15 +158,22 @@ _logs.get = (payload, callback) => {
           }
         }
       });
-    } else {
+    } else if (Object.keys(query).length === 0) {
       handlers.db.collection('logs').find({}, (error, result) => {
         if (error) {
           callback(400, error);
         } else {
-          console.log(result.data);
-          callback(200, []);
+          result.toArray((error, docs) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, docs);
+            }
+          });
         }
       });
+    } else {
+      callback(400, { error: 'Invalid request' });
     }
   } else {
     callback(503, { error: 'Could not connect to the database server' });
