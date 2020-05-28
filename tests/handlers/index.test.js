@@ -225,9 +225,24 @@ it("'/api/logs' LOGS GET path should handle an unsuccessful (400) get request fo
   assert.deepStrictEqual(_data, { error: 'No record found for _id: 1' });
   handlers.db = undefined;
 });
+it("'/api/logs' LOGS GET path should handle invalid url query (400)", () => {
+  let _statusCode, _data;
+  // Stub the mongoDB response
+  //For this test, it is enough to have a handlers.db Object
+  handlers.db = {};
+  //End Stub
+  // fname is invalid query, should send 400 statuscode
+  handlers.logs({ method: 'get', query: { fname: 'Amit' } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Invalid request' });
+});
 
 it("'/api/logs' LOGS GET path should handle an unsuccessful (400) get request for all records", () => {
   let _statusCode, _data;
+  //Stub the MongoDB response object
   handlers.db = {
     collection: (collectionName) => {
       return {
@@ -237,12 +252,17 @@ it("'/api/logs' LOGS GET path should handle an unsuccessful (400) get request fo
       };
     },
   };
+  //End stub
+  //Call the method that makes MongoDB call, store result in temp variables
   handlers.logs({ method: 'get', query: {} }, (statusCode, data) => {
     _statusCode = statusCode;
     _data = data;
   });
+  //assert
   assert.strictEqual(_statusCode, 400);
   assert.deepStrictEqual(_data, { error: 'Some error occurred' });
+
+  //reset the response object
   handlers.db = undefined;
 });
 
@@ -252,7 +272,9 @@ it("'/api/logs' LOGS GET path should handle a successful (200) get request for a
     collection: (collectionName) => {
       return {
         find: (filter, callback) => {
-          callback(false, []);
+          callback(false, {
+            toArray: (cb) => cb(false, [{ _id: 1 }, { _id: 2 }]),
+          });
         },
       };
     },
@@ -262,7 +284,7 @@ it("'/api/logs' LOGS GET path should handle a successful (200) get request for a
     _data = data;
   });
   assert.strictEqual(_statusCode, 200);
-  assert.deepStrictEqual(_data, []);
+  assert.deepStrictEqual(_data.length, 2);
   handlers.db = undefined;
 });
 

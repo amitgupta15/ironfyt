@@ -147,7 +147,7 @@ _logs.get = (payload, callback) => {
   const { query } = payload;
   if (handlers.db) {
     if (query._id) {
-      handlers.db.collection('logs').findOne({ _id: query._id }, (error, result) => {
+      handlers.db.collection('logs').findOne({ _id: parseInt(query._id) }, (error, result) => {
         if (error) {
           callback(400, error);
         } else {
@@ -173,39 +173,12 @@ _logs.get = (payload, callback) => {
         }
       });
     } else {
-      callback(400, { error: 'Invalid request' });
+      callback(400, { error: `Invalid request` });
     }
   } else {
     callback(503, { error: 'Could not connect to the database server' });
   }
 };
-// _logs.get = (payload, callback) => {
-//   const { query } = payload;
-//   if (!isNaN(parseInt(query._id))) {
-//     dataService.read('logs', query._id, (error, data) => {
-//       if (!error) {
-//         callback(200, data);
-//       } else {
-//         callback(400, { error: `Error reading data with id - ${query._id}` });
-//       }
-//     });
-//   } else if (query.filter) {
-//     const filter = query.filter;
-//     if (filter.toLowerCase() === 'all') {
-//       const ids = dataService.list('logs');
-//       const logsArray = [];
-//       ids.forEach((id) => {
-//         const record = dataService.readSync('logs', id);
-//         logsArray.push(record);
-//       });
-//       callback(200, { logs: logsArray });
-//     } else {
-//       callback(400, { error: 'Invalid filter criteria' });
-//     }
-//   } else {
-//     callback(400, { error: 'Please provide a valid id' });
-//   }
-// };
 
 _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);
