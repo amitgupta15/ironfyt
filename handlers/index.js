@@ -88,46 +88,6 @@ _workouts.post = (payload, callback) => {
   }
 };
 
-// _workouts.put = (payload, callback) => {
-//   const buffer = JSON.parse(payload.buffer);
-//   const id = buffer.id ? buffer.id : false;
-//   const name = typeof buffer.name === 'string' && buffer.name.trim().length > 0 ? buffer.name.trim() : false;
-//   const type = buffer.type !== undefined ? buffer.type : null;
-//   const timecap = buffer.timecap !== undefined ? buffer.timecap : null;
-//   const rounds = buffer.rounds !== undefined ? buffer.rounds : null;
-//   const reps = buffer.reps !== undefined ? buffer.reps : null;
-//   const description = buffer.description !== undefined ? buffer.description : null;
-
-//   if (id) {
-//     if (name) {
-//       dataService.read('workouts', id, (error, workout) => {
-//         if (!error && workout) {
-//           workout.name = name;
-//           workout.type = type;
-//           workout.timecap = timecap;
-//           workout.rounds = rounds;
-//           workout.reps = reps;
-//           workout.description = description;
-
-//           dataService.update('workouts', id, workout, (error) => {
-//             if (!error) {
-//               callback(200, { message: `Workout successfully updated, workout id : ${id}` });
-//             } else {
-//               callback(500, { error: `Could not update the workout with id: ${id}` });
-//             }
-//           });
-//         } else {
-//           callback(400, { error: `Workout with id ${id} not found` });
-//         }
-//       });
-//     } else {
-//       callback(400, { error: `Please provide required fields` });
-//     }
-//   } else {
-//     callback(400, { error: `Please provide a valid id` });
-//   }
-// };
-
 /**
  *
  * Logs Handler
