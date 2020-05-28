@@ -145,31 +145,60 @@ const _logs = {};
 
 _logs.get = (payload, callback) => {
   const { query } = payload;
-  if (!isNaN(parseInt(query._id))) {
-    dataService.read('logs', query._id, (error, data) => {
-      if (!error) {
-        callback(200, data);
-      } else {
-        callback(400, { error: `Error reading data with id - ${query._id}` });
-      }
-    });
-  } else if (query.filter) {
-    const filter = query.filter;
-    if (filter.toLowerCase() === 'all') {
-      const ids = dataService.list('logs');
-      const logsArray = [];
-      ids.forEach((id) => {
-        const record = dataService.readSync('logs', id);
-        logsArray.push(record);
+  if (handlers.db) {
+    if (query._id) {
+      handlers.db.collection('logs').findOne({ _id: query._id }, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          if (!result) {
+            callback(400, { error: `No record found for _id: ${query._id}` });
+          } else {
+            callback(200, result);
+          }
+        }
       });
-      callback(200, { logs: logsArray });
     } else {
-      callback(400, { error: 'Invalid filter criteria' });
+      handlers.db.collection('logs').find({}, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          console.log(result.data);
+          callback(200, []);
+        }
+      });
     }
   } else {
-    callback(400, { error: 'Please provide a valid id' });
+    callback(503, { error: 'Could not connect to the database server' });
   }
 };
+// _logs.get = (payload, callback) => {
+//   const { query } = payload;
+//   if (!isNaN(parseInt(query._id))) {
+//     dataService.read('logs', query._id, (error, data) => {
+//       if (!error) {
+//         callback(200, data);
+//       } else {
+//         callback(400, { error: `Error reading data with id - ${query._id}` });
+//       }
+//     });
+//   } else if (query.filter) {
+//     const filter = query.filter;
+//     if (filter.toLowerCase() === 'all') {
+//       const ids = dataService.list('logs');
+//       const logsArray = [];
+//       ids.forEach((id) => {
+//         const record = dataService.readSync('logs', id);
+//         logsArray.push(record);
+//       });
+//       callback(200, { logs: logsArray });
+//     } else {
+//       callback(400, { error: 'Invalid filter criteria' });
+//     }
+//   } else {
+//     callback(400, { error: 'Please provide a valid id' });
+//   }
+// };
 
 _logs.post = (payload, callback) => {
   let log = JSON.parse(payload.buffer);

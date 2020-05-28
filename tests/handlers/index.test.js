@@ -74,10 +74,13 @@ it("'/api/workouts' WORKOUTS POST path should handle a post request", () => {
 it("'/api/workouts' WORKOUTS GET path should handle a get request", () => {
   // Successful retrieval of data
   dataservice.read = (dir, file, callback) => callback(false, { _id: 1 }); // Stub
+  let _statusCode, _data;
   handlers.workouts({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, { _id: 1 });
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, { _id: 1 });
 
   //_id does not exist
   dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error')); // Stub
@@ -146,44 +149,121 @@ it("'/api/logs' LOGS POST - path should handle a post request", () => {
   tearDown();
 });
 
-it("'/api/logs' LOGS GET path should handle a get request", () => {
-  const log = { _id: 1, user_id: 1 };
-  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, log) : callback('error')); // Stub
+it("'/api/logs' LOGS GET path should handle unsuccessful (503) database connection", () => {
+  let _statusCode, _data;
 
-  // Successful GET
+  // No connection to the database server
+  handlers.db = undefined;
   handlers.logs({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, log);
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
 
-  // _id does not exist
-  handlers.logs({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
+  //tearDown
+  handlers.db = undefined;
+});
+
+it("'/api/logs' LOGS GET path should handle a successful (200) get request for a given id", () => {
+  let _statusCode, _data;
+  // Successful connection to the database server
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback(false, { _id: 1, user_id: 1 });
+        },
+      };
+    },
+  };
+  handlers.logs({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, { _id: 1, user_id: 1 });
 
-  // Invalid non numeric id
-  handlers.logs({ method: 'get', query: { _id: 'abc' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  handlers.db = undefined;
+});
+
+it("'/api/logs' LOGS GET path should handle an unsuccessful (400) get request for a given id", () => {
+  let _statusCode, _data;
+
+  // Unknown database error
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback({ error: 'Some error occurred' });
+        },
+      };
+    },
+  };
+  handlers.logs({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Some error occurred' });
 
-  dataservice.list = (dir) => [1]; // Stub
-  dataservice.readSync = (dir, id) => ({ _id: id }); // Stub
-
-  // Handle invalid filter criteria
-  handlers.logs({ method: 'get', query: { filter: 'invalidfilter' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Invalid filter criteria' });
+  //Null result
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback(false, null);
+        },
+      };
+    },
+  };
+  handlers.logs({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'No record found for _id: 1' });
+  handlers.db = undefined;
+});
 
-  // Handle valid filter criteria
-  handlers.logs({ method: 'get', query: { filter: 'all' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, { logs: [{ _id: 1 }] });
+it("'/api/logs' LOGS GET path should handle an unsuccessful (400) get request for all records", () => {
+  let _statusCode, _data;
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        find: (filter, callback) => {
+          callback({ error: 'Some error occurred' }, []);
+        },
+      };
+    },
+  };
+  handlers.logs({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
-  //teardown
-  tearDown();
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Some error occurred' });
+  handlers.db = undefined;
+});
+
+it("'/api/logs' LOGS GET path should handle a successful (200) get request for all records", () => {
+  let _statusCode, _data;
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        find: (filter, callback) => {
+          callback(false, []);
+        },
+      };
+    },
+  };
+  handlers.logs({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, []);
+  handlers.db = undefined;
 });
 
 /**
