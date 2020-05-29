@@ -351,30 +351,146 @@ it("'/api/users' USERS METHOD NOT ALLOWED - path should have status code 405 for
   });
 });
 
-it("'/api/users' USERS  GET - path should handle get request", () => {
-  const user = { _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+it("'/api/users' USERS  GET - path should handle unsuccessful (503) database connection", () => {
+  let _statusCode, _data;
 
-  // Successful GET
-  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, user) : callback('error')); // Stub
+  // No connection to the database server
+  handlers.db = undefined;
   handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, user);
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
 
-  // _id not found
-  handlers.users({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
+  //tearDown
+  handlers.db = undefined;
+});
+it("'/api/users' USERS GET path should handle a successful (200) get request for a given id", () => {
+  let _statusCode, _data;
+  // Successful connection to the database server
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback(false, { _id: 1 });
+        },
+      };
+    },
+  };
+  handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, { _id: 1 });
 
-  // Invalid _id
-  handlers.users({ method: 'get', query: { _id: 'abc' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  handlers.db = undefined;
+});
+
+it("'/api/users' USERS GET path should handle an unsuccessful (400) get request for a given id", () => {
+  let _statusCode, _data;
+
+  // Unknown database error
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback({ error: 'Some error occurred' });
+        },
+      };
+    },
+  };
+  handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Some error occurred' });
 
-  //Clean up stub data
-  tearDown();
+  //Null result
+  handlers.db = {
+    collection: (collectionName) => {
+      return {
+        findOne: (filter, callback) => {
+          callback(false, null);
+        },
+      };
+    },
+  };
+  handlers.users({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'No record found for _id: 1' });
+  handlers.db = undefined;
+});
+it("'/api/users' USERS GET path should handle invalid url query (400)", () => {
+  let _statusCode, _data;
+  // Stub the mongoDB response
+  //For this test, it is enough to have a handlers.db Object
+  handlers.db = {};
+  //End Stub
+  // fname is invalid query, should send 400 statuscode
+  handlers.users({ method: 'get', query: { fname: 'Amit' } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Invalid request' });
+});
+
+it("'/api/users' USERS GET path should handle an unsuccessful (400) get request for all records", () => {
+  let _statusCode, _data;
+  //Stub the MongoDB response object
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'users') {
+        return {
+          find: (filter, callback) => {
+            callback({ error: 'Some error occurred' }, []);
+          },
+        };
+      }
+    },
+  };
+  //End stub
+  //Call the method that makes MongoDB call, store result in temp variables
+  handlers.users({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  //assert
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Some error occurred' });
+
+  //reset the response object
+  handlers.db = undefined;
+});
+
+it("'/api/users' USERS GET path should handle a successful (200) get request for all records", () => {
+  let _statusCode, _data;
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'users') {
+        return {
+          find: (filter, callback) => {
+            callback(false, {
+              toArray: (cb) => cb(false, [{ _id: 1 }, { _id: 2 }]),
+            });
+          },
+        };
+      }
+    },
+  };
+  handlers.users({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data.length, 2);
+  handlers.db = undefined;
 });
 
 it("'/api/users' USERS POST - path should handle a post request", () => {

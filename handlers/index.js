@@ -186,30 +186,63 @@ const _users = {};
 
 _users.get = (payload, callback) => {
   const { query } = payload;
-  if (!isNaN(parseInt(query._id))) {
-    dataService.read('users', query._id, (error, data) => {
-      if (!error) {
-        callback(200, data);
-      } else {
-        callback(400, { error: `Error reading data with id - ${query._id}` });
-      }
-    });
-  } else if (query.filter) {
-    const filter = query.filter;
-    if (filter.toLowerCase() === 'all') {
-      const ids = dataService.list('users');
-      const usersArray = [];
-      ids.forEach((id) => {
-        const record = dataService.readSync('users', id);
-        usersArray.push(record);
+  if (handlers.db) {
+    if (query._id) {
+      handlers.db.collection('users').findOne({ _id: parseInt(query._id) }, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          if (!result) {
+            callback(400, { error: `No record found for _id: ${query._id}` });
+          } else {
+            callback(200, result);
+          }
+        }
       });
-      callback(200, { users: usersArray });
+    } else if (Object.keys(query).length === 0) {
+      handlers.db.collection('users').find({}, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          result.toArray((error, docs) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, docs);
+            }
+          });
+        }
+      });
     } else {
-      callback(400, { error: 'Invalid filter criteria' });
+      callback(400, { error: `Invalid request` });
     }
   } else {
-    callback(400, { error: 'Please provide a valid id' });
+    callback(503, { error: 'Could not connect to the database server' });
   }
+  // if (!isNaN(parseInt(query._id))) {
+  //   dataService.read('users', query._id, (error, data) => {
+  //     if (!error) {
+  //       callback(200, data);
+  //     } else {
+  //       callback(400, { error: `Error reading data with id - ${query._id}` });
+  //     }
+  //   });
+  // } else if (query.filter) {
+  //   const filter = query.filter;
+  //   if (filter.toLowerCase() === 'all') {
+  //     const ids = dataService.list('users');
+  //     const usersArray = [];
+  //     ids.forEach((id) => {
+  //       const record = dataService.readSync('users', id);
+  //       usersArray.push(record);
+  //     });
+  //     callback(200, { users: usersArray });
+  //   } else {
+  //     callback(400, { error: 'Invalid filter criteria' });
+  //   }
+  // } else {
+  //   callback(400, { error: 'Please provide a valid id' });
+  // }
 };
 
 _users.post = (payload, callback) => {
