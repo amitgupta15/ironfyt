@@ -219,53 +219,44 @@ _users.get = (payload, callback) => {
   } else {
     callback(503, { error: 'Could not connect to the database server' });
   }
-  // if (!isNaN(parseInt(query._id))) {
-  //   dataService.read('users', query._id, (error, data) => {
-  //     if (!error) {
-  //       callback(200, data);
-  //     } else {
-  //       callback(400, { error: `Error reading data with id - ${query._id}` });
-  //     }
-  //   });
-  // } else if (query.filter) {
-  //   const filter = query.filter;
-  //   if (filter.toLowerCase() === 'all') {
-  //     const ids = dataService.list('users');
-  //     const usersArray = [];
-  //     ids.forEach((id) => {
-  //       const record = dataService.readSync('users', id);
-  //       usersArray.push(record);
-  //     });
-  //     callback(200, { users: usersArray });
-  //   } else {
-  //     callback(400, { error: 'Invalid filter criteria' });
-  //   }
-  // } else {
-  //   callback(400, { error: 'Please provide a valid id' });
-  // }
 };
 
 _users.post = (payload, callback) => {
-  const buffer = JSON.parse(payload.buffer);
-  const missingRequiredFields = [];
-  if (!buffer.hasOwnProperty('_id')) missingRequiredFields.push('_id');
-  if (!buffer.hasOwnProperty('username')) missingRequiredFields.push('username');
-  if (!buffer.hasOwnProperty('password')) missingRequiredFields.push('password');
-  if (!buffer.hasOwnProperty('fname')) missingRequiredFields.push('fname');
-  if (!buffer.hasOwnProperty('lname')) missingRequiredFields.push('lname');
-  if (!buffer.hasOwnProperty('logs')) missingRequiredFields.push('logs');
-  if (!buffer.hasOwnProperty('workouts')) missingRequiredFields.push('workouts');
-
-  if (missingRequiredFields.length) {
-    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
-  } else {
-    dataService.create('users', buffer._id, buffer, (error) => {
-      if (!error) {
-        callback(200, { message: `New record created, record ID: ${buffer._id}` });
+  let user;
+  try {
+    user = JSON.parse(payload.buffer);
+  } catch (error) {
+    callback(500, { error: error });
+  }
+  if (user && handlers.db) {
+    handlers.db.collection('users').countDocuments((error, count) => {
+      if (error) {
+        callback(400, { error: error });
       } else {
-        callback(400, { error: `Could not create a new record with id ${buffer._id}` });
+        user._id = count + 1;
+        const missingRequiredFields = [];
+        if (!user.hasOwnProperty('username')) missingRequiredFields.push('username');
+        if (!user.hasOwnProperty('password')) missingRequiredFields.push('password');
+        if (!user.hasOwnProperty('fname')) missingRequiredFields.push('fname');
+        if (!user.hasOwnProperty('lname')) missingRequiredFields.push('lname');
+        if (!user.hasOwnProperty('logs')) missingRequiredFields.push('logs');
+        if (!user.hasOwnProperty('workouts')) missingRequiredFields.push('workouts');
+
+        if (missingRequiredFields.length) {
+          callback(500, { error: `Required fields missing: ${missingRequiredFields.join(', ')}` });
+        } else {
+          handlers.db.collection('users').insertOne(user, (error, result) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, result);
+            }
+          });
+        }
       }
     });
+  } else {
+    callback(503, { error: 'Could not connect to the database server' });
   }
 };
 
