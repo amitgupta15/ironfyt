@@ -261,39 +261,50 @@ _users.post = (payload, callback) => {
 };
 
 _users.put = (payload, callback) => {
-  const buffer = JSON.parse(payload.buffer);
-  const _id = buffer._id ? buffer._id : false;
-  const username = typeof buffer.username === 'string' && buffer.username.trim().length > 0 ? buffer.username.trim() : false;
-  const password = buffer.password !== undefined ? buffer.password : null;
-  const fname = buffer.fname !== undefined ? buffer.fname : null;
-  const lname = buffer.lname !== undefined ? buffer.lname : null;
-  const logs = buffer.logs !== undefined && buffer.logs instanceof Array ? buffer.logs : [];
-  const workouts = buffer.workouts !== undefined && buffer.workouts instanceof Array ? buffer.workouts : [];
-
-  if (_id) {
-    dataService.read('users', _id, (error, user) => {
-      if (!error && user) {
-        user.username = username;
-        user.password = password;
-        user.fname = fname;
-        user.lname = lname;
-        user.logs = logs;
-        user.workouts = workouts;
-
-        dataService.update('users', _id, user, (error) => {
-          if (!error) {
-            callback(200, { message: `User successfully updated, user _id : ${_id}` });
-          } else {
-            callback(500, { error: `Could not update the user with _id: ${_id}` });
-          }
-        });
-      } else {
-        callback(400, { error: `User with id ${_id} not found` });
-      }
-    });
-  } else {
-    callback(400, { error: `Please provide a valid _id` });
+  let buffer;
+  try {
+    buffer = JSON.parse(payload.buffer);
+  } catch (error) {
+    callback(500, { error: error });
   }
+  if (buffer && handlers.db) {
+    const _id = buffer._id ? buffer._id : false;
+    const username = typeof buffer.username === 'string' && buffer.username.trim().length > 0 ? buffer.username.trim() : false;
+    const password = buffer.password !== undefined ? buffer.password : null;
+    const fname = buffer.fname !== undefined ? buffer.fname : null;
+    const lname = buffer.lname !== undefined ? buffer.lname : null;
+    const logs = buffer.logs !== undefined && buffer.logs instanceof Array ? buffer.logs : [];
+    const workouts = buffer.workouts !== undefined && buffer.workouts instanceof Array ? buffer.workouts : [];
+    if (_id) {
+    } else {
+      callback(400, { error: 'Please provide a valid user id' });
+    }
+  } else {
+    callback(503, { error: 'Could not connect to the database server' });
+  }
+  // if (_id) {
+  //   dataService.read('users', _id, (error, user) => {
+  //     if (!error && user) {
+  //       user.username = username;
+  //       user.password = password;
+  //       user.fname = fname;
+  //       user.lname = lname;
+  //       user.logs = logs;
+  //       user.workouts = workouts;
+  //       dataService.update('users', _id, user, (error) => {
+  //         if (!error) {
+  //           callback(200, { message: `User successfully updated, user _id : ${_id}` });
+  //         } else {
+  //           callback(500, { error: `Could not update the user with _id: ${_id}` });
+  //         }
+  //       });
+  //     } else {
+  //       callback(400, { error: `User with id ${_id} not found` });
+  //     }
+  //   });
+  // } else {
+  //   callback(400, { error: `Please provide a valid _id` });
+  // }
 };
 
 /** Helper Functions */

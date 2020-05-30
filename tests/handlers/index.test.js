@@ -351,6 +351,61 @@ it("'/api/users' USERS METHOD NOT ALLOWED - path should have status code 405 for
   });
 });
 
+it("'/api/users' USERS PUT - path should handle unsuccessful (503) database connection", () => {
+  let _statusCode, _data;
+
+  // No connection to the database server
+  handlers.db = undefined;
+  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
+
+  //tearDown
+  handlers.db = undefined;
+});
+it("'/api/users' USERS PUT - path should handle unsuccessful (400) update attempt - no id", () => {
+  let _statusCode, _data;
+
+  // No connection to the database server
+  handlers.db = {};
+  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Please provide a valid user id' });
+
+  //tearDown
+  handlers.db = undefined;
+});
+it("'/api/users' USERS PUT - path should handle a successful (200) post request", () => {});
+// it("'/api/users' USERS PUT - path should handle a put request", () => {
+//   const user = { _id: 1, username: 'amitgupta15@gmail.com', fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
+
+//   // Invalid PUT
+//   dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, user) : callback(true)); //Stub
+//   dataservice.update = (dir, _id, buffer, callback) => callback('error'); // simulate error callback // Stub
+//   handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ _id: 1, message: 'Hello World!!!' })) }, (statusCode, data) => {
+//     assert.deepStrictEqual(data, { error: 'Could not update the user with _id: 1' });
+//     assert.strictEqual(statusCode, 500);
+//   });
+
+//   // Valid PUT
+//   dataservice.update = (dir, _id, buffer, callback) => callback(); // No param means successful operation
+//   assert.strictEqual(user.logs.length, 0);
+//   handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ ...user, logs: [1, 2] })) }, (statusCode, data) => {
+//     assert.deepStrictEqual(data, { message: 'User successfully updated, user _id : 1' });
+//     assert.strictEqual(statusCode, 200);
+//   });
+//   assert.strictEqual(user.logs.length, 2);
+
+//   // Clean up stubs
+//   tearDown();
+// });
+
 it("'/api/users' USERS POST path should handle unsuccessful (503) database connection", () => {
   let _statusCode, _data;
 
@@ -570,48 +625,6 @@ it("'/api/users' USERS GET path should handle a successful (200) get request for
   assert.strictEqual(_statusCode, 200);
   assert.deepStrictEqual(_data.length, 2);
   handlers.db = undefined;
-});
-
-// it("'/api/users' USERS POST - path should handle a post request", () => {
-//   // Missing required fields
-//   handlers.users({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'missing fields, invalid data' })) }, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 500);
-//     assert.deepStrictEqual(data, { error: 'Missing required fields: _id, username, password, fname, lname, logs, workouts' });
-//   });
-
-//   // Successful POST
-//   const newUser = { _id: 1, username: 'amitgupta15@gmail.com', password: null, fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
-//   dataservice.create = (dir, _id, buffer, callback) => callback(false); // Stub
-//   handlers.users({ method: 'post', buffer: Buffer.from(JSON.stringify(newUser)) }, (statusCode, data) => {
-//     assert.strictEqual(statusCode, 200);
-//     assert.deepStrictEqual(data, { message: 'New record created, record ID: 1' });
-//   });
-
-//   tearDown();
-// });
-
-it("'/api/users' USERS PUT - path should handle a put request", () => {
-  const user = { _id: 1, username: 'amitgupta15@gmail.com', fname: 'Amit', lname: 'Gupta', logs: [], workouts: [] };
-
-  // Invalid PUT
-  dataservice.read = (dir, _id, callback) => (_id === 1 ? callback(false, user) : callback(true)); //Stub
-  dataservice.update = (dir, _id, buffer, callback) => callback('error'); // simulate error callback // Stub
-  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ _id: 1, message: 'Hello World!!!' })) }, (statusCode, data) => {
-    assert.deepStrictEqual(data, { error: 'Could not update the user with _id: 1' });
-    assert.strictEqual(statusCode, 500);
-  });
-
-  // Valid PUT
-  dataservice.update = (dir, _id, buffer, callback) => callback(); // No param means successful operation
-  assert.strictEqual(user.logs.length, 0);
-  handlers.users({ method: 'put', buffer: Buffer.from(JSON.stringify({ ...user, logs: [1, 2] })) }, (statusCode, data) => {
-    assert.deepStrictEqual(data, { message: 'User successfully updated, user _id : 1' });
-    assert.strictEqual(statusCode, 200);
-  });
-  assert.strictEqual(user.logs.length, 2);
-
-  // Clean up stubs
-  tearDown();
 });
 
 /** Helper Functions Tests */
