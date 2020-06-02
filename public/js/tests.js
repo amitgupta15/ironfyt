@@ -163,8 +163,8 @@
 
   it('should have user-list route populate userListComponent data object successfully', function () {
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/users?filter=all') {
-        callback({ users: [{ id: -1, fname: 'amit', logs: [{ log_id: -1, workout_id: -1 }] }] });
+      if (str === '/api/users') {
+        callback([{ id: -1, fname: 'amit', logs: [{ log_id: -1, workout_id: -1 }] }]);
       }
     };
     // Call the function associated with the route
@@ -200,13 +200,11 @@
     /** setup */
     // Stub hl.fetch()
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/workouts?filter=all') {
-        callback({
-          workouts: [
-            { _id: -2, name: 'workout1' },
-            { _id: -1, name: 'workout2' },
-          ],
-        });
+      if (str === '/api/workouts') {
+        callback([
+          { _id: -2, name: 'workout1' },
+          { _id: -1, name: 'workout2' },
+        ]);
       }
       if (str === '/api/users?_id=-1') {
         callback({
@@ -219,15 +217,13 @@
           ],
         });
       }
-      if (str === '/api/logs?filter=all') {
-        callback({
-          logs: [
-            { _id: '1', workout_id: '-1' },
-            { _id: '2', workout_id: '-1' },
-            { _id: '3', workout_id: '-1' },
-            { _id: '3', workout_id: '-2' },
-          ],
-        });
+      if (str === '/api/logs') {
+        callback([
+          { _id: '1', workout_id: '-1' },
+          { _id: '2', workout_id: '-1' },
+          { _id: '3', workout_id: '-1' },
+          { _id: '3', workout_id: '-2' },
+        ]);
       }
     };
     // Stub hl.getParams()
@@ -334,14 +330,12 @@
       if (str === '/api/users?_id=-1') {
         callback(_user);
       }
-      if (str === '/api/logs?filter=all') {
-        callback({
-          logs: [
-            { _id: -1, date: new Date('01/02/2020'), user_id: -1, workout_id: -2 },
-            { _id: -2, date: new Date('01/03/2020'), user_id: -1, workout_id: -2 },
-            { _id: -3, date: new Date('01/04/2020'), user_id: -1, workout_id: -1 },
-          ],
-        });
+      if (str === '/api/logs') {
+        callback([
+          { _id: -1, date: new Date('01/02/2020'), user_id: -1, workout_id: -2 },
+          { _id: -2, date: new Date('01/03/2020'), user_id: -1, workout_id: -2 },
+          { _id: -3, date: new Date('01/04/2020'), user_id: -1, workout_id: -1 },
+        ]);
       }
     };
 
@@ -614,20 +608,18 @@
     /** setup block */
     //Stub the get method for all possible queries for this page
     hl.fetch.get = function (str, callback) {
-      if (str === '/api/users?filter=all') {
-        callback({ users: [{ _id: -1, fname: 'amit' }] });
+      if (str === '/api/users') {
+        callback([{ _id: -1, fname: 'amit' }]);
       }
-      if (str === '/api/logs?filter=all') {
-        callback({
-          logs: [
-            { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1, workout_id: -1 },
-            { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
-            { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
-          ],
-        });
+      if (str === '/api/logs') {
+        callback([
+          { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1, workout_id: -1 },
+          { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
+          { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
+        ]);
       }
-      if (str === '/api/workouts?filter=all') {
-        callback({ workouts: [{ _id: -1, name: 'some workout' }] });
+      if (str === '/api/workouts') {
+        callback([{ _id: -1, name: 'some workout' }]);
       }
     };
     /** end setup block */

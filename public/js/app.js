@@ -116,8 +116,8 @@
   });
 
   var userListPage = function () {
-    hl.fetch.get('/api/users?filter=all', function (response) {
-      ironfyt.userListComponent.setData({ users: response.users });
+    hl.fetch.get('/api/users', function (users) {
+      ironfyt.userListComponent.setData({ users: users });
     });
   };
 
@@ -155,10 +155,10 @@
     var user_id = hl.getParams().user;
     if (user_id) {
       hl.fetch.get('/api/users?_id=' + user_id, function (user) {
-        hl.fetch.get('/api/workouts?filter=all', function (workoutsResponse) {
-          hl.fetch.get('/api/logs?filter=all', function (logsResponse) {
-            var workouts = workoutsResponse.workouts;
-            var logs = logsResponse.logs;
+        hl.fetch.get('/api/workouts', function (workoutsResponse) {
+          hl.fetch.get('/api/logs', function (logsResponse) {
+            var workouts = workoutsResponse;
+            var logs = logsResponse;
             workouts.forEach(function (workout) {
               workout.userlogcount = user.logs.filter(function (log) {
                 return parseInt(log.workout_id) === parseInt(workout._id);
@@ -167,7 +167,7 @@
                 return parseInt(log.workout_id) === parseInt(workout._id);
               }).length;
             });
-            workouts = hl.sortArray(workoutsResponse.workouts, 'totallogcount', 'desc');
+            workouts = hl.sortArray(workoutsResponse, 'totallogcount', 'desc');
             ironfyt.workoutListComponent.setData({ user: user, workouts: workouts, unfilteredList: workouts });
           });
         });
@@ -280,15 +280,15 @@
     var user_id = params && params.user ? parseInt(params.user) : false;
     hl.fetch.get('/api/workouts?_id=' + workout_id, function (workout) {
       hl.fetch.get('/api/users?_id=' + user_id, function (user) {
-        hl.fetch.get('/api/logs?filter=all', function (logsResponse) {
-          var logs = logsResponse.logs
+        hl.fetch.get('/api/logs', function (logsResponse) {
+          var logs = logsResponse
             .filter(function (log) {
               return parseInt(user._id) === parseInt(log.user_id) && parseInt(workout._id) === parseInt(log.workout_id);
             })
             .sort(function (a, b) {
               return new Date(b.date) - new Date(a.date);
             });
-          var allLogs = logsResponse.logs.filter(function (log) {
+          var allLogs = logsResponse.filter(function (log) {
             return parseInt(workout._id) === parseInt(log.workout_id);
           });
           workout.userlogcount = logs.length;
@@ -388,7 +388,7 @@
             if (!user.workouts) {
               user.workouts = [];
             }
-            user.workouts.push(parseInt(newWorkout.id));
+            user.workouts.push(parseInt(newWorkout._id));
             hl.fetch.put('/api/users', user, function (response) {
               location.assign('workout-list.html?user=' + params.user_id);
             });
@@ -555,17 +555,17 @@
     var params = hl.getParams();
     var user_id = params && params.user ? params.user : false;
     var alllogs = params && (params.all === 'true' || params.all === true) ? true : false;
-    hl.fetch.get('/api/logs?filter=all', function (logsResponse) {
-      hl.fetch.get('/api/workouts?filter=all', function (workoutsResponse) {
-        hl.fetch.get('/api/users?filter=all', function (usersResponse) {
+    hl.fetch.get('/api/logs', function (logsResponse) {
+      hl.fetch.get('/api/workouts', function (workoutsResponse) {
+        hl.fetch.get('/api/users', function (usersResponse) {
           // Populate the user object
-          var user = usersResponse.users.filter(function (user) {
+          var user = usersResponse.filter(function (user) {
             return parseInt(user._id) === parseInt(user_id);
           })[0];
 
-          var logs = logsResponse.logs;
-          var workouts = workoutsResponse.workouts;
-          var users = usersResponse.users;
+          var logs = logsResponse;
+          var workouts = workoutsResponse;
+          var users = usersResponse;
 
           // Filter based on alllogs URL Parameter
           if (!alllogs) {
