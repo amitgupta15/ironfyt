@@ -301,29 +301,6 @@ _users.put = (payload, callback) => {
   } else {
     callback(503, { error: 'Could not connect to the database server' });
   }
-  // if (_id) {
-  //   dataService.read('users', _id, (error, user) => {
-  //     if (!error && user) {
-  //       user.username = username;
-  //       user.password = password;
-  //       user.fname = fname;
-  //       user.lname = lname;
-  //       user.logs = logs;
-  //       user.workouts = workouts;
-  //       dataService.update('users', _id, user, (error) => {
-  //         if (!error) {
-  //           callback(200, { message: `User successfully updated, user _id : ${_id}` });
-  //         } else {
-  //           callback(500, { error: `Could not update the user with _id: ${_id}` });
-  //         }
-  //       });
-  //     } else {
-  //       callback(400, { error: `User with id ${_id} not found` });
-  //     }
-  //   });
-  // } else {
-  //   callback(400, { error: `Please provide a valid _id` });
-  // }
 };
 
 /** Helper Functions */
