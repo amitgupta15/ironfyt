@@ -1,6 +1,6 @@
 'use strict';
 
-const dataService = require('../data-service');
+// const dataService = require('../data-service');
 
 // Container object
 const handlers = {};
@@ -42,29 +42,38 @@ const _workouts = {};
  */
 _workouts.get = (payload, callback) => {
   const { query } = payload;
-  if (!isNaN(parseInt(query._id))) {
-    dataService.read('workouts', query._id, (error, data) => {
-      if (!error) {
-        callback(200, data);
-      } else {
-        callback(500, { error: `Error reading data with id - ${query._id}` });
-      }
-    });
-  } else if (query.filter) {
-    const filter = query.filter;
-    if (filter.toLowerCase() === 'all') {
-      const ids = dataService.list('workouts');
-      const workoutsArray = [];
-      ids.forEach((id) => {
-        const record = dataService.readSync('workouts', id);
-        workoutsArray.push(record);
+  if (handlers.db) {
+    if (query._id) {
+      handlers.db.collection('workouts').findOne({ _id: parseInt(query._id) }, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          if (!result) {
+            callback(400, { error: `No record found for _id: ${query._id}` });
+          } else {
+            callback(200, result);
+          }
+        }
       });
-      callback(200, { workouts: workoutsArray });
+    } else if (Object.keys(query).length === 0) {
+      handlers.db.collection('workouts').find({}, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          result.toArray((error, docs) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, docs);
+            }
+          });
+        }
+      });
     } else {
-      callback(400, { error: 'Invalid filter criteria' });
+      callback(400, { error: `Invalid request` });
     }
   } else {
-    callback(400, { error: 'Please provide a valid id' });
+    callback(503, { error: 'Could not connect to the database server' });
   }
 };
 
@@ -318,12 +327,12 @@ _users.put = (payload, callback) => {
 };
 
 /** Helper Functions */
-handlers.getMaxId = function (dir) {
-  if (dir) {
-    var ids = dataService.list(dir);
-    return ids.length;
-  } else {
-    return false;
-  }
-};
+// handlers.getMaxId = function (dir) {
+//   if (dir) {
+//     var ids = dataService.list(dir);
+//     return ids.length;
+//   } else {
+//     return false;
+//   }
+// };
 module.exports = handlers;

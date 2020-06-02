@@ -2,20 +2,6 @@
 
 const { assert, it } = require('../js-unit-test-library');
 const handlers = require('../../handlers');
-const dataservice = require('../../data-service');
-
-const tearDown = () => {
-  dataservice.create = (dir, file, data, callback) => {};
-  dataservice.update = (dir, file, data, callback) => {};
-  dataservice.read = (dir, file, callback) => {};
-  dataservice.delete = (dir, file, callback) => {};
-  dataservice.list = {};
-  dataservice.readSync = {};
-};
-
-/** Globally stubbing the data services to avoid any unintentional overwrite of data **/
-tearDown();
-/** End Data Service Stub **/
 
 it('should only allow [get, post, put, and delete] http methods', () => {
   assert.ok(handlers.isMethodAllowed('GET'));
@@ -43,6 +29,7 @@ it("'/api/workouts' WORKOUTS METHODS NOT ALLOWED path should have status code 40
     assert.strictEqual(data, 'Method Not Allowed');
   });
 });
+
 it("'/api/workouts' WORKOUTS POST path should handle unsuccessful (503) database connection", () => {
   let _statusCode, _data;
 
@@ -55,6 +42,7 @@ it("'/api/workouts' WORKOUTS POST path should handle unsuccessful (503) database
   assert.strictEqual(_statusCode, 503);
   assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
 });
+
 it("'/api/workouts' WORKOUTS POST path should handle unsuccessful (400) collection count attempt", () => {
   let _statusCode, _data;
 
@@ -108,49 +96,127 @@ it("'/api/workouts' WORKOUTS POST - path should handle a successful (200) post r
 
   handlers.db = undefined;
 });
-
-it("'/api/workouts' WORKOUTS GET path should handle a get request", () => {
-  // Successful retrieval of data
-  dataservice.read = (dir, file, callback) => callback(false, { _id: 1 }); // Stub
+it("'/api/workouts' WORKOUTS GET path should handle unsuccessful (503) database connection", () => {
   let _statusCode, _data;
+  handlers.db = undefined;
+  handlers.workouts({ method: 'get' }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
+});
+
+it("'/api/workouts' WORKOUTS GET path should handle a successful (200) get request for a given id", () => {
+  let _statusCode, _data;
+  // Successful connection to the database server
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          findOne: (filter, callback) => {
+            callback(false, { _id: 1, user_id: 1 });
+          },
+        };
+      }
+    },
+  };
   handlers.workouts({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
     _statusCode = statusCode;
     _data = data;
   });
   assert.strictEqual(_statusCode, 200);
-  assert.deepStrictEqual(_data, { _id: 1 });
+  assert.deepStrictEqual(_data, { _id: 1, user_id: 1 });
 
-  //_id does not exist
-  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error')); // Stub
-  handlers.workouts({ method: 'get', query: { _id: 0 } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 500);
-    assert.deepStrictEqual(data, { error: 'Error reading data with id - 0' });
+  handlers.db = undefined;
+});
+
+it("'/api/workouts' WORKOUTS GET path should handle an unsuccessful (400) get request for a given id", () => {
+  let _statusCode, _data;
+  // Successful connection to the database server
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          findOne: (filter, callback) => {
+            callback(false, { _id: 1, user_id: 1 });
+          },
+        };
+      }
+    },
+  };
+  handlers.workouts({ method: 'get', query: { _id: 1 } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, { _id: 1, user_id: 1 });
 
-  // Invalid id
-  dataservice.read = (dir, file, callback) => (file === 1 ? callback(false) : callback('error')); // Stub
-  handlers.workouts({ method: 'get', query: { id: 'abc' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Please provide a valid id' });
+  handlers.db = undefined;
+});
+it("'/api/workouts' WORKOUTS GET path should handle invalid url query (400)", () => {
+  let _statusCode, _data;
+  // Stub the mongoDB response
+  //For this test, it is enough to have a handlers.db Object
+  handlers.db = {};
+  //End Stub
+  // fname is invalid query, should send 400 statuscode
+  handlers.workouts({ method: 'get', query: { fname: 'Amit' } }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
-
-  //Invalid filter criteria
-  handlers.workouts({ method: 'get', query: { filter: 'abc' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Invalid filter criteria' });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Invalid request' });
+});
+it("'/api/workouts' WORKOUTS GET path should handle an unsuccessful (400) get request for all records", () => {
+  let _statusCode, _data;
+  //Stub the MongoDB response object
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          find: (filter, callback) => {
+            callback({ error: 'Some error occurred' }, []);
+          },
+        };
+      }
+    },
+  };
+  //End stub
+  //Call the method that makes MongoDB call, store result in temp variables
+  handlers.workouts({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  //assert
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'Some error occurred' });
 
-  //Valid filter criteria
-  dataservice.list = (dir) => [1]; // Stub
-  dataservice.readSync = (dir, file) => ({ _id: file }); // Stub
-
-  handlers.workouts({ method: 'get', query: { filter: 'all' } }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, { workouts: [{ _id: 1 }] });
+  //reset the response object
+  handlers.db = undefined;
+});
+it("'/api/workouts' WORKOUTS GET path should handle a successful (200) get request for all records", () => {
+  let _statusCode, _data;
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          find: (filter, callback) => {
+            callback(false, {
+              toArray: (cb) => cb(false, [{ _id: 1 }, { _id: 2 }]),
+            });
+          },
+        };
+      }
+    },
+  };
+  handlers.workouts({ method: 'get', query: {} }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
-
-  //tearDown
-  tearDown();
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data.length, 2);
+  handlers.db = undefined;
 });
 
 /**
@@ -225,18 +291,22 @@ it("'/api/logs' LOGS POST - path should handle a successful (200) post request",
 
   //Successful POST
   handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify(log)) }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, {});
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, {});
 
   //Invalid POST
   handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({ notes: 'Finished Workout' })) }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 500);
-    assert.deepStrictEqual(data, { error: 'Required fields missing: user_id, date' });
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 500);
+  assert.deepStrictEqual(_data, { error: 'Required fields missing: user_id, date' });
 
   // Clean up Stubs
-  tearDown();
+  handlers.db = undefined;
 });
 
 it("'/api/logs' LOGS GET path should handle unsuccessful (503) database connection", () => {
@@ -671,9 +741,9 @@ it("'/api/users' USERS GET path should handle a successful (200) get request for
 });
 
 /** Helper Functions Tests */
-it('should get the latest id for a directory', () => {
-  dataservice.list = (dir) => []; // Stub
+// it('should get the latest id for a directory', () => {
+//   dataservice.list = (dir) => []; // Stub
 
-  var maxId = handlers.getMaxId('tests');
-  assert.strictEqual(maxId, 0);
-});
+//   var maxId = handlers.getMaxId('tests');
+//   assert.strictEqual(maxId, 0);
+// });
