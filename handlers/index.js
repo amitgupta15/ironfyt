@@ -275,7 +275,26 @@ _users.put = (payload, callback) => {
     const lname = buffer.lname !== undefined ? buffer.lname : null;
     const logs = buffer.logs !== undefined && buffer.logs instanceof Array ? buffer.logs : [];
     const workouts = buffer.workouts !== undefined && buffer.workouts instanceof Array ? buffer.workouts : [];
-    if (_id) {
+    if (_id && username) {
+      handlers.db.collection('users').findOne({ _id: _id }, (error, user) => {
+        if (!error && user) {
+          user.username = username;
+          user.password = password;
+          user.fname = fname;
+          user.lname = lname;
+          user.logs = logs;
+          user.workouts = workouts;
+          handlers.db.collection('users').replaceOne({ _id: _id }, user, (error, result) => {
+            if (error) {
+              callback(500, { error: error });
+            } else {
+              callback(200, result);
+            }
+          });
+        } else {
+          callback(400, { error: error });
+        }
+      });
     } else {
       callback(400, { error: 'Please provide a valid user id' });
     }
