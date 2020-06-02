@@ -69,22 +69,36 @@ _workouts.get = (payload, callback) => {
 };
 
 _workouts.post = (payload, callback) => {
-  let workout = JSON.parse(payload.buffer);
-  const _id = handlers.getMaxId('workouts') + 1;
-  workout._id = _id;
-  const missingRequiredFields = [];
-  if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
-  if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
-  if (missingRequiredFields.length) {
-    callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
-  } else {
-    dataService.create('workouts', workout._id, workout, (error) => {
+  let workout;
+  try {
+    workout = JSON.parse(payload.buffer);
+  } catch (error) {
+    callback(400, 'Could not parse buffer', error);
+  }
+  if (handlers.db) {
+    handlers.db.collection('workouts').countDocuments((error, count) => {
       if (!error) {
-        callback(200, workout);
+        workout._id = count + 1;
+        const missingRequiredFields = [];
+        if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
+        if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
+        if (missingRequiredFields.length) {
+          callback(500, { error: `Missing required fields: ${missingRequiredFields.join(', ')}` });
+        } else {
+          handlers.db.collection('workouts').insertOne(workout, (error, result) => {
+            if (!error) {
+              callback(200, result);
+            } else {
+              callback(400, error);
+            }
+          });
+        }
       } else {
-        callback(400, { error: `Could not create a new record with id ${workout._id}` });
+        callback(400, { error: 'Could not get the workouts collection record count', error });
       }
     });
+  } else {
+    callback(503, { error: 'Could not connect to the database server' });
   }
 };
 

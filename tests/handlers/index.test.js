@@ -43,32 +43,70 @@ it("'/api/workouts' WORKOUTS METHODS NOT ALLOWED path should have status code 40
     assert.strictEqual(data, 'Method Not Allowed');
   });
 });
+it("'/api/workouts' WORKOUTS POST path should handle unsuccessful (503) database connection", () => {
+  let _statusCode, _data;
 
-it("'/api/workouts' WORKOUTS POST path should handle a post request", () => {
-  dataservice.list = (dir) => []; // Stub
-
-  // Missing required fields
-  dataservice.create = (dir, file, data, callback) => callback('error'); // Stub
-  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ message: 'hello world' })) }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 500);
-    assert.deepStrictEqual(data, { error: 'Missing required fields: name, description' });
+  // No connection to the database server
+  handlers.db = undefined;
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 503);
+  assert.deepStrictEqual(_data, { error: 'Could not connect to the database server' });
+});
+it("'/api/workouts' WORKOUTS POST path should handle unsuccessful (400) collection count attempt", () => {
+  let _statusCode, _data;
 
-  // Server Error
-  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 400);
-    assert.deepStrictEqual(data, { error: 'Could not create a new record with id 1' });
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          countDocuments: (cb) => {
+            cb('error');
+          },
+        };
+      }
+    },
+  };
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({})) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 400);
+  assert.deepStrictEqual(_data, { error: 'error' });
 
-  // Successfully created workout
-  dataservice.create = (dir, file, data, callback) => callback(false); // Stub
-  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify({ name: 'workout', description: 'description' })) }, (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.deepStrictEqual(data, { _id: 1, name: 'workout', description: 'description' });
+  handlers.db = undefined;
+});
+it("'/api/workouts' WORKOUTS POST - path should handle a successful (200) post request", () => {
+  let _statusCode, _data;
+  handlers.db = {
+    collection: (collectionName) => {
+      if (collectionName === 'workouts') {
+        return {
+          countDocuments: (cb) => {
+            cb(false, 0); // 0 Documents in the collection
+          },
+          insertOne: (doc, cb) => {
+            if (doc) {
+              cb(false, doc);
+            } else {
+              cb(true, 'no doc');
+            }
+          },
+        };
+      }
+    },
+  };
+  const workout = { name: 'workout 1', description: 'some workout' };
+  handlers.workouts({ method: 'post', buffer: Buffer.from(JSON.stringify(workout)) }, (statusCode, data) => {
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.deepStrictEqual(_data, { _id: 1, description: 'some workout', name: 'workout 1' });
 
-  //teardown
-  tearDown();
+  handlers.db = undefined;
 });
 
 it("'/api/workouts' WORKOUTS GET path should handle a get request", () => {
@@ -126,6 +164,7 @@ it("'/api/logs' LOGS METHODS NOT ALLOWED path should have status code 405 for a 
     assert.strictEqual(data, 'Method Not Allowed');
   });
 });
+
 it("'/api/logs' LOGS POST path should handle unsuccessful (503) database connection", () => {
   let _statusCode, _data;
 
