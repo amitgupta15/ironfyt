@@ -1,7 +1,5 @@
 'use strict';
 
-// const dataService = require('../data-service');
-
 // Container object
 const handlers = {};
 handlers.db = undefined;
@@ -326,13 +324,4 @@ _users.put = (payload, callback) => {
   }
 };
 
-/** Helper Functions */
-// handlers.getMaxId = function (dir) {
-//   if (dir) {
-//     var ids = dataService.list(dir);
-//     return ids.length;
-//   } else {
-//     return false;
-//   }
-// };
 module.exports = handlers;
