@@ -9,7 +9,7 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 let db;
-
+console.log('Mongodb url:', process.env.MONGODB_URI);
 mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
   console.log('trying to connect to the database');
   if (err) {
