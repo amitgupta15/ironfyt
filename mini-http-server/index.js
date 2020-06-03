@@ -40,7 +40,7 @@ const mimeTypes = {
  * Get the content type for a given path
  * @param {string} url - url extracted from request.url
  */
-server.getContentType = url => {
+server.getContentType = (url) => {
   // Set the default content type to application/octet-stream
   let contentType = 'application/octet-stream';
 
@@ -102,7 +102,7 @@ let allowedPaths = {};
  * else return false
  * @param {string} path
  */
-server.getAllowedDynamicPath = path => {
+server.getAllowedDynamicPath = (path) => {
   for (const key in allowedPaths) {
     if (allowedPaths.hasOwnProperty(key)) {
       if (path === key) {
@@ -130,13 +130,13 @@ server.serveDynamicContent = (request, response) => {
   // buffer holds the request body that might come with a POST or PUT request.
   let buffer = [];
 
-  request.on('error', error => {
+  request.on('error', (error) => {
     console.log('Error Occurred', error);
     response.writeHead(500);
     response.end('Error occurred while processing HTTP request', error);
   });
 
-  request.on('data', chunk => {
+  request.on('data', (chunk) => {
     buffer.push(chunk);
   });
 
@@ -160,10 +160,17 @@ server.serveDynamicContent = (request, response) => {
      *
      */
     handler(responseData, (statusCode = 200, data = '') => {
-      data = typeof data === 'string' ? data : JSON.stringify(data);
-      response.setHeader('Content-Type', 'application/json');
-      response.writeHead(statusCode);
-      response.end(data);
+      if (responseData.pathname === '/') {
+        response.writeHead(statusCode, {
+          Location: data,
+        });
+        response.end();
+      } else {
+        data = typeof data === 'string' ? data : JSON.stringify(data);
+        response.setHeader('Content-Type', 'application/json');
+        response.writeHead(statusCode);
+        response.end(data);
+      }
     });
   });
 };
@@ -190,7 +197,7 @@ const httpServer = http.createServer((request, response) => {
  * Set allowed paths
  * @param {Object} paths - Object containing all the allowed paths
  */
-server.setAllowedPaths = paths => {
+server.setAllowedPaths = (paths) => {
   allowedPaths = paths;
 };
 

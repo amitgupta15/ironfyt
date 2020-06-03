@@ -15,7 +15,7 @@ handlers.isMethodAllowed = (method) => {
 
 // Default handler
 handlers.default = (data, callback) => {
-  callback(200);
+  callback(302, '/public/index.html');
 };
 
 /**
