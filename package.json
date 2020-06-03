@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/amitgupta15/ironfyt#readme",
   "dependencies": {
-    "mongodb": "^3.5.7",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "mongodb": "^3.5.8"
   }
 }
