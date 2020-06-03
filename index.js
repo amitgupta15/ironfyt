@@ -10,9 +10,10 @@ const port = process.env.PORT || 3000;
 
 let db;
 
-mongodb.MongoClient.connect(process.env.MONGODB_URI, { useUnifiedTopology: true }, function (err, database) {
+mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
+  console.log('trying to connect to the database');
   if (err) {
-    console.log(err);
+    console.log('Found error', err);
     process.exit(1);
   }
 
