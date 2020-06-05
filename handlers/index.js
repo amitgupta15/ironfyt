@@ -180,7 +180,7 @@ _logs.post = (payload, callback) => {
             if (error) {
               callback(400, error);
             } else {
-              callback(200, result);
+              callback(200, result.ops[0]);
             }
           });
         }
