@@ -11,11 +11,11 @@ it('should only allow [get, post, put, and delete] http methods', () => {
   assert.ok(!handlers.isMethodAllowed('SOMETHING'));
 });
 
-it("'/' path should have status code 200 and no data", () => {
+it("'/' path should have status code 302 and string path data for default redirect", () => {
   // Create variables here and assign inside callback. This way if the callback is not called, these variables will be undefined and the callback error will get caught.
   handlers.default('', (statusCode, data) => {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data, undefined);
+    assert.strictEqual(statusCode, 302);
+    assert.strictEqual(data, '/public/index.html');
   });
 });
 
