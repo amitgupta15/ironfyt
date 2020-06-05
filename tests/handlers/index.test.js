@@ -77,7 +77,7 @@ it("'/api/workouts' WORKOUTS POST - path should handle a successful (200) post r
           },
           insertOne: (doc, cb) => {
             if (doc) {
-              cb(false, doc);
+              cb(false, { ops: [doc] });
             } else {
               cb(true, 'no doc');
             }
@@ -282,7 +282,7 @@ it("'/api/logs' LOGS POST - path should handle a successful (200) post request",
           callback(false, 0); //No error, 0 documents
         },
         insertOne: (data, callback) => {
-          callback(false, {});
+          callback(false, { ops: [data] });
         },
       };
     },
@@ -295,7 +295,7 @@ it("'/api/logs' LOGS POST - path should handle a successful (200) post request",
     _data = data;
   });
   assert.strictEqual(_statusCode, 200);
-  assert.deepStrictEqual(_data, {});
+  assert.deepStrictEqual(_data, { ...log, _id: 1 });
 
   //Invalid POST
   handlers.logs({ method: 'post', buffer: Buffer.from(JSON.stringify({ notes: 'Finished Workout' })) }, (statusCode, data) => {

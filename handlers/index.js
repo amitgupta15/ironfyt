@@ -94,7 +94,7 @@ _workouts.post = (payload, callback) => {
         } else {
           handlers.db.collection('workouts').insertOne(workout, (error, result) => {
             if (!error) {
-              callback(200, result);
+              callback(200, result.ops[0]);
             } else {
               callback(400, error);
             }
