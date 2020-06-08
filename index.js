@@ -17,10 +17,10 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     process.exit(1);
   }
 
-  db = database.db('ironfyt');
+  db = database.db(process.env.DATABASE);
   // assign the db handle to handler
   handlers.db = db;
-  console.log('Database connection is ready');
+  console.log('Connected to Database: ' + process.env.DATABASE);
 
   // Dynamic paths
   const paths = {
