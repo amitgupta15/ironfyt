@@ -33,6 +33,13 @@
     );
   };
 
+  ironfyt.bottomBarTemplate = function (props) {
+    return `<ul class="bottom-bar">
+              <li><a href="#">My Logs</a></li>
+              <li><a href="#">All Logs</a></li>
+            </ul>`;
+  };
+
   ironfyt.signInTemplate = function () {
     return '<a href="index.html">Please select a user</a>';
   };
@@ -138,16 +145,15 @@
       return !user._id
         ? ironfyt.signInTemplate()
         : ironfyt.topBarTemplate({ user, page: 'workout-list' }) +
-            '<p>' +
-            ironfyt.searchTemplate({ search: search, id: 'search-workout' }) +
-            '</p>' +
+            `<p> ${ironfyt.searchTemplate({ search: search, id: 'search-workout' })}</p>` +
             (workouts.length === 0
               ? '<em>No Workouts Found</em>'
               : workouts
                   .map(function (workout) {
                     return ironfyt.workoutTemplate({ page: 'workout-list', workout: workout, user: user });
                   })
-                  .join(''));
+                  .join('')) +
+            ironfyt.bottomBarTemplate();
     },
   });
 
