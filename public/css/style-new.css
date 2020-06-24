@@ -1,6 +1,9 @@
 /**
  * ORANGE: #FF8C00 
+ * LIME GREEN: #C5F04E
  */
+
+ /* Global Styles */
 html {
   box-sizing: border-box;
 }
@@ -28,7 +31,9 @@ body {
   text-align: center;
   min-height: 200vh;
 }
+/* End Global Styles */
 
+/* Header Styles */
 header {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -36,8 +41,6 @@ header {
   width: 100%;
   position: sticky;
   height: 88px;
-  /* border-bottom: 1px solid #FF8C00; */
-  /* background-color: rgba(255,255,255, .3); */
 }
 
 header h1 {
@@ -58,6 +61,79 @@ header h1::before {
   top: 15px;
   height: 30px;
 }
+/* End Header Styles */
+
+/* Footer Styles */
+footer {
+  color: white;
+  position: fixed;
+  bottom:0;
+  background-color: #C5F04E;
+  width: 100%;
+  max-width: 1152px;
+  height: 70px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+footer a {
+  color: transparent;
+  font-size: 0.7rem;
+  /* border: 1px solid red; */
+  text-transform: uppercase;
+  text-decoration: none;
+  height: 60px;
+  /* width: 100%; */
+}
+
+footer a:nth-of-type(1) {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-friends-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+footer a:nth-of-type(2) {
+  width:25%;
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-pr-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+footer a:nth-of-type(3) {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-workouts-grey.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+footer a:nth-of-type(4) {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-activity-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+footer a:nth-of-type(5) {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-more-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+/* End Footer Style */
 
 .icon-profile {
   margin-left: 10px;

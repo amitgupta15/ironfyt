@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="42px" height="43px" viewBox="0 0 42 43" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon activity</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Mobile" transform="translate(-199.000000, -769.000000)" fill="#FF8C00">
+            <g id="footer" transform="translate(0.000000, 755.000000)">
+                <g id="icon-activity" transform="translate(199.000000, 15.000000)">
+                    <g id="icon-fitness-log" transform="translate(9.000000, 0.000000)" stroke="#C5F04E">
+                        <path d="M17.2828934,4.57627119 L19.3220339,4.57627119 C19.8836794,4.57627119 20.3389831,5.03157483 20.3389831,5.59322034 L20.3389831,28.9830508 C20.3389831,29.5446964 19.8836794,30 19.3220339,30 L1.01694915,30 C0.455303644,30 0,29.5446964 0,28.9830508 L0,5.59322034 C0,5.03157483 0.455303644,4.57627119 1.01694915,4.57627119 L3.11312186,4.57627119 L3.11312186,4.57627119" id="Path"></path>
+                        <path d="M10.1694915,0 C11.2927825,0 12.2033898,0.910607289 12.2033898,2.03389831 C12.2033898,2.11134302 12.1990614,2.18777677 12.1906333,2.26297085 C14.5667882,2.81803793 16.2711864,4.32717191 16.2711864,6.10169492 L16.2711864,6.10169492 L4.06779661,6.10169492 C4.06779661,4.97413771 4.61488584,3.94116228 5.73553867,3.20229227 C6.38349547,2.77508071 7.22489224,2.44628697 8.14788999,2.24788798 C8.13940199,2.17830322 8.13559322,2.10654556 8.13559322,2.03389831 C8.13559322,0.910607289 9.04620051,0 10.1694915,0 Z" id="Combined-Shape"></path>
+                        <line x1="2.79661017" y1="11.9491525" x2="12.9661017" y2="11.9491525" id="Line-4" stroke-linecap="square"></line>
+                        <line x1="2.79661017" y1="22.1186441" x2="9.91525424" y2="22.1186441" id="Line-4-Copy-2" stroke-linecap="square"></line>
+                        <circle id="Oval" cx="17.5423729" cy="19.0677966" r="6.36440678"></circle>
+                        <line x1="2.79661017" y1="17.0338983" x2="9.40677966" y2="17.0338983" id="Line-4-Copy" stroke-linecap="square"></line>
+                        <line x1="13.4745763" y1="19.0677966" x2="16.5254237" y2="22.6271186" id="Line-5" stroke-linecap="square"></line>
+                        <line x1="16.779661" y1="22.3728814" x2="21.6101695" y2="17.0338983" id="Line" stroke-linecap="square"></line>
+                    </g>
+                    <text id="ACTIVITY" font-family="Arial-BoldMT, Arial" font-size="9" font-weight="bold">
+                        <tspan x="0.499511719" y="40">ACTIVITY</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
