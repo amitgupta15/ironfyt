@@ -94,6 +94,38 @@ header h1::before {
   height: 48px;
   width: 48px;
 }
+/* Search Bar */
+.search-bar {
+  text-align: left;
+  margin:1rem;
+  position:sticky;
+  top:80px;
+  border: 2px solid #AAAAAA;
+  border-radius: 5px;
+}
+
+.search-bar button {
+  background-image: url('../images/icon-search-white.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  margin-left: 0.4rem;
+  height: 44px;
+  color:transparent;
+  background-color: transparent;
+  border:none;
+}
+
+.search-bar input {
+  background-color: transparent;
+  font-size: 1.5rem;
+  color:#AAAAAA;
+  margin-top:0.4rem;
+  border: none;
+  outline:none;
+}
+
+/* End Search bar */
 
 /* Footer Styles */
 footer {
