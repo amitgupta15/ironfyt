@@ -41,6 +41,7 @@ header {
   width: 100%;
   position: sticky;
   height: 88px;
+  border: 1px solid white;
 }
 
 header h1 {
@@ -51,89 +52,17 @@ header h1 {
 
 header h1::before {
   content: " ";
-  background-image: url('../images/icon-barbell.svg');
+  background-image: url('../images/icon-barbell-25x25-orange.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
   position: absolute;
   left: 0;
   right:0;
-  top: 15px;
-  height: 30px;
+  top: 0;
+  height: 3rem;
 }
 /* End Header Styles */
-
-/* Footer Styles */
-footer {
-  color: white;
-  position: fixed;
-  bottom:0;
-  background-color: #C5F04E;
-  width: 100%;
-  max-width: 1152px;
-  height: 70px;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  align-items: center;
-  justify-items: center;
-}
-
-footer a {
-  color: transparent;
-  font-size: 0.7rem;
-  /* border: 1px solid red; */
-  text-transform: uppercase;
-  text-decoration: none;
-  height: 60px;
-  /* width: 100%; */
-}
-
-footer a:nth-of-type(1) {
-  content: " ";
-  display:block;
-  background-image: url('../images/icon-friends-orange.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-footer a:nth-of-type(2) {
-  width:25%;
-  content: " ";
-  display:block;
-  background-image: url('../images/icon-pr-orange.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-footer a:nth-of-type(3) {
-  content: " ";
-  display:block;
-  background-image: url('../images/icon-workouts-grey.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-footer a:nth-of-type(4) {
-  content: " ";
-  display:block;
-  background-image: url('../images/icon-activity-orange.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-footer a:nth-of-type(5) {
-  content: " ";
-  display:block;
-  background-image: url('../images/icon-more-orange.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-/* End Footer Style */
 
 .icon-profile {
   margin-left: 10px;
@@ -163,3 +92,75 @@ footer a:nth-of-type(5) {
   height: 60px;
   width: 60px;
 }
+
+/* Footer Styles */
+footer {
+  color: white;
+  position: fixed;
+  bottom:0;
+  background-color: #C5F04E;
+  width: 100%;
+  max-width: 1152px;
+  height: 65px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+footer a {
+  color: #FF8C00;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  align-self: baseline;
+}
+
+footer a:nth-of-type(1)::before {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-friends-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 2.2rem;
+}
+
+footer a:nth-of-type(2)::before {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-pr-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 1.8rem;
+}
+
+footer a:nth-of-type(3)::before {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-barbell-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 3rem;
+}
+
+footer a:nth-of-type(4)::before {
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-fitness-log-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 2rem;
+}
+
+footer a:nth-of-type(5)::before{
+  content: " ";
+  display:block;
+  background-image: url('../images/icon-more-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  height: 2rem;
+}
+/* End Footer Style */
