@@ -127,6 +127,14 @@ header h1::before {
 
 /* End Search bar */
 
+/* Workout Container */
+.workout-container {
+  text-align: left;
+  border: 1px solid white;
+  margin: 1rem;
+}
+/* End Workout Container */
+
 /* Footer Styles */
 footer {
   color: white;
