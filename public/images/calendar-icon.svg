@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="111px" viewBox="0 0 100 111" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>calendar-icon</title>
+    <g id="calendar-icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" stroke="#FFFFFF" x="0.5" y="11.5" width="99" height="88" rx="1"></rect>
+        <line x1="29.0062057" y1="0.993428131" x2="28.5000829" y2="25.9802844" id="Line-3" stroke="#FFFFFF" stroke-linecap="square" transform="translate(29.253061, 13.493428) rotate(-1.000000) translate(-29.253061, -13.493428) "></line>
+        <line x1="50.0062057" y1="0.993428131" x2="49.5000829" y2="25.9802844" id="Line-3-Copy" stroke="#FFFFFF" stroke-linecap="square" transform="translate(50.253061, 13.493428) rotate(-1.000000) translate(-50.253061, -13.493428) "></line>
+        <line x1="71.0062057" y1="0.993428131" x2="70.5000829" y2="25.9802844" id="Line-3-Copy-2" stroke="#FFFFFF" stroke-linecap="square" transform="translate(71.253061, 13.493428) rotate(-1.000000) translate(-71.253061, -13.493428) "></line>
+        <line x1="25.25" y1="44.75" x2="32.75" y2="45.25" id="Line" stroke="#FFFFFF" stroke-linecap="square" transform="translate(28.750000, 45.250000) rotate(-3.814075) translate(-28.750000, -45.250000) "></line>
+        <line x1="67.25" y1="44.75" x2="74.75" y2="45.25" id="Line-Copy-2" stroke="#FFFFFF" stroke-linecap="square" transform="translate(70.750000, 45.250000) rotate(-3.814075) translate(-70.750000, -45.250000) "></line>
+        <line x1="46.25" y1="44.75" x2="53.75" y2="45.25" id="Line-Copy" stroke="#FFFFFF" stroke-linecap="square" transform="translate(49.750000, 45.250000) rotate(-3.814075) translate(-49.750000, -45.250000) "></line>
+        <line x1="25.25" y1="59.7638612" x2="32.75" y2="60.2638612" id="Line-Copy-3" stroke="#FFFFFF" stroke-linecap="square" transform="translate(28.750000, 60.263861) rotate(-3.814075) translate(-28.750000, -60.263861) "></line>
+        <line x1="46.25" y1="59.75" x2="53.75" y2="60.25" id="Line-Copy-5" stroke="#FFFFFF" stroke-linecap="square" transform="translate(49.750000, 60.250000) rotate(-3.814075) translate(-49.750000, -60.250000) "></line>
+        <line x1="25.25" y1="74.7777224" x2="32.75" y2="75.2777224" id="Line-Copy-6" stroke="#FFFFFF" stroke-linecap="square" transform="translate(28.750000, 75.277722) rotate(-3.814075) translate(-28.750000, -75.277722) "></line>
+        <line x1="46.25" y1="74.7638612" x2="53.75" y2="75.2638612" id="Line-Copy-7" stroke="#FFFFFF" stroke-linecap="square" transform="translate(49.750000, 75.263861) rotate(-3.814075) translate(-49.750000, -75.263861) "></line>
+        <line x1="67.25" y1="59.7638612" x2="74.75" y2="60.2638612" id="Line-Copy-4" stroke="#FFFFFF" stroke-linecap="square" transform="translate(70.750000, 60.263861) rotate(-3.814075) translate(-70.750000, -60.263861) "></line>
+        <line x1="67.25" y1="74.75" x2="74.75" y2="75.25" id="Line-Copy-8" stroke="#FFFFFF" stroke-linecap="square" transform="translate(70.750000, 75.250000) rotate(-3.814075) translate(-70.750000, -75.250000) "></line>
+    </g>
+</svg>

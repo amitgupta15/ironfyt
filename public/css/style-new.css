@@ -23,6 +23,10 @@ body {
   background-color: #000;
 }
 
+.limegreen {
+  color: #C5F04E;
+}
+
 .container {
   background-color:#000;
   width: 100%;
@@ -40,6 +44,7 @@ header {
   position: fixed;
   top:0;
   background:#000;
+  z-index: 100;
 }
 /* End Header Styles */
 
@@ -139,7 +144,8 @@ header {
 
 /* Workout */
 .workout {
-  border: 1px solid red;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #666;
   color: white;
 }
 
@@ -151,14 +157,14 @@ header {
 .modality {
   list-style: none;
   justify-self: flex-start;
-  width: 40%;
+  margin-right: 30px;
 }
 
 .modality li {
   display: inline-block;
   color: transparent;
-  height:24px;
-  width:24px;
+  height:30px;
+  width:30px;
 }
 
 .modality-w {
@@ -180,6 +186,51 @@ header {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
+}
+
+.workout-frequency {
+  border: 2px solid #C5F04E;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 0.9rem;
+  color: #FF8C00
+}
+
+.workout-detail {
+  font-size: 1.2rem;
+}
+
+.workout-detail h2 {
+  color: #C5F04E;
+  margin-bottom: 5px;
+}
+.workout-detail p {
+  margin-bottom: 5px;
+}
+
+.workout-bottom-band {
+  text-align: right;
+  float:right;
+}
+.workout-bottom-band p{
+  font-size: 0.9rem;
+  color: #FF8C00;
+  position: relative;
+}
+
+.workout-bottom-band p::before {
+  content:" ";
+  background-image: url('../images/calendar-icon.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 24px;
+  width: 24px;
+  display: block;
+  position: absolute;
+  margin-left: -25px;
+  margin-top: -4px;
+  
 }
 /* End Workout */
 
