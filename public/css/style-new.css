@@ -20,10 +20,11 @@ body {
   margin: 0;
   padding: 0;
   font-size: 1rem;
+  background-color: #000;
 }
 
 .container {
-  background-color:#ccc;
+  background-color:#000;
   width: 100%;
   max-width: 1152px;
   margin: 0 auto;
@@ -132,6 +133,7 @@ header {
 .workouts-container {
   text-align: left;
   margin: 152px 1rem 1rem 1rem;
+  padding-top:20px;
 }
 /* End Workout Container */
 
@@ -139,6 +141,45 @@ header {
 .workout {
   border: 1px solid red;
   color: white;
+}
+
+.workout-top-band {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.modality {
+  list-style: none;
+  justify-self: flex-start;
+  width: 40%;
+}
+
+.modality li {
+  display: inline-block;
+  color: transparent;
+  height:24px;
+  width:24px;
+}
+
+.modality-w {
+  background-image: url('../images/modality-weightlifting.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.modality-m {
+  background-image: url('../images/modality-monostructural.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.modality-g {
+  background-image: url('../images/modality-gymnastics.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 /* End Workout */
 
