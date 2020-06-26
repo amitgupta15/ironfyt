@@ -23,9 +23,7 @@ body {
 }
 
 .container {
-  position: relative;
-  background-color:#000;
-  color: white;
+  background-color:#ccc;
   width: 100%;
   max-width: 1152px;
   margin: 0 auto;
@@ -36,23 +34,27 @@ body {
 
 /* Header Styles */
 header {
+  width: 100%;
+  max-width: 1152px;
+  position: fixed;
+  top:0;
+  background:#000;
+}
+/* End Header Styles */
+
+/* Top Bar */
+.top-bar {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  top: 0;
-  width: 100%;
-  position: sticky;
   height: 70px;
-  background: rgb(0,0,0);
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
 }
-
-header h1 {
+.top-bar h1 {
   font-size: 1.5rem;
   padding-top:2rem;
   color: #FF8C00;
 }
 
-header h1::before {
+.top-bar h1::before {
   content: " ";
   background-image: url('../images/icon-barbell-25x25-orange.svg');
   background-repeat: no-repeat;
@@ -64,7 +66,7 @@ header h1::before {
   top: -1rem;
   height: 3rem;
 }
-/* End Header Styles */
+/* End Top Bar */
 
 .icon-profile {
   margin-left: 10px;
@@ -94,12 +96,11 @@ header h1::before {
   height: 48px;
   width: 48px;
 }
+
 /* Search Bar */
 .search-bar {
   text-align: left;
   margin:1rem;
-  position:sticky;
-  top:80px;
   border: 2px solid #AAAAAA;
   border-radius: 5px;
 }
@@ -128,12 +129,18 @@ header h1::before {
 /* End Search bar */
 
 /* Workout Container */
-.workout-container {
+.workouts-container {
   text-align: left;
-  border: 1px solid white;
-  margin: 1rem;
+  margin: 152px 1rem 1rem 1rem;
 }
 /* End Workout Container */
+
+/* Workout */
+.workout {
+  border: 1px solid red;
+  color: white;
+}
+/* End Workout */
 
 /* Footer Styles */
 footer {
