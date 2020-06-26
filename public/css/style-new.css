@@ -139,12 +139,13 @@ header {
   text-align: left;
   margin: 152px 1rem 1rem 1rem;
   padding-top:20px;
+  padding-bottom:70px;
 }
 /* End Workout Container */
 
 /* Workout */
 .workout {
-  padding: 30px 0;
+  padding: 30px 0 10px;
   border-bottom: 1px solid #FF8C00;
   color: white;
 }
@@ -233,7 +234,7 @@ header {
   margin-bottom: 10px;
 }
 .workout-detail p {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   color: #AAAAAA
 }
 
