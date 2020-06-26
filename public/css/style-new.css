@@ -33,7 +33,7 @@ body {
   max-width: 1152px;
   margin: 0 auto;
   text-align: center;
-  min-height: 200vh;
+  /* min-height: 200vh; */
 }
 /* End Global Styles */
 
@@ -144,20 +144,22 @@ header {
 
 /* Workout */
 .workout {
-  padding-bottom: 30px;
-  border-bottom: 1px solid #666;
+  padding: 30px 0;
+  border-bottom: 1px solid #FF8C00;
   color: white;
 }
 
+.workout:first-of-type {
+  padding-top:0;
+}
 .workout-top-band {
-  display: flex;
-  margin-bottom: 5px;
+  display: grid;
+  grid-template-columns: 120px 100px 200px;
+  margin-bottom: 10px;
 }
 
 .modality {
   list-style: none;
-  justify-self: flex-start;
-  margin-right: 30px;
 }
 
 .modality li {
@@ -189,36 +191,24 @@ header {
 }
 
 .workout-frequency {
-  border: 2px solid #C5F04E;
+  align-self: center;
+}
+.workout-frequency > span {
+  border: 1px solid #C5F04E;
   border-radius: 5px;
   padding: 5px;
   font-size: 0.9rem;
-  color: #FF8C00
+  color: #FF8C00;
 }
 
-.workout-detail {
-  font-size: 1.2rem;
-}
-
-.workout-detail h2 {
-  color: #C5F04E;
-  margin-bottom: 5px;
-}
-.workout-detail p {
-  margin-bottom: 5px;
-}
-
-.workout-bottom-band {
-  text-align: right;
-  float:right;
-}
-.workout-bottom-band p{
+.workout-last-performed p{
   font-size: 0.9rem;
   color: #FF8C00;
   position: relative;
+  margin: 5px 0 0 30px;
 }
 
-.workout-bottom-band p::before {
+.workout-last-performed p::before {
   content:" ";
   background-image: url('../images/calendar-icon.svg');
   background-position: center;
@@ -232,6 +222,21 @@ header {
   margin-top: -4px;
   
 }
+
+.workout-detail {
+  font-size: 1.2rem;
+}
+
+.workout-detail h2 {
+  color: #C5F04E;
+  font-size:1.5rem;
+  margin-bottom: 10px;
+}
+.workout-detail p {
+  margin-bottom: 5px;
+  color: #AAAAAA
+}
+
 /* End Workout */
 
 /* Footer Styles */
