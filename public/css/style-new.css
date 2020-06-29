@@ -228,17 +228,17 @@ header {
 }
 
 .workout-detail {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 
 .workout-detail h2 {
   color: #C5F04E;
-  font-size:1.5rem;
+  font-size:1.6rem;
   margin-bottom: 10px;
 }
 .workout-detail p {
   margin-bottom: 10px;
-  color: #AAAAAA
+  color: #dedede
 }
 
 /* End Workout */
@@ -251,7 +251,7 @@ footer {
   background-color: #C5F04E;
   width: 100%;
   max-width: 1152px;
-  height: 65px;
+  height: 80px;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
 }

@@ -8,7 +8,7 @@
     event.preventDefault();
     switch (event.target.id) {
       case 'new-item-btn':
-        console.log('new item button clicked');
+        alert("I hear you, I'm working on this feature");
         break;
       case 'search-btn':
         console.log('search button clicked');
