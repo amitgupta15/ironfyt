@@ -317,3 +317,52 @@ footer a:nth-of-type(5)::before{
   height: 2rem;
 }
 /* End Footer Style */
+
+/* Choose a task dialog box */
+.modal-dialog-container {
+  background-color: rgba(255,255,255,0.5);
+  position: fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom: 0;
+  overflow:auto;
+  z-index: 110;
+  display:none;
+}
+
+.choose-a-task-dialog {
+  background-color: #000;
+  width: 90vw;
+  max-width: 1150px;
+  margin: 10px auto;
+  height: 75vh;
+  min-height: 400px;
+  text-align: center;
+  padding-top:20vh;
+  position: relative;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.choose-a-task-dialog button {
+  width: 90%;
+  max-width: 300px;
+  padding: 25px;
+  margin: 10px auto;
+  border: 1px solid #FF8C00;
+  border-radius: 3px;
+  color: #C5F04E;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  background-color: transparent;
+}
+#close-dialog {
+  color: #dedede;
+  padding: 2px;
+  font-size: 3rem;
+  position: absolute;
+  right: 15px;
+  top: 5px;
+  cursor: pointer;
+}
+/* End Choose a task dialog box */

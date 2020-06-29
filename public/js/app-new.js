@@ -8,13 +8,24 @@
     event.preventDefault();
     switch (event.target.id) {
       case 'new-item-btn':
-        alert("I hear you, I'm working on this feature");
+        toggleModalDialogDisplay();
         break;
       case 'search-btn':
         console.log('search button clicked');
         break;
+      case 'close-dialog':
+        toggleModalDialogDisplay();
+        break;
       default:
-        console.log('unhandled event');
+        if (event.target.className === 'modal-dialog-container') {
+          toggleModalDialogDisplay();
+        }
+        break;
     }
   });
+
+  function toggleModalDialogDisplay() {
+    var dialog = document.querySelector('.modal-dialog-container');
+    dialog.style.display = dialog.style.display === 'block' ? 'none' : 'block';
+  }
 })();
