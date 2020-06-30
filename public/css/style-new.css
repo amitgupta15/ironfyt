@@ -37,7 +37,6 @@ body {
   max-width: 1152px;
   margin: 0 auto;
   text-align: center;
-  /* min-height: 200vh; */
 }
 /* End Global Styles */
 
@@ -102,8 +101,7 @@ header {
   align-self: center;
   justify-self: end;
   margin-right: 10px;
-  height: 40px;
-  width: 40px;
+  padding: 20px;
 }
 
 /* Search Bar */
@@ -150,7 +148,6 @@ header {
 .workout {
   padding: 30px 0 10px;
   border-bottom: 1px solid #FF8C00;
-  color: white;
 }
 
 .workout:first-of-type {
@@ -320,28 +317,30 @@ footer a:nth-of-type(5)::before{
 
 /* Choose a task dialog box */
 .modal-dialog-container {
-  background-color: rgba(255,255,255,0.5);
+  background-color: #000;
   position: fixed;
-  top:0;
+  top:100vh;
   left:0;
   right:0;
   bottom: 0;
   overflow:auto;
+  height: 100vh;
   z-index: 110;
-  display:none;
+  display:block;
+  transition: transform 1s ease-in-out;
 }
 
 .choose-a-task-dialog {
   background-color: #000;
-  width: 90vw;
+  width: 100vw;
   max-width: 1150px;
   margin: 10px auto;
-  height: 75vh;
+  height: 100vh;
   min-height: 400px;
   text-align: center;
   padding-top:20vh;
   position: relative;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); */
 }
 
 .choose-a-task-dialog button {
@@ -358,11 +357,10 @@ footer a:nth-of-type(5)::before{
 }
 #close-dialog {
   color: #dedede;
-  padding: 2px;
-  font-size: 3rem;
+  padding: 5px;
   position: absolute;
-  right: 15px;
-  top: 5px;
+  left: 15px;
+  top: 15px;
   cursor: pointer;
 }
 /* End Choose a task dialog box */

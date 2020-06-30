@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  // Global Variables
+  var isModalDialogVisible = false;
   /**
    * Event Listeners
    */
@@ -26,6 +28,12 @@
 
   function toggleModalDialogDisplay() {
     var dialog = document.querySelector('.modal-dialog-container');
-    dialog.style.display = dialog.style.display === 'block' ? 'none' : 'block';
+    if (!isModalDialogVisible) {
+      dialog.style.transform = 'translateY(-100vh)';
+      isModalDialogVisible = true;
+    } else if (isModalDialogVisible) {
+      dialog.style.transform = 'translateY(100vh)';
+      isModalDialogVisible = false;
+    }
   }
 })();
