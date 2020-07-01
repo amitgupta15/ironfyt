@@ -27,7 +27,7 @@
         modalType: 'slideLeft',
       },
     },
-    'close-rtl-dialog': {
+    'close-new-workout-modal-btn': {
       fn: hideModal,
       props: {
         elementId: '#new-workout-form-modal',

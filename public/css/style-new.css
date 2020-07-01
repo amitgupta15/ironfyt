@@ -63,7 +63,7 @@ header {
   color: #FF8C00;
 }
 
-.top-bar h1::before {
+.title-workout::before {
   content: " ";
   background-image: url('../images/icon-barbell-25x25-orange.svg');
   background-repeat: no-repeat;
@@ -354,6 +354,28 @@ footer a:nth-of-type(5)::before{
 
 }
 
+.modal-content-top-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 70px;
+  border-bottom: 1px solid #AAAAAA;
+}
+
+.modal-content-top-bar h1 {
+  font-size: 1.2rem;
+  padding-top:2rem;
+  color: #FF8C00;
+  text-align: center;
+}
+.modal-content-top-bar-right-btn {
+  background-color: transparent;
+  color: #AAAAAA;
+  justify-self: flex-end;
+  margin-right: 10px;
+  font-size: 1.2rem;
+  outline:transparent;
+  border: none;
+}
 .cancel-slide-up-modal-btn{
   color: #FF8C00;
   background: none;
@@ -364,14 +386,18 @@ footer a:nth-of-type(5)::before{
   margin: 5px 0 0 5px;
 }
 
-#close-rtl-dialog {
-  color: #dedede;
-  background: none;
+.cancel-slide-left-modal-btn {
+  background-image: url('../images/icon-chevron-left-25x25-orange.svg');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: 10px;
+  outline: none;
+  background-color: transparent;
   border: none;
-  padding: 10px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin: 5px 0 0 5px;
+  height: 30px;
+  width: 30px;
+  align-self: center;
 }
 
 .modal-btn-grid {
