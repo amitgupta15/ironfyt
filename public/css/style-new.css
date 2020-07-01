@@ -318,8 +318,8 @@ footer a:nth-of-type(5)::before{
 }
 /* End Footer Style */
 
-/* Choose a task dialog box */
-.modal-dialog-container {
+/* Slide Up Modal Container */
+.slide-up-modal-container {
   background-color: #ccc;
   position: fixed;
   overflow:auto;
@@ -330,8 +330,23 @@ footer a:nth-of-type(5)::before{
   transition: transform 0.5s ease-in-out 0s;
   z-index: 110;
 }
+/* End Slide Up Modal Container */
 
-.modal-dialog-content {
+/* Slide Left Modal Container */
+.slide-left-modal-container {
+  background-color: #ccc;
+  position: fixed;
+  overflow:auto;
+  height: 100%;
+  width: 100%;
+  top:0;
+  left:100vw;
+  transition: transform 0.5s ease-in-out 0s;
+  z-index: 120;
+}
+/* End Slide Left Modal Container */
+
+.modal-content {
   background-color: #000;
   height: 100%;
   max-width: 1152px;
@@ -339,7 +354,17 @@ footer a:nth-of-type(5)::before{
 
 }
 
-#close-dialog, #close-rtl-dialog {
+.cancel-slide-up-modal-btn{
+  color: #FF8C00;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin: 5px 0 0 5px;
+}
+
+#close-rtl-dialog {
   color: #dedede;
   background: none;
   border: none;
@@ -368,11 +393,12 @@ footer a:nth-of-type(5)::before{
   font-size: 1.2rem;
   text-transform: uppercase;
   background-color: transparent;
+  position: relative;
 }
 
 .modal-btn-grid button::after {
   content: '';
-  background-image: url('../images/icon-chevron-25x25-orange.svg');
+  background-image: url('../images/icon-chevron-right-25x25-orange.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -382,10 +408,6 @@ footer a:nth-of-type(5)::before{
   position: absolute;
   top: 15px;
   right: 20px;
-}
-
-#new-workout-modal-btn, #new-log-modal-btn {
-  position: relative;
 }
 
 #new-workout-modal-btn::before {
@@ -414,17 +436,3 @@ footer a:nth-of-type(5)::before{
   top: 15px;
 }
 /* End Choose a task dialog box */
-
-/* rtl modal dialog */
-.rtl-modal-dialog-container {
-  background-color: #ccc;
-  position: fixed;
-  overflow:auto;
-  height: 100%;
-  width: 100%;
-  top:0;
-  left:100vw;
-  transition: transform 0.5s ease-in-out 0s;
-  z-index: 120;
-}
-/* end rtl modal dialog */

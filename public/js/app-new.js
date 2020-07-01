@@ -2,57 +2,64 @@
   'use strict';
 
   // Global Variables
-  var isSlideUpModalVisible = false;
-  var isRTLModalVisible = false;
-
+  let visibleModals = [];
   /**
    * Event Listeners
    */
-  var handlers = {
-    'new-item-btn': showSlideUpModal,
-    'close-dialog': hideSlideUpModal,
-    'new-workout-modal-btn': showRTLModal,
-    'close-rtl-dialog': hideRTLModal,
+  let eventHandlers = {
+    'new-task-btn': {
+      fn: showModal,
+      props: {
+        elementId: '#select-task-modal',
+        modalType: 'slideUp',
+      },
+    },
+    'close-select-task-modal': {
+      fn: hideModal,
+      props: {
+        elementId: '#select-task-modal',
+      },
+    },
+    'new-workout-modal-btn': {
+      fn: showModal,
+      props: {
+        elementId: '#new-workout-form-modal',
+        modalType: 'slideLeft',
+      },
+    },
+    'close-rtl-dialog': {
+      fn: hideModal,
+      props: {
+        elementId: '#new-workout-form-modal',
+      },
+    },
   };
   document.addEventListener('click', function (event) {
     event.preventDefault();
-    if (handlers[event.target.id] !== undefined) {
-      handlers[event.target.id]();
+    if (eventHandlers[event.target.id] !== undefined) {
+      let handler = eventHandlers[event.target.id];
+      handler.fn(handler.props);
     }
   });
 
   /**
    * Handlers
    */
-  function showSlideUpModal() {
-    var dialog = document.querySelector('.modal-dialog-container');
-    if (!isSlideUpModalVisible) {
-      dialog.style.transform = 'translateY(-100vh)';
-      isSlideUpModalVisible = true;
+  function showModal(props) {
+    let { elementId, modalType } = props;
+    let dialog = document.querySelector(elementId);
+    if (visibleModals.indexOf(elementId) < 0) {
+      dialog.style.transform = modalType === 'slideUp' ? 'translateY(-100vh)' : 'translateX(-100vw)';
+      visibleModals.push(props);
     }
   }
-
-  function hideSlideUpModal() {
-    var dialog = document.querySelector('.modal-dialog-container');
-    if (isSlideUpModalVisible) {
-      dialog.style.transform = 'translateY(100vh)';
-      isSlideUpModalVisible = false;
-    }
-  }
-
-  function showRTLModal() {
-    var dialog = document.querySelector('.rtl-modal-dialog-container');
-    if (!isRTLModalVisible) {
-      dialog.style.transform = 'translateX(-100vw)';
-      isRTLModalVisible = true;
-    }
-  }
-
-  function hideRTLModal() {
-    var dialog = document.querySelector('.rtl-modal-dialog-container');
-    if (isRTLModalVisible) {
-      dialog.style.transform = 'translateX(100vw)';
-      isRTLModalVisible = false;
+  function hideModal({ elementId }) {
+    let dialog = document.querySelector(elementId);
+    let obj = visibleModals.find((item) => item.elementId === elementId);
+    if (visibleModals.indexOf(obj) > -1) {
+      dialog.style.transform = obj.modalType === 'slideUp' ? 'translateY(100vh)' : 'translateX(100vw)';
+      let index = visibleModals.indexOf(obj);
+      visibleModals.splice(index, 1);
     }
   }
 })();

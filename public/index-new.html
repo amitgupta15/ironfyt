@@ -12,7 +12,7 @@
       <div class="top-bar">
         <a href="" class="icon-profile">AG</a>
         <h1>WORKOUTS</h1>
-        <button id="new-item-btn" class="btn-new"></button>
+        <button id="new-task-btn" class="btn-new"></button>
       </div>
       <div class="search-bar">
         <form id="search-workout-form">
@@ -120,19 +120,20 @@
     </footer>
   </div>
 
-  <!-- Slide Up Dialog Box -->
-  <div class="modal-dialog-container">
-    <div class="modal-dialog-content">
-      <button id="close-dialog">Cancel</button>
+  <!-- Slide Up Modal -->
+  <div class="slide-up-modal-container" id="select-task-modal">
+    <div class="modal-content">
+      <button id="close-select-task-modal" class="cancel-slide-up-modal-btn">Cancel</button>
       <div class="modal-btn-grid">
         <button id="new-workout-modal-btn">New Workout</button>
         <button id="new-log-modal-btn">New Log</button>
       </div>
     </div>
   </div>
+
   <!-- End Slide Up Dialog Box -->
-  <div class="rtl-modal-dialog-container">
-    <div class="modal-dialog-content">
+  <div class="slide-left-modal-container" id="new-workout-form-modal">
+    <div class="modal-content">
       <button id="close-rtl-dialog">&lt;</button>
       <div class="modal-btn-grid">
         <button>Select a Workout</button>
