@@ -2,38 +2,57 @@
   'use strict';
 
   // Global Variables
-  var isModalDialogVisible = false;
+  var isSlideUpModalVisible = false;
+  var isRTLModalVisible = false;
+
   /**
    * Event Listeners
    */
+  var handlers = {
+    'new-item-btn': showSlideUpModal,
+    'close-dialog': hideSlideUpModal,
+    'new-workout-modal-btn': showRTLModal,
+    'close-rtl-dialog': hideRTLModal,
+  };
   document.addEventListener('click', function (event) {
     event.preventDefault();
-    switch (event.target.id) {
-      case 'new-item-btn':
-        toggleModalDialogDisplay();
-        break;
-      case 'search-btn':
-        console.log('search button clicked');
-        break;
-      case 'close-dialog':
-        toggleModalDialogDisplay();
-        break;
-      default:
-        if (event.target.className === 'modal-dialog-container') {
-          toggleModalDialogDisplay();
-        }
-        break;
+    if (handlers[event.target.id] !== undefined) {
+      handlers[event.target.id]();
     }
   });
 
-  function toggleModalDialogDisplay() {
+  /**
+   * Handlers
+   */
+  function showSlideUpModal() {
     var dialog = document.querySelector('.modal-dialog-container');
-    if (!isModalDialogVisible) {
+    if (!isSlideUpModalVisible) {
       dialog.style.transform = 'translateY(-100vh)';
-      isModalDialogVisible = true;
-    } else if (isModalDialogVisible) {
+      isSlideUpModalVisible = true;
+    }
+  }
+
+  function hideSlideUpModal() {
+    var dialog = document.querySelector('.modal-dialog-container');
+    if (isSlideUpModalVisible) {
       dialog.style.transform = 'translateY(100vh)';
-      isModalDialogVisible = false;
+      isSlideUpModalVisible = false;
+    }
+  }
+
+  function showRTLModal() {
+    var dialog = document.querySelector('.rtl-modal-dialog-container');
+    if (!isRTLModalVisible) {
+      dialog.style.transform = 'translateX(-100vw)';
+      isRTLModalVisible = true;
+    }
+  }
+
+  function hideRTLModal() {
+    var dialog = document.querySelector('.rtl-modal-dialog-container');
+    if (isRTLModalVisible) {
+      dialog.style.transform = 'translateX(100vw)';
+      isRTLModalVisible = false;
     }
   }
 })();

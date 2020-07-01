@@ -74,6 +74,8 @@ header {
   right:0;
   top: -1rem;
   height: 3rem;
+  width: 3rem;
+  margin: 0 auto;
 }
 /* End Top Bar */
 
@@ -102,6 +104,7 @@ header {
   justify-self: end;
   margin-right: 10px;
   padding: 20px;
+  cursor: pointer;
 }
 
 /* Search Bar */
@@ -324,7 +327,7 @@ footer a:nth-of-type(5)::before{
   top:100vh;
   left:0;
   right:0;
-  transition: transform 1s ease-in-out;
+  transition: transform 0.5s ease-in-out 0s;
   z-index: 110;
 }
 
@@ -336,7 +339,7 @@ footer a:nth-of-type(5)::before{
 
 }
 
-#close-dialog {
+#close-dialog, #close-rtl-dialog {
   color: #dedede;
   background: none;
   border: none;
@@ -411,3 +414,17 @@ footer a:nth-of-type(5)::before{
   top: 15px;
 }
 /* End Choose a task dialog box */
+
+/* rtl modal dialog */
+.rtl-modal-dialog-container {
+  background-color: #ccc;
+  position: fixed;
+  overflow:auto;
+  height: 100%;
+  width: 100%;
+  top:0;
+  left:100vw;
+  transition: transform 0.5s ease-in-out 0s;
+  z-index: 120;
+}
+/* end rtl modal dialog */
