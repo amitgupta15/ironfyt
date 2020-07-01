@@ -317,37 +317,48 @@ footer a:nth-of-type(5)::before{
 
 /* Choose a task dialog box */
 .modal-dialog-container {
-  background-color: #000;
+  background-color: #ccc;
   position: fixed;
+  overflow:auto;
+  height: 100%;
   top:100vh;
   left:0;
   right:0;
-  bottom: 0;
-  overflow:auto;
-  height: 100vh;
-  z-index: 110;
-  display:block;
   transition: transform 1s ease-in-out;
+  z-index: 110;
 }
 
-.choose-a-task-dialog {
+.modal-dialog-content {
   background-color: #000;
-  width: 100vw;
-  max-width: 1150px;
-  margin: 10px auto;
-  height: 100vh;
-  min-height: 400px;
-  text-align: center;
-  padding-top:20vh;
-  position: relative;
-  /* box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19); */
+  height: 100%;
+  max-width: 1152px;
+  margin: 0 auto;
+
 }
 
-.choose-a-task-dialog button {
-  width: 90%;
-  max-width: 300px;
+#close-dialog {
+  color: #dedede;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin: 5px 0 0 5px;
+}
+
+.modal-btn-grid {
+  height: 70vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  justify-content: center;
+}
+
+.modal-btn-grid button {
+  width: 100%;
+  max-width: 420px;
   padding: 25px;
-  margin: 10px auto;
+  margin: 5px auto;
   border: 1px solid #FF8C00;
   border-radius: 3px;
   color: #C5F04E;
@@ -355,12 +366,48 @@ footer a:nth-of-type(5)::before{
   text-transform: uppercase;
   background-color: transparent;
 }
-#close-dialog {
-  color: #dedede;
-  padding: 5px;
+
+.modal-btn-grid button::after {
+  content: '';
+  background-image: url('../images/icon-chevron-25x25-orange.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 2.5rem;
+  width: 2.5rem;
+  display: block;
   position: absolute;
-  left: 15px;
   top: 15px;
-  cursor: pointer;
+  right: 20px;
+}
+
+#new-workout-modal-btn, #new-log-modal-btn {
+  position: relative;
+}
+
+#new-workout-modal-btn::before {
+  content: '';
+  background-image: url('../images/icon-barbell-25x25-orange.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 3rem;
+  width: 3rem;
+  position: absolute;
+  left: 75px;
+  top: -3px;
+}
+
+#new-log-modal-btn::before {
+  content: '';
+  background-image: url('../images/icon-fitness-log-25x25-no-fill.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 2.5rem;
+  width: 2.5rem;
+  position: absolute;
+  left: 125px;
+  top: 15px;
 }
 /* End Choose a task dialog box */
