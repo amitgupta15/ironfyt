@@ -324,7 +324,7 @@ footer a:nth-of-type(5)::before{
   position: fixed;
   overflow:auto;
   height: 100%;
-  top:100vh;
+  top:100%;
   left:0;
   right:0;
   transition: transform 0.5s ease-in-out 0s;
@@ -340,7 +340,7 @@ footer a:nth-of-type(5)::before{
   height: 100%;
   width: 100%;
   top:0;
-  left:100vw;
+  left:100%;
   transition: transform 0.5s ease-in-out 0s;
   z-index: 120;
 }
@@ -358,7 +358,7 @@ footer a:nth-of-type(5)::before{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   height: 70px;
-  border-bottom: 1px solid #AAAAAA;
+  /* border-bottom: 1px solid #AAAAAA; */
 }
 
 .modal-content-top-bar h1 {

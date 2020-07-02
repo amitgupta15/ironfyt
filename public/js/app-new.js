@@ -60,7 +60,7 @@
     let { elementId, slideUpModal } = props;
     let dialog = document.querySelector(elementId);
     if (visibleModals.indexOf(elementId) < 0) {
-      dialog.style.transform = slideUpModal !== undefined && slideUpModal === true ? 'translateY(-100vh)' : 'translateX(-100vw)';
+      dialog.style.transform = slideUpModal !== undefined && slideUpModal === true ? 'translateY(-100%)' : 'translateX(-100%)';
       visibleModals.push(props);
     }
   }
@@ -68,7 +68,7 @@
     let dialog = document.querySelector(elementId);
     let obj = visibleModals.find((item) => item.elementId === elementId);
     if (visibleModals.indexOf(obj) > -1) {
-      dialog.style.transform = obj.slideUpModal !== undefined && obj.slideUpModal === true ? 'translateY(100vh)' : 'translateX(100vw)';
+      dialog.style.transform = obj.slideUpModal !== undefined && obj.slideUpModal === true ? 'translateY(100%)' : 'translateX(100%)';
       let index = visibleModals.indexOf(obj);
       visibleModals.splice(index, 1);
     }
