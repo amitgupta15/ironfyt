@@ -120,7 +120,7 @@
     </footer>
   </div>
 
-  <!-- Slide Up Modal -->
+  <!-- Slide Up Modal - Select a Task-->
   <div class="slide-up-modal-container" id="select-task-modal">
     <div class="modal-content">
       <button id="close-select-task-modal" class="cancel-slide-up-modal-btn">Cancel</button>
@@ -131,7 +131,9 @@
     </div>
   </div>
 
-  <!-- End Slide Up Dialog Box -->
+  <!-- End Slide Up Modal - Select a Task -->
+
+  <!-- Slide Left Modal - New Workout -->
   <div class="slide-left-modal-container" id="new-workout-form-modal">
     <div class="modal-content">
       <div class="modal-content-top-bar">
@@ -139,11 +141,25 @@
         <h1 class="title-workout">New Workout</h1>
         <button class="modal-content-top-bar-right-btn">Save</button>
       </div>
-      
     </div>
   </div>
-  <!-- Slide RTL Dialog Box -->
-  <!-- End Slide RTL Dialog Box -->
+  <!-- End Slide Left Modal - New Workout -->
+
+  <!-- Slide Left Modal - Log a Workout -->
+  <div class="slide-left-modal-container" id="log-workout-modal">
+    <div class="modal-content">
+      <div class="modal-content-top-bar">
+        <button class="cancel-slide-left-modal-btn" id="close-log-workout-modal-btn"></button>
+        <h1>Log Workout</h1>
+        <!-- <button class="modal-content-top-bar-right-btn">Save</button> -->
+      </div>
+      <div class="modal-btn-grid">
+        <button id="new-workout-and-log-modal-btn">Create New Workout</button>
+        <button id="select-workout-for-log-modal-btn">Select a Workout</button>
+      </div>
+    </div>
+  </div>
+  <!-- End Slide Left Modal - Log a Workout -->
   <script src="js/app-new.js"></script>
 </body>
 </html>
