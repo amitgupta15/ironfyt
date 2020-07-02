@@ -462,3 +462,11 @@ footer a:nth-of-type(5)::before{
   top: 15px;
 }
 /* End Choose a task dialog box */
+
+.temp {
+  /* border: 1px solid white; */
+  text-align: center;
+  color: white;
+  margin-top: 20px;
+  font-size: 0.7rem;
+}
