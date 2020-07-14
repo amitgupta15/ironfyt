@@ -79,7 +79,14 @@
     let { elementId, isSlideUpModal } = props;
     let dialog = document.querySelector(elementId);
     if (visibleModals.indexOf(elementId) < 0) {
-      dialog.style.transform = isSlideUpModal !== undefined && isSlideUpModal === true ? 'translateY(-100%)' : 'translateX(-100%)';
+      // dialog.style.transform = isSlideUpModal !== undefined && isSlideUpModal === true ? 'translateY(-100%)' : 'translateX(-100%)';
+      if (isSlideUpModal !== undefined && isSlideUpModal === true) {
+        dialog.classList.add('show-slide-up-modal');
+        dialog.classList.remove('hide-slide-up-modal');
+      } else {
+        dialog.classList.add('show-slide-left-modal');
+        dialog.classList.remove('hide-slide-left-modal');
+      }
       visibleModals.push(props);
     }
   }
@@ -87,7 +94,14 @@
     let dialog = document.querySelector(elementId);
     let obj = visibleModals.find((item) => item.elementId === elementId);
     if (visibleModals.indexOf(obj) > -1) {
-      dialog.style.transform = obj.isSlideUpModal !== undefined && obj.isSlideUpModal === true ? 'translateY(100%)' : 'translateX(100%)';
+      // dialog.style.transform = obj.isSlideUpModal !== undefined && obj.isSlideUpModal === true ? 'translateY(100%)' : 'translateX(100%)';
+      if (obj.isSlideUpModal !== undefined && obj.isSlideUpModal === true) {
+        dialog.classList.remove('show-slide-up-modal');
+        dialog.classList.add('hide-slide-up-modal');
+      } else {
+        dialog.classList.remove('show-slide-left-modal');
+        dialog.classList.add('hide-slide-left-modal');
+      }
       let index = visibleModals.indexOf(obj);
       visibleModals.splice(index, 1);
     }
@@ -99,13 +113,15 @@
       let dialog = document.querySelector(modal.elementId);
       dialog.style.transitionDuration = '0s';
       if (modal.isSlideUpModal) {
-        dialog.style.transform = 'translateY(100%)';
+        dialog.classList.remove('hide-slide-up-modal');
+        dialog.classList.remove('show-slide-up-modal');
       } else {
-        dialog.style.transform = 'translateX(100%)';
+        dialog.classList.remove('hide-slide-left-modal');
+        dialog.classList.remove('show-slide-left-modal');
       }
     });
 
-    // Resetting all styles after a short delay to avoid interference with above transitions
+    // Resetting all styles after a short delay to avoid interference with future transitions
     window.setTimeout(function () {
       visibleModals.forEach((modal) => {
         let dialog = document.querySelector(modal.elementId);

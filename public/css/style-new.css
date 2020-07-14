@@ -318,6 +318,24 @@ footer a:nth-of-type(5)::before{
 }
 /* End Footer Style */
 
+/* Show & Hide Modal */
+.show-slide-up-modal {
+  transform: translateY(-100%);
+}
+.hide-slide-up-modal {
+  transform: translateY(100%);
+}
+.show-slide-left-modal {
+  transform: translateX(-100%);
+}
+.hide-slide-left-modal {
+  transform: translateX(100%);
+}
+.hide-modal-immediate {
+  transition: transform 0s;
+}
+/* End - Show & Hide Modal */
+
 /* Slide Up Modal Container */
 .slide-up-modal-container {
   background-color: #ccc;
