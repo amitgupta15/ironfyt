@@ -75,6 +75,7 @@
   /**
    * Handlers
    */
+  // Shows a modal dialog
   function showModal(props) {
     let { elementId, isSlideUpModal } = props;
     let dialog = document.querySelector(elementId);
