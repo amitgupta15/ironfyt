@@ -15,14 +15,13 @@
           <h1 class="title-activity">ACTIVITY</h1>
           <button id="new-task-btn" class="btn-new"></button>
         </div>
-        <!-- <div class="search-bar">
-          <form id="search-workout-form">
-            <button id="search-btn">Search</button>
-            <input type="text" name="" id="" placeholder="Search" />
-          </form>
-        </div> -->
       </header>
       <div class="calendar-container">
+        <div class="calendar-month-bar">
+          <button>Previous</button>
+          <h2>July 2020</h2>
+          <button>Next</button>
+        </div>
         <div class="calendar">
           <div class="calendar-item day">S</div>
           <div class="calendar-item day">M</div>
@@ -34,41 +33,139 @@
           <div class="calendar-item date"></div>
           <div class="calendar-item date"></div>
           <div class="calendar-item date"></div>
-          <div class="calendar-item date">1</div>
-          <div class="calendar-item date">2</div>
-          <div class="calendar-item date">
+          <div id="200701" class="calendar-item date">1</div>
+          <div id="200702" class="calendar-item date">2</div>
+          <div id="200703" class="calendar-item date for-time-border">
             <span class="selected-date">3</span>
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
           </div>
-          <div class="calendar-item date">4</div>
-          <div class="calendar-item date">5</div>
-          <div class="calendar-item date">6</div>
-          <div class="calendar-item date">7</div>
-          <div class="calendar-item date">8</div>
-          <div class="calendar-item date">9</div>
-          <div class="calendar-item date">10</div>
-          <div class="calendar-item date">11</div>
-          <div class="calendar-item date">12</div>
-          <div class="calendar-item date">13</div>
-          <div class="calendar-item date">14</div>
-          <div class="calendar-item date">15</div>
-          <div class="calendar-item date">16</div>
-          <div class="calendar-item date">17</div>
-          <div class="calendar-item date">18</div>
-          <div class="calendar-item date">19</div>
-          <div class="calendar-item date">20</div>
-          <div class="calendar-item date">21</div>
-          <div class="calendar-item date current-date">22</div>
-          <div class="calendar-item date">23</div>
-          <div class="calendar-item date">24</div>
-          <div class="calendar-item date">25</div>
-          <div class="calendar-item date">26</div>
-          <div class="calendar-item date">27</div>
-          <div class="calendar-item date">28</div>
-          <div class="calendar-item date">29</div>
-          <div class="calendar-item date">30</div>
-          <div class="calendar-item date">31</div>
+          <div id="200704" class="calendar-item date amrap-border">
+            4
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200705" class="calendar-item date amrap-border">
+            5
+            <div class="modality-indicator-container">
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200706" class="calendar-item date for-load-border">
+            6
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+            </div>
+          </div>
+          <div id="200707" class="calendar-item date for-time-border">
+            7
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200708" class="calendar-item date amrap-border">
+            8
+            <div class="modality-indicator-container">
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200709" class="calendar-item date">9</div>
+          <div id="200710" class="calendar-item date">10</div>
+          <div id="200711" class="calendar-item date for-load-border">
+            11
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+            </div>
+          </div>
+          <div id="200712" class="calendar-item date amrap-border">
+            12
+            <div class="modality-indicator-container">
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200713" class="calendar-item date for-time-border">
+            13
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+            </div>
+          </div>
+          <div id="200714" class="calendar-item date for-time-border">
+            14
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200715" class="calendar-item date for-load-border">
+            15
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+            </div>
+          </div>
+          <div id="200716" class="calendar-item date">16</div>
+          <div id="200717" class="calendar-item date for-time-border">
+            17
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200718" class="calendar-item date for-time-border">
+            18
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+            </div>
+          </div>
+          <div id="200719" class="calendar-item date">19</div>
+          <div id="200720" class="calendar-item date for-time-border">
+            20
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+            </div>
+          </div>
+          <div id="200721" class="calendar-item date for-time-border">
+            21
+            <div class="modality-indicator-container">
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div
+            id="200722"
+            class="calendar-item date current-date for-time-border"
+          >
+            22
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+              <div class="modality-indicator w"></div>
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="200723" class="calendar-item date">23</div>
+          <div id="200724" class="calendar-item date">24</div>
+          <div id="200725" class="calendar-item date">25</div>
+          <div id="200726" class="calendar-item date">26</div>
+          <div id="200727" class="calendar-item date">27</div>
+          <div id="200728" class="calendar-item date">28</div>
+          <div id="200729" class="calendar-item date">29</div>
+          <div id="200730" class="calendar-item date">30</div>
+          <div id="200731" class="calendar-item date">31</div>
         </div>
       </div>
+      <footer>
+        <a href="#friends">Friends</a>
+        <a href="#pr">PR</a>
+        <a href="#workouts" class="active">Workouts</a>
+        <a href="#activity">Activity</a>
+        <a href="#more">More</a>
+      </footer>
     </div>
   </body>
 </html>

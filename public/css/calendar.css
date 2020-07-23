@@ -17,9 +17,54 @@ html {
   outline: none;
 }
 
+.title-activity::before {
+  content: ' ';
+  background-image: url('../images/icon-fitness-log-25x25-orange-outline.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  margin: 0 auto;
+}
 .calendar-container {
-  /* text-align: left; */
   margin: 75px 1rem 1rem 1rem;
+}
+
+.calendar-month-bar {
+  color: #ff8c00;
+  display: flex;
+  padding: 10px 0;
+}
+
+.calendar-month-bar > * {
+  flex: 1;
+}
+
+.calendar-month-bar button {
+  background: transparent;
+  border: transparent;
+  color: transparent;
+  text-align: center;
+  /* padding: 10px 0; */
+}
+
+.calendar-month-bar button:first-of-type {
+  background-image: url('../images/icon-chevron-left-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.calendar-month-bar button:last-of-type {
+  background-image: url('../images/icon-chevron-right-25x25-orange.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .calendar {
@@ -27,13 +72,15 @@ html {
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  /* grid-template-rows: repeat(5, 1fr); */
+  gap: 8px;
 }
 
 .calendar-item {
-  color: white;
+  color: #ffffff;
   font-weight: bold;
   font-size: 24px;
+  padding: 5px;
+  cursor: pointer;
 }
 
 .calendar-item.day {
@@ -42,7 +89,7 @@ html {
 }
 
 .calendar-item.date {
-  height: 55px;
+  /* height: 55px; */
 }
 
 .calendar-item.current-date {
@@ -51,6 +98,41 @@ html {
 
 .selected-date {
   background: #ff8c00;
-  padding: 5px 12px;
+  padding: 1px 9px;
   border-radius: 100%;
+}
+
+.calendar-item.for-load-border {
+  border: 1px solid #a796e7;
+}
+
+.calendar-item.for-time-border {
+  border: 1px solid #b7e6ce;
+}
+.calendar-item.amrap-border {
+  border: 1px solid #00bfff;
+}
+
+.modality-indicator-container {
+  margin: -10px 0 -5px;
+}
+
+.modality-indicator {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+}
+
+.modality-indicator.w {
+  background-color: #00ffff;
+}
+.modality-indicator.g {
+  background-color: #ba55d3;
+}
+.modality-indicator.m {
+  background-color: #ff6347;
 }
