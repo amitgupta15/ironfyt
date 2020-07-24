@@ -30,12 +30,33 @@
           <div class="calendar-item day">TH</div>
           <div class="calendar-item day">F</div>
           <div class="calendar-item day">SA</div>
-          <div class="calendar-item date"></div>
-          <div class="calendar-item date"></div>
-          <div class="calendar-item date"></div>
-          <div id="200701" class="calendar-item date">1</div>
-          <div id="200702" class="calendar-item date">2</div>
-          <div id="200703" class="calendar-item date for-time-border">
+          <div id="dt200628" class="calendar-item date-last-month">28</div>
+          <div
+            id="dt200629"
+            class="calendar-item date-last-month for-time-border"
+          >
+            29
+            <div class="modality-indicator-container">
+              <div class="modality-indicator m"></div>
+            </div>
+          </div>
+          <div
+            id="dt200630"
+            class="calendar-item date-last-month for-load-border"
+          >
+            30
+            <div class="modality-indicator-container">
+              <div class="modality-indicator w"></div>
+            </div>
+          </div>
+          <div id="dt200701" class="calendar-item date for-time-border">
+            1
+            <div class="modality-indicator-container">
+              <div class="modality-indicator g"></div>
+            </div>
+          </div>
+          <div id="dt200702" class="calendar-item date">2</div>
+          <div id="dt200703" class="calendar-item date for-time-border">
             <span class="selected-date">3</span>
             <div class="modality-indicator-container">
               <div class="modality-indicator m"></div>
@@ -43,26 +64,26 @@
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200704" class="calendar-item date amrap-border">
+          <div id="dt200704" class="calendar-item date amrap-border">
             4
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200705" class="calendar-item date amrap-border">
+          <div id="dt200705" class="calendar-item date amrap-border">
             5
             <div class="modality-indicator-container">
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200706" class="calendar-item date for-load-border">
+          <div id="dt200706" class="calendar-item date for-load-border">
             6
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
             </div>
           </div>
-          <div id="200707" class="calendar-item date for-time-border">
+          <div id="dt200707" class="calendar-item date for-time-border">
             7
             <div class="modality-indicator-container">
               <div class="modality-indicator m"></div>
@@ -70,47 +91,47 @@
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200708" class="calendar-item date amrap-border">
+          <div id="dt200708" class="calendar-item date amrap-border">
             8
             <div class="modality-indicator-container">
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200709" class="calendar-item date">9</div>
-          <div id="200710" class="calendar-item date">10</div>
-          <div id="200711" class="calendar-item date for-load-border">
+          <div id="dt200709" class="calendar-item date">9</div>
+          <div id="dt200710" class="calendar-item date">10</div>
+          <div id="dt200711" class="calendar-item date for-load-border">
             11
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
             </div>
           </div>
-          <div id="200712" class="calendar-item date amrap-border">
+          <div id="dt200712" class="calendar-item date amrap-border">
             12
             <div class="modality-indicator-container">
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200713" class="calendar-item date for-time-border">
+          <div id="dt200713" class="calendar-item date for-time-border">
             13
             <div class="modality-indicator-container">
               <div class="modality-indicator m"></div>
             </div>
           </div>
-          <div id="200714" class="calendar-item date for-time-border">
+          <div id="dt200714" class="calendar-item date for-time-border">
             14
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200715" class="calendar-item date for-load-border">
+          <div id="dt200715" class="calendar-item date for-load-border">
             15
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
             </div>
           </div>
-          <div id="200716" class="calendar-item date">16</div>
-          <div id="200717" class="calendar-item date for-time-border">
+          <div id="dt200716" class="calendar-item date">16</div>
+          <div id="dt200717" class="calendar-item date for-time-border">
             17
             <div class="modality-indicator-container">
               <div class="modality-indicator m"></div>
@@ -118,27 +139,27 @@
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200718" class="calendar-item date for-time-border">
+          <div id="dt200718" class="calendar-item date for-time-border">
             18
             <div class="modality-indicator-container">
               <div class="modality-indicator w"></div>
             </div>
           </div>
-          <div id="200719" class="calendar-item date">19</div>
-          <div id="200720" class="calendar-item date for-time-border">
+          <div id="dt200719" class="calendar-item date">19</div>
+          <div id="dt200720" class="calendar-item date for-time-border">
             20
             <div class="modality-indicator-container">
               <div class="modality-indicator m"></div>
             </div>
           </div>
-          <div id="200721" class="calendar-item date for-time-border">
+          <div id="dt200721" class="calendar-item date for-time-border">
             21
             <div class="modality-indicator-container">
               <div class="modality-indicator g"></div>
             </div>
           </div>
           <div
-            id="200722"
+            id="dt200722"
             class="calendar-item date current-date for-time-border"
           >
             22
@@ -148,15 +169,16 @@
               <div class="modality-indicator g"></div>
             </div>
           </div>
-          <div id="200723" class="calendar-item date">23</div>
-          <div id="200724" class="calendar-item date">24</div>
-          <div id="200725" class="calendar-item date">25</div>
-          <div id="200726" class="calendar-item date">26</div>
-          <div id="200727" class="calendar-item date">27</div>
-          <div id="200728" class="calendar-item date">28</div>
-          <div id="200729" class="calendar-item date">29</div>
-          <div id="200730" class="calendar-item date">30</div>
-          <div id="200731" class="calendar-item date">31</div>
+          <div id="dt200723" class="calendar-item date">23</div>
+          <div id="dt200724" class="calendar-item date">24</div>
+          <div id="dt200725" class="calendar-item date">25</div>
+          <div id="dt200726" class="calendar-item date">26</div>
+          <div id="dt200727" class="calendar-item date">27</div>
+          <div id="dt200728" class="calendar-item date">28</div>
+          <div id="dt200729" class="calendar-item date">29</div>
+          <div id="dt200730" class="calendar-item date">30</div>
+          <div id="dt200731" class="calendar-item date">31</div>
+          <div id="dt200801" class="calendar-item date-next-month">1</div>
         </div>
       </div>
       <footer>
@@ -167,5 +189,18 @@
         <a href="#more">More</a>
       </footer>
     </div>
+    <!-- Slide Up Modal - Select a Task-->
+    <div class="slide-up-modal-container" id="activity-detail-modal">
+      <div class="modal-content">
+        <button id="close-select-task-modal" class="cancel-slide-up-modal-btn">
+          Cancel
+        </button>
+        <div id="activity-detail">
+          Content goes here
+        </div>
+      </div>
+    </div>
+    <!-- End Slide Up Modal - Select a Task -->
+    <script src="js/calendar.js"></script>
   </body>
 </html>

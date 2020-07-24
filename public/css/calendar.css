@@ -88,8 +88,13 @@ html {
   margin-bottom: 10px;
 }
 
-.calendar-item.date {
-  /* height: 55px; */
+/* .calendar-item.date {
+  height: 55px;
+} */
+
+.calendar-item.date-last-month,
+.calendar-item.date-next-month {
+  color: darkgray;
 }
 
 .calendar-item.current-date {
