@@ -99,6 +99,7 @@
     assert(_data2.length === 2);
   });
   console.groupEnd();
+
   /**
    * TEST helper-library.js
    */
@@ -136,6 +137,61 @@
     assert(hl.formatDateString('03/06/07') === '03/06/2007');
     assert(hl.formatDateString('03/06/2020') === '03/06/2020');
   });
+
+  it('should match closest selector in the parent chain for a given element', function () {
+    var selector = document.getElementById('selector');
+    selector.innerHTML = `
+      <div id='dt200702'>
+        <div class='nest-level-1'>
+          <div class='nest-level-2'>1
+          </div>
+        </div>
+      </div>
+      <div id='dt200703'>
+        <div class='nest-level-1'>
+          <div class='nest-level-2'>2
+          </div>
+        </div>
+      </div>
+    `;
+    var nested2 = document.querySelector('.nest-level-2');
+    let calendarItemIdRegEx = new RegExp(/dt\d{6}/); //Example: 'dt200701';
+
+    var matchedId = hl.matchClosestSelector(nested2, calendarItemIdRegEx);
+    assert(matchedId === 'dt200702');
+
+    //machedId should be 'false' for <div id="selector"> when matched with calendar regex
+    matchedId = hl.matchClosestSelector(selector, calendarItemIdRegEx);
+    assert(matchedId === false);
+
+    //machedId should be 'selector' when we try the exact match
+    matchedId = hl.matchClosestSelector(selector, 'selector');
+    assert(matchedId === 'selector');
+
+    //matchedId should be 'false' when we try to match with invalid id
+    matchedId = hl.matchClosestSelector(nested2, 'dt200701');
+    assert(matchedId === false);
+
+    //matchedId should be 'dt200702' when we try to do an exact match but with a child selector
+    matchedId = hl.matchClosestSelector(nested2, 'dt200702');
+    assert(matchedId === 'dt200702');
+
+    // matchedId should match appropriate id selector
+    var allNestLevel2Elements = document.querySelectorAll('.nest-level-2');
+    assert(allNestLevel2Elements.length === 2);
+    matchedId = hl.matchClosestSelector(
+      allNestLevel2Elements[0],
+      calendarItemIdRegEx
+    );
+    assert(matchedId === 'dt200702');
+
+    matchedId = hl.matchClosestSelector(
+      allNestLevel2Elements[1],
+      calendarItemIdRegEx
+    );
+    assert(matchedId === 'dt200703');
+    // selector.innerHTML = '';
+  });
   console.groupEnd();
   /**
    * TEST app.js
@@ -156,7 +212,7 @@
     });
     assert(
       usersHTMLString ===
-        '<ul class="user-list"><li><a href="workout-list.html?user=-1">amit</a></li><li><a href="workout-list.html?user=-2">pooja</a></li></ul>',
+        '<ul class="user-list"><li><a href="workout-list.html?user=-1">amit</a></li><li><a href="workout-list.html?user=-2">pooja</a></li></ul>'
     );
     assert(ironfyt.routes['user-list'].name === 'userListPage');
   });
@@ -164,7 +220,9 @@
   it('should have user-list route populate userListComponent data object successfully', function () {
     hl.fetch.get = function (str, callback) {
       if (str === '/api/users') {
-        callback([{ id: -1, fname: 'amit', logs: [{ log_id: -1, workout_id: -1 }] }]);
+        callback([
+          { id: -1, fname: 'amit', logs: [{ log_id: -1, workout_id: -1 }] },
+        ]);
       }
     };
     // Call the function associated with the route
@@ -179,20 +237,36 @@
     assert(Object.keys(ironfyt.workoutListComponent.data).length === 4);
     assert(typeof ironfyt.workoutListComponent.data['user'] === 'object');
     assert(ironfyt.workoutListComponent.data['workouts'] instanceof Array);
-    assert(ironfyt.workoutListComponent.data['unfilteredList'] instanceof Array);
+    assert(
+      ironfyt.workoutListComponent.data['unfilteredList'] instanceof Array
+    );
     assert(typeof ironfyt.workoutListComponent.data['search'] === 'string');
-    var notLoggedInHTMLString = ironfyt.workoutListComponent.template({ workouts: [], user: {}, search: '' });
-    assert(notLoggedInHTMLString.toLowerCase().includes('please select a user'));
-    var workoutListHTMLString = ironfyt.workoutListComponent.template({ workouts: [], user: { _id: -1, fname: 'amit' }, search: '' });
+    var notLoggedInHTMLString = ironfyt.workoutListComponent.template({
+      workouts: [],
+      user: {},
+      search: '',
+    });
+    assert(
+      notLoggedInHTMLString.toLowerCase().includes('please select a user')
+    );
+    var workoutListHTMLString = ironfyt.workoutListComponent.template({
+      workouts: [],
+      user: { _id: -1, fname: 'amit' },
+      search: '',
+    });
     assert(workoutListHTMLString.toLowerCase().includes('<ul class="top-bar"'));
-    assert(workoutListHTMLString.toLowerCase().includes('<form id="search-workout">'));
+    assert(
+      workoutListHTMLString.toLowerCase().includes('<form id="search-workout">')
+    );
     assert(workoutListHTMLString.toLowerCase().includes('no workouts found'));
     workoutListHTMLString = ironfyt.workoutListComponent.template({
       workouts: [{ _id: -1, name: 'workout', description: 'hello' }],
       user: { _id: -1, fname: 'amit' },
       search: '',
     });
-    assert(workoutListHTMLString.toLowerCase().includes('<div class="workout-item">'));
+    assert(
+      workoutListHTMLString.toLowerCase().includes('<div class="workout-item">')
+    );
     assert(ironfyt.routes['workout-list'].name === 'workoutListPage');
   });
 
@@ -252,8 +326,12 @@
 
   it('should reset the search result of workout list on clicking the reset button', function () {
     var selector = document.getElementById('selector');
-    selector.innerHTML = '<form id="search-workout"><button type="reset">Reset</button></form>';
-    ironfyt.workoutListComponent.setData({ unfilteredList: [{ _id: -1, name: 'workout' }], workouts: [] });
+    selector.innerHTML =
+      '<form id="search-workout"><button type="reset">Reset</button></form>';
+    ironfyt.workoutListComponent.setData({
+      unfilteredList: [{ _id: -1, name: 'workout' }],
+      workouts: [],
+    });
     var _data = ironfyt.workoutListComponent.getData();
 
     assert(_data.workouts.length === 0);
@@ -266,15 +344,24 @@
 
   it('should search workouts based on search criteria', function () {
     var selector = document.getElementById('selector');
-    selector.innerHTML = '<form id="search-workout"><input type="text" name="search"/><button type="submit">Submit</button></form>';
-    var searchInputField = document.querySelector('form[id="search-workout"]').elements['search'];
+    selector.innerHTML =
+      '<form id="search-workout"><input type="text" name="search"/><button type="submit">Submit</button></form>';
+    var searchInputField = document.querySelector('form[id="search-workout"]')
+      .elements['search'];
     searchInputField.value = 'thruster';
     var workouts = [
       { _id: -1, name: 'bench-press', description: '20 bench-press' },
       { _id: -2, name: 'Fran', description: '21-15-9 Thrusters and pull-ups' },
-      { _id: -3, name: 'Cindy', description: '20 pull-ups, 30 push-ups, 40 sit-ups and 50 squats' },
+      {
+        _id: -3,
+        name: 'Cindy',
+        description: '20 pull-ups, 30 push-ups, 40 sit-ups and 50 squats',
+      },
     ];
-    ironfyt.workoutListComponent.setData({ unfilteredList: workouts, workouts: workouts });
+    ironfyt.workoutListComponent.setData({
+      unfilteredList: workouts,
+      workouts: workouts,
+    });
     var _data = ironfyt.workoutListComponent.getData();
     assert(_data.workouts.length === 3);
     assert(_data.search === '');
@@ -299,11 +386,27 @@
     assert('workout' in _data);
     assert('user' in _data);
     assert('logs' in _data);
-    assert(ironfyt.logComponent.template(_data).toLowerCase().includes('please select a user'));
+    assert(
+      ironfyt.logComponent
+        .template(_data)
+        .toLowerCase()
+        .includes('please select a user')
+    );
     var _template = ironfyt.logComponent.template({
-      workout: { _id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' },
+      workout: {
+        _id: -2,
+        name: 'fran',
+        description: '21-15-9 thursters & pull-ups',
+      },
       user: { _id: -1, fname: 'amit' },
-      logs: [{ duration: '20 minutes', rounds: null, load: '95 lbs', notes: 'finished well' }],
+      logs: [
+        {
+          duration: '20 minutes',
+          rounds: null,
+          load: '95 lbs',
+          notes: 'finished well',
+        },
+      ],
     });
     assert(_template.includes('fran'));
     assert(_template.includes('finished well'));
@@ -312,7 +415,11 @@
 
   it('should have log route populate logComponent data object successfully', function () {
     /** setup block */
-    var _workout = { _id: -2, name: 'fran', description: '21-15-9 thursters & pull-ups' };
+    var _workout = {
+      _id: -2,
+      name: 'fran',
+      description: '21-15-9 thursters & pull-ups',
+    };
     var _user = {
       _id: -1,
       fname: 'amit',
@@ -332,9 +439,24 @@
       }
       if (str === '/api/logs') {
         callback([
-          { _id: -1, date: new Date('01/02/2020'), user_id: -1, workout_id: -2 },
-          { _id: -2, date: new Date('01/03/2020'), user_id: -1, workout_id: -2 },
-          { _id: -3, date: new Date('01/04/2020'), user_id: -1, workout_id: -1 },
+          {
+            _id: -1,
+            date: new Date('01/02/2020'),
+            user_id: -1,
+            workout_id: -2,
+          },
+          {
+            _id: -2,
+            date: new Date('01/03/2020'),
+            user_id: -1,
+            workout_id: -2,
+          },
+          {
+            _id: -3,
+            date: new Date('01/04/2020'),
+            user_id: -1,
+            workout_id: -1,
+          },
         ]);
       }
     };
@@ -347,7 +469,12 @@
 
     ironfyt.routes['log']();
     var _data = ironfyt.logComponent.getData();
-    assert(ironfyt.logComponent.template(_data).toLowerCase().includes('please select a user'));
+    assert(
+      ironfyt.logComponent
+        .template(_data)
+        .toLowerCase()
+        .includes('please select a user')
+    );
 
     // Stub hl.getParams() without any url parameters
     hl.getParams = function () {
@@ -356,7 +483,12 @@
 
     ironfyt.routes['log']();
     var _data = ironfyt.logComponent.getData();
-    assert(ironfyt.logComponent.template(_data).toLowerCase().includes('please select a user'));
+    assert(
+      ironfyt.logComponent
+        .template(_data)
+        .toLowerCase()
+        .includes('please select a user')
+    );
 
     // Stub hl.getParams() with url parameters
     hl.getParams = function () {
@@ -364,7 +496,12 @@
     };
     ironfyt.routes['log']();
     _data = ironfyt.logComponent.getData();
-    assert(ironfyt.logComponent.template(_data).toLowerCase().includes('please select a user'));
+    assert(
+      ironfyt.logComponent
+        .template(_data)
+        .toLowerCase()
+        .includes('please select a user')
+    );
 
     // Stub hl.getParams() with url parameters
     hl.getParams = function () {
@@ -388,12 +525,17 @@
     assert(ironfyt.newWorkoutComponent.selector === '[data-app=new-workout]');
     var _data = ironfyt.newWorkoutComponent.getData();
     assert(Object.keys(_data).length === 0);
-    assert(ironfyt.newWorkoutComponent.template().toLowerCase().includes('please select a user'));
+    assert(
+      ironfyt.newWorkoutComponent
+        .template()
+        .toLowerCase()
+        .includes('please select a user')
+    );
     assert(
       ironfyt.newWorkoutComponent
         .template({ user: { _id: -1, fname: 'amit' } })
         .toLowerCase()
-        .includes('<form id="new-workout-form">'),
+        .includes('<form id="new-workout-form">')
     );
     assert(ironfyt.routes['new-workout'].name === 'newWorkoutPage');
   });
@@ -465,7 +607,8 @@
     form.dispatchEvent(ev);
     assert(alertCalledCount === 1);
     alertCalledCount = 0;
-    form.innerHTML = '<input type="text" name="workout_name"><textarea name="workout_description"></textarea>';
+    form.innerHTML =
+      '<input type="text" name="workout_name"><textarea name="workout_description"></textarea>';
     form.dispatchEvent(ev);
     assert(alertCalledCount === 1);
     alertCalledCount = 0;
@@ -506,7 +649,9 @@
       '<div data-app="new-log"></div><form id="new-log-form"><input type="text" name="log_date"><input type="text" name="log_duration"></form>';
     ironfyt.routes['new-log']();
     var form = document.querySelector('#new-log-form');
-    assert(selector.innerHTML.toLowerCase().includes('<p><strong>workout: a workout'));
+    assert(
+      selector.innerHTML.toLowerCase().includes('<p><strong>workout: a workout')
+    );
     assert(document.activeElement.name === 'log_duration');
     // date field is not empty - it is populated with today's date
     assert(form.elements['log_date'].value !== '');
@@ -550,21 +695,34 @@
     /** test block */
     var selector = document.querySelector('#selector');
     //Add a form with proper id to the DOM. This form will be dispatching the submit event
-    selector.innerHTML = '<form id="new-log-form"><input type="text" class="input-textfield" name="log_date" placeholder="Date: mm/dd/yyyy"></form>';
+    selector.innerHTML =
+      '<form id="new-log-form"><input type="text" class="input-textfield" name="log_date" placeholder="Date: mm/dd/yyyy"></form>';
     var form = document.querySelector('#new-log-form');
     var ev = document.createEvent('HTMLEvents');
     ev.initEvent('submit', true, true);
 
     form.dispatchEvent(ev);
 
-    assert(selector.innerHTML.toLowerCase().includes('<div id="date-error-div" class="error-div">please enter a valid date mm/dd/yyyy</div>'));
+    assert(
+      selector.innerHTML
+        .toLowerCase()
+        .includes(
+          '<div id="date-error-div" class="error-div">please enter a valid date mm/dd/yyyy</div>'
+        )
+    );
     // Make sure field-has-error class is added to the required field
     assert(form.elements['log_date'].classList.contains('field-has-error'));
 
     // Populate a required field on the DOM with invalid Date
     form.elements['log_date'].value = '13/01/2020';
     form.dispatchEvent(ev);
-    assert(selector.innerHTML.toLowerCase().includes('<div id="date-error-div" class="error-div">please enter a valid date mm/dd/yyyy</div>'));
+    assert(
+      selector.innerHTML
+        .toLowerCase()
+        .includes(
+          '<div id="date-error-div" class="error-div">please enter a valid date mm/dd/yyyy</div>'
+        )
+    );
     // Make sure field-has-error class is added to the required field
     assert(form.elements['log_date'].classList.contains('field-has-error'));
 
@@ -613,9 +771,26 @@
       }
       if (str === '/api/logs') {
         callback([
-          { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1, workout_id: -1 },
-          { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
-          { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
+          {
+            _id: -1,
+            date: new Date('01/01/2020'),
+            notes: 'log 1',
+            user_id: -1,
+            workout_id: -1,
+          },
+          {
+            _id: -2,
+            date: new Date('01/02/2020'),
+            notes: 'log 2',
+            user_id: -1,
+            workout_id: -1,
+          },
+          {
+            _id: -3,
+            date: new Date('01/01/2020'),
+            notes: 'log 3',
+            user_id: -2,
+          },
         ]);
       }
       if (str === '/api/workouts') {
@@ -659,11 +834,29 @@
   it('should reset the search result of log list on clicking the reset button', function () {
     var unfilteredLogs = [
       { _id: -1, date: new Date('01/01/2020'), notes: 'log 1', user_id: -1 },
-      { _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 },
+      {
+        _id: -2,
+        date: new Date('01/02/2020'),
+        notes: 'log 2',
+        user_id: -1,
+        workout_id: -1,
+      },
       { _id: -3, date: new Date('01/01/2020'), notes: 'log 3', user_id: -2 },
     ];
-    var filteredLogs = [{ _id: -2, date: new Date('01/02/2020'), notes: 'log 2', user_id: -1, workout_id: -1 }];
-    ironfyt.logListComponent.setData({ logs: filteredLogs, unfilteredList: unfilteredLogs, search: 'testing' });
+    var filteredLogs = [
+      {
+        _id: -2,
+        date: new Date('01/02/2020'),
+        notes: 'log 2',
+        user_id: -1,
+        workout_id: -1,
+      },
+    ];
+    ironfyt.logListComponent.setData({
+      logs: filteredLogs,
+      unfilteredList: unfilteredLogs,
+      search: 'testing',
+    });
 
     var _data = ironfyt.logListComponent.getData();
     assert(_data.logs.length === 1);
@@ -697,7 +890,8 @@
     // Get the div with id= selector from test.html file
     var selector = document.querySelector('#selector');
     // Attach a form with id=search-logs to selector
-    selector.innerHTML = '<form id="search-logs"><input type="text" name="search"></form>';
+    selector.innerHTML =
+      '<form id="search-logs"><input type="text" name="search"></form>';
     var form = document.querySelector('#search-logs');
     // Set the search criteria in the search field
     form.elements['search'].value = 'bench';
@@ -716,7 +910,9 @@
   it('should render workoutTempate', function () {
     var workout = {};
     var workoutTemplate = ironfyt.workoutTemplate({ workout: workout });
-    assert(workoutTemplate.toLowerCase().includes('<div class="workout-item">'));
+    assert(
+      workoutTemplate.toLowerCase().includes('<div class="workout-item">')
+    );
   });
 
   it('should render signInTemplate', function () {
@@ -725,12 +921,18 @@
   });
 
   it('should render topBarTemplate', function () {
-    var topBarTemplate = ironfyt.topBarTemplate({ page: 'log-list', user: { _id: 1 } });
+    var topBarTemplate = ironfyt.topBarTemplate({
+      page: 'log-list',
+      user: { _id: 1 },
+    });
     assert(topBarTemplate.toLowerCase().includes('<ul class="top-bar">'));
     assert(topBarTemplate.toLowerCase().includes('user=1'));
   });
   it('should render searchTemplate', function () {
-    var searchTemplate = ironfyt.searchTemplate({ search: 'aworkout', id: 'search-workout' });
+    var searchTemplate = ironfyt.searchTemplate({
+      search: 'aworkout',
+      id: 'search-workout',
+    });
     assert(searchTemplate.toLowerCase().includes('<form id="search-workout">'));
     assert(searchTemplate.toLowerCase().includes('aworkout'));
   });

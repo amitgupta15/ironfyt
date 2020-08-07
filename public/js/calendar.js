@@ -2,12 +2,15 @@
   'use strict';
 
   // Create a global variable and expose it the world.
-  var ironfytCal = {};
+  let ironfytCal = {};
   self.ironfytCal = ironfytCal;
 
   document.addEventListener('click', function (ev) {
-    if (ev.target.className === 'calendar-item') {
-      showModal(ev.target.id);
+    let matchedId = false;
+    let calendarItemIdRegEx = new RegExp(/dt\d{6}/);
+    matchedId = hl.matchClosestSelector(ev.target, calendarItemIdRegEx);
+    if (matchedId) {
+      showModal(matchedId);
     }
   });
 

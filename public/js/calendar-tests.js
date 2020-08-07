@@ -23,9 +23,15 @@
   /** END TEST METHODS */
 
   console.group('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
+
   it('should show a slide up modal dialog', function () {
     const div = `
-      <div id='dt200701' class="calendar-item">1</div>
+      <div id="dt200629" class="calendar-item date-last-month for-time-border">
+        29
+        <div class="modality-indicator-container">
+          <div class="modality-indicator m"></div>
+        </div>
+      </div>
       <div id='activity-detail-modal' class="hide-modal">
         <div id='modal-content'></div>
       </div>
@@ -35,16 +41,19 @@
 
     const ev = document.createEvent('HTMLEvents');
     ev.initEvent('click', true, true);
-
-    const eventDispatcherDiv = document.querySelector('#dt200701');
+    //Dispatching event from the inner most div of the parent div (id=dt200629) which contains the date
+    const eventDispatcherDiv = document.querySelector('.modality-indicator');
     eventDispatcherDiv.dispatchEvent(ev);
 
     const modal = document.querySelector('#activity-detail-modal');
-    console.assert(modal.classList.contains('show-modal'));
-    console.assert(!modal.classList.contains('hide-modal'));
+    //If click is captured successfully, modal window is showed.
+    uitest.assert(modal.classList.contains('show-modal'));
+    uitest.assert(!modal.classList.contains('hide-modal'));
 
     const modalContent = document.querySelector('#modal-content');
-    console.assert(modalContent.innerHTML === '<p>dt200701</p>');
+    //Modal will display the parent's id
+    uitest.assert(modalContent.innerHTML === '<p>dt200629</p>');
+    selector.innerHTML = '';
   });
   console.groupEnd('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 })();

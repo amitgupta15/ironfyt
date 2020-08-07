@@ -80,7 +80,6 @@ html {
   font-weight: bold;
   font-size: 24px;
   padding: 5px;
-  cursor: pointer;
 }
 
 .calendar-item.day {
@@ -88,13 +87,14 @@ html {
   margin-bottom: 10px;
 }
 
-/* .calendar-item.date {
-  height: 55px;
-} */
+.calendar-item.date {
+  cursor: pointer;
+}
 
 .calendar-item.date-last-month,
 .calendar-item.date-next-month {
   color: darkgray;
+  cursor: pointer;
 }
 
 .calendar-item.current-date {
