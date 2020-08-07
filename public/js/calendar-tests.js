@@ -26,8 +26,8 @@
 
     const modal = document.querySelector('#activity-detail-modal');
     //If click is captured successfully, modal window is showed.
-    uitest.assert(modal.classList.contains('show-modal'));
-    uitest.assert(!modal.classList.contains('hide-modal'));
+    uitest.assert(modal.classList.contains('show-slide-up-modal'));
+    uitest.assert(!modal.classList.contains('hide-slide-up-modal'));
 
     const modalContent = document.querySelector('#modal-content');
     //Modal will display the parent's id
