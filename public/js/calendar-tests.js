@@ -1,30 +1,9 @@
 (function () {
   'use strict';
 
-  /**
-   * TEST METHODS
-   */
-
-  /**
-   * test function
-   * @param {string} desc
-   * @param {function} fn
-   */
-  function it(desc, fn) {
-    try {
-      fn();
-      console.log('\x1b[32m%s\x1b[0m', '\u2714 ' + desc);
-    } catch (error) {
-      console.log('\n');
-      console.log('\x1b[31m%s\x1b[0m', '\u2718 ' + desc);
-      console.error(error);
-    }
-  }
-  /** END TEST METHODS */
-
   console.group('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 
-  it('should show a slide up modal dialog', function () {
+  uitest.it('should show a slide up modal dialog', function () {
     const div = `
       <div id="dt200629" class="calendar-item date-last-month for-time-border">
         29
