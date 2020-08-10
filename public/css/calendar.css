@@ -145,7 +145,7 @@ html {
 .slide-up-modal-3_4-container {
   background-color: #111;
   position: fixed;
-  overflow: auto;
+  overflow: scroll;
   height: 100%;
   top: 100%;
   left: 0;
@@ -163,7 +163,7 @@ html {
 }
 
 .cancel-slide-up-3_4-modal-btn {
-  color: #ff8c00;
+  color: white;
   background: none;
   border: none;
   padding: 10px;
@@ -172,10 +172,41 @@ html {
   margin: 5px 0 0 5px;
 }
 
-#activity-detail {
-  padding: 2rem;
-  color: white;
+.activity-detail {
+  color: #ff8c00;
+  margin: 0 10px;
+}
+
+.activity-date {
+  text-align: center;
+}
+
+.activity-detail h3 {
+  margin: 10px 0;
+  /* background-color: #ff8c00; */
+  color: #c5f04e;
+  font-weight: 600;
+  font-size: 1.5rem;
+  padding: 5px 0;
+  /* border-bottom: 1px solid #c5f04e; */
+  /* width: 75%; */
+  text-align: center;
 }
 .show-slide-up-3_4-modal {
-  transform: translateY(-80%);
+  transform: translateY(-90%);
+}
+
+.log-detail {
+  font-size: 1.4rem;
+  margin: 15px 0;
+}
+
+.log-detail h2 {
+  color: white;
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+.log-detail p {
+  margin-bottom: 10px;
+  color: #dedede;
 }
