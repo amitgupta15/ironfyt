@@ -16,28 +16,16 @@
       '<ul class="top-bar">' +
       '<li><a href="index.html">Home</a></li>' +
       '<li>' +
-      (page === 'workout-list'
-        ? 'Workouts'
-        : '<a href="workout-list.html?user=' + user._id + '">Workouts</a>') +
+      (page === 'workout-list' ? 'Workouts' : '<a href="workout-list.html?user=' + user._id + '">Workouts</a>') +
       '</li>' +
       '<li>' +
-      (page === 'log-list' && props.alllogs === false
-        ? 'My Logs'
-        : '<a href="log-list.html?user=' + user._id + '">My Logs</a>') +
+      (page === 'log-list' && props.alllogs === false ? 'My Logs' : '<a href="log-list.html?user=' + user._id + '">My Logs</a>') +
       '</li>' +
       '<li>' +
-      (page === 'log-list' && props.alllogs === true
-        ? 'All Logs'
-        : '<a href="log-list.html?user=' +
-          user._id +
-          '&all=true">All Logs</a>') +
+      (page === 'log-list' && props.alllogs === true ? 'All Logs' : '<a href="log-list.html?user=' + user._id + '&all=true">All Logs</a>') +
       '</li>' +
       '<li>' +
-      (page === 'new-workout'
-        ? 'New Workout'
-        : '<a href="new-workout.html?user_id=' +
-          user._id +
-          '">New Workout</a>') +
+      (page === 'new-workout' ? 'New Workout' : '<a href="new-workout.html?user_id=' + user._id + '">New Workout</a>') +
       '</li>' +
       '<li style="float:right;color:blue">' +
       user.fname +
@@ -57,15 +45,7 @@
       return (
         '<div class="workout-item">' +
         '<h3>' +
-        (page === 'log'
-          ? workout.name
-          : '<a href="log.html?workout=' +
-            workout._id +
-            '&user=' +
-            user._id +
-            '">' +
-            workout.name +
-            '</a>') +
+        (page === 'log' ? workout.name : '<a href="log.html?workout=' + workout._id + '&user=' + user._id + '">' + workout.name + '</a>') +
         ' <span class="logcount">(' +
         workout.userlogcount +
         '/' +
@@ -75,21 +55,13 @@
         '<p><strong>Type: </strong>' +
         workout.type +
         '</p>' +
-        (workout.timecap !== null
-          ? '<p><strong>Time Cap: </strong>' + workout.timecap + '</p>'
-          : '') +
+        (workout.timecap !== null ? '<p><strong>Time Cap: </strong>' + workout.timecap + '</p>' : '') +
         '' +
-        (workout.reps !== null && workout.reps !== undefined
-          ? '<p><strong>Reps: </strong>' + workout.reps + '</p>'
-          : '') +
+        (workout.reps !== null && workout.reps !== undefined ? '<p><strong>Reps: </strong>' + workout.reps + '</p>' : '') +
         '' +
-        (workout.rounds !== undefined && workout.rounds !== null
-          ? '<p><strong>Rounds: </strong>' + workout.rounds + '</p>'
-          : '') +
+        (workout.rounds !== undefined && workout.rounds !== null ? '<p><strong>Rounds: </strong>' + workout.rounds + '</p>' : '') +
         '' +
-        (workout.description !== undefined && workout.description !== null
-          ? '<p>' + hl.replaceNewLineWithBR(workout.description) + '</p>'
-          : '') +
+        (workout.description !== undefined && workout.description !== null ? '<p>' + hl.replaceNewLineWithBR(workout.description) + '</p>' : '') +
         '</div>'
       );
     }
@@ -127,21 +99,7 @@
         '<ul class="user-list">' +
         users
           .map(function (user) {
-            return (
-              '<li><a href="workout-list.html?user=' +
-              user._id +
-              '">' +
-              user.fname +
-              '</a>' +
-              (user.logs
-                ? ' (<a href="log-list.html?user=' +
-                  user._id +
-                  '">' +
-                  user.logs.length +
-                  '</a>)'
-                : '') +
-              '</li>'
-            );
+            return '<li><a href="workout-list.html?user=' + user._id + '">' + user.fname + '</a>' + (user.logs ? ' (<a href="log-list.html?user=' + user._id + '">' + user.logs.length + '</a>)' : '') + '</li>';
           })
           .join('') +
         '</ul>'
@@ -283,11 +241,7 @@
       var logs = props.logs;
       var user = props.user;
       if (!user._id) return ironfyt.signInTemplate();
-      if (!workout._id)
-        return (
-          ironfyt.topBarTemplate({ user }) +
-          '<br/><p><em>Not a valid workout id</em></p>'
-        );
+      if (!workout._id) return ironfyt.topBarTemplate({ user }) + '<br/><p><em>Not a valid workout id</em></p>';
       return (
         ironfyt.topBarTemplate({ user }) +
         ironfyt.workoutTemplate({ page: 'log', workout: workout, user: user }) +
@@ -305,30 +259,11 @@
         (function () {
           var htmlString = '';
           logs.forEach(function (log) {
-            var durationString = log.duration
-              ? '<p><strong>Duration: </strong>' + log.duration + '</p>'
-              : '';
-            var loadString = log.load
-              ? '<p><strong>Load: </strong>' + log.load + ' </p>'
-              : '';
-            var roundsString = log.rounds
-              ? '<p><strong>Rounds: </strong>' + log.rounds + ' </p>'
-              : '';
-            var notesString = log.notes
-              ? '<p><strong>Notes: </strong><br/>' +
-                hl.replaceNewLineWithBR(log.notes) +
-                ' </p>'
-              : '';
-            htmlString +=
-              '<div class="log-item">' +
-              ' <p class="date">' +
-              new Date(log.date).toLocaleDateString() +
-              '</p>' +
-              durationString +
-              loadString +
-              roundsString +
-              notesString +
-              '</div>';
+            var durationString = log.duration ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '';
+            var loadString = log.load ? '<p><strong>Load: </strong>' + log.load + ' </p>' : '';
+            var roundsString = log.rounds ? '<p><strong>Rounds: </strong>' + log.rounds + ' </p>' : '';
+            var notesString = log.notes ? '<p><strong>Notes: </strong><br/>' + hl.replaceNewLineWithBR(log.notes) + ' </p>' : '';
+            htmlString += '<div class="log-item">' + ' <p class="date">' + new Date(log.date).toLocaleDateString() + '</p>' + durationString + loadString + roundsString + notesString + '</div>';
           });
           return htmlString;
         })()
@@ -338,18 +273,14 @@
 
   var logPage = function () {
     var params = hl.getParams();
-    var workout_id =
-      params && params.workout ? parseInt(params.workout) : false;
+    var workout_id = params && params.workout ? parseInt(params.workout) : false;
     var user_id = params && params.user ? parseInt(params.user) : false;
     hl.fetch.get('/api/workouts?_id=' + workout_id, function (workout) {
       hl.fetch.get('/api/users?_id=' + user_id, function (user) {
         hl.fetch.get('/api/logs', function (logsResponse) {
           var logs = logsResponse
             .filter(function (log) {
-              return (
-                parseInt(user._id) === parseInt(log.user_id) &&
-                parseInt(workout._id) === parseInt(log.workout_id)
-              );
+              return parseInt(user._id) === parseInt(log.user_id) && parseInt(workout._id) === parseInt(log.workout_id);
             })
             .sort(function (a, b) {
               return new Date(b.date) - new Date(a.date);
@@ -436,42 +367,18 @@
     event.preventDefault();
     var params = hl.getParams();
     var elements = document.querySelector('#new-workout-form').elements;
-    if (
-      elements['workout_name'] === undefined ||
-      elements['workout_name'].value.trim() === '' ||
-      elements['workout_description'] === undefined ||
-      elements['workout_description'].value.trim() === ''
-    ) {
+    if (elements['workout_name'] === undefined || elements['workout_name'].value.trim() === '' || elements['workout_description'] === undefined || elements['workout_description'].value.trim() === '') {
       alert('Please provide a workout name');
       return false;
     }
     var data = {
       user_id: params.user_id !== undefined ? parseInt(params.user_id) : null,
-      name:
-        elements['workout_name'] && elements['workout_name'].value !== ''
-          ? elements['workout_name'].value
-          : null,
-      type:
-        elements['workout_type'] && elements['workout_type'].value !== ''
-          ? elements['workout_type'].value
-          : null,
-      timecap:
-        elements['workout_timecap'] && elements['workout_timecap'].value !== ''
-          ? elements['workout_timecap'].value
-          : null,
-      rounds:
-        elements['workout_rounds'] && elements['workout_rounds'].value !== ''
-          ? elements['workout_rounds'].value
-          : null,
-      reps:
-        elements['workout_reps'] && elements['workout_reps'].value !== ''
-          ? elements['workout_reps'].value
-          : null,
-      description:
-        elements['workout_description'] &&
-        elements['workout_description'].value !== ''
-          ? elements['workout_description'].value
-          : null,
+      name: elements['workout_name'] && elements['workout_name'].value !== '' ? elements['workout_name'].value : null,
+      type: elements['workout_type'] && elements['workout_type'].value !== '' ? elements['workout_type'].value : null,
+      timecap: elements['workout_timecap'] && elements['workout_timecap'].value !== '' ? elements['workout_timecap'].value : null,
+      rounds: elements['workout_rounds'] && elements['workout_rounds'].value !== '' ? elements['workout_rounds'].value : null,
+      reps: elements['workout_reps'] && elements['workout_reps'].value !== '' ? elements['workout_reps'].value : null,
+      description: elements['workout_description'] && elements['workout_description'].value !== '' ? elements['workout_description'].value : null,
     };
     hl.fetch.post('/api/workouts', data, function (newWorkout) {
       if (newWorkout) {
@@ -498,9 +405,7 @@
    */
   ironfyt.newLogComponent = new Component('[data-app=new-log]', {
     template: function (props) {
-      return props.workout_name !== undefined
-        ? '<p><strong>Workout: ' + props.workout_name + '</strong></p>'
-        : '';
+      return props.workout_name !== undefined ? '<p><strong>Workout: ' + props.workout_name + '</strong></p>' : '';
     },
   });
 
@@ -529,30 +434,14 @@
     event.preventDefault();
 
     var params = hl.getParams();
-    var workout_id =
-      params.workout_id !== undefined ? parseInt(params.workout_id) : null;
+    var workout_id = params.workout_id !== undefined ? parseInt(params.workout_id) : null;
     var user_id = params.user_id;
     var elements = document.querySelector('#new-log-form').elements;
-    var date =
-      elements['log_date'] && elements['log_date'].value !== ''
-        ? new Date(elements['log_date'].value)
-        : null;
-    var duration =
-      elements['log_duration'] && elements['log_duration'].value !== ''
-        ? elements['log_duration'].value
-        : null;
-    var load =
-      elements['log_load'] && elements['log_load'].value !== ''
-        ? elements['log_load'].value
-        : null;
-    var rounds =
-      elements['log_rounds'] && elements['log_rounds'].value !== ''
-        ? elements['log_rounds'].value
-        : null;
-    var notes =
-      elements['log_notes'] && elements['log_notes'].value !== ''
-        ? elements['log_notes'].value
-        : null;
+    var date = elements['log_date'] && elements['log_date'].value !== '' ? new Date(elements['log_date'].value) : null;
+    var duration = elements['log_duration'] && elements['log_duration'].value !== '' ? elements['log_duration'].value : null;
+    var load = elements['log_load'] && elements['log_load'].value !== '' ? elements['log_load'].value : null;
+    var rounds = elements['log_rounds'] && elements['log_rounds'].value !== '' ? elements['log_rounds'].value : null;
+    var notes = elements['log_notes'] && elements['log_notes'].value !== '' ? elements['log_notes'].value : null;
 
     // Clean up error fields before validating
     var logDateField = elements['log_date'];
@@ -597,9 +486,7 @@
           user.logs.push({ log_id: newLog._id, workout_id: workout_id });
           hl.fetch.put('/api/users', user, function (response) {
             if (workout_id) {
-              location.assign(
-                'log.html?user=' + user_id + '&workout=' + workout_id
-              );
+              location.assign('log.html?user=' + user_id + '&workout=' + workout_id);
             } else {
               location.assign('log-list.html?user=' + user_id);
             }
@@ -641,38 +528,20 @@
                 return (
                   '<div class="workout-item">' +
                   '<p><strong>User: </strong>' +
-                  (log.user !== {} && log.user !== undefined
-                    ? log.user.fname
-                    : '') +
+                  (log.user !== {} && log.user !== undefined ? log.user.fname : '') +
                   '</p>' +
                   '<p><strong>Date: </strong>' +
                   new Date(log.date).toLocaleDateString() +
                   '</p>' +
-                  (log.workout !== {} && log.workout !== undefined
-                    ? '<p><strong>Workout: </strong><a href="log.html?workout=' +
-                      log.workout._id +
-                      '&user=' +
-                      props.user._id +
-                      '">' +
-                      log.workout.name +
-                      '</a></p>'
-                    : '') +
+                  (log.workout !== {} && log.workout !== undefined ? '<p><strong>Workout: </strong><a href="log.html?workout=' + log.workout._id + '&user=' + props.user._id + '">' + log.workout.name + '</a></p>' : '') +
                   '' +
-                  (log.duration !== null && log.duration !== undefined
-                    ? '<p><strong>Duration: </strong>' + log.duration + '</p>'
-                    : '') +
+                  (log.duration !== null && log.duration !== undefined ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '') +
                   '' +
-                  (log.load !== undefined && log.load !== null
-                    ? '<p><strong>Load: </strong>' + log.load + '</p>'
-                    : '') +
+                  (log.load !== undefined && log.load !== null ? '<p><strong>Load: </strong>' + log.load + '</p>' : '') +
                   '' +
-                  (log.rounds !== null && log.rounds !== undefined
-                    ? '<p><strong>Rounds: </strong>' + log.rounds + '</p>'
-                    : '') +
+                  (log.rounds !== null && log.rounds !== undefined ? '<p><strong>Rounds: </strong>' + log.rounds + '</p>' : '') +
                   '' +
-                  (log.notes !== null && log.notes !== undefined
-                    ? '<p>' + hl.replaceNewLineWithBR(log.notes) + '</p>'
-                    : '') +
+                  (log.notes !== null && log.notes !== undefined ? '<p>' + hl.replaceNewLineWithBR(log.notes) + '</p>' : '') +
                   '</div>'
                 );
               })
@@ -685,8 +554,7 @@
   var logListPage = function () {
     var params = hl.getParams();
     var user_id = params && params.user ? params.user : false;
-    var alllogs =
-      params && (params.all === 'true' || params.all === true) ? true : false;
+    var alllogs = params && (params.all === 'true' || params.all === true) ? true : false;
     hl.fetch.get('/api/logs', function (logsResponse) {
       hl.fetch.get('/api/workouts', function (workoutsResponse) {
         hl.fetch.get('/api/users', function (usersResponse) {
@@ -756,19 +624,11 @@
         .map(function (log) {
           var logString = '';
           for (var key in log) {
-            if (
-              log.hasOwnProperty(key) &&
-              key !== 'id' &&
-              key !== 'user_id' &&
-              key !== 'workout_id' &&
-              log[key] !== null
-            ) {
+            if (log.hasOwnProperty(key) && key !== 'id' && key !== 'user_id' && key !== 'workout_id' && log[key] !== null) {
               if (key === 'workout') {
-                logString +=
-                  log[key].name.toString().toLowerCase().trim() + ' ';
+                logString += log[key].name.toString().toLowerCase().trim() + ' ';
               } else if (key === 'user') {
-                logString +=
-                  log[key].fname.toString().toLowerCase().trim() + ' ';
+                logString += log[key].fname.toString().toLowerCase().trim() + ' ';
               } else if (key === 'date') {
                 logString += new Date(log[key]).toLocaleDateString() + ' ';
               } else {

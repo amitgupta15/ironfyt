@@ -25,21 +25,26 @@
     `;
     const selector = document.querySelector('#selector');
     selector.innerHTML = div;
-
     const ev = document.createEvent('HTMLEvents');
     ev.initEvent('click', true, true);
     //Dispatching event from the inner most div of the parent div (id=dt200629) which contains the date
     const eventDispatcherDiv = document.querySelector('.modality-indicator');
     eventDispatcherDiv.dispatchEvent(ev);
-
     const modal = document.querySelector('#activity-detail-modal');
     //If click is captured successfully, modal window is showed.
     uitest.assert(modal.classList.contains('show-slide-up-3_4-modal'));
-
     // const modalContent = document.querySelector('.activity-detail');
     // //Modal will display the parent's id
     // uitest.assert(modalContent.innerHTML === '<p>dt200629</p>');
     selector.innerHTML = '';
+  });
+
+  uitest.it('should calculate total number of days in a month', function () {
+    uitest.assert(ironfytCal.daysInMonth(2020, 1) === 31);
+    uitest.assert(ironfytCal.daysInMonth(2020, 2) === 29);
+    uitest.assert(ironfytCal.daysInMonth(2019, 2) === 28);
+    uitest.assert(ironfytCal.daysInMonth(2020, 7) === 31);
+    uitest.assert(ironfytCal.daysInMonth(2020, 8) === 31);
   });
   console.groupEnd('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 })();
