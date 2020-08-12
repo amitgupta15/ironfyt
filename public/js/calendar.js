@@ -8,29 +8,12 @@
   function showModal(id) {
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.add('show-slide-up-3_4-modal');
-
-    // let modalContent = document.querySelector('.activity-detail');
-    // modalContent.innerHTML = `<p>${id}</p>`;
   }
 
   function hideModal() {
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.remove('show-slide-up-3_4-modal');
   }
-
-  /**
-   * Returns number of days in a month
-   * @param {*} year //year is required to return proper number of days for Feb
-   * @param {*} month //month is 1-indexed
-   * @param {*} date //date field is optional and has no effect on the final result. It is used for recursion
-   */
-  // ironfytCal.daysInMonth = function (year, month, date = 1) {
-  //   let aDate = new Date(year, month - 1, date);
-  //   if (aDate.getDate() !== date) {
-  //     return new Date(year, month - 1, date - 1).getDate();
-  //   }
-  //   return ironfytCal.daysInMonth(year, month, date + 1);
-  // };
 
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   let daysofWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -88,9 +71,9 @@
       return `
       <div class="calendar-container">
         <div class="calendar-month-bar">
-        <button id="prev-month-btn">Previous</button>
-           <h2>${props.month} ${props.year}</h2>
-           <button id="next-month-btn">Next</button>
+          <button id="prev-month-btn">Previous</button>
+          <h2>${props.month} ${props.year}</h2>
+          <button id="next-month-btn">Next</button>
         </div>
         <div class="calendar">
           <div class="calendar-item day">S</div>

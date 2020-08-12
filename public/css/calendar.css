@@ -44,6 +44,9 @@ html {
 .calendar-month-bar > * {
   flex: 1;
 }
+.calendar-month-bar > h2 {
+  flex: 1 0 250px;
+}
 
 .calendar-month-bar button {
   background: transparent;

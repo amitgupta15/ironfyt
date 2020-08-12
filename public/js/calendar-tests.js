@@ -39,12 +39,5 @@
     selector.innerHTML = '';
   });
 
-  uitest.it('should calculate total number of days in a month', function () {
-    uitest.assert(ironfytCal.daysInMonth(2020, 1) === 31);
-    uitest.assert(ironfytCal.daysInMonth(2020, 2) === 29);
-    uitest.assert(ironfytCal.daysInMonth(2019, 2) === 28);
-    uitest.assert(ironfytCal.daysInMonth(2020, 7) === 31);
-    uitest.assert(ironfytCal.daysInMonth(2020, 8) === 31);
-  });
   console.groupEnd('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 })();
