@@ -158,10 +158,7 @@
     uitest.assert(_data.workouts.length === 3);
     uitest.assert(_data.search === '');
 
-    var fm = document.querySelector('form[id="search-workout"]');
-    var ev = document.createEvent('HTMLEvents');
-    ev.initEvent('submit', true, true);
-    fm.dispatchEvent(ev);
+    uitest.dispatchHTMLEvent('submit', 'form[id="search-workout"]');
 
     _data = ironfyt.workoutListComponent.getData();
     uitest.assert(_data.workouts.length === 1);
@@ -365,23 +362,32 @@
     /** test block */
     var selector = document.querySelector('#selector');
     selector.innerHTML = '<form id="new-workout-form"></form>';
+
     var form = document.querySelector('#new-workout-form');
-    var ev = document.createEvent('HTMLEvents');
-    ev.initEvent('submit', true, true);
+
     window.alert = function (str) {
       alertCalledCount++;
     };
-    form.dispatchEvent(ev);
+
+    uitest.dispatchHTMLEvent('submit', '#new-workout-form');
+
     uitest.assert(alertCalledCount === 1);
+
     alertCalledCount = 0;
     form.innerHTML = '<input type="text" name="workout_name"><textarea name="workout_description"></textarea>';
-    form.dispatchEvent(ev);
+
+    uitest.dispatchHTMLEvent('submit', '#new-workout-form');
+
     uitest.assert(alertCalledCount === 1);
+
     alertCalledCount = 0;
     form.elements['workout_name'].value = 'New Workout';
     form.elements['workout_description'].value = 'workout description';
-    form.dispatchEvent(ev);
+
+    uitest.dispatchHTMLEvent('submit', '#new-workout-form');
+
     uitest.assert(alertCalledCount === 0);
+
     selector.innerHTML = '';
     uitest.assert('workouts' in _user);
     /** end test block */
@@ -615,10 +621,8 @@
 
     var selector = document.querySelector('#selector');
     selector.innerHTML = '<form id="search-logs"></form>';
-    var form = document.querySelector('#search-logs');
-    var ev = document.createEvent('HTMLEvents');
-    ev.initEvent('reset', true, true);
-    form.dispatchEvent(ev);
+
+    uitest.dispatchHTMLEvent('reset', '#search-logs');
 
     _data = ironfyt.logListComponent.getData();
     uitest.assert(_data.logs.length === 3);
@@ -645,10 +649,8 @@
     // Set the search criteria in the search field
     form.elements['search'].value = 'bench';
 
-    var ev = document.createEvent('HTMLEvents');
-    ev.initEvent('submit', true, true);
+    uitest.dispatchHTMLEvent('submit', '#search-logs');
 
-    form.dispatchEvent(ev);
     _data = ironfyt.logListComponent.getData();
     uitest.assert(_data.logs.length === 2);
     uitest.assert(_data.unfilteredList.length === 3);

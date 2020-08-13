@@ -25,11 +25,7 @@
     `;
     const selector = document.querySelector('#selector');
     selector.innerHTML = div;
-    const ev = document.createEvent('HTMLEvents');
-    ev.initEvent('click', true, true);
-    //Dispatching event from the inner most div of the parent div (id=dt200629) which contains the date
-    const eventDispatcherDiv = document.querySelector('.modality-indicator');
-    eventDispatcherDiv.dispatchEvent(ev);
+    uitest.dispatchHTMLEvent('click', '.modality-indicator');
     const modal = document.querySelector('#activity-detail-modal');
     //If click is captured successfully, modal window is showed.
     uitest.assert(modal.classList.contains('show-slide-up-3_4-modal'));

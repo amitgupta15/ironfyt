@@ -16,10 +16,9 @@
   }
 
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  let daysofWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  let dayOfWeekAbbr = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
   let today = new Date();
   let currentMonth = today.getMonth();
-  let currentDay = today.getDate();
   let currentYear = today.getFullYear();
 
   let month = currentMonth;
@@ -46,6 +45,20 @@
     return daysOfCalendarMonth;
   };
 
+  ironfytCal.calendarMonthBarTemplate = function (props) {
+    return `
+        <div class="calendar-month-bar">
+          <button id="prev-month-btn">Previous</button>
+          <h2>${props.month} ${props.year}</h2>
+          <button id="next-month-btn">Next</button>
+        </div>
+    `;
+  };
+
+  ironfytCal.calendarDayOfWeekTemplate = function ({ dayOfWeekAbbr }) {
+    return dayOfWeekAbbr.map((day) => `<div class="calendar-item day">${day}</div>`).join('');
+  };
+
   ironfytCal.dateGridTemplate = function (props) {
     return props.daysOfCalendarMonth
       .map((day) => {
@@ -70,23 +83,14 @@
       month: '',
       year: '',
       daysOfCalendarMonth: [],
+      dayOfWeekAbbr,
     },
     template: function (props) {
       return `
       <div class="calendar-container">
-        <div class="calendar-month-bar">
-          <button id="prev-month-btn">Previous</button>
-          <h2>${props.month} ${props.year}</h2>
-          <button id="next-month-btn">Next</button>
-        </div>
+        ${ironfytCal.calendarMonthBarTemplate(props)}
         <div class="calendar">
-          <div class="calendar-item day">S</div>
-          <div class="calendar-item day">M</div>
-          <div class="calendar-item day">T</div>
-          <div class="calendar-item day">W</div>
-          <div class="calendar-item day">TH</div>
-          <div class="calendar-item day">F</div>
-          <div class="calendar-item day">SA</div>
+          ${ironfytCal.calendarDayOfWeekTemplate(props)}
           ${ironfytCal.dateGridTemplate(props)}
         </div>
       </div>
@@ -95,21 +99,21 @@
   });
 
   let calendarPage = function () {
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
   };
 
   function showPrevMonth() {
     let date = new Date(year, month - 1);
     month = date.getMonth();
     year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
   }
 
   function showNextMonth() {
     let date = new Date(year, month + 1);
     month = date.getMonth();
     year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
   }
 
   // Handling the click event for a Regex to match the closest selector for dates grid.
