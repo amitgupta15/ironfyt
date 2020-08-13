@@ -84,7 +84,26 @@
 
     matchedId = hl.matchClosestSelector(allNestLevel2Elements[1], calendarItemIdRegEx);
     uitest.assert(matchedId === 'dt200703');
-    // selector.innerHTML = '';
+    selector.innerHTML = '';
   });
+
+  uitest.it('hl.eventListener should add an event listener for a given id', function () {
+    hl.eventListener('click', 'click-1', function (ev) {
+      document.getElementById('click-1').innerHTML = '1';
+    });
+    var selector = document.getElementById('selector');
+    selector.innerHTML = `<div id="click-1"></div>`;
+    var click1 = document.getElementById('click-1');
+
+    // Event Creation
+    var ev = document.createEvent('HTMLEvents');
+    ev.initEvent('click', true, true);
+    click1.dispatchEvent(ev);
+    // Assert
+    uitest.assert(document.getElementById('click-1').innerHTML === '1');
+    //Clean up
+    selector.innerHTML = '';
+  });
+
   console.groupEnd();
 })();

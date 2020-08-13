@@ -25,23 +25,26 @@
   let month = currentMonth;
   let year = currentYear;
 
-  let firstDayOfCalendarMonth = new Date(year, month).getDay();
-  let totalDaysInCalendarMonth = new Date(year, month + 1, 0).getDate();
-  let totalDaysInPrevCalendarMonth = new Date(year, month, 0).getDate();
-  let daysOfCalendarMonth = [];
+  let createDaysArray = function (year, month) {
+    let daysOfCalendarMonth = [];
+    let firstDayOfCalendarMonth = new Date(year, month).getDay();
+    let totalDaysInCalendarMonth = new Date(year, month + 1, 0).getDate();
+    let totalDaysInPrevCalendarMonth = new Date(year, month, 0).getDate();
 
-  for (var i = 1; i <= firstDayOfCalendarMonth; i++) {
-    daysOfCalendarMonth.push({ date: totalDaysInPrevCalendarMonth - firstDayOfCalendarMonth + i, month: 'prev' });
-  }
-  for (var i = 1; i <= totalDaysInCalendarMonth; i++) {
-    daysOfCalendarMonth.push({ date: i, month: 'current' });
-  }
-  if (daysOfCalendarMonth.length < 42) {
-    let count = 42 - daysOfCalendarMonth.length;
-    for (var i = 1; i <= count; i++) {
-      daysOfCalendarMonth.push({ date: i, month: 'next' });
+    for (var i = 1; i <= firstDayOfCalendarMonth; i++) {
+      daysOfCalendarMonth.push({ date: totalDaysInPrevCalendarMonth - firstDayOfCalendarMonth + i, month: 'prev' });
     }
-  }
+    for (var i = 1; i <= totalDaysInCalendarMonth; i++) {
+      daysOfCalendarMonth.push({ date: i, month: 'current' });
+    }
+    if (daysOfCalendarMonth.length < 42) {
+      let count = 42 - daysOfCalendarMonth.length;
+      for (var i = 1; i <= count; i++) {
+        daysOfCalendarMonth.push({ date: i, month: 'next' });
+      }
+    }
+    return daysOfCalendarMonth;
+  };
 
   ironfytCal.dateGridTemplate = function (props) {
     return props.daysOfCalendarMonth
@@ -60,6 +63,7 @@
       })
       .join('');
   };
+
   ironfytCal.calendarComponent = new Component('[data-app=calendar]', {
     data: {
       monthDigit: '',
@@ -90,28 +94,38 @@
     },
   });
 
-  ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth });
+  let calendarPage = function () {
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
+  };
 
   function showPrevMonth() {
-    console.log('show prev month');
+    let date = new Date(year, month - 1);
+    month = date.getMonth();
+    year = date.getFullYear();
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
   }
 
   function showNextMonth() {
-    console.log('show next month');
+    let date = new Date(year, month + 1);
+    month = date.getMonth();
+    year = date.getFullYear();
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, daysOfCalendarMonth: createDaysArray(year, month) });
   }
 
+  // Handling the click event for a Regex to match the closest selector for dates grid.
+  // Did not enhance the hl.eventListener method to handle this situation yet. Waiting to see if the requirement evolves. Don't want to refactor prematurely.
   document.addEventListener('click', function (ev) {
     let matchedId = false;
     let calendarItemIdRegEx = new RegExp(/dt\d{6}/);
     matchedId = hl.matchClosestSelector(ev.target, calendarItemIdRegEx);
     if (matchedId) {
-      showModal(matchedId);
-    } else if (ev.target.className !== undefined && ev.target.className === 'cancel-slide-up-3_4-modal-btn') {
-      hideModal();
-    } else if (ev.target.id === 'prev-month-btn') {
-      showPrevMonth();
-    } else if (ev.target.id === 'next-month-btn') {
-      showNextMonth();
+      showModal();
     }
   });
+  hl.eventListener('click', 'prev-month-btn', showPrevMonth);
+  hl.eventListener('click', 'next-month-btn', showNextMonth);
+  hl.eventListener('click', 'close-activity-detail-modal', hideModal);
+
+  // Calling client side router to laod the calendar page for 'calendar' data-app attribute
+  hl.router({ calendar: calendarPage });
 })();

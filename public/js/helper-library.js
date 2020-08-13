@@ -77,9 +77,9 @@
    * @param targetId Target ID
    * @param callback callback function takes event parameter
    * */
-  helper.eventListener = function (eventType, targetId, callback) {
+  helper.eventListener = function (eventType, target, callback) {
     document.addEventListener(eventType, function (event) {
-      if (event.target.id === targetId) {
+      if (event.target.id === target) {
         callback(event);
       }
     });
