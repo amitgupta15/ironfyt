@@ -5,29 +5,33 @@
   let ironfytCal = {};
   self.ironfytCal = ironfytCal;
 
-  let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  let dayOfWeekAbbr = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-  let today = new Date();
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
-
-  let month = currentMonth;
-  let year = currentYear;
+  ironfytCal.state = {
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  };
 
   ironfytCal.calendarMonthBarTemplate = function (props) {
+    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    if (props.month < 0 || props.month > 11) return `Invalid Month`;
     return `
         <div class="calendar-month-bar">
           <button id="prev-month-btn">Previous</button>
-          <h2>${props.month} ${props.year}</h2>
+          <h2>${months[props.month]} ${props.year}</h2>
           <button id="next-month-btn">Next</button>
         </div>
     `;
   };
 
-  ironfytCal.calendarDayOfWeekTemplate = function ({ dayOfWeekAbbr }) {
+  ironfytCal.calendarDayOfWeekTemplate = function () {
+    let dayOfWeekAbbr = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
     return dayOfWeekAbbr.map((day) => `<div class="calendar-item day">${day}</div>`).join('');
   };
 
+  /**
+   *
+   * @param {number} year
+   * @param {number} month 0-indexed
+   */
   ironfytCal.createDaysArray = function (year, month) {
     let daysOfCalendarMonth = [];
     let firstDayOfCalendarMonth = new Date(year, month).getDay();
@@ -49,12 +53,13 @@
     return daysOfCalendarMonth;
   };
 
-  ironfytCal.dateGridTemplate = function (props) {
-    return props.daysOfCalendarMonth
+  ironfytCal.dateGridTemplate = function ({ year, month }) {
+    let daysOfCalendarMonth = ironfytCal.createDaysArray(year, month);
+    return daysOfCalendarMonth
       .map((day) => {
-        if (day.month === 'prev') return `<div id="dt${props.year}${props.monthDigit}${day.date}" class="calendar-item date-last-month">${day.date}</div>`;
+        if (day.month === 'prev') return `<div id="dt-${year}-${month}-${day.date}" class="calendar-item date-last-month">${day.date}</div>`;
         if (day.month === 'current') {
-          return `<div id="dt${props.year}${props.monthDigit + 1}${day.date}" class="calendar-item date  for-time-border">${day.date}
+          return `<div id="dt-${year}-${month + 1}-${day.date}" class="calendar-item date  for-time-border">${day.date}
                   <div class="modality-indicator-container">
                     <div class="modality-indicator m"></div>
                     <div class="modality-indicator w"></div>
@@ -62,25 +67,22 @@
                   </div>
                   </div>`;
         }
-        if (day.month === 'next') return `<div id="dt${props.year}${props.monthDigit + 2}${day.date}" class="calendar-item date-next-month">${day.date}</div>`;
+        if (day.month === 'next') return `<div id="dt-${year}-${month + 2}-${day.date}" class="calendar-item date-next-month">${day.date}</div>`;
       })
       .join('');
   };
 
   ironfytCal.calendarComponent = new Component('[data-app=calendar]', {
     data: {
-      monthDigit: '',
       month: '',
       year: '',
-      daysOfCalendarMonth: [],
-      dayOfWeekAbbr,
     },
     template: function (props) {
       return `
       <div class="calendar-container">
         ${ironfytCal.calendarMonthBarTemplate(props)}
         <div class="calendar">
-          ${ironfytCal.calendarDayOfWeekTemplate(props)}
+          ${ironfytCal.calendarDayOfWeekTemplate()}
           ${ironfytCal.dateGridTemplate(props)}
         </div>
       </div>
@@ -89,21 +91,21 @@
   });
 
   let calendarPage = function () {
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData(ironfytCal.state);
   };
 
   function showPrevMonth() {
-    let date = new Date(year, month - 1);
-    month = date.getMonth();
-    year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
+    let date = new Date(ironfytCal.state.year, ironfytCal.state.month - 1);
+    ironfytCal.state.month = date.getMonth();
+    ironfytCal.state.year = date.getFullYear();
+    ironfytCal.calendarComponent.setData(ironfytCal.state);
   }
 
   function showNextMonth() {
-    let date = new Date(year, month + 1);
-    month = date.getMonth();
-    year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
+    let date = new Date(ironfytCal.state.year, ironfytCal.state.month + 1);
+    ironfytCal.state.month = date.getMonth();
+    ironfytCal.state.year = date.getFullYear();
+    ironfytCal.calendarComponent.setData(ironfytCal.state);
   }
 
   /**
@@ -133,6 +135,10 @@
   hl.eventListener('click', 'next-month-btn', showNextMonth);
   hl.eventListener('click', 'close-activity-detail-modal', hideModal);
 
+  // Register Routes
+  ironfytCal.routes = {
+    calendar: calendarPage,
+  };
   // Calling client side router to laod the calendar page for 'calendar' data-app attribute
-  hl.router({ calendar: calendarPage });
+  hl.router(ironfytCal.routes);
 })();
