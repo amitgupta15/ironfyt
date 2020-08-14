@@ -5,16 +5,6 @@
   let ironfytCal = {};
   self.ironfytCal = ironfytCal;
 
-  function showModal(id) {
-    let dialog = document.querySelector(`#activity-detail-modal`);
-    dialog.classList.add('show-slide-up-3_4-modal');
-  }
-
-  function hideModal() {
-    let dialog = document.querySelector(`#activity-detail-modal`);
-    dialog.classList.remove('show-slide-up-3_4-modal');
-  }
-
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   let dayOfWeekAbbr = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
   let today = new Date();
@@ -24,7 +14,21 @@
   let month = currentMonth;
   let year = currentYear;
 
-  let createDaysArray = function (year, month) {
+  ironfytCal.calendarMonthBarTemplate = function (props) {
+    return `
+        <div class="calendar-month-bar">
+          <button id="prev-month-btn">Previous</button>
+          <h2>${props.month} ${props.year}</h2>
+          <button id="next-month-btn">Next</button>
+        </div>
+    `;
+  };
+
+  ironfytCal.calendarDayOfWeekTemplate = function ({ dayOfWeekAbbr }) {
+    return dayOfWeekAbbr.map((day) => `<div class="calendar-item day">${day}</div>`).join('');
+  };
+
+  ironfytCal.createDaysArray = function (year, month) {
     let daysOfCalendarMonth = [];
     let firstDayOfCalendarMonth = new Date(year, month).getDay();
     let totalDaysInCalendarMonth = new Date(year, month + 1, 0).getDate();
@@ -43,20 +47,6 @@
       }
     }
     return daysOfCalendarMonth;
-  };
-
-  ironfytCal.calendarMonthBarTemplate = function (props) {
-    return `
-        <div class="calendar-month-bar">
-          <button id="prev-month-btn">Previous</button>
-          <h2>${props.month} ${props.year}</h2>
-          <button id="next-month-btn">Next</button>
-        </div>
-    `;
-  };
-
-  ironfytCal.calendarDayOfWeekTemplate = function ({ dayOfWeekAbbr }) {
-    return dayOfWeekAbbr.map((day) => `<div class="calendar-item day">${day}</div>`).join('');
   };
 
   ironfytCal.dateGridTemplate = function (props) {
@@ -99,21 +89,34 @@
   });
 
   let calendarPage = function () {
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
   };
 
   function showPrevMonth() {
     let date = new Date(year, month - 1);
     month = date.getMonth();
     year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
   }
 
   function showNextMonth() {
     let date = new Date(year, month + 1);
     month = date.getMonth();
     year = date.getFullYear();
-    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: createDaysArray(year, month) });
+    ironfytCal.calendarComponent.setData({ monthDigit: month, month: months[month], year: year, dayOfWeekAbbr, daysOfCalendarMonth: ironfytCal.createDaysArray(year, month) });
+  }
+
+  /**
+   * Handle the display for Log Activity Modal
+   */
+  function showModal(id) {
+    let dialog = document.querySelector(`#activity-detail-modal`);
+    dialog.classList.add('show-slide-up-3_4-modal');
+  }
+
+  function hideModal() {
+    let dialog = document.querySelector(`#activity-detail-modal`);
+    dialog.classList.remove('show-slide-up-3_4-modal');
   }
 
   // Handling the click event for a Regex to match the closest selector for dates grid.
