@@ -5,9 +5,100 @@
   let ironfytCal = {};
   self.ironfytCal = ironfytCal;
 
-  ironfytCal.state = {
+  let ironfytCalState = {
+    modalId: '',
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
+    logs: [
+      {
+        _id: 469,
+        user_id: '1',
+        workout_id: null,
+        date: '2020-08-10T07:00:00.000Z',
+        duration: '1 hour',
+        load: null,
+        rounds: null,
+        notes: 'Run 5 miles',
+        modality: ['m'],
+      },
+      {
+        _id: 468,
+        user_id: '1',
+        workout_id: 110,
+        date: '2020-08-09T07:00:00.000Z',
+        duration: null,
+        load: null,
+        rounds: null,
+        notes: '3 rounds + 6 Bench press Finished 4 rounds after the clock. All strict pull-ups ',
+        workout: {
+          _id: 110,
+          user_id: 1,
+          name: 'Sunday 200809',
+          type: 'For Time',
+          timecap: '20 minutes ',
+          rounds: null,
+          reps: null,
+          description: '12 bench presses\n12 strict pull-ups\n\n♀ 95 lb. ♂ 135 lb.\n\nPost rounds',
+        },
+      },
+      {
+        _id: 464,
+        user_id: '1',
+        workout_id: 109,
+        date: '2020-08-07T07:00:00.000Z',
+        duration: '31:23 minutes',
+        load: null,
+        rounds: null,
+        notes: null,
+        workout: {
+          _id: 109,
+          user_id: 1,
+          name: 'Friday 200807',
+          type: 'For Time',
+          timecap: null,
+          rounds: 5,
+          reps: null,
+          description: '5 rounds, each for time of:\nRun 400 meters\n15 clean & jerks\nRest 3 minutes between rounds.\n\n♀ 65 lb. ♂ 95 lb.\n\nPost times',
+        },
+      },
+    ],
+  };
+
+  ironfytCal.setState = function (obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        ironfytCalState[key] = obj[key];
+      }
+    }
+  };
+
+  ironfytCal.getData = function () {
+    // Return a copy of data object
+    return JSON.parse(JSON.stringify(ironfytCalState));
+  };
+
+  ironfytCal.headerTemplate = function (props) {
+    return `
+        <header>
+          <div class="top-bar">
+            <a href="" class="icon-profile">AG</a>
+            <h1 class="title-activity">ACTIVITY</h1>
+            <button id="new-task-btn" class="btn-new"></button>
+          </div>
+        </header>
+    `;
+  };
+
+  ironfytCal.footerTemplate = function (props) {
+    return `
+      <footer>
+        <a href="#friends">Friends</a>
+        <a href="#pr">PR</a>
+        <a href="#workouts" class="active">Workouts</a>
+        <a href="#activity">Activity</a>
+        <a href="#more">More</a>
+      </footer>
+    `;
   };
 
   ironfytCal.calendarMonthBarTemplate = function (props) {
@@ -53,7 +144,7 @@
     return daysOfCalendarMonth;
   };
 
-  ironfytCal.dateGridTemplate = function ({ year, month }) {
+  ironfytCal.calendarDateGridTemplate = function ({ year, month }) {
     let daysOfCalendarMonth = ironfytCal.createDaysArray(year, month);
     return daysOfCalendarMonth
       .map((day) => {
@@ -125,55 +216,40 @@
     template: function (props) {
       return `
       <div class="container">
-        <header>
-          <div class="top-bar">
-            <a href="" class="icon-profile">AG</a>
-            <h1 class="title-activity">ACTIVITY</h1>
-            <button id="new-task-btn" class="btn-new"></button>
-          </div>
-        </header>
+        ${ironfytCal.headerTemplate(props)}
         <div class="calendar-container">
           ${ironfytCal.calendarMonthBarTemplate(props)}
           <div class="calendar">
             ${ironfytCal.calendarDayOfWeekTemplate()}
-            ${ironfytCal.dateGridTemplate(props)}
+            ${ironfytCal.calendarDateGridTemplate(props)}
           </div>
         </div>
-        <footer>
-          <a href="#friends">Friends</a>
-          <a href="#pr">PR</a>
-          <a href="#workouts" class="active">Workouts</a>
-          <a href="#activity">Activity</a>
-          <a href="#more">More</a>
-        </footer>
+        ${ironfytCal.footerTemplate(props)}
       </div>
       ${ironfytCal.slideUpModalTempate(props)}
       `;
     },
   });
 
-  let calendarPage = function () {
-    ironfytCal.calendarComponent.setData(ironfytCal.state);
-  };
-
-  function showPrevMonth() {
-    let date = new Date(ironfytCal.state.year, ironfytCal.state.month - 1);
-    ironfytCal.state.month = date.getMonth();
-    ironfytCal.state.year = date.getFullYear();
-    ironfytCal.calendarComponent.setData(ironfytCal.state);
+  /**
+   *
+   * @param {*} indicator 0 = current, 1 = next, -1 = previous
+   */
+  function showCalendar(indicator) {
+    let { month, year } = ironfytCal.getData();
+    let date = new Date(year, month + indicator);
+    ironfytCal.setState({ month: date.getMonth(), year: date.getFullYear() });
+    ironfytCal.calendarComponent.setData(ironfytCal.getData());
   }
 
-  function showNextMonth() {
-    let date = new Date(ironfytCal.state.year, ironfytCal.state.month + 1);
-    ironfytCal.state.month = date.getMonth();
-    ironfytCal.state.year = date.getFullYear();
-    ironfytCal.calendarComponent.setData(ironfytCal.state);
-  }
+  let calendarPage = () => showCalendar(0);
+  let showPrevMonth = () => showCalendar(-1);
+  let showNextMonth = () => showCalendar(1);
 
   /**
    * Handle the display for Log Activity Modal
    */
-  function showModal() {
+  function showModal(id) {
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.add('show-slide-up-3_4-modal');
   }
@@ -190,7 +266,7 @@
     let calendarItemIdRegEx = new RegExp(/dt-(\d{4}|\d{2})-\d{1,2}-\d{1,2}/);
     matchedId = hl.matchClosestSelector(ev.target, calendarItemIdRegEx);
     if (matchedId) {
-      showModal();
+      showModal(matchedId);
     }
   });
   hl.eventListener('click', 'prev-month-btn', showPrevMonth);

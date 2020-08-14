@@ -48,9 +48,9 @@
       month: 0,
       year: 2020,
     };
-    uitest.assert(ironfytCal.dateGridTemplate(props).includes('<div id="dt-2020-0-30"'));
-    uitest.assert(ironfytCal.dateGridTemplate(props).includes('<div id="dt-2020-1-1"'));
-    uitest.assert(ironfytCal.dateGridTemplate(props).includes('<div id="dt-2020-2-2"'));
+    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-0-30"'));
+    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-1-1"'));
+    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-2-2"'));
   });
 
   uitest.it('should create a days array with 42 entries for a 7x6 grid given a year and a month', function () {
@@ -65,7 +65,7 @@
   uitest.it('should render calendar component on page load', function () {
     let selector = document.getElementById('selector');
     selector.innerHTML = '<div data-app="calendar"></div>';
-    ironfytCal.state = { year: 2021, month: 0 };
+    ironfytCal.setState({ year: 2021, month: 0 });
     ironfytCal.routes['calendar']();
     let data = ironfytCal.calendarComponent.getData();
     uitest.assert(data.month === 0);
@@ -80,10 +80,7 @@
   uitest.it('should render previous month when prev button is clicked', function () {
     let selector = document.getElementById('selector');
     selector.innerHTML = '<div data-app="calendar"><button id="prev-month-btn">Prev</div></div>';
-    ironfytCal.state = {
-      month: 0,
-      year: 2020,
-    };
+    ironfytCal.setState({ month: 0, year: 2020 });
 
     uitest.dispatchHTMLEvent('click', '#prev-month-btn');
     uitest.assert(selector.innerHTML.includes('December 2019'));
@@ -101,11 +98,7 @@
   uitest.it('should render next month when next button is clicked', function () {
     let selector = document.getElementById('selector');
     selector.innerHTML = '<div data-app="calendar"><button id="next-month-btn">Next</div></div>';
-    ironfytCal.state = {
-      month: 11,
-      year: 2020,
-    };
-
+    ironfytCal.setState({ month: 11, year: 2020 });
     uitest.dispatchHTMLEvent('click', '#next-month-btn');
     uitest.assert(selector.innerHTML.includes('January 2021'));
 
@@ -117,6 +110,14 @@
 
     // Cleanup
     selector.innerHTML = '';
+  });
+
+  uitest.it('should find an activity for a given date', function () {
+    let id = 'dt-2020-7-7';
+    let dateComponentsFromId = id.split('-');
+    let dateFromId = new Date(dateComponentsFromId[1], dateComponentsFromId[2], dateComponentsFromId[3]);
+    let activityDate = new Date('2020-08-07T07:00:00.000Z');
+    uitest.assert(dateFromId.getFullYear() === activityDate.getFullYear() && dateFromId.getMonth() === activityDate.getMonth() && dateFromId.getDate() === activityDate.getDate());
   });
   console.groupEnd('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 })();
