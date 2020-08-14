@@ -72,6 +72,51 @@
       .join('');
   };
 
+  ironfytCal.slideUpModalTempate = function (props) {
+    return `
+    <div class="slide-up-modal-3_4-container" id="activity-detail-modal">
+      <div class="modal-content-3_4">
+        <button class="cancel-slide-up-3_4-modal-btn" id="close-activity-detail-modal">
+          X
+        </button>
+        <div>
+          <div class="activity-detail">
+            <h2 class="activity-date">Fri, July 3, 2020</h2>
+            <h3>Log</h3>
+            <div class="log-detail">
+              <p><strong>Duration: </strong>42:09 minutes</p>
+              <p>
+                <strong>Notes:</strong><br />
+                Squats - 185 lbs
+              </p>
+            </div>
+            <h3>Workout</h3>
+            <div>
+              <div class="workout-top-band">
+                <ul class="modality">
+                  <li class="modality-m">M</li>
+                  <li class="modality-w">W</li>
+                  <li class="modality-g">G</li>
+                </ul>
+              </div>
+              <div class="log-detail">
+                <h2>Loredo</h2>
+                <p><strong>Type: </strong>For Time</p>
+                <p><strong>Rounds: </strong>6</p>
+                <p>
+                  24 squats<br />
+                  24 push-ups<br />
+                  24 walking lunge steps<br />
+                  Run 400 meters<br /><br />Post Time
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+  };
   ironfytCal.calendarComponent = new Component('[data-app=calendar]', {
     data: {
       month: '',
@@ -79,13 +124,30 @@
     },
     template: function (props) {
       return `
-      <div class="calendar-container">
-        ${ironfytCal.calendarMonthBarTemplate(props)}
-        <div class="calendar">
-          ${ironfytCal.calendarDayOfWeekTemplate()}
-          ${ironfytCal.dateGridTemplate(props)}
+      <div class="container">
+        <header>
+          <div class="top-bar">
+            <a href="" class="icon-profile">AG</a>
+            <h1 class="title-activity">ACTIVITY</h1>
+            <button id="new-task-btn" class="btn-new"></button>
+          </div>
+        </header>
+        <div class="calendar-container">
+          ${ironfytCal.calendarMonthBarTemplate(props)}
+          <div class="calendar">
+            ${ironfytCal.calendarDayOfWeekTemplate()}
+            ${ironfytCal.dateGridTemplate(props)}
+          </div>
         </div>
+        <footer>
+          <a href="#friends">Friends</a>
+          <a href="#pr">PR</a>
+          <a href="#workouts" class="active">Workouts</a>
+          <a href="#activity">Activity</a>
+          <a href="#more">More</a>
+        </footer>
       </div>
+      ${ironfytCal.slideUpModalTempate(props)}
       `;
     },
   });
@@ -111,7 +173,7 @@
   /**
    * Handle the display for Log Activity Modal
    */
-  function showModal(id) {
+  function showModal() {
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.add('show-slide-up-3_4-modal');
   }
@@ -125,7 +187,7 @@
   // Did not enhance the hl.eventListener method to handle this situation yet. Waiting to see if the requirement evolves. Don't want to refactor prematurely.
   document.addEventListener('click', function (ev) {
     let matchedId = false;
-    let calendarItemIdRegEx = new RegExp(/dt\d{6}/);
+    let calendarItemIdRegEx = new RegExp(/dt-(\d{4}|\d{2})-\d{1,2}-\d{1,2}/);
     matchedId = hl.matchClosestSelector(ev.target, calendarItemIdRegEx);
     if (matchedId) {
       showModal();

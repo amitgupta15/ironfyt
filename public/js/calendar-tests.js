@@ -5,7 +5,7 @@
 
   uitest.it('should show a slide up modal dialog', function () {
     const div = `
-      <div id="dt200629" class="calendar-item date-last-month for-time-border">
+      <div id="dt-2020-11-29" class="calendar-item date-last-month for-time-border">
         29
         <div class="modality-indicator-container">
           <div class="modality-indicator m"></div>
