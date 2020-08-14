@@ -3,7 +3,7 @@
 
   console.group('\x1b[34m%s\x1b[0m', 'Testing calendar.js library');
 
-  uitest.it('should show a slide up modal dialog', function () {
+  uitest.it('should show and hide a slide up modal dialog', function () {
     const div = `
       <div id="dt-2020-11-29" class="calendar-item date-last-month for-time-border">
         29
@@ -13,7 +13,7 @@
       </div>
       <div class="slide-up-modal-3_4-container" id="activity-detail-modal">
         <div class="modal-content-3_4">
-          <button class="cancel-slide-up-3_4-modal-btn">
+          <button class="cancel-slide-up-3_4-modal-btn" id="close-activity-detail-modal">
             X
           </button>
           <div>
@@ -29,6 +29,11 @@
     const modal = document.querySelector('#activity-detail-modal');
     //If click is captured successfully, modal window is showed.
     uitest.assert(modal.classList.contains('show-slide-up-3_4-modal'));
+
+    uitest.assert(ironfytCal.getState().modalId === 'dt-2020-11-29');
+
+    uitest.dispatchHTMLEvent('click', '#close-activity-detail-modal');
+    uitest.assert(ironfytCal.getState().modalId === '');
 
     selector.innerHTML = '';
   });

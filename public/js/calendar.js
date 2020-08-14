@@ -72,7 +72,7 @@
     }
   };
 
-  ironfytCal.getData = function () {
+  ironfytCal.getState = function () {
     // Return a copy of data object
     return JSON.parse(JSON.stringify(ironfytCalState));
   };
@@ -236,10 +236,10 @@
    * @param {*} indicator 0 = current, 1 = next, -1 = previous
    */
   function showCalendar(indicator) {
-    let { month, year } = ironfytCal.getData();
+    let { month, year } = ironfytCal.getState();
     let date = new Date(year, month + indicator);
     ironfytCal.setState({ month: date.getMonth(), year: date.getFullYear() });
-    ironfytCal.calendarComponent.setData(ironfytCal.getData());
+    ironfytCal.calendarComponent.setData(ironfytCal.getState());
   }
 
   let calendarPage = () => showCalendar(0);
@@ -250,11 +250,13 @@
    * Handle the display for Log Activity Modal
    */
   function showModal(id) {
+    ironfytCal.setState({ modalId: id });
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.add('show-slide-up-3_4-modal');
   }
 
   function hideModal() {
+    ironfytCal.setState({ modalId: '' });
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.remove('show-slide-up-3_4-modal');
   }
