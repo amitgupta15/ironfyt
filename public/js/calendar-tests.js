@@ -5,7 +5,7 @@
 
   uitest.it('should show and hide a slide up modal dialog', function () {
     const div = `
-      <div id="dt-2020-11-29" class="calendar-item date-last-month for-time-border">
+      <div id="469" class="calendar-item date-last-month for-time-border">
         29
         <div class="modality-indicator-container">
           <div class="modality-indicator m"></div>
@@ -18,10 +18,14 @@
           </button>
           <div>
             <div class="activity-detail">
+              <h2 class="activity-date"></h2>
+              <h3>Log</h3>
+              <div class="log-detail"></div>
+              <div id="activity-workout"></div>
             </div>
           </div>
+        </div>
       </div>
-    </div>
     `;
     const selector = document.querySelector('#selector');
     selector.innerHTML = div;
@@ -29,11 +33,10 @@
     const modal = document.querySelector('#activity-detail-modal');
     //If click is captured successfully, modal window is showed.
     uitest.assert(modal.classList.contains('show-slide-up-3_4-modal'));
-
-    uitest.assert(ironfytCal.getState().modalId === 'dt-2020-11-29');
+    uitest.assert(document.querySelector('.activity-date').innerHTML !== '');
 
     uitest.dispatchHTMLEvent('click', '#close-activity-detail-modal');
-    uitest.assert(ironfytCal.getState().modalId === '');
+    uitest.assert(document.querySelector('.activity-date').innerHTML === '');
 
     selector.innerHTML = '';
   });
