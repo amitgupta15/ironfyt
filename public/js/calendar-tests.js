@@ -52,14 +52,14 @@
     let props = {
       month: 0,
       year: 2020,
+      daysOfCalendarMonth: [{ date: 1, month: 'current', log: {} }],
     };
-    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-0-30"'));
-    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-1-1"'));
-    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('<div id="dt-2020-2-2"'));
+
+    uitest.assert(ironfytCal.calendarDateGridTemplate(props).includes('class="calendar-item date">1'));
   });
 
   uitest.it('should create a days array with 42 entries for a 7x6 grid given a year and a month', function () {
-    let daysArray = ironfytCal.createDaysArray(2020, 0); //January 2020;
+    let daysArray = ironfytCal.createDaysArray(2020, 0, []); //January 2020;
 
     uitest.assert(daysArray.length === 42);
 
