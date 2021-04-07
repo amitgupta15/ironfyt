@@ -1,9 +1,10 @@
 'use strict';
 
-const server = require('./mini-http-server');
+const server = require('./vendor/mini-http-server');
 const handlers = require('./handlers');
 const mongodb = require('mongodb');
 const dotenv = require('dotenv');
+const path = require('path');
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -32,5 +33,6 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
 
   // Set the allowed dynamic paths
   server.setAllowedPaths(paths);
+  server.setStaticPath(path.join(__dirname, ''));
   server.init(port);
 });

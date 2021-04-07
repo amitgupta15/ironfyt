@@ -5,6 +5,9 @@
  * 1. Place this code in folder such as 'minimal-http-server'
  * 2. Import the server in your code
  *       const server = require('./minimal-http-server');
+ * 3. Set the dynamic paths by calling server.setAllowedPaths(paths) and passing an object with all the dynamic paths
+ * 4. Set the static path by calling server.setStaticPath(path) to let the server know where to pick up static content from
+ * 5. Call server.init(). You can pass the optional port parameter
  */
 
 // Dependencies
@@ -16,8 +19,10 @@ const url = require('url');
 // Container Object
 const server = {};
 
-// Base directory - Assuming minimal-dynamic-http-server will be accessed from its own folder
-const baseDir = path.join(__dirname, '../');
+/**
+ * baseDir is set by the code calling the server
+ */
+let baseDir = '';
 
 /**
  *
@@ -28,7 +33,7 @@ const baseDir = path.join(__dirname, '../');
 // Allowed Mime types for static content
 const mimeTypes = {
   '.html': 'text/html',
-  '.jgp': 'image/jpeg',
+  '.jpg': 'image/jpeg',
   '.css': 'text/css',
   '.js': 'text/javascript',
   '.png': 'image/png',
@@ -70,6 +75,7 @@ server.serveStaticContent = (pathname, response) => {
   response.setHeader('Content-Type', contentType);
 
   // Read the file and send the response
+  console.log(baseDir + '  ' + pathname);
   fs.readFile(`${baseDir}${pathname}`, (error, data) => {
     if (!error) {
       response.writeHead(200);
@@ -199,6 +205,14 @@ const httpServer = http.createServer((request, response) => {
  */
 server.setAllowedPaths = (paths) => {
   allowedPaths = paths;
+};
+
+/**
+ * Set the base directory for the static content
+ * @param {String} path
+ */
+server.setStaticPath = (path) => {
+  baseDir = path;
 };
 
 /**

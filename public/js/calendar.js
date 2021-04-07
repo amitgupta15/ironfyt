@@ -1,5 +1,5 @@
 (function () {
-  'use strict';
+  ('use strict');
 
   // Create a global variable and expose it the world.
   let ironfytCal = {};
@@ -193,7 +193,9 @@
       .join('');
   };
 
-  ironfytCal.slideUpModalTempate = function (props) {
+  ironfytCal.slideUpModalTempate = function ({ selectedLog }) {
+    let logDate = new Date(selectedLog.date).toDateString().split(' ');
+    let workout = selectedLog.workout ? selectedLog.workout : false;
     return `
     <div class="slide-up-modal-3_4-container" id="activity-detail-modal">
       <div class="modal-content-3_4">
@@ -202,22 +204,71 @@
         </button>
         <div>
           <div class="activity-detail">
-            <h2 class="activity-date"></h2>
+            <h2 class="activity-date">${logDate[0]} &nbsp; ${logDate[1]} ${logDate[2]}, ${logDate[3]}</h2>
             <h3>Log</h3>
-            <div class="log-detail"></div>
-            <div id="activity-workout"></div>
+            <div class="log-detail">
+              ${
+                selectedLog.modality && selectedLog.modality.length > 0
+                  ? `
+                    <ul class="modality">
+                      ${selectedLog.modality
+                        .map(function (modality) {
+                          return `<li class="modality-${modality}">${modality}</li>`;
+                        })
+                        .join(' ')}
+                    </ul><br/>`
+                  : ``
+              }
+              ${selectedLog.duration ? `<p><strong>Duration: </strong>${selectedLog.duration}</p>` : ``}
+              ${selectedLog.load ? `<p><strong>Load: </strong>${selectedLog.load}</p>` : ``}
+              ${selectedLog.rounds ? `<p><strong>Rounds: </strong>${selectedLog.rounds}</p>` : ``}
+              ${selectedLog.notes ? `<p><strong>Notes: </strong><br/>${hl.replaceNewLineWithBR(selectedLog.notes)}</p>` : ``}
+            </div>
+            <div id="activity-workout">
+            ${
+              workout
+                ? `
+                <h3>Workout</h3>
+                <div>
+                  <div class="workout-top-band">
+                  ${
+                    workout.modality && workout.modality.length > 0
+                      ? `<ul class="modality">
+                          ${workout.modality
+                            .map(function (modality) {
+                              return `<li class="modality-${modality}">${modality}</li>`;
+                            })
+                            .join(' ')}
+                        </ul><br/>`
+                      : ``
+                  }
+                  </div>
+                  <div class="log-detail">
+                    <h2>${workout.name}</h2>
+                    <p><strong>Type: </strong>${workout.type}</p>
+                    ${workout.timecap ? `<p><strong>Time Cap: </strong>${workout.timecap}</p>` : ``}
+                    ${workout.rounds ? `<p><strong>Rounds: </strong>${workout.rounds}</p>` : ``}
+                    ${workout.reps ? `<p><strong>Reps: </strong>${workout.reps}</p>` : ``}
+                    ${workout.description ? `<p>${hl.replaceNewLineWithBR(workout.description)}</p>` : ``}
+                  </div>
+                </div>
+                `
+                : ``
+            }
+            </div>
           </div>
         </div>
       </div>
     </div>
     `;
   };
+
   ironfytCal.calendarComponent = new Component('[data-app=calendar]', {
     data: {
       month: '',
       year: '',
       daysOfCalendarMonth: [],
-      selectedLogId: '',
+      selectedLog: {},
     },
     template: function (props) {
       return `
@@ -259,71 +310,23 @@
    * Handle the display for Log Activity Modal
    */
   function showModal(id) {
-    ironfytCal.calendarComponent.setData({ selectedLogId: id }, false);
-    let dialog = document.querySelector(`#activity-detail-modal`);
-    dialog.classList.add('show-slide-up-3_4-modal');
     var log = logs.filter(function (log) {
       return parseInt(log._id) === parseInt(id);
     })[0];
-    let logDate = new Date(log.date).toDateString().split(' ');
-    document.querySelector('.activity-date').innerHTML = `${logDate[0]}, ${logDate[1]} ${logDate[2]}, ${logDate[3]}`;
-    document.querySelector('.log-detail').innerHTML = `
-              ${
-                log.modality && log.modality.length > 0
-                  ? `
-                    <ul class="modality">
-                      ${log.modality
-                        .map(function (modality) {
-                          return `<li class="modality-${modality}">${modality}</li>`;
-                        })
-                        .join(' ')}
-                    </ul><br/>`
-                  : ``
-              }
-              ${log.duration ? `<p><strong>Duration: </strong>${log.duration}</p>` : ``}
-              ${log.load ? `<p><strong>Load: </strong>${log.load}</p>` : ``}
-              ${log.rounds ? `<p><strong>Rounds: </strong>${log.rounds}</p>` : ``}
-              ${log.notes ? `<p><strong>Notes: </strong><br/>${hl.replaceNewLineWithBR(log.notes)}</p>` : ``}
-              `;
-    if (log.workout) {
-      let workout = log.workout;
-      document.querySelector('#activity-workout').innerHTML = `
-        <h3>Workout</h3>
-        <div>
-          <div class="workout-top-band">
-          ${
-            workout.modality && workout.modality.length > 0
-              ? `<ul class="modality">
-                  ${workout.modality
-                    .map(function (modality) {
-                      return `<li class="modality-${modality}">${modality}</li>`;
-                    })
-                    .join(' ')}
-                </ul><br/>`
-              : ``
-          }
-          </div>
-          <div class="log-detail">
-            <h2>${workout.name}</h2>
-            <p><strong>Type: </strong>${workout.type}</p>
-            ${workout.timecap ? `<p><strong>Time Cap: </strong>${workout.timecap}</p>` : ``}
-            ${workout.rounds ? `<p><strong>Rounds: </strong>${workout.rounds}</p>` : ``}
-            ${workout.reps ? `<p><strong>Reps: </strong>${workout.reps}</p>` : ``}
-            ${workout.description ? `<p>${hl.replaceNewLineWithBR(workout.description)}</p>` : ``}
-          </div>
-        </div>
-      `;
-    }
+    ironfytCal.calendarComponent.setData({ selectedLog: log });
+    // Enclosing the transition in a setTimeout() function to work around the async nature of UI render
+    setTimeout(function () {
+      let dialog = document.querySelector(`#activity-detail-modal`);
+      dialog.classList.add('show-slide-up-3_4-modal');
+    }, 100);
   }
 
   function hideModal() {
-    ironfytCal.calendarComponent.setData({ selectedLogId: '' }, false);
     let dialog = document.querySelector(`#activity-detail-modal`);
     dialog.classList.remove('show-slide-up-3_4-modal');
-
-    document.querySelector('.activity-date').innerHTML = ``;
-    document.querySelector('.log-detail').innerHTML = ``;
-    document.querySelector('#activity-workout').innerHTML = ``;
+    setTimeout(function () {
+      ironfytCal.calendarComponent.setData({ selectedLog: {} });
+    }, 500);
   }
 
   // Handling the click event for a Regex to match the closest selector for dates grid.

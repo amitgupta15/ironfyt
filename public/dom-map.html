@@ -8,6 +8,7 @@
   <body>
     <div id="app">
       <h1>Hello World, How are you doing?</h1>
+      <!--Some comment-->
       <p>Pretty good</p>
       <ul>
         <li>learning dom mapping</li>
@@ -20,7 +21,7 @@
 
     <div id="app-2">
       <h1>Hello World, How are you doing?</h1>
-      <!--Some comment-->
+
       <p>Pretty good</p>
       <ul>
         <li>learning dom mapping</li>
@@ -53,12 +54,14 @@
       });
     };
 
-    var diff = function (map1, map2) {
+    var diff = function (templateMap, domMap) {
       // compare the length
-      if (map1.length === map2.length) {
-        // compare attributes
-        return 0;
-      } else if (map1.length > map2.length) {
+      let count = domMap.length - templateMap.length;
+      if (count > 0) {
+        for (; count > 0; count--) {
+          console.log(domMap[domMap.length - count].node.parentNode);
+          domMap[domMap.length - count].node.parentNode.removeChild(domMap[domMap.length - count].node);
+        }
       }
     };
     var app = document.querySelector('#app');
@@ -67,7 +70,7 @@
     var app2 = document.querySelector('#app-2');
     var app2Map = createDOMMap(app2);
 
-    var difference = diff(app1Map, app2Map);
+    var difference = diff(app2Map, app1Map);
     console.log(app1Map.length, app2Map.length);
   </script>
 </html>
