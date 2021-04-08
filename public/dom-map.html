@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM Map</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Hello World, How are you doing?</h1>
+      <!--Some comment-->
+      <p>Pretty good</p>
+      <ul>
+        <li>learning dom mapping</li>
+        <li>this is a list</li>
+        <li>it has 3 items</li>
+      </ul>
+      <p><strong>Here is a text in bold</strong></p>
+      <div class="green">This is supposed to be in green</div>
+    </div>
+
+    <div id="app-2">
+      <h1>Hello World, How are you doing?</h1>
+
+      <p>Pretty good</p>
+      <ul>
+        <li>learning dom mapping</li>
+        <li>this is a list</li>
+        <li>it has 3 items</li>
+      </ul>
+      <p><strong>Here is a text in bold</strong></p>
+      <div class="green">This is supposed to be in green</div>
+    </div>
+  </body>
+  <script>
+    var getAttributes = function (attributes) {
+      return Array.prototype.map.call(attributes, function (attribute) {
+        return {
+          attr: attribute.name,
+          value: attribute.value,
+        };
+      });
+    };
+    var createDOMMap = function (element) {
+      return Array.prototype.map.call(element.childNodes, function (node) {
+        var details = {
+          content: node.childNodes && node.childNodes.length > 0 ? null : node.textContent,
+          atts: node.nodeType !== 1 ? [] : getAttributes(node.attributes),
+          type: node.nodeType === 3 ? 'text' : node.nodeType === 8 ? 'comment' : node.tagName.toLowerCase(),
+          node: node,
+        };
+        details.children = createDOMMap(node);
+        return details;
+      });
+    };
+
+    var diff = function (templateMap, domMap) {
+      // compare the length
+      let count = domMap.length - templateMap.length;
+      if (count > 0) {
+        for (; count > 0; count--) {
+          console.log(domMap[domMap.length - count].node.parentNode);
+          domMap[domMap.length - count].node.parentNode.removeChild(domMap[domMap.length - count].node);
+        }
+      }
+    };
+    var app = document.querySelector('#app');
+    var app1Map = createDOMMap(app);
+
+    var app2 = document.querySelector('#app-2');
+    var app2Map = createDOMMap(app2);
+
+    var difference = diff(app2Map, app1Map);
+    console.log(app1Map.length, app2Map.length);
+  </script>
+</html>

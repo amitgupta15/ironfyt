@@ -106,15 +106,7 @@
         '<ul class="user-list">' +
         users
           .map(function (user) {
-            return (
-              '<li><a href="workout-list.html?user=' +
-              user._id +
-              '">' +
-              user.fname +
-              '</a>' +
-              (user.logs ? ' (<a href="log-list.html?user=' + user._id + '">' + user.logs.length + '</a>)' : '') +
-              '</li>'
-            );
+            return '<li><a href="workout-list.html?user=' + user._id + '">' + user.fname + '</a>' + (user.logs ? ' (<a href="log-list.html?user=' + user._id + '">' + user.logs.length + '</a>)' : '') + '</li>';
           })
           .join('') +
         '</ul>'
@@ -150,7 +142,11 @@
               ? '<em>No Workouts Found</em>'
               : workouts
                   .map(function (workout) {
-                    return ironfyt.workoutTemplate({ page: 'workout-list', workout: workout, user: user });
+                    return ironfyt.workoutTemplate({
+                      page: 'workout-list',
+                      workout: workout,
+                      user: user,
+                    });
                   })
                   .join('')) +
             ironfyt.bottomBarTemplate();
@@ -174,7 +170,11 @@
               }).length;
             });
             workouts = hl.sortArray(workoutsResponse, 'totallogcount', 'desc');
-            ironfyt.workoutListComponent.setData({ user: user, workouts: workouts, unfilteredList: workouts });
+            ironfyt.workoutListComponent.setData({
+              user: user,
+              workouts: workouts,
+              unfilteredList: workouts,
+            });
           });
         });
       });
@@ -220,14 +220,20 @@
         .map(function (wo) {
           return wo.workout;
         });
-      ironfyt.workoutListComponent.setData({ workouts: workouts, search: searchTerm });
+      ironfyt.workoutListComponent.setData({
+        workouts: workouts,
+        search: searchTerm,
+      });
     }
   };
 
   var handleResetWorkoutSearch = function (event) {
     event.preventDefault();
     var _data = ironfyt.workoutListComponent.getData();
-    ironfyt.workoutListComponent.setData({ workouts: _data.unfilteredList, search: '' });
+    ironfyt.workoutListComponent.setData({
+      workouts: _data.unfilteredList,
+      search: '',
+    });
   };
 
   /**
@@ -263,16 +269,7 @@
             var loadString = log.load ? '<p><strong>Load: </strong>' + log.load + ' </p>' : '';
             var roundsString = log.rounds ? '<p><strong>Rounds: </strong>' + log.rounds + ' </p>' : '';
             var notesString = log.notes ? '<p><strong>Notes: </strong><br/>' + hl.replaceNewLineWithBR(log.notes) + ' </p>' : '';
-            htmlString +=
-              '<div class="log-item">' +
-              ' <p class="date">' +
-              new Date(log.date).toLocaleDateString() +
-              '</p>' +
-              durationString +
-              loadString +
-              roundsString +
-              notesString +
-              '</div>';
+            htmlString += '<div class="log-item">' + ' <p class="date">' + new Date(log.date).toLocaleDateString() + '</p>' + durationString + loadString + roundsString + notesString + '</div>';
           });
           return htmlString;
         })()
@@ -299,7 +296,11 @@
           });
           workout.userlogcount = logs.length;
           workout.totallogcount = allLogs.length;
-          ironfyt.logComponent.setData({ workout: workout, user: user, logs: logs });
+          ironfyt.logComponent.setData({
+            workout: workout,
+            user: user,
+            logs: logs,
+          });
         });
       });
     });
@@ -314,7 +315,10 @@
       return props && props.user
         ? (function () {
             return (
-              ironfyt.topBarTemplate({ page: 'new-workout', user: props.user }) +
+              ironfyt.topBarTemplate({
+                page: 'new-workout',
+                user: props.user,
+              }) +
               '<form id="new-workout-form">' +
               '<div>' +
               '<label for="workout_name" hidden>Name: </label>' +
@@ -369,12 +373,7 @@
     event.preventDefault();
     var params = hl.getParams();
     var elements = document.querySelector('#new-workout-form').elements;
-    if (
-      elements['workout_name'] === undefined ||
-      elements['workout_name'].value.trim() === '' ||
-      elements['workout_description'] === undefined ||
-      elements['workout_description'].value.trim() === ''
-    ) {
+    if (elements['workout_name'] === undefined || elements['workout_name'].value.trim() === '' || elements['workout_description'] === undefined || elements['workout_description'].value.trim() === '') {
       alert('Please provide a workout name');
       return false;
     }
@@ -419,7 +418,9 @@
   var newLogPage = function () {
     var params = hl.getParams();
     if (params.workout_name) {
-      ironfyt.newLogComponent.setData({ workout_name: window.decodeURIComponent(params.workout_name) });
+      ironfyt.newLogComponent.setData({
+        workout_name: window.decodeURIComponent(params.workout_name),
+      });
     } else {
       ironfyt.newLogComponent.render();
     }
@@ -516,8 +517,15 @@
     },
     template: function (props) {
       return props && props.user
-        ? ironfyt.topBarTemplate({ user: props.user, page: 'log-list', alllogs: props.alllogs }) +
-            ironfyt.searchTemplate({ search: props.search, id: 'search-logs' }) +
+        ? ironfyt.topBarTemplate({
+            user: props.user,
+            page: 'log-list',
+            alllogs: props.alllogs,
+          }) +
+            ironfyt.searchTemplate({
+              search: props.search,
+              id: 'search-logs',
+            }) +
             '<p><a href="new-log.html?user_id=' +
             props.user._id +
             '" class="btn">+</a></p><br/><br/>' +
@@ -531,15 +539,7 @@
                   '<p><strong>Date: </strong>' +
                   new Date(log.date).toLocaleDateString() +
                   '</p>' +
-                  (log.workout !== {} && log.workout !== undefined
-                    ? '<p><strong>Workout: </strong><a href="log.html?workout=' +
-                      log.workout._id +
-                      '&user=' +
-                      props.user._id +
-                      '">' +
-                      log.workout.name +
-                      '</a></p>'
-                    : '') +
+                  (log.workout !== {} && log.workout !== undefined ? '<p><strong>Workout: </strong><a href="log.html?workout=' + log.workout._id + '&user=' + props.user._id + '">' + log.workout.name + '</a></p>' : '') +
                   '' +
                   (log.duration !== null && log.duration !== undefined ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '') +
                   '' +
@@ -599,7 +599,12 @@
             return new Date(b.date) - new Date(a.date);
           });
 
-          ironfyt.logListComponent.setData({ user: user, logs: logs, unfilteredList: logs, alllogs: alllogs });
+          ironfyt.logListComponent.setData({
+            user: user,
+            logs: logs,
+            unfilteredList: logs,
+            alllogs: alllogs,
+          });
         });
       });
     });
@@ -658,7 +663,10 @@
   var handleResetLogSearch = function (event) {
     event.preventDefault();
     var _data = ironfyt.logListComponent.getData();
-    ironfyt.logListComponent.setData({ logs: _data.unfilteredList, search: '' });
+    ironfyt.logListComponent.setData({
+      logs: _data.unfilteredList,
+      search: '',
+    });
   };
 
   /**

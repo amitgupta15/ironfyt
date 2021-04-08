@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>modality-monostructural</title>
+    <g id="modality-monostructural" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" stroke="#FF6347" cx="9" cy="9" r="8.5"></circle>
+        <polygon id="M" fill="#FF6347" fill-rule="nonzero" points="6.88574219 13 6.88574219 7.36523438 8.30175781 13 9.69335938 13 11.1142578 7.36523438 11.1142578 13 12.4570312 13 12.4570312 5.84179688 10.2890625 5.84179688 9.00488281 10.7246094 7.70605469 5.84179688 5.54296875 5.84179688 5.54296875 13"></polygon>
+    </g>
+</svg>

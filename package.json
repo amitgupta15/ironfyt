@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node tests/runner.js",
+    "test": "node test-runner.js",
     "start": "node index.js"
   },
   "repository": {

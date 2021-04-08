@@ -1,6 +1,6 @@
 'use strict';
 
-const { assert, it } = require('../js-unit-test-library');
+const { assert, it } = require('../../vendor/nodejs-unit-test-library');
 const handlers = require('../../handlers');
 
 it('should only allow [get, post, put, and delete] http methods', () => {
