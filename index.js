@@ -35,6 +35,6 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   };
   // Set the allowed dynamic paths
   server.setAllowedPaths(paths);
-  server.setStaticPath(path.join(__dirname, ''));
+  server.setStaticPath(path.join(__dirname, '/public/'));
   server.init(port);
 });

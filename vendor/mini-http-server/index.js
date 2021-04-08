@@ -75,7 +75,6 @@ server.serveStaticContent = (pathname, response) => {
   response.setHeader('Content-Type', contentType);
 
   // Read the file and send the response
-  console.log(baseDir + '  ' + pathname);
   fs.readFile(`${baseDir}${pathname}`, (error, data) => {
     if (!error) {
       response.writeHead(200);
