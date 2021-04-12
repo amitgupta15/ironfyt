@@ -3,34 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>IronFyt Test</title>
+    <title>Test Runner</title>
   </head>
   <body>
     <div id="selector"></div>
-    <div class="" id="calendar-container"></div>
-    <!-- Include utilities and libraries -->
-    <script src="js/uitest-library.js"></script>
-    <script src="js/component.js"></script>
-    <script src="js/helper-library.js"></script>
-    <!-- End utitilies and libraries -->
+
+    <!-- Testing Library - Goes first -->
+    <script src="js/vendor/uitest-library.js"></script>
+    <!-- End Testing Library -->
+
+    <!-- #### Vendor Code Testing #### -->
 
     <!-- Component Tests -->
-    <script src="js/component-test.js"></script>
+    <script src="js/vendor/component.js"></script>
+    <script src="js/vendor/tests/component-tests.js"></script>
     <!-- End Component Tests -->
 
     <!-- Helper Library Tests -->
-    <script src="js/helper-library-tests.js"></script>
+    <script src="js/vendor/helper-library.js"></script>
+    <script src="js/vendor/tests/helper-library-tests.js"></script>
     <!-- End Helper Library Tests -->
 
-    <!-- App Tests -->
-    <script src="js/app.js"></script>
-    <script src="js/app-tests.js"></script>
-    <!--  End App Tests -->
+    <!-- #### End Vendor Code Testing -->
 
-    <!-- Calendar Tests -->
-    <script src="js/calendar.js"></script>
-    <script src="js/calendar-tests.js"></script>
-    <!-- End Calendar Tests -->
+    <!-- #### Application Code Test ####-->
+
+    <!-- Master application file -->
+    <script src="js/app.js"></script>
+    <!-- Master Test file with all the test configuration. Creates the $test object for testing-->
+    <script src="js/tests/tests.js"></script>
+
+    <!-- <script src="js/tests/app-tests.js"></script> -->
+
+    <script src="js/user-list.js"></script>
+    <script src="js/tests/user-list-tests.js"></script>
+
+    <!-- #### End Application Code Tests ####-->
   </body>
 </html>

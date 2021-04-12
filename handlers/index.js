@@ -41,8 +41,9 @@ const _workouts = {};
 _workouts.get = (payload, callback) => {
   const { query } = payload;
   if (handlers.db) {
+    console.log(query._id);
     if (query._id) {
-      handlers.db.collection('workouts').findOne({ _id: parseInt(query._id) }, (error, result) => {
+      handlers.db.collection('workouts').findOne({ _id: query._id }, (error, result) => {
         if (error) {
           callback(400, error);
         } else {
@@ -85,7 +86,7 @@ _workouts.post = (payload, callback) => {
   if (handlers.db) {
     handlers.db.collection('workouts').countDocuments((error, count) => {
       if (!error) {
-        workout._id = count + 1;
+        // workout._id = count + 1;
         const missingRequiredFields = [];
         if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
         if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
