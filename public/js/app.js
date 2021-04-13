@@ -10,9 +10,55 @@
   let serverUrl = 'http://localhost:3000';
 
   $ironfyt.fetchUsers = function (callback) {
-    fetch.get(`${serverUrl}/api/users`, function (response) {
-      console.log(response);
+    fetch.get(`${serverUrl}/api/users`, function (error, users) {
+      callback(error, users);
     });
-    console.log($hl.fetch);
+  };
+
+  $ironfyt.fetchLogs = function (callback) {
+    fetch.get(`${serverUrl}/api/logs`, function (error, logs) {
+      callback(error, logs);
+    });
+  };
+
+  $ironfyt.fetchUserLogs = function (userId, callback) {
+    if (userId) {
+      fetch.get(`${serverUrl}/api/logs?user_id=${userId}`, function (error, logs) {
+        callback(error, logs);
+      });
+    } else {
+      callback({ message: 'Please provide a user id' });
+    }
+  };
+
+  /**
+   * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
+   * holds the main content for the page
+   *
+   * @param {object} props - props to be passed to a template
+   * @param {function} template - a template method that returns an html template
+   */
+  $ironfyt.pageTemplate = function (props, template) {
+    props = props !== undefined ? props : {};
+    if (props.error) {
+      return errorTemplate(props.error);
+    } else {
+      return `
+        ${topBarTemplate(props)}
+        <div class="main">
+        ${template(props)}
+        </div>
+        `;
+    }
+  };
+
+  //Topbar template
+  let topBarTemplate = function (props) {
+    return `<div>Top Bar</div>`;
+  };
+
+  // Common error template which can be shared across components to render error messages
+  let errorTemplate = function (error) {
+    return `<p class="error-div">${error.message}</p>`;
   };
 })();

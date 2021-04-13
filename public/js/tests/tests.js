@@ -5,12 +5,7 @@
 (function (global) {
   'use strict';
 
-  // Use HelperLib instance from ceapp so that the state can be viewed, especially for hl.getParams() method
-  // global.$hl = ceapp.hl;
-
-  // let getParams = $hl.getParams;
-  // let get = $hl.fetch.get;
-  // let post = $hl.fetch.post;
+  let getParams = $hl.getParams;
 
   let app = $ironfyt;
   for (var key in app) {
@@ -39,11 +34,7 @@
 
   global.$test = Uitest({
     tearDown: function () {
-      // $hl.getParams = getParams;
-      // $hl.fetch.get = get;
-      // $hl.fetch.post = post;
-
-      // $ironfyt.fetchUsers = fetchUsers;
+      $hl.getParams = getParams;
       teardownComponents();
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

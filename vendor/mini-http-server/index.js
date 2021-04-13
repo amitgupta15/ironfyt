@@ -173,6 +173,7 @@ server.serveDynamicContent = (request, response) => {
       } else {
         data = typeof data === 'string' ? data : JSON.stringify(data);
         response.setHeader('Content-Type', 'application/json');
+        response.setHeader('Access-Control-Allow-Origin', '*');
         response.writeHead(statusCode);
         response.end(data);
       }

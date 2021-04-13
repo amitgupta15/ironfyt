@@ -1,5 +1,7 @@
 'use strict';
 
+const { ObjectId } = require('mongodb');
+
 // Container object
 const handlers = {};
 handlers.db = undefined;
@@ -138,6 +140,20 @@ _logs.get = (payload, callback) => {
           } else {
             callback(200, result);
           }
+        }
+      });
+    } else if (query.user_id) {
+      handlers.db.collection('logs').find({ user_id: ObjectId(query.user_id) }, (error, result) => {
+        if (error) {
+          callback(400, error);
+        } else {
+          result.toArray((error, docs) => {
+            if (error) {
+              callback(400, error);
+            } else {
+              callback(200, docs);
+            }
+          });
         }
       });
     } else if (Object.keys(query).length === 0) {
