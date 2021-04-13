@@ -8,8 +8,8 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-const mongodb = process.env.ENV === 'dev' ? require('./vendor/local-db') : require('mongodb');
-if (process.env.ENV === 'dev') {
+const mongodb = process.env.ENV === 'local' ? require('./vendor/local-db') : require('mongodb');
+if (process.env.ENV === 'local') {
   //If running in dev environment, then provide the test data
   require('./local-db-collections');
 }
