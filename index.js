@@ -8,11 +8,7 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-const mongodb = process.env.ENV === 'local' ? require('./vendor/local-db') : require('mongodb');
-if (process.env.ENV === 'local') {
-  //If running in dev environment, then provide the test data
-  require('./local-db-collections');
-}
+const mongodb = require('mongodb');
 
 let db;
 console.log('Mongodb url:', process.env.MONGODB_URI);
@@ -32,6 +28,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/api/workouts': handlers.workouts,
     '/api/logs': handlers.logs,
     '/api/users': handlers.users,
+    '/api/auth': handlers.auth,
   };
   // Set the allowed dynamic paths
   server.setAllowedPaths(paths);

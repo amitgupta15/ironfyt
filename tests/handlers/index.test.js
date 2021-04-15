@@ -3,6 +3,8 @@
 const { assert, it } = require('../../vendor/nodejs-unit-test-library');
 const handlers = require('../../handlers');
 
+console.group('\x1b[33m%s\x1b[0m', 'handlers/index.js Tests');
+
 it('should only allow [get, post, put, and delete] http methods', () => {
   assert.ok(handlers.isMethodAllowed('GET'));
   assert.ok(handlers.isMethodAllowed('POST'));
@@ -15,7 +17,7 @@ it("'/' path should have status code 302 and string path data for default redire
   // Create variables here and assign inside callback. This way if the callback is not called, these variables will be undefined and the callback error will get caught.
   handlers.default('', (statusCode, data) => {
     assert.strictEqual(statusCode, 302);
-    assert.strictEqual(data, '/public/index.html');
+    assert.strictEqual(data, 'index.html');
   });
 });
 
@@ -92,7 +94,7 @@ it("'/api/workouts' WORKOUTS POST - path should handle a successful (200) post r
     _data = data;
   });
   assert.strictEqual(_statusCode, 200);
-  assert.deepStrictEqual(_data, { _id: 1, description: 'some workout', name: 'workout 1' });
+  assert.deepStrictEqual(_data, { description: 'some workout', name: 'workout 1' });
 
   handlers.db = undefined;
 });
@@ -740,10 +742,4 @@ it("'/api/users' USERS GET path should handle a successful (200) get request for
   handlers.db = undefined;
 });
 
-/** Helper Functions Tests */
-// it('should get the latest id for a directory', () => {
-//   dataservice.list = (dir) => []; // Stub
-
-//   var maxId = handlers.getMaxId('tests');
-//   assert.strictEqual(maxId, 0);
-// });
+console.groupEnd();

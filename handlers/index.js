@@ -43,7 +43,6 @@ const _workouts = {};
 _workouts.get = (payload, callback) => {
   const { query } = payload;
   if (handlers.db) {
-    console.log(query._id);
     if (query._id) {
       handlers.db.collection('workouts').findOne({ _id: query._id }, (error, result) => {
         if (error) {

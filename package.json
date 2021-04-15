@@ -6,9 +6,16 @@
   "directories": {
     "test": "tests"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "dist/*",
+      "*/*.css",
+      "public/*"
+    ]
+  },
   "scripts": {
     "test": "node test-runner.js",
-    "start": "node index.js"
+    "start": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -21,7 +28,11 @@
   },
   "homepage": "https://github.com/amitgupta15/ironfyt#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^8.2.0",
     "mongodb": "^3.5.8"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
