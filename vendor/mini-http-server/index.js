@@ -25,6 +25,11 @@ const server = {};
 let baseDir = '';
 
 /**
+ * Options to be passed to the routes (example: database connection, etc.)
+ */
+let options = {};
+
+/**
  *
  * HANDLE STATIC CONTENT
  *
@@ -154,6 +159,7 @@ server.serveDynamicContent = (request, response) => {
       pathname,
       query,
       buffer,
+      options,
     };
 
     // Retrieve the handler for the path
@@ -171,7 +177,15 @@ server.serveDynamicContent = (request, response) => {
         });
         response.end();
       } else {
-        data = typeof data === 'string' ? data : JSON.stringify(data);
+        if (typeof data !== 'string') {
+          try {
+            data = JSON.stringify(data);
+          } catch (e) {
+            data = {};
+            console.log('Error occurred while stringifying data ' + e);
+          }
+        }
+        // data = typeof data === 'string' ? data : JSON.stringify(data);
         response.setHeader('Content-Type', 'application/json');
         response.setHeader('Access-Control-Allow-Origin', '*');
         response.writeHead(statusCode);
@@ -207,6 +221,17 @@ server.setAllowedPaths = (paths) => {
   allowedPaths = paths;
 };
 
+/**
+ * Set the options such as database connection to be passed to the routes.
+ * @param {object} obj
+ */
+server.setOptions = (obj) => {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      options[key] = obj[key];
+    }
+  }
+};
 /**
  * Set the base directory for the static content
  * @param {String} path

@@ -2,6 +2,7 @@
 
 const server = require('./vendor/mini-http-server');
 const handlers = require('./handlers');
+const auth = require('./handlers/auth');
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config();
@@ -10,7 +11,6 @@ const port = process.env.PORT || 3000;
 
 const mongodb = require('mongodb');
 
-let db;
 console.log('Mongodb url:', process.env.MONGODB_URI);
 mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
   console.log('trying to connect to the database');
@@ -18,9 +18,10 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     console.log('Found error', err);
     process.exit(1);
   }
-  db = database.db(process.env.DATABASE);
+  // Making database connection available across different routes
+  server.setOptions({ database: database.db(process.env.DATABASE) });
   // assign the db handle to handler
-  handlers.db = db;
+  // handlers.db = db;
   console.log('Connected to Database: ' + process.env.DATABASE);
   // Dynamic paths
   const paths = {
@@ -28,7 +29,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/api/workouts': handlers.workouts,
     '/api/logs': handlers.logs,
     '/api/users': handlers.users,
-    '/api/auth': handlers.auth,
+    '/api/login': auth.login,
   };
   // Set the allowed dynamic paths
   server.setAllowedPaths(paths);
