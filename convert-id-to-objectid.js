@@ -130,4 +130,15 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //       });
   //     });
   //   });
+
+  // Add email to user collection
+  // db.collection('users')
+  //   .find({})
+  //   .toArray(function (error, users) {
+  //     users.forEach(function (user) {
+  //       db.collection('users').updateOne({ username: user.username }, { $set: { email: user.username } }, function (error, result) {
+  //         console.log(result);
+  //       });
+  //     });
+  //   });
 });
