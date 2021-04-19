@@ -154,24 +154,25 @@ server.serveDynamicContent = (request, response) => {
     buffer = Buffer.concat(buffer);
 
     // Prepare the request data object to pass to the handler function
-    const responseData = {
+    const data = {
       method,
       pathname,
       query,
       buffer,
       options,
+      headers: request.headers,
     };
 
     // Retrieve the handler for the path
     const handler = allowedPaths[pathname];
     /**
      * Call the handler for the path
-     * @param {Object} responseData
+     * @param {Object} data
      * @param {function} callback (statusCode, data) => {}
      *
      */
-    handler(responseData, (statusCode = 200, data = '') => {
-      if (responseData.pathname === '/') {
+    handler(data, (statusCode = 200, data = '') => {
+      if (data.pathname === '/') {
         response.writeHead(statusCode, {
           Location: data,
         });

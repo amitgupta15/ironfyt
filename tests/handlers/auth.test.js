@@ -4,16 +4,21 @@ const { assert, it } = $test;
 const auth = require('./../../handlers/auth');
 
 console.group('\x1b[33m%s\x1b[0m', 'handlers/auth.js Tests');
-let bcrypt, compare, hash;
+
+let bcrypt, compare, hash, jwt, sign;
 $test.setUp = () => {
   bcrypt = require('bcrypt');
   compare = bcrypt.compare;
   hash = bcrypt.hash;
+
+  jwt = require('jsonwebtoken');
+  sign = jwt.sign;
 };
 
 $test.tearDown = () => {
   bcrypt.compare = compare;
   bcrypt.hash = hash;
+  jwt.sign = sign;
 };
 
 // login
@@ -34,6 +39,9 @@ it('auth.login() should handle a valid login request', function () {
   bcrypt.compare = function (stringOne, hashedString, callback) {
     callback(false, true); //callback(error, success)
   };
+  jwt.sign = function (obj, key) {
+    return 'A fake token';
+  };
 
   //create a dummy database connection with relevant dummy methods to provide data to the test
   let database = {
@@ -52,7 +60,7 @@ it('auth.login() should handle a valid login request', function () {
   // create a dummy payload
   let payload = {
     method: 'get',
-    buffer: JSON.stringify({ email: 'amitgupta15@gmail.com', password: 'password' }),
+    buffer: JSON.stringify({ email: 'amitgupta15@gmail.com', password: 'pp' }),
     options: { database },
   };
 
@@ -62,8 +70,7 @@ it('auth.login() should handle a valid login request', function () {
     _data = data;
   });
   assert.strictEqual(_statusCode, 201);
-  assert.strictEqual(_data.token, 'A fake token');
-  assert.strictEqual(_data.user.email, 'amitgupta15@gmail.com');
+  assert.strictEqual(_data.data.token, 'A fake token');
 });
 
 it('should register a user', function () {
@@ -96,7 +103,7 @@ it('should register a user', function () {
     _statusCode = statusCode;
     _data = data;
   });
-  assert.strictEqual(_statusCode, 200);
-  assert.strictEqual(_data, 'Registration Successful');
+  assert.strictEqual(_statusCode, 201);
+  assert.strictEqual(_data.data.message, 'Registration Successful');
 });
 console.groupEnd();

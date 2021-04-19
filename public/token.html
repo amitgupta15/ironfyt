@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testing Token</title>
+  </head>
+  <body>
+    <h1>Using JWT</h1>
+    <p><button id="check-token">Check Token</button></p>
+    <p><button id="get-token">Get Token</button></p>
+    <pre id="display"></pre>
+  </body>
+  <script>
+    let display = document.getElementById('display');
+
+    document.getElementById('check-token').addEventListener('click', function (event) {
+      event.preventDefault();
+      let token = localStorage.getItem('token');
+      if (!token) {
+        display.innerHTML = 'No available token';
+        return;
+      }
+      fetch('http://localhost:3000/api/testtoken', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((content) => {
+          if (content.code > 0) {
+            localStorage.removeItem('token');
+          }
+          display.innerHTML = JSON.stringify(content, '\n', 2);
+        })
+        .catch((err) => console.error);
+    });
+    document.getElementById('get-token').addEventListener('click', function (event) {
+      event.preventDefault();
+      fetch('http://localhost:3000/api/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'amitgupta15@gmail.com' }),
+      })
+        .then((res) => res.json())
+        .then((content) => {
+          display.innerHTML = JSON.stringify(content, '\n', 2);
+          let token = content.data;
+          localStorage.setItem('token', token);
+        })
+        .catch((err) => console.error);
+    });
+  </script>
+</html>

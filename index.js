@@ -31,6 +31,8 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/api/users': handlers.users,
     '/api/login': auth.login,
     '/api/register': auth.register,
+    '/api/token': auth.token,
+    '/api/testtoken': auth.testtoken,
   };
   // Set the allowed dynamic paths
   server.setAllowedPaths(paths);
