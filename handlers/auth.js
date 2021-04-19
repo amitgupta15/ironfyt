@@ -105,6 +105,7 @@ let getToken = (user) => {
   return jwt.sign(obj, process.env.JWT_KEY);
 };
 
+/** Temp methods - Remove once the authentication code is stable  */
 auth.token = (payload, callback) => {
   let user = {};
   try {
@@ -122,6 +123,7 @@ auth.token = (payload, callback) => {
   callback(201, { data: token, email: user.email });
 };
 
+// Keep this method to test token
 auth.testtoken = (payload, callback) => {
   let header = payload.headers.authorization;
   let [type, token] = header.split(' ');
