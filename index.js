@@ -2,6 +2,7 @@
 
 const server = require('./vendor/mini-http-server');
 const handlers = require('./handlers');
+const workout = require('./handlers/workout');
 const auth = require('./handlers/auth');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -26,7 +27,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   // Dynamic paths
   const paths = {
     '/': handlers.default,
-    '/api/workouts': handlers.workouts,
+    '/api/workout': workout.handler,
     '/api/logs': handlers.logs,
     '/api/users': handlers.users,
     '/api/login': auth.login,
