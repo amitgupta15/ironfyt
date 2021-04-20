@@ -1,5 +1,6 @@
 'use strict';
 
+const ObjectId = require('mongodb').ObjectID;
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const jwt_key = process.env.JWT_KEY;
@@ -14,28 +15,42 @@ workout.handler = (req, callback) => {
     callback(405, { code: 1, data: { error: 'Method not allowed' } });
   } else {
     //check for valid token
-    if (headers.authorization) {
-      let [type, token] = headers.authorization.split(' ');
-      if (type === 'Bearer') {
-        try {
-          let tokenpayload = jwt.verify(token, jwt_key);
-          req.tokenpayload = tokenpayload;
-          _workout[method](req, callback);
-        } catch (error) {
-          callback(401, { code: 1, message: 'Invalid or expired token' });
-        }
-      } else {
-        callback(401, { code: 1, data: { error: 'Unauthorized request' } });
-      }
-    } else {
-      callback(401, { code: 1, data: { error: 'Unauthorized request' } });
-    }
+    workout.verifyToken(headers, callback, (tokenpayload) => {
+      req.tokenpayload = tokenpayload;
+      _workout[method](req, callback);
+    });
   }
 };
 
 let _workout = {};
 _workout.get = (req, callback) => {
-  callback(200, { code: 0, data: { ...req.tokenpayload, message: 'successfully executed get request' } });
+  let { query, options, tokenpayload } = req;
+  let user = tokenpayload.user;
+  let database = options.database;
+  if (query._id) {
+    if (query._id.length === 24) {
+      database.collection('workouts').findOne({ _id: ObjectId(query._id) }, (error, result) => {
+        if (!error) {
+          callback(200, { code: 0, data: { workout: result, user: user } });
+        } else {
+          callback(400, { code: 1, data: { error: `Could not find a workout record for _id ${query._id}` } });
+        }
+      });
+    } else {
+      callback(400, { code: 1, data: { error: `Invalid workout id` } });
+    }
+  } else {
+    database
+      .collection('workouts')
+      .find({})
+      .toArray((error, workouts) => {
+        if (!error) {
+          callback(200, { code: 0, data: { workouts, user } });
+        } else {
+          callback(400, { code: 1, data: { error: `Error occurred while retrieving workouts` } });
+        }
+      });
+  }
 };
 
 _workout.post = (req, callback) => {
@@ -46,4 +61,21 @@ _workout.put = (req, callback) => {
   callback(200, { code: 0, data: { ...req.tokenpayload, message: 'successfully executed put request' } });
 };
 
+workout.verifyToken = (headers, res, callback) => {
+  if (headers.authorization) {
+    let [type, token] = headers.authorization.split(' ');
+    if (type === 'Bearer') {
+      try {
+        let tokenpayload = jwt.verify(token, jwt_key);
+        callback(tokenpayload);
+      } catch (error) {
+        res(401, { code: 1, message: 'Invalid or expired token' });
+      }
+    } else {
+      res(401, { code: 1, data: { error: 'Unauthorized request' } });
+    }
+  } else {
+    res(401, { code: 1, data: { error: 'Unauthorized request' } });
+  }
+};
 module.exports = workout;

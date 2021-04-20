@@ -96,7 +96,7 @@ auth.register = (payload, callback) => {
 };
 
 let getToken = (user) => {
-  let limit = 60 * 2;
+  let limit = 60 * 60 * 24 * 5; // expires after 5 days
   let expires = Math.floor(Date.now() / 1000) + limit;
   let obj = {
     user: user,
