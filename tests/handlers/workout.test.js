@@ -126,4 +126,28 @@ it('should edit an existing workout', () => {
     assert.strictEqual(data.data.workout.description, 'run 5 miles');
   });
 });
+it('should delete a workout', () => {
+  let req = {
+    method: 'delete',
+    headers: {
+      authorization: 'Bearer aFakeToken',
+    },
+    options: {
+      database: {
+        collection: () => {
+          return {
+            removeOne: (filter, callback) => {
+              callback(false, { deletedCount: 1 });
+            },
+          };
+        },
+      },
+    },
+    query: { _id: '012345678901234567890123' },
+  };
+  workout.handler(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.data.deletedCount, 1);
+  });
+});
 console.groupEnd();

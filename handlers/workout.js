@@ -6,57 +6,53 @@ require('dotenv').config();
 const jwt_key = process.env.JWT_KEY;
 
 const workout = {};
-
-workout.handler = (req, callback) => {
-  let allowedMethods = ['get', 'post', 'put'];
-  let method = req.method.toLowerCase();
-  let headers = req.headers;
+let workoutCollection;
+workout.handler = (req, res) => {
+  let allowedMethods = ['get', 'post', 'put', 'delete'];
+  let { method, headers, options } = req;
+  method = method.toLowerCase();
+  workoutCollection = options.database.collection('workouts');
   if (allowedMethods.indexOf(method) < 0) {
-    callback(405, { code: 1, data: { error: 'Method not allowed' } });
+    res(405, { code: 1, data: { error: 'Method not allowed' } });
   } else {
     //check for valid token
-    workout.verifyToken(headers, callback, (tokenpayload) => {
+    workout.verifyToken(headers, res, (tokenpayload) => {
       req.tokenpayload = tokenpayload;
-      _workout[method](req, callback);
+      _workout[method](req, res);
     });
   }
 };
 
 let _workout = {};
-_workout.get = (req, callback) => {
-  let { query, options, tokenpayload } = req;
+_workout.get = (req, res) => {
+  let { query, tokenpayload } = req;
   let user = tokenpayload.user;
-  let database = options.database;
   if (query._id) {
     if (query._id.length === 24) {
-      database.collection('workouts').findOne({ _id: ObjectId(query._id) }, (error, result) => {
+      workoutCollection.findOne({ _id: ObjectId(query._id) }, (error, result) => {
         if (!error) {
-          callback(200, { code: 0, data: { workout: result, user: user } });
+          res(200, { code: 0, data: { workout: result, user: user } });
         } else {
-          callback(400, { code: 1, data: { error: `Could not find a workout record for _id ${query._id}` } });
+          res(400, { code: 1, data: { error: `Could not find a workout record for _id ${query._id}` } });
         }
       });
     } else {
-      callback(400, { code: 1, data: { error: `Invalid workout id` } });
+      res(400, { code: 1, data: { error: `Invalid workout id` } });
     }
   } else {
-    database
-      .collection('workouts')
-      .find({})
-      .toArray((error, workouts) => {
-        if (!error) {
-          callback(200, { code: 0, data: { workouts, user } });
-        } else {
-          callback(400, { code: 1, data: { error: `Error occurred while retrieving workouts` } });
-        }
-      });
+    workoutCollection.find({}).toArray((error, workouts) => {
+      if (!error) {
+        res(200, { code: 0, data: { workouts, user } });
+      } else {
+        res(400, { code: 1, data: { error: `Error occurred while retrieving workouts` } });
+      }
+    });
   }
 };
 
-_workout.post = (req, callback) => {
-  let { options, tokenpayload, buffer } = req;
+_workout.post = (req, res) => {
+  let { tokenpayload, buffer } = req;
   let user = tokenpayload.user;
-  let database = options.database;
   let workout;
   try {
     workout = JSON.parse(buffer);
@@ -64,29 +60,28 @@ _workout.post = (req, callback) => {
     if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
     if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
     if (missingRequiredFields.length) {
-      callback(400, { code: 1, data: { error: `Missing required fields: ${missingRequiredFields.join(', ')}` } });
+      res(400, { code: 1, data: { error: `Missing required fields: ${missingRequiredFields.join(', ')}` } });
     } else {
-      database.collection('workouts').insertOne(workout, (error, result) => {
+      workoutCollection.insertOne(workout, (error, result) => {
         if (!error) {
-          callback(200, { code: 0, data: { workout: result.ops[0], user } });
+          res(200, { code: 0, data: { workout: result.ops[0], user } });
         } else {
-          callback(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
+          res(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
         }
       });
     }
   } catch (error) {
-    callback(400, { code: 1, data: { error: 'Invalid Workout data' } });
+    res(400, { code: 1, data: { error: 'Invalid Workout data' } });
   }
 };
 
-_workout.put = (req, callback) => {
-  let { options, tokenpayload, buffer } = req;
+_workout.put = (req, res) => {
+  let { tokenpayload, buffer } = req;
   let user = tokenpayload.user;
-  let database = options.database;
   try {
     let wo = JSON.parse(buffer);
     if (wo._id) {
-      database.collection('workouts').findOne({ _id: ObjectId(wo._id) }, (error, workout) => {
+      workoutCollection.findOne({ _id: ObjectId(wo._id) }, (error, workout) => {
         if (!error) {
           if (workout) {
             if (wo.name) workout.name = wo.name;
@@ -95,31 +90,46 @@ _workout.put = (req, callback) => {
             if (wo.type) workout.type = wo.type;
             if (wo.rounds) workout.rounds = wo.rounds;
             if (wo.timecap) workout.timecap = wo.timecap;
-            database.collection('workouts').replaceOne({ _id: ObjectId(wo._id) }, workout, function (error, result) {
-              callback(200, { code: 0, data: { workout: result.ops[0], user } });
+            workoutCollection.replaceOne({ _id: ObjectId(wo._id) }, workout, function (error, result) {
+              res(200, { code: 0, data: { workout: result.ops[0], user } });
             });
           } else {
-            callback(400, { code: 1, data: { error: `Workout not found for ID ${_id}` } });
+            res(400, { code: 1, data: { error: `Workout not found for ID ${_id}` } });
           }
         } else {
-          callback(400, { code: 1, data: { error: 'Error occurred while retrieving existing record' } });
+          res(400, { code: 1, data: { error: 'Error occurred while retrieving existing record' } });
         }
       });
     } else {
-      callback(400, { code: 1, data: { error: 'Invalid or missing workout id' } });
+      res(400, { code: 1, data: { error: 'Invalid or missing workout id' } });
     }
   } catch (error) {
-    callback(400, { code: 1, data: { error: 'Invalid Workout data' } });
+    res(400, { code: 1, data: { error: 'Invalid Workout data' } });
   }
 };
 
-workout.verifyToken = (headers, res, callback) => {
+_workout.delete = (req, res) => {
+  let { query, tokenpayload } = req;
+  if (query._id && query._id.length === 24) {
+    workoutCollection.removeOne({ _id: ObjectId(query._id) }, (error, result) => {
+      if (!error) {
+        res(200, { code: 0, data: { deletedCount: result.deletedCount, user: tokenpayload.user } });
+      } else {
+        res(400, { code: 1, data: { error: `Could not delete the workout record` } });
+      }
+    });
+  } else {
+    res(400, { code: 1, data: { error: `Please provide a valid workout id to delete` } });
+  }
+};
+
+workout.verifyToken = (headers, res, next) => {
   if (headers.authorization) {
     let [type, token] = headers.authorization.split(' ');
     if (type === 'Bearer') {
       try {
         let tokenpayload = jwt.verify(token, jwt_key);
-        callback(tokenpayload);
+        next(tokenpayload);
       } catch (error) {
         res(401, { code: 1, message: 'Invalid or expired token' });
       }
