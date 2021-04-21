@@ -1,9 +1,9 @@
 'use strict';
 const $test = require('../../vendor/nodejs-unit-test-library');
 const { assert, it } = $test;
-const auth = require('./../../handlers/auth');
+const user = require('../../handlers/user');
 
-console.group('\x1b[33m%s\x1b[0m', 'handlers/auth.js Tests');
+console.group('\x1b[33m%s\x1b[0m', 'handlers/user.js Tests');
 
 let bcrypt, compare, hash, jwt, sign;
 $test.setUp = () => {
@@ -22,19 +22,19 @@ $test.tearDown = () => {
 };
 
 // login
-it('auth.login() should not allow POST method', function () {
+it('user.login() should not allow POST method', function () {
   let _statusCode, _data;
   let payload = {
     method: 'post',
   };
-  auth.login(payload, (statusCode, data) => {
+  user.login(payload, (statusCode, data) => {
     _statusCode = statusCode;
     _data = data;
   });
   assert.strictEqual(_statusCode, 405);
 });
 
-it('auth.login() should handle a valid login request', function () {
+it('user.login() should handle a valid login request', function () {
   //stub bcrypt.compare
   bcrypt.compare = function (stringOne, hashedString, callback) {
     callback(false, true); //callback(error, success)
@@ -65,7 +65,7 @@ it('auth.login() should handle a valid login request', function () {
   };
 
   let _statusCode, _data;
-  auth.login(payload, (statusCode, data) => {
+  user.login(payload, (statusCode, data) => {
     _statusCode = statusCode;
     _data = data;
   });
@@ -99,7 +99,7 @@ it('should register a user', function () {
     options: { database },
   };
   let _statusCode, _data;
-  auth.register(payload, (statusCode, data) => {
+  user.register(payload, (statusCode, data) => {
     _statusCode = statusCode;
     _data = data;
   });

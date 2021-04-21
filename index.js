@@ -3,7 +3,7 @@
 const server = require('./vendor/mini-http-server');
 // const handlers = require('./handlers/index.old');
 const handler = require('./handlers');
-const auth = require('./handlers/auth');
+const user = require('./handlers/user');
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config();
@@ -28,10 +28,10 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/api/workout': handler.workout,
     '/api/workoutlog': handler.workoutlog,
     // '/api/users': handlers.users,
-    '/api/login': auth.login,
-    '/api/register': auth.register,
-    '/api/token': auth.token,
-    '/api/testtoken': auth.testtoken,
+    '/api/login': user.login,
+    '/api/register': user.register,
+    '/api/token': user.token,
+    '/api/testtoken': user.testtoken,
   });
   server.setStaticPath(path.join(__dirname, '/public/'));
   server.init(port);
