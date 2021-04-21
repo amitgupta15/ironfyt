@@ -55,7 +55,7 @@ workout.post = (req, res) => {
       if (!error) {
         res(200, { code: 0, data: { workout: result.ops[0], user } });
       } else {
-        res(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
+        res(400, { code: 1, data: { error: `Error occurred while creating a new workout ${error}` } });
       }
     });
   }
@@ -77,7 +77,11 @@ workout.put = (req, res) => {
             if (wo.rounds) workout.rounds = wo.rounds;
             if (wo.timecap) workout.timecap = wo.timecap;
             workoutsCollection(req).replaceOne({ _id: ObjectId(wo._id) }, workout, function (error, result) {
-              res(200, { code: 0, data: { workout: result.ops[0], user } });
+              if (!error) {
+                res(200, { code: 0, data: { workout: result.ops[0], user } });
+              } else {
+                res(400, { code: 1, data: { error: `Error updating workout` } });
+              }
             });
           } else {
             res(400, { code: 1, data: { error: `Workout not found for ID ${_id}` } });

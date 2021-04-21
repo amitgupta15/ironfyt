@@ -151,8 +151,11 @@ server.serveDynamicContent = (request, response) => {
   });
 
   request.on('end', () => {
-    buffer = Buffer.concat(buffer);
-
+    if (buffer.length) {
+      buffer = Buffer.concat(buffer);
+    } else {
+      buffer = Buffer.from(JSON.stringify({}));
+    }
     // Prepare the request data object to pass to the handler function
     const data = {
       method,
