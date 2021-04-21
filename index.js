@@ -26,7 +26,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   server.setAllowedPaths({
     '/': handler.default,
     '/api/workout': handler.workout,
-    // '/api/logs': handlers.logs,
+    '/api/workoutlog': handler.workoutlog,
     // '/api/users': handlers.users,
     '/api/login': auth.login,
     '/api/register': auth.register,

@@ -5,24 +5,8 @@ const workout = require('./../../handlers/workout');
 
 console.group('\x1b[33m%s\x1b[0m', 'handlers/workout.js Tests');
 
-let verifyToken;
-$test.setUp = () => {
-  verifyToken = workout.verifyToken;
-  workout.verifyToken = function (headers, res, callback) {
-    callback({});
-  };
-};
-
-$test.tearDown = () => {
-  workout.verifyToken = verifyToken;
-};
-
 it('should query a workout for a given id', () => {
   let req = {
-    method: 'get',
-    headers: {
-      authorization: 'Bearer aFakeToken',
-    },
     options: {
       database: {
         collection: () => {

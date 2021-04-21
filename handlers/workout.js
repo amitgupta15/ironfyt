@@ -38,22 +38,26 @@ workout.post = (req, res) => {
   let workout;
   try {
     workout = JSON.parse(buffer);
-    let missingRequiredFields = [];
-    if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
-    if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
-    if (missingRequiredFields.length) {
-      res(400, { code: 1, data: { error: `Missing required fields: ${missingRequiredFields.join(', ')}` } });
-    } else {
-      workoutsCollection(req).insertOne(workout, (error, result) => {
-        if (!error) {
-          res(200, { code: 0, data: { workout: result.ops[0], user } });
-        } else {
-          res(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
-        }
-      });
-    }
   } catch (error) {
     res(400, { code: 1, data: { error: 'Invalid Workout data' } });
+  }
+  let missingRequiredFields = [];
+  if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
+  if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
+  if (missingRequiredFields.length) {
+    res(400, { code: 1, data: { error: `Missing required fields: ${missingRequiredFields.join(', ')}` } });
+  } else {
+    workout.timecap = workout.timecap ? workout.timecap : null;
+    workout.rounds = workout.rounds ? workout.rounds : null;
+    workout.type = workout.type ? workout.type : null;
+    workout.user_id = workout.user_id ? new ObjectId(workout.user_id) : null;
+    workoutsCollection(req).insertOne(workout, (error, result) => {
+      if (!error) {
+        res(200, { code: 0, data: { workout: result.ops[0], user } });
+      } else {
+        res(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
+      }
+    });
   }
 };
 

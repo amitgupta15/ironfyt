@@ -9,6 +9,7 @@ require('dotenv').config();
 const jwt_key = process.env.JWT_KEY;
 
 const workout = require('./workout');
+const workoutlog = require('./workoutlog');
 
 const handler = {};
 
@@ -20,7 +21,9 @@ handler.workout = (req, res) => {
   handleRoute(req, res, workout, true);
 };
 
-handler.log = (req, res) => {};
+handler.workoutlog = (req, res) => {
+  handleRoute(req, res, workoutlog, true);
+};
 
 /**
  *
