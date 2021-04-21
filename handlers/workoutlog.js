@@ -99,7 +99,18 @@ workoutlog.put = (req, res) => {
 };
 
 workoutlog.delete = (req, res) => {
-  res(200, { code: 0, data: { message: 'successfully workout log delete request' } });
+  let { query, tokenpayload } = req;
+  if (query._id && query._id.length === 24) {
+    workoutlogsCollection(req).removeOne({ _id: ObjectId(query._id) }, (error, result) => {
+      if (!error) {
+        res(200, { code: 0, data: { deletedCount: result.deletedCount, user: tokenpayload.user } });
+      } else {
+        res(400, { code: 1, data: { error: `Could not delete the workout log record` } });
+      }
+    });
+  } else {
+    res(400, { code: 1, data: { error: `Please provide a valid workout log id to delete` } });
+  }
 };
 
 let workoutlogsCollection = (req) => {
