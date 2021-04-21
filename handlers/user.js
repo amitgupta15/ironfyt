@@ -5,18 +5,19 @@
 
 //library to hash password
 const bcrypt = require('bcrypt');
+const ObjectId = require('mongodb').ObjectID;
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 //Number of salt rounds to provide hashing
 const saltRounds = 13;
-const auth = {};
+const user = {};
 /**
  * Authenticate a user and send back token with user info
  * @param {object} payload - payload object contains buffer with login info, database connection object, etc.
  * @param {*} callback - send back the status code and data callback(statusCode, data)
  */
-auth.login = (payload, callback) => {
+user.login = (payload, callback) => {
   const { method, buffer, options } = payload;
   let loginData = {};
   if (method.toLowerCase() === 'get') {
@@ -56,7 +57,7 @@ auth.login = (payload, callback) => {
   }
 };
 
-auth.register = (payload, callback) => {
+user.register = (payload, callback) => {
   const { method, buffer, options } = payload;
   let user = {};
   if (method.toLowerCase() !== 'post') {
@@ -106,7 +107,7 @@ let getToken = (user) => {
 };
 
 /** Temp methods - Remove once the authentication code is stable  */
-auth.token = (payload, callback) => {
+user.token = (payload, callback) => {
   let user = {};
   try {
     user = JSON.parse(payload.buffer);
@@ -124,7 +125,7 @@ auth.token = (payload, callback) => {
 };
 
 // Keep this method to test token
-auth.testtoken = (payload, callback) => {
+user.testtoken = (payload, callback) => {
   let header = payload.headers.authorization;
   let [type, token] = header.split(' ');
   if (type.toLowerCase() === 'bearer' && typeof token !== undefined) {
@@ -140,4 +141,49 @@ auth.testtoken = (payload, callback) => {
     callback(401, { code: 123, message: 'Invalid token' });
   }
 };
-module.exports = auth;
+
+user.get = (req, res) => {
+  let { query, tokenpayload } = req;
+  let user = tokenpayload && tokenpayload.user ? tokenpayload.user : {};
+  let role = user && user.role ? user.role.toLowerCase() : 'notadmin';
+  let _id = query && query._id ? query._id : false;
+  if (role === 'admin' || _id === user._id) {
+    if (_id) {
+      if (_id.length === 24) {
+        usersCollection(req).findOne({ _id: ObjectId(_id) }, (error, userDoc) => {
+          if (!error) {
+            res(200, { code: 0, data: { user: userDoc } });
+          } else {
+            res(400, { code: 1, data: { error: 'Error occurred while querying user' } });
+          }
+        });
+      } else {
+        res(400, { code: 1, data: { error: 'Invalid User Id' } });
+      }
+    } else if (role === 'admin') {
+      usersCollection(req)
+        .find({})
+        .toArray((error, users) => {
+          res(200, { code: 0, data: { users } });
+        });
+    } else {
+      res(400, { code: 1, data: { error: 'Please provide a valid user id' } });
+    }
+  } else {
+    res(401, { code: 1, data: { error: 'Not Authorized' } });
+  }
+};
+
+user.put = (req, res) => {
+  res(200, { code: 0, data: { message: 'successful user put request' } });
+};
+
+user.delete = (req, res) => {
+  res(200, { code: 0, data: { message: 'successful user delete request' } });
+};
+
+let usersCollection = (req) => {
+  let { options } = req;
+  return options.database.collection('users');
+};
+module.exports = user;

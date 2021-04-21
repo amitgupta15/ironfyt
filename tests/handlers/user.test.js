@@ -106,4 +106,88 @@ it('should register a user', function () {
   assert.strictEqual(_statusCode, 201);
   assert.strictEqual(_data.data.message, 'Registration Successful');
 });
+
+it('should query a user for a given id', () => {
+  let req = {
+    options: {
+      database: {
+        collection: () => {
+          return {
+            findOne: (option, callback) => {
+              callback(false, { name: 'amit' });
+            },
+          };
+        },
+      },
+    },
+    query: { _id: '012345678901234567890123' },
+    tokenpayload: {
+      user: { _id: '012345678901234567890123' },
+    },
+  };
+  user.get(req, function (statusCode, response) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(response.code, 0);
+    assert.strictEqual(response.data.user.name, 'amit');
+  });
+});
+
+it('should query all users if no id is provided', () => {
+  let req = {
+    options: {
+      database: {
+        collection: () => {
+          return {
+            find: () => {
+              return {
+                toArray: (callback) => {
+                  callback(false, [{ name: 'user 1' }, { name: 'user 2' }]);
+                },
+              };
+            },
+          };
+        },
+      },
+    },
+    query: {},
+    tokenpayload: {
+      user: { role: 'admin' },
+    },
+  };
+  user.get(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.code, 0);
+    assert.strictEqual(data.data.users.length, 2);
+  });
+});
+
+it('should NOT query all users if the logged in user is not an admin', () => {
+  let req = {
+    options: {
+      database: {
+        collection: () => {
+          return {
+            find: () => {
+              return {
+                toArray: (callback) => {
+                  callback(false, [{ name: 'user 1' }, { name: 'user 2' }]);
+                },
+              };
+            },
+          };
+        },
+      },
+    },
+    query: {},
+    tokenpayload: {
+      user: { role: 'notadmin' },
+    },
+  };
+  user.get(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 401);
+    assert.strictEqual(data.code, 1);
+    assert.strictEqual(data.data.error, 'Not Authorized');
+  });
+});
+
 console.groupEnd();

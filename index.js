@@ -27,7 +27,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/': handler.default,
     '/api/workout': handler.workout,
     '/api/workoutlog': handler.workoutlog,
-    // '/api/users': handlers.users,
+    '/api/user': handler.user,
     '/api/login': user.login,
     '/api/register': user.register,
     '/api/token': user.token,

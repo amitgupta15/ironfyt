@@ -10,6 +10,7 @@ const jwt_key = process.env.JWT_KEY;
 
 const workout = require('./workout');
 const workoutlog = require('./workoutlog');
+const user = require('./user');
 
 const handler = {};
 
@@ -25,6 +26,9 @@ handler.workoutlog = (req, res) => {
   handleRoute(req, res, workoutlog, true);
 };
 
+handler.user = (req, res) => {
+  handleRoute(req, res, user, true, ['get', 'put', 'delete']);
+};
 /**
  *
  * @param {*} req - request object
@@ -32,8 +36,7 @@ handler.workoutlog = (req, res) => {
  * @param {*} route - route module
  * @param {*} secure - flag to indicate if it is a secure route. By default, it is assumed that the route is a secure route
  */
-let handleRoute = (req, res, route, secure = true) => {
-  let allowedMethods = ['get', 'post', 'put', 'delete'];
+let handleRoute = (req, res, route, secure = true, allowedMethods = ['get', 'post', 'put', 'delete']) => {
   let { method, headers } = req;
   method = method.toLowerCase();
   if (allowedMethods.indexOf(method) < 0) {
