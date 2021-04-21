@@ -54,7 +54,29 @@ _workout.get = (req, callback) => {
 };
 
 _workout.post = (req, callback) => {
-  callback(200, { code: 0, data: { ...req.tokenpayload, message: 'successfully executed post request' } });
+  let { options, tokenpayload, buffer } = req;
+  let user = tokenpayload.user;
+  let database = options.database;
+  let workout;
+  try {
+    workout = JSON.parse(buffer);
+    let missingRequiredFields = [];
+    if (!workout.hasOwnProperty('name')) missingRequiredFields.push('name');
+    if (!workout.hasOwnProperty('description')) missingRequiredFields.push('description');
+    if (missingRequiredFields.length) {
+      callback(400, { code: 1, data: { error: `Missing required fields: ${missingRequiredFields.join(', ')}` } });
+    } else {
+      database.collection('workouts').insertOne(workout, (error, result) => {
+        if (!error) {
+          callback(200, { code: 0, data: { workout: result.ops[0], user } });
+        } else {
+          callback(400, { code: 1, data: { error: `Error occurred while creating a new workouts ${error}` } });
+        }
+      });
+    }
+  } catch (error) {
+    callback(400, { code: 1, data: { error: 'Invalid Workout data' } });
+  }
 };
 
 _workout.put = (req, callback) => {

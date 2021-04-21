@@ -5,21 +5,19 @@ const workout = require('./../../handlers/workout');
 
 console.group('\x1b[33m%s\x1b[0m', 'handlers/workout.js Tests');
 
-let jwt, verify;
+let verifyToken;
 $test.setUp = () => {
-  jwt = require('jsonwebtoken');
-  verify = jwt.verify;
-};
-
-$test.tearDown = () => {
-  jwt.verify = verify;
-};
-
-it('should query a workout for a given id', () => {
-  let _verifyToken = workout.verifyToken;
+  verifyToken = workout.verifyToken;
   workout.verifyToken = function (headers, res, callback) {
     callback({});
   };
+};
+
+$test.tearDown = () => {
+  workout.verifyToken = verifyToken;
+};
+
+it('should query a workout for a given id', () => {
   let req = {
     method: 'get',
     headers: {
@@ -43,15 +41,9 @@ it('should query a workout for a given id', () => {
     assert.strictEqual(data.code, 0);
     assert.strictEqual(data.data.workout.name, 'workout 1');
   });
-
-  workout.verifyToken = _verifyToken;
 });
 
 it('should query all workouts if no id is provided', () => {
-  let _verifyToken = workout.verifyToken;
-  workout.verifyToken = function (headers, res, callback) {
-    callback({});
-  };
   let req = {
     method: 'get',
     headers: {
@@ -79,7 +71,31 @@ it('should query all workouts if no id is provided', () => {
     assert.strictEqual(data.code, 0);
     assert.strictEqual(data.data.workouts.length, 2);
   });
-
-  workout.verifyToken = _verifyToken;
+});
+it('should create a new workout', () => {
+  let req = {
+    method: 'post',
+    headers: {
+      authorization: 'Bearer aFakeToken',
+    },
+    buffer: Buffer.from(JSON.stringify({ name: 'worout 1', description: 'some description' })),
+    options: {
+      database: {
+        collection: () => {
+          return {
+            insertOne: (data, callback) => {
+              callback(false, { ops: [{ name: 'workout 1' }] });
+            },
+          };
+        },
+      },
+    },
+    query: {},
+  };
+  workout.handler(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.code, 0);
+    assert.strictEqual(data.data.workout.name, 'workout 1');
+  });
 });
 console.groupEnd();
