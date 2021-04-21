@@ -80,7 +80,37 @@ _workout.post = (req, callback) => {
 };
 
 _workout.put = (req, callback) => {
-  callback(200, { code: 0, data: { ...req.tokenpayload, message: 'successfully executed put request' } });
+  let { options, tokenpayload, buffer } = req;
+  let user = tokenpayload.user;
+  let database = options.database;
+  try {
+    let wo = JSON.parse(buffer);
+    if (wo._id) {
+      database.collection('workouts').findOne({ _id: ObjectId(wo._id) }, (error, workout) => {
+        if (!error) {
+          if (workout) {
+            if (wo.name) workout.name = wo.name;
+            if (wo.description) workout.description = wo.description;
+            if (wo.user_id) workout.user_id = wo.user_id;
+            if (wo.type) workout.type = wo.type;
+            if (wo.rounds) workout.rounds = wo.rounds;
+            if (wo.timecap) workout.timecap = wo.timecap;
+            database.collection('workouts').replaceOne({ _id: ObjectId(wo._id) }, workout, function (error, result) {
+              callback(200, { code: 0, data: { workout: result.ops[0], user } });
+            });
+          } else {
+            callback(400, { code: 1, data: { error: `Workout not found for ID ${_id}` } });
+          }
+        } else {
+          callback(400, { code: 1, data: { error: 'Error occurred while retrieving existing record' } });
+        }
+      });
+    } else {
+      callback(400, { code: 1, data: { error: 'Invalid or missing workout id' } });
+    }
+  } catch (error) {
+    callback(400, { code: 1, data: { error: 'Invalid Workout data' } });
+  }
 };
 
 workout.verifyToken = (headers, res, callback) => {

@@ -98,4 +98,32 @@ it('should create a new workout', () => {
     assert.strictEqual(data.data.workout.name, 'workout 1');
   });
 });
+it('should edit an existing workout', () => {
+  let req = {
+    method: 'put',
+    headers: {
+      authorization: 'Bearer aFakeToken',
+    },
+    buffer: Buffer.from(JSON.stringify({ _id: '012345678901234567890123', name: 'workout 2', description: 'some description' })),
+    options: {
+      database: {
+        collection: () => {
+          return {
+            findOne: (option, callback) => {
+              callback(false, { _id: '012345678901234567890123', name: 'workout 1' });
+            },
+            replaceOne: (_id, data, callback) => {
+              callback(false, { ops: [{ name: 'workout 1', description: 'run 5 miles' }] });
+            },
+          };
+        },
+      },
+    },
+    query: {},
+  };
+  workout.handler(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.data.workout.description, 'run 5 miles');
+  });
+});
 console.groupEnd();
