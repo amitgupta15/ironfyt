@@ -1,7 +1,7 @@
 'use strict';
 
 const { assert, it } = require('../../vendor/nodejs-unit-test-library');
-const handlers = require('../../handlers');
+const handlers = require('../../handlers/index.old');
 
 console.group('\x1b[33m%s\x1b[0m', 'handlers/index.js Tests');
 

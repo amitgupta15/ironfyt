@@ -1,8 +1,8 @@
 'use strict';
 
 const server = require('./vendor/mini-http-server');
-const handlers = require('./handlers');
-const workout = require('./handlers/workout');
+// const handlers = require('./handlers/index.old');
+const handler = require('./handlers');
 const auth = require('./handlers/auth');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -21,22 +21,18 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   }
   // Making database connection available across different routes
   server.setOptions({ database: database.db(process.env.DATABASE) });
-  // assign the db handle to handler
-  // handlers.db = db;
   console.log('Connected to Database: ' + process.env.DATABASE);
-  // Dynamic paths
-  const paths = {
-    '/': handlers.default,
-    '/api/workout': workout.handler,
-    '/api/logs': handlers.logs,
-    '/api/users': handlers.users,
+  // Set the allowed dynamic paths
+  server.setAllowedPaths({
+    '/': handler.default,
+    '/api/workout': handler.workout,
+    // '/api/logs': handlers.logs,
+    // '/api/users': handlers.users,
     '/api/login': auth.login,
     '/api/register': auth.register,
     '/api/token': auth.token,
     '/api/testtoken': auth.testtoken,
-  };
-  // Set the allowed dynamic paths
-  server.setAllowedPaths(paths);
+  });
   server.setStaticPath(path.join(__dirname, '/public/'));
   server.init(port);
 });

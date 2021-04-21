@@ -35,8 +35,9 @@ it('should query a workout for a given id', () => {
       },
     },
     query: { _id: '111111111111111111111111' },
+    tokenpayload: {},
   };
-  workout.handler(req, function (statusCode, data) {
+  workout.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(data.code, 0);
     assert.strictEqual(data.data.workout.name, 'workout 1');
@@ -45,10 +46,6 @@ it('should query a workout for a given id', () => {
 
 it('should query all workouts if no id is provided', () => {
   let req = {
-    method: 'get',
-    headers: {
-      authorization: 'Bearer aFakeToken',
-    },
     options: {
       database: {
         collection: () => {
@@ -65,8 +62,9 @@ it('should query all workouts if no id is provided', () => {
       },
     },
     query: {},
+    tokenpayload: {},
   };
-  workout.handler(req, function (statusCode, data) {
+  workout.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(data.code, 0);
     assert.strictEqual(data.data.workouts.length, 2);
@@ -74,10 +72,6 @@ it('should query all workouts if no id is provided', () => {
 });
 it('should create a new workout', () => {
   let req = {
-    method: 'post',
-    headers: {
-      authorization: 'Bearer aFakeToken',
-    },
     buffer: Buffer.from(JSON.stringify({ name: 'worout 1', description: 'some description' })),
     options: {
       database: {
@@ -91,8 +85,9 @@ it('should create a new workout', () => {
       },
     },
     query: {},
+    tokenpayload: {},
   };
-  workout.handler(req, function (statusCode, data) {
+  workout.post(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(data.code, 0);
     assert.strictEqual(data.data.workout.name, 'workout 1');
@@ -100,10 +95,6 @@ it('should create a new workout', () => {
 });
 it('should edit an existing workout', () => {
   let req = {
-    method: 'put',
-    headers: {
-      authorization: 'Bearer aFakeToken',
-    },
     buffer: Buffer.from(JSON.stringify({ _id: '012345678901234567890123', name: 'workout 2', description: 'some description' })),
     options: {
       database: {
@@ -120,18 +111,15 @@ it('should edit an existing workout', () => {
       },
     },
     query: {},
+    tokenpayload: {},
   };
-  workout.handler(req, function (statusCode, data) {
+  workout.put(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(data.data.workout.description, 'run 5 miles');
   });
 });
 it('should delete a workout', () => {
   let req = {
-    method: 'delete',
-    headers: {
-      authorization: 'Bearer aFakeToken',
-    },
     options: {
       database: {
         collection: () => {
@@ -144,8 +132,9 @@ it('should delete a workout', () => {
       },
     },
     query: { _id: '012345678901234567890123' },
+    tokenpayload: {},
   };
-  workout.handler(req, function (statusCode, data) {
+  workout.delete(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(data.data.deletedCount, 1);
   });
