@@ -66,13 +66,13 @@ workout.put = (req, res) => {
   let user = tokenpayload.user;
   try {
     let wo = JSON.parse(buffer);
-    if (wo._id) {
+    if (wo._id && wo._id.length === 24) {
       workoutsCollection(req).findOne({ _id: ObjectId(wo._id) }, (error, workout) => {
         if (!error) {
           if (workout) {
             if (wo.name) workout.name = wo.name;
             if (wo.description) workout.description = wo.description;
-            if (wo.user_id) workout.user_id = wo.user_id;
+            if (wo.user_id) workout.user_id = new ObjectId(wo.user_id);
             if (wo.type) workout.type = wo.type;
             if (wo.rounds) workout.rounds = wo.rounds;
             if (wo.timecap) workout.timecap = wo.timecap;
