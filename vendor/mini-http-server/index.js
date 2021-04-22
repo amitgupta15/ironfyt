@@ -74,6 +74,7 @@ server.getContentType = (url) => {
  * @param {Object} response - response object expected by the http.createServer callback
  */
 server.serveStaticContent = (pathname, response) => {
+  pathname = pathname === '/' ? 'index.html' : pathname;
   // Get content type based on the file extension passed in the request url
   const contentType = server.getContentType(pathname);
   // Set the Content-Type response header
@@ -175,26 +176,18 @@ server.serveDynamicContent = (request, response) => {
      *
      */
     handler(data, (statusCode = 200, data = '') => {
-      if (data.pathname === '/') {
-        response.writeHead(statusCode, {
-          Location: data,
-        });
-        response.end();
-      } else {
-        if (typeof data !== 'string') {
-          try {
-            data = JSON.stringify(data);
-          } catch (e) {
-            data = {};
-            console.log('Error occurred while stringifying data ' + e);
-          }
+      if (typeof data !== 'string') {
+        try {
+          data = JSON.stringify(data);
+        } catch (e) {
+          data = {};
+          console.log('Error occurred while stringifying data ' + e);
         }
-        // data = typeof data === 'string' ? data : JSON.stringify(data);
-        response.setHeader('Content-Type', 'application/json');
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        response.writeHead(statusCode);
-        response.end(data);
       }
+      response.setHeader('Content-Type', 'application/json');
+      response.setHeader('Access-Control-Allow-Origin', '*');
+      response.writeHead(statusCode);
+      response.end(data);
     });
   });
 };

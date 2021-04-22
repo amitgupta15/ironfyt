@@ -14,8 +14,8 @@ const user = require('./user');
 
 const handler = {};
 
-handler.default = (req, res) => {
-  res(302, 'index.html');
+handler.healthcheck = (req, res) => {
+  res(302, { code: 0, data: { pathname: req.pathname, query: req.query } });
 };
 
 handler.workout = (req, res) => {

@@ -24,7 +24,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   console.log('Connected to Database: ' + process.env.DATABASE);
   // Set the allowed dynamic paths
   server.setAllowedPaths({
-    '/': handler.default,
+    '/healthcheck': handler.healthcheck,
     '/api/workout': handler.workout,
     '/api/workoutlog': handler.workoutlog,
     '/api/user': handler.user,
