@@ -175,11 +175,78 @@ user.get = (req, res) => {
 };
 
 user.put = (req, res) => {
-  res(200, { code: 0, data: { message: 'successful user put request' } });
+  let { buffer, tokenpayload } = req;
+  let user = tokenpayload && tokenpayload.user ? tokenpayload.user : {};
+  let role = user && user.role ? user.role.toLowerCase() : 'notadmin';
+  let editUser;
+  try {
+    editUser = JSON.parse(buffer);
+  } catch (error) {
+    res(400, { code: 1, data: { error: 'Invalid user data' } });
+  }
+  if (role === 'admin' || editUser._id === user._id) {
+    if (editUser._id.length === 24) {
+      usersCollection(req).findOne({ _id: ObjectId(editUser._id) }, (error, u) => {
+        if (!error) {
+          if (u) {
+            if (editUser.fname) u.fname = editUser.fname.trim();
+            if (editUser.lname) u.lname = editUser.lname.trim();
+            if (editUser.role && role === 'admin') u.role = editUser.role;
+            if (editUser.password) {
+              bcrypt.hash(editUser.password, saltRounds, function (error, hashedPassword) {
+                if (!error) {
+                  u.password = hashedPassword;
+                  replaceUser(req, res, user, u);
+                } else {
+                  res(400, { code: 1, data: { error: `Error while encoding the password` } });
+                }
+              });
+            } else {
+              replaceUser(req, res, user, u);
+            }
+          } else {
+            res(400, { code: 1, data: { error: `User not found for id: ${editUser._id}` } });
+          }
+        } else {
+          res(400, { code: 1, data: { error: 'Error retrieving the user to be edited' } });
+        }
+      });
+    } else {
+      res(400, { code: 1, data: { error: 'Invalid User Id' } });
+    }
+  } else {
+    res(401, { code: 1, data: { error: 'Not Authorized' } });
+  }
+};
+let replaceUser = (req, res, user, u) => {
+  usersCollection(req).replaceOne({ _id: ObjectId(u._id) }, u, (error, result) => {
+    if (!error) {
+      res(200, { code: 0, data: { updateduser: result.ops[0], user } });
+    } else {
+      res(400, { code: 1, data: { error: `Error updating user` } });
+    }
+  });
 };
 
 user.delete = (req, res) => {
-  res(200, { code: 0, data: { message: 'successful user delete request' } });
+  let { query, tokenpayload } = req;
+  let user = tokenpayload && tokenpayload.user ? tokenpayload.user : {};
+  let role = user && user.role ? user.role.toLowerCase() : 'notadmin';
+  if (role === 'admin') {
+    if (query._id && query._id.length === 24) {
+      usersCollection(req).removeOne({ _id: ObjectId(query._id) }, (error, result) => {
+        if (!error) {
+          res(200, { code: 0, data: { deletedCount: result.deletedCount, user: tokenpayload.user } });
+        } else {
+          res(400, { code: 1, data: { error: `Could not delete the user record` } });
+        }
+      });
+    } else {
+      res(400, { code: 1, data: { error: 'Invalid user id' } });
+    }
+  } else {
+    res(401, { code: 1, data: { error: `Not Authorized to delete a user` } });
+  }
 };
 
 let usersCollection = (req) => {

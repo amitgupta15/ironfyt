@@ -190,4 +190,56 @@ it('should NOT query all users if the logged in user is not an admin', () => {
   });
 });
 
+//Not a good test. Dig deeper to check
+it('should edit an existing user', () => {
+  let req = {
+    buffer: Buffer.from(JSON.stringify({ _id: '012345678901234567890123', fname: 'amit', lname: 'gupta' })),
+    options: {
+      database: {
+        collection: () => {
+          return {
+            findOne: (option, callback) => {
+              callback(false, { _id: '012345678901234567890123', fname: 'pooja' });
+            },
+            replaceOne: (_id, data, callback) => {
+              callback(false, { ops: [{ fname: 'pooja' }] });
+            },
+          };
+        },
+      },
+    },
+    query: {},
+    tokenpayload: {
+      user: { _id: '012345678901234567890123' },
+    },
+  };
+  user.put(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.data.updateduser.fname, 'pooja');
+  });
+});
+it('should delete a user', () => {
+  let req = {
+    options: {
+      database: {
+        collection: () => {
+          return {
+            removeOne: (filter, callback) => {
+              callback(false, { deletedCount: 1 });
+            },
+          };
+        },
+      },
+    },
+    query: { _id: '012345678901234567890123' },
+    tokenpayload: {
+      user: { role: 'admin' },
+    },
+  };
+  user.delete(req, function (statusCode, data) {
+    assert.strictEqual(statusCode, 200);
+    assert.strictEqual(data.data.deletedCount, 1);
+  });
+});
+
 console.groupEnd();
