@@ -6,29 +6,15 @@
   self.$ironfyt = $ironfyt;
 
   let fetch = $hl.fetch;
-
   let serverUrl = 'http://localhost:3000';
 
-  $ironfyt.fetchUsers = function (callback) {
-    fetch.get(`${serverUrl}/api/users`, function (error, users) {
-      callback(error, users);
-    });
-  };
+  $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
+  $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
-  $ironfyt.fetchLogs = function (callback) {
-    fetch.get(`${serverUrl}/api/logs`, function (error, logs) {
-      callback(error, logs);
+  $ironfyt.login = function (loginInfo, callback) {
+    fetch.post(`${serverUrl}/login`, loginInfo, function (error, response) {
+      callback(error, response);
     });
-  };
-
-  $ironfyt.fetchUserLogs = function (userId, callback) {
-    if (userId) {
-      fetch.get(`${serverUrl}/api/logs?user_id=${userId}`, function (error, logs) {
-        callback(error, logs);
-      });
-    } else {
-      callback({ message: 'Please provide a user id' });
-    }
   };
 
   /**
@@ -50,6 +36,10 @@
         </div>
         `;
     }
+  };
+
+  $ironfyt.navigateToUrl = function (page) {
+    window.location.href = page;
   };
 
   //Topbar template

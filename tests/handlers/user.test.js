@@ -22,18 +22,6 @@ $test.tearDown = () => {
 };
 
 // login
-it('user.login() should not allow POST method', function () {
-  let _statusCode, _data;
-  let payload = {
-    method: 'post',
-  };
-  user.login(payload, (statusCode, data) => {
-    _statusCode = statusCode;
-    _data = data;
-  });
-  assert.strictEqual(_statusCode, 405);
-});
-
 it('user.login() should handle a valid login request', function () {
   //stub bcrypt.compare
   bcrypt.compare = function (stringOne, hashedString, callback) {
@@ -59,7 +47,7 @@ it('user.login() should handle a valid login request', function () {
   };
   // create a dummy payload
   let payload = {
-    method: 'get',
+    method: 'post',
     buffer: JSON.stringify({ email: 'amitgupta15@gmail.com', password: 'pp' }),
     options: { database },
   };

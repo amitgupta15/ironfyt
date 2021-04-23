@@ -20,7 +20,7 @@ const user = {};
 user.login = (payload, callback) => {
   const { method, buffer, options } = payload;
   let loginData = {};
-  if (method.toLowerCase() === 'get') {
+  if (method.toLowerCase() === 'post') {
     try {
       loginData = JSON.parse(buffer);
     } catch (e) {
@@ -40,7 +40,7 @@ user.login = (payload, callback) => {
             } else if (same) {
               delete user.password; // Do not send back user password
               let token = getToken(user);
-              callback(201, { code: 0, data: { token } });
+              callback(201, { code: 0, data: { token, user } });
             } else {
               callback(401, { code: 1, data: { error: 'Wrong Username or Password' } });
             }

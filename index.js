@@ -28,10 +28,10 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     '/api/workout': handler.workout,
     '/api/workoutlog': handler.workoutlog,
     '/api/user': handler.user,
-    '/api/login': user.login,
-    '/api/register': user.register,
-    '/api/token': user.token,
-    '/api/testtoken': user.testtoken,
+    '/login': user.login,
+    '/register': user.register,
+    '/token': user.token,
+    '/testtoken': user.testtoken,
   });
   server.setStaticPath(path.join(__dirname, '/public/'));
   server.init(port);

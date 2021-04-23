@@ -8,13 +8,19 @@
   let getParams = $hl.getParams;
 
   let app = $ironfyt;
-  for (var key in app) {
-    if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
-      app[key] = function (callback) {
-        callback();
-      };
-    }
-  }
+
+  let localStroageSetItem = (localStorage.setItem = function () {});
+  let navigateToUrl = (app.navigateToUrl = function () {});
+  let login = (app.login = function (loginInfo, callback) {
+    callback();
+  });
+  // for (var key in app) {
+  //   if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
+  //     app[key] = function (callback) {
+  //       callback();
+  //     };
+  //   }
+  // }
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -24,18 +30,24 @@
           component.setState({ [key]: '' });
         }
       }
-      if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
-        app[key] = function (callback) {
-          callback();
-        };
-      }
+      // if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
+      //   app[key] = function (callback) {
+      //     callback();
+      //   };
+      // }
     }
   };
 
   global.$test = Uitest({
     tearDown: function () {
       $hl.getParams = getParams;
+
       teardownComponents();
+
+      localStorage.setItem = localStroageSetItem;
+      app.navigateToUrl = navigateToUrl;
+      app.login = login;
+
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
     },

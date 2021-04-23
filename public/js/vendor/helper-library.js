@@ -43,15 +43,11 @@
       get: function (url, callback) {
         var requestListener = function () {
           if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-              try {
-                let response = JSON.parse(httpRequest.response);
-                callback(false, response);
-              } catch (error) {
-                callback({ message: error });
-              }
-            } else {
-              callback({ message: httpRequest.response });
+            try {
+              let response = JSON.parse(httpRequest.response);
+              callback(false, response);
+            } catch (error) {
+              callback({ message: error });
             }
           }
         };
@@ -64,17 +60,39 @@
         httpRequest.open('GET', url);
         httpRequest.send();
       },
+      delete: function (url, callback) {
+        var requestListener = function () {
+          if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            try {
+              let response = JSON.parse(httpRequest.response);
+              callback(false, response);
+            } catch (error) {
+              callback({ message: error });
+            }
+          }
+        };
+
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.addEventListener('load', requestListener);
+        httpRequest.addEventListener('error', function (error) {
+          callback({ message: 'Error Connecting to the Server', error: error });
+        });
+        httpRequest.open('DELETE', url);
+        httpRequest.send();
+      },
       post: function (url, data, callback) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener('load', function () {
-          if (httpRequest.status === 200) {
-            let response = {};
-            try {
-              response = JSON.parse(httpRequest.response);
-            } catch (error) {
-              callback({});
-            }
+          let response = {};
+          try {
+            response = JSON.parse(httpRequest.response);
+          } catch (error) {
+            callback(error);
+          }
+          if (httpRequest.status >= 400) {
             callback(response);
+          } else {
+            callback(false, response);
           }
         });
         httpRequest.open('POST', url);
@@ -84,10 +102,8 @@
       put: function (url, data, callback) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener('load', function () {
-          if (httpRequest.status === 200) {
-            var response = JSON.parse(httpRequest.response);
-            callback(response);
-          }
+          var response = JSON.parse(httpRequest.response);
+          callback(response);
         });
         httpRequest.open('PUT', url);
         httpRequest.send(JSON.stringify(data));

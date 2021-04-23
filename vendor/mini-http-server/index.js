@@ -166,7 +166,6 @@ server.serveDynamicContent = (request, response) => {
       options,
       headers: request.headers,
     };
-
     // Retrieve the handler for the path
     const handler = allowedPaths[pathname];
     /**
@@ -186,6 +185,9 @@ server.serveDynamicContent = (request, response) => {
       }
       response.setHeader('Content-Type', 'application/json');
       response.setHeader('Access-Control-Allow-Origin', '*');
+      response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+      response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      response.setHeader('Access-Control-Allow-Credentials', true);
       response.writeHead(statusCode);
       response.end(data);
     });
