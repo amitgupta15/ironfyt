@@ -24,7 +24,10 @@
       </div>
       `;
     } else {
-      return `<h2>You are already logged in ${user.fname ? user.fname : ''} ${user.lname ? user.lname : ''}</h2>`;
+      return `
+      <h2>You are already logged in ${user.fname ? user.fname : ''} ${user.lname ? user.lname : ''}</h2>
+      <button id="logout">Logout</button>
+      `;
     }
   };
 
@@ -71,6 +74,12 @@
       });
     }
   };
-
-  document.addEventListener('submit', handleLoginFormSubmitEvent);
+  let handleLogoutEvent = function (event) {
+    event.preventDefault();
+    localStorage.removeItem($ironfyt.AUTH_TOKEN);
+    localStorage.removeItem($ironfyt.AUTH_USER);
+    $ironfyt.navigateToUrl('/');
+  };
+  $hl.eventListener('submit', 'login-form', handleLoginFormSubmitEvent);
+  $hl.eventListener('click', 'logout', handleLogoutEvent);
 })();
