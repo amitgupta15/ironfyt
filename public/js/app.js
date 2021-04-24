@@ -11,12 +11,40 @@
   $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
+  let authenticateUser = function () {
+    let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
+    let user = localStorage.getItem($ironfyt.AUTH_USER);
+    user = user ? JSON.parse(user) : null;
+    if (token === null || user === null) {
+      $ironfyt.logout();
+    } else {
+      return { token, user };
+    }
+  };
+
   $ironfyt.login = function (loginInfo, callback) {
     fetch.post(`${serverUrl}/login`, loginInfo, function (error, response) {
       callback(error, response);
     });
   };
 
+  $ironfyt.logout = function () {
+    localStorage.removeItem($ironfyt.AUTH_TOKEN);
+    localStorage.removeItem($ironfyt.AUTH_USER);
+    $ironfyt.navigateToUrl('/');
+  };
+
+  $ironfyt.getWorkoutLogs = function (callback) {
+    let { token, user } = authenticateUser();
+    let options = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    fetch.get('/api/workoutlog', options, function (error, response) {
+      callback(error, response);
+    });
+  };
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page

@@ -76,9 +76,7 @@
   };
   let handleLogoutEvent = function (event) {
     event.preventDefault();
-    localStorage.removeItem($ironfyt.AUTH_TOKEN);
-    localStorage.removeItem($ironfyt.AUTH_USER);
-    $ironfyt.navigateToUrl('/');
+    $ironfyt.logout();
   };
   $hl.eventListener('submit', 'login-form', handleLoginFormSubmitEvent);
   $hl.eventListener('click', 'logout', handleLogoutEvent);

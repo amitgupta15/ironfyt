@@ -40,12 +40,16 @@
      * fetch() helper function - encapsulates XMLHttpRequest() calls
      */
     fetch: {
-      get: function (url, callback) {
+      get: function (url, options, callback) {
         var requestListener = function () {
           if (httpRequest.readyState === XMLHttpRequest.DONE) {
             try {
               let response = JSON.parse(httpRequest.response);
-              callback(false, response);
+              if (httpRequest.status >= 400) {
+                callback(response);
+              } else {
+                callback(false, response);
+              }
             } catch (error) {
               callback({ message: error });
             }
@@ -58,6 +62,15 @@
           callback({ message: 'Error Connecting to the Server', error: error });
         });
         httpRequest.open('GET', url);
+        options = options.toString() !== '{}' ? options : {};
+        if (options.headers) {
+          let headers = options.headers;
+          if (typeof headers === 'object') {
+            for (var key in headers) {
+              httpRequest.setRequestHeader(key, headers[key]);
+            }
+          }
+        }
         httpRequest.send();
       },
       delete: function (url, callback) {
@@ -65,7 +78,11 @@
           if (httpRequest.readyState === XMLHttpRequest.DONE) {
             try {
               let response = JSON.parse(httpRequest.response);
-              callback(false, response);
+              if (httpRequest.status >= 400) {
+                callback(response);
+              } else {
+                callback(false, response);
+              }
             } catch (error) {
               callback({ message: error });
             }
@@ -103,7 +120,11 @@
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener('load', function () {
           var response = JSON.parse(httpRequest.response);
-          callback(response);
+          if (httpRequest.status >= 400) {
+            callback(response);
+          } else {
+            callback(false, response);
+          }
         });
         httpRequest.open('PUT', url);
         httpRequest.send(JSON.stringify(data));

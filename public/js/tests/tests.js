@@ -11,7 +11,11 @@
 
   let localStroageSetItem = (localStorage.setItem = function () {});
   let navigateToUrl = (app.navigateToUrl = function () {});
+  let logout = (app.logout = function () {});
   let login = (app.login = function (loginInfo, callback) {
+    callback();
+  });
+  let getWorkoutLogs = (app.getWorkoutLogs = function (callback) {
     callback();
   });
   // for (var key in app) {
@@ -47,6 +51,8 @@
       localStorage.setItem = localStroageSetItem;
       app.navigateToUrl = navigateToUrl;
       app.login = login;
+      app.logout = logout;
+      app.getWorkoutLogs = getWorkoutLogs;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
