@@ -20,6 +20,7 @@
 
   ($ironfyt.workoutlogPage = function () {
     let { user } = $ironfyt.getCredentials();
+    user = user ? user : {};
     $ironfyt.getWorkoutLogs({ user_id: user._id }, function (error, response) {
       if (error) {
         component.setState({ error: { message: `Code: ${error.code}, Error: ${error.data.error}` } });

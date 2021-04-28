@@ -15,7 +15,7 @@
   let login = (app.login = function (loginInfo, callback) {
     callback();
   });
-  let getWorkoutLogs = (app.getWorkoutLogs = function (callback) {
+  let getWorkoutLogs = (app.getWorkoutLogs = function (params, callback) {
     callback();
   });
   let getCredentials = (app.getCredentials = function () {
