@@ -63,7 +63,7 @@ let verifyToken = (headers, res, next) => {
         let tokenpayload = jwt.verify(token, jwt_key);
         next(tokenpayload);
       } catch (error) {
-        res(401, { code: 1, message: 'Invalid or expired token' });
+        res(401, { code: 11, data: { error: 'Invalid or expired token' } });
       }
     } else {
       res(401, { code: 1, data: { error: 'Unauthorized request' } });

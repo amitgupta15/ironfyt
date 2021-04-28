@@ -18,13 +18,9 @@
   let getWorkoutLogs = (app.getWorkoutLogs = function (callback) {
     callback();
   });
-  // for (var key in app) {
-  //   if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
-  //     app[key] = function (callback) {
-  //       callback();
-  //     };
-  //   }
-  // }
+  let getCredentials = (app.getCredentials = function () {
+    return {};
+  });
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -34,11 +30,6 @@
           component.setState({ [key]: '' });
         }
       }
-      // if (app.hasOwnProperty(key) && typeof app[key] === 'function') {
-      //   app[key] = function (callback) {
-      //     callback();
-      //   };
-      // }
     }
   };
 
@@ -53,6 +44,7 @@
       app.login = login;
       app.logout = logout;
       app.getWorkoutLogs = getWorkoutLogs;
+      app.getCredentials = getCredentials;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

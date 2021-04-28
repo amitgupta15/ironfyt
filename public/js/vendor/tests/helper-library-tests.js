@@ -130,5 +130,13 @@
   test.it('hl.formatDateForInputField() should return a string in yyyy-MM-dd format', function () {
     test.assert(hl.formatDateForInputField(new Date('12/15/2020')) === '2020-12-15');
   });
+
+  test.it('hl.createQueryString() should return a url query string', function () {
+    let queryObj = {
+      _id: 123456,
+      user_id: 789012,
+    };
+    test.assert(hl.createQueryString(queryObj) === '_id=123456&user_id=789012&');
+  });
   console.groupEnd();
 })();

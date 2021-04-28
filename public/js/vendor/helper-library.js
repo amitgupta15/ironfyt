@@ -266,6 +266,20 @@
       let data = convertToCSVFormat(arr);
       downloadCSV(data);
     },
+    /**
+     * Creates a url query string of type "_id=123456&user_id=789&"
+     * @param {object} query
+     * @returns
+     */
+    createQueryString: function (query) {
+      let queryString = '';
+      if (query && Object.keys(query).length > 0) {
+        Object.keys(query).forEach((key) => {
+          queryString += `${key}=${query[key]}&`;
+        });
+      }
+      return queryString;
+    },
   };
 
   /** Methods used by downloadData */

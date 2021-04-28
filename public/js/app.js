@@ -11,15 +11,26 @@
   $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
-  let authenticateUser = function () {
+  let validateReponse = function (error, callback) {
+    if (error && error.code === 11) {
+      $ironfyt.logout();
+    } else {
+      callback();
+    }
+  };
+
+  let getAuthHeader = function () {
+    let { token } = $ironfyt.getCredentials();
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
+  $ironfyt.getCredentials = function () {
     let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
     let user = localStorage.getItem($ironfyt.AUTH_USER);
     user = user ? JSON.parse(user) : null;
-    if (token === null || user === null) {
-      $ironfyt.logout();
-    } else {
-      return { token, user };
-    }
+    return { token, user };
   };
 
   $ironfyt.login = function (loginInfo, callback) {
@@ -34,15 +45,17 @@
     $ironfyt.navigateToUrl('/');
   };
 
-  $ironfyt.getWorkoutLogs = function (callback) {
-    let { token, user } = authenticateUser();
-    let options = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    fetch.get('/api/workoutlog', options, function (error, response) {
-      callback(error, response);
+  $ironfyt.getWorkoutLogs = function (params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`/api/workoutlog?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, function () {
+        if (response.code === 0) {
+          callback(false, response);
+        } else {
+          callback(response);
+        }
+      });
     });
   };
   /**
@@ -72,7 +85,8 @@
 
   //Topbar template
   let topBarTemplate = function (props) {
-    return `<div>Top Bar</div>`;
+    let user = props && props.user ? props.user : {};
+    return `<div>Logged in as: ${user.fname} ${user.lname}</div>`;
   };
 
   // Common error template which can be shared across components to render error messages
