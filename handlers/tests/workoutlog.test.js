@@ -5,29 +5,6 @@ const workoutlog = require('./../../handlers/workoutlog');
 
 console.group('\x1b[33m%s\x1b[0m', 'handlers/workoutlog.js Tests');
 
-it('should query a workout log for a given id', () => {
-  let req = {
-    options: {
-      database: {
-        collection: () => {
-          return {
-            findOne: (option, callback) => {
-              callback(false, { name: 'workout 1' });
-            },
-          };
-        },
-      },
-    },
-    query: { _id: '111111111111111111111111' },
-    tokenpayload: {},
-  };
-  workoutlog.get(req, function (statusCode, response) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(response.code, 0);
-    assert.strictEqual(response.data.workoutlog.name, 'workout 1');
-  });
-});
-
 it('should query all workouts logs if no id is provided', () => {
   let req = {
     options: {
