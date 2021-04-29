@@ -15,10 +15,11 @@
     $test.assert(_page === 'login.html');
   });
 
-  $test.it('should redirect to the workoutlog page if a valid token is found', function () {
+  $test.it('should redirect to the workoutlog page if a valid token and user are found', function () {
     $ironfyt.getCredentials = function () {
-      return { token: 'afaketoken' };
+      return { token: 'afaketoken', user: { _id: 1 } };
     };
+
     let _page;
     $ironfyt.navigateToUrl = function (page) {
       _page = page;

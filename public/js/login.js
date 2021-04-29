@@ -3,9 +3,11 @@
   let loginTemplate = function (props) {
     let token = props && props.token ? props.token : false;
     let user = props && props.user ? props.user : {};
-    if (!token) {
-      return `
-      <div class="login-container">
+    return token && JSON.stringify(user) !== '{}'
+      ? `<h2>You are already logged in ${user.fname ? user.fname : ''} ${user.lname ? user.lname : ''}</h2>
+      <button id="logout">Logout</button>
+      `
+      : `<div class="login-container">
         <h2>Login</h2>
         <form id="login-form">
           <div>
@@ -23,12 +25,6 @@
         </form>
       </div>
       `;
-    } else {
-      return `
-      <h2>You are already logged in ${user.fname ? user.fname : ''} ${user.lname ? user.lname : ''}</h2>
-      <button id="logout">Logout</button>
-      `;
-    }
   };
 
   $ironfyt.loginComponent = Component('[data-app=login]', {

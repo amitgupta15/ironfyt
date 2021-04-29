@@ -2,11 +2,11 @@
   'use strict';
 
   ($ironfyt.main = function () {
-    let { token } = $ironfyt.getCredentials();
-    if (!token) {
-      $ironfyt.navigateToUrl('login.html');
-    } else {
+    let { token, user } = $ironfyt.getCredentials();
+    if (token && user) {
       $ironfyt.navigateToUrl('workoutlog.html');
+    } else {
+      $ironfyt.navigateToUrl('login.html');
     }
   })();
 })();

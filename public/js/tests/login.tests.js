@@ -19,6 +19,7 @@
       _urlname = urlname;
     };
 
+    let state = component.getState();
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template();
 

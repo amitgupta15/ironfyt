@@ -4,16 +4,22 @@
   let workoutlogTemplate = function (props) {
     let logs = props && props.logs ? props.logs : [];
     let user = props && props.user ? props.user : {};
+    let showingResultsFor = logs ? (logs[0].user[0] ? `${logs[0].user[0].fname} ${logs[0].user[0].lname}` : '') : '';
     let filter = props && props.filter ? props.filter : {};
+    let name = function (log) {
+      let nameString = log.user[0] ? `${log.user[0].fname} ${log.user[0].lname}` : ``;
+      let urlString = nameString ? `<a href="workoutlog.html?user_id=${log.user[0]._id}">${nameString}</a>` : ``;
+      return nameString ? `<br/><br/><strong>User: </strong> ${user.role === 'admin' ? urlString : nameSring}<br/>` : ``;
+    };
     return `
       <div class="container">
         <button id="toggle-logs-btn">${filter.user_id ? `Show All Logs` : `Show My Logs`}</button>
-        <h1>${filter.user_id ? `${user.fname} ${user.lname}` : `Logs`} (${logs.length})</h1><br/>
+        <h1>${filter.user_id ? `${showingResultsFor}` : `Logs`} (${logs.length})</h1><br/>
         ${logs
           .map((log) => {
-            let workout = log.workout.length ? log.workout[0] : {};
+            let workout = log.workout && log.workout.length ? log.workout[0] : {};
             return `
-          <div>
+          <div><br/>
             <strong>Date: </strong>${new Date(log.date).toLocaleDateString()}<br/>
             ${log.rounds ? `<strong>Rounds: </strong>${log.rounds}<br/>` : ''}
             ${log.duration ? `<strong>Duration: </strong>${log.duration}<br/>` : ''}
@@ -22,7 +28,7 @@
             ${
               workout.name
                 ? `<strong>Workout: </strong><br/>
-                  ${workout.name ? `${workout.name}<br/>` : ''}
+                  ${workout.name ? `<a href="workout.html?user_id=${user._id}&workout_id=${workout._id}">${workout.name}</a><br/>` : ''}
                   ${workout.type ? `${workout.type}<br/>` : ''}
                   ${workout.timecap ? `${workout.timecap}<br/>` : ''}
                   ${workout.reps ? `${workout.reps}<br/>` : ''}
@@ -30,8 +36,8 @@
                   ${workout.description ? `${$hl.replaceNewLineWithBR(workout.description)}` : ''}`
                 : ''
             }
-            ${filter.user_id ? `` : log.user[0] ? `<br/><br/><strong>User: </strong> ${log.user[0].fname} ${log.user[0].lname}<br/>` : ``}
-            <br/><hr/>
+            ${filter.user_id ? `` : name(log)}
+            <br/><br/><hr/>
           </div>
         `;
           })
@@ -77,7 +83,13 @@
   ($ironfyt.workoutlogPage = function () {
     let { user } = $ironfyt.getCredentials();
     user = user ? user : {};
-    getLogs({ user_id: user._id }, user);
+    if (JSON.stringify(user) === '{}') {
+      component.setState({ error: { message: 'User not found, logout and log back in.' } });
+    } else {
+      let params = $hl.getParams();
+      let filter = JSON.stringify(params) !== '{}' ? params : { user_id: user._id };
+      getLogs(filter, user);
+    }
   })();
 
   $hl.eventListener('click', 'toggle-logs-btn', handleToggleLogsEvent);
