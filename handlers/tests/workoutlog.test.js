@@ -11,7 +11,7 @@ it('should query all workouts logs if no id is provided', () => {
       database: {
         collection: () => {
           return {
-            find: () => {
+            aggregate: () => {
               return {
                 toArray: (callback) => {
                   callback(false, [{ name: 'workout 1' }, { name: 'workout 2' }]);

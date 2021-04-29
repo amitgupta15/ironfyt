@@ -23,7 +23,17 @@ workoutlog.get = (req, res) => {
     }
   }
   workoutlogsCollection(req)
-    .find(query)
+    .aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' },
+      },
+      {
+        $lookup: { from: 'workouts', localField: 'workout_id', foreignField: '_id', as: 'workout' },
+      },
+    ])
     .toArray((error, workoutlogs) => {
       if (!error) {
         res(200, { code: 0, data: { workoutlogs, user } });

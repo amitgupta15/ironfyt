@@ -141,4 +141,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //       });
   //     });
   //   });
+
+  //Remove logs and workouts from users collection
+  // db.collection('users').updateMany({}, { $unset: { logs: '', workouts: '' } });
 });
