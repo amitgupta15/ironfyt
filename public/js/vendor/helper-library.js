@@ -46,12 +46,14 @@
             try {
               let response = JSON.parse(httpRequest.response);
               if (httpRequest.status >= 400) {
+                console.error(`Bad Response ${response}`);
                 callback(response);
               } else {
                 callback(false, response);
               }
             } catch (error) {
-              callback({ message: error });
+              console.error(error);
+              callback(error);
             }
           }
         };
@@ -79,12 +81,13 @@
             try {
               let response = JSON.parse(httpRequest.response);
               if (httpRequest.status >= 400) {
+                console.error(response);
                 callback(response);
               } else {
                 callback(false, response);
               }
             } catch (error) {
-              callback({ message: error });
+              callback(error);
             }
           }
         };
@@ -104,9 +107,11 @@
           try {
             response = JSON.parse(httpRequest.response);
           } catch (error) {
+            console.error(error);
             callback(error);
           }
           if (httpRequest.status >= 400) {
+            console.error(response);
             callback(response);
           } else {
             callback(false, response);
@@ -121,6 +126,7 @@
         httpRequest.addEventListener('load', function () {
           var response = JSON.parse(httpRequest.response);
           if (httpRequest.status >= 400) {
+            console.error(response);
             callback(response);
           } else {
             callback(false, response);

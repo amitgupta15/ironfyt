@@ -10,7 +10,7 @@
 
   $test.it('should validate login credentials', function () {
     $ironfyt.login = function (loginInfo, callback) {
-      callback(false, { code: 0, data: { token: 'afaketoken', user: { fname: 'amit' } } });
+      callback(false, { token: 'afaketoken', user: { fname: 'amit' } });
     };
     let navigateToUrlCalled = false,
       _urlname = '';

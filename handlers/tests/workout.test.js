@@ -23,8 +23,7 @@ it('should query a workout for a given id', () => {
   };
   workout.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.code, 0);
-    assert.strictEqual(data.data.workout.name, 'workout 1');
+    assert.strictEqual(data.workout.name, 'workout 1');
   });
 });
 
@@ -50,8 +49,7 @@ it('should query all workouts if no id is provided', () => {
   };
   workout.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.code, 0);
-    assert.strictEqual(data.data.workouts.length, 2);
+    assert.strictEqual(data.workouts.length, 2);
   });
 });
 it('should create a new workout', () => {
@@ -73,8 +71,7 @@ it('should create a new workout', () => {
   };
   workout.post(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.code, 0);
-    assert.strictEqual(data.data.workout.name, 'workout 1');
+    assert.strictEqual(data.workout.name, 'workout 1');
   });
 });
 it('should edit an existing workout', () => {
@@ -99,7 +96,7 @@ it('should edit an existing workout', () => {
   };
   workout.put(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.data.workout.description, 'run 5 miles');
+    assert.strictEqual(data.workout.description, 'run 5 miles');
   });
 });
 it('should delete a workout', () => {
@@ -120,7 +117,7 @@ it('should delete a workout', () => {
   };
   workout.delete(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.data.deletedCount, 1);
+    assert.strictEqual(data.deletedCount, 1);
   });
 });
 console.groupEnd();

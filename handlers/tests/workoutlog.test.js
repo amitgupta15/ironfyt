@@ -27,8 +27,7 @@ it('should query all workouts logs if no id is provided', () => {
   };
   workoutlog.get(req, function (statusCode, response) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(response.code, 0);
-    assert.strictEqual(response.data.workoutlogs.length, 2);
+    assert.strictEqual(response.workoutlogs.length, 2);
   });
 });
 
@@ -51,8 +50,7 @@ it('should create a new workout log', () => {
   };
   workoutlog.post(req, function (statusCode, response) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(response.code, 0);
-    assert.strictEqual(response.data.workoutlog.notes, 'some notes');
+    assert.strictEqual(response.workoutlog.notes, 'some notes');
   });
 });
 
@@ -78,7 +76,7 @@ it('should edit an existing workout log', () => {
   };
   workoutlog.put(req, function (statusCode, response) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(response.data.workoutlog.notes, 'workout 1');
+    assert.strictEqual(response.workoutlog.notes, 'workout 1');
   });
 });
 
@@ -100,7 +98,7 @@ it('should delete a workout log', () => {
   };
   workoutlog.delete(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.data.deletedCount, 1);
+    assert.strictEqual(data.deletedCount, 1);
   });
 });
 

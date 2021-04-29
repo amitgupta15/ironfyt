@@ -58,7 +58,7 @@ it('user.login() should handle a valid login request', function () {
     _data = data;
   });
   assert.strictEqual(_statusCode, 201);
-  assert.strictEqual(_data.data.token, 'A fake token');
+  assert.strictEqual(_data.token, 'A fake token');
 });
 
 it('should register a user', function () {
@@ -92,7 +92,7 @@ it('should register a user', function () {
     _data = data;
   });
   assert.strictEqual(_statusCode, 201);
-  assert.strictEqual(_data.data.message, 'Registration Successful');
+  assert.strictEqual(_data.message, 'Registration Successful');
 });
 
 it('should query a user for a given id', () => {
@@ -115,8 +115,7 @@ it('should query a user for a given id', () => {
   };
   user.get(req, function (statusCode, response) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(response.code, 0);
-    assert.strictEqual(response.data.user.name, 'amit');
+    assert.strictEqual(response.user.name, 'amit');
   });
 });
 
@@ -144,8 +143,7 @@ it('should query all users if no id is provided', () => {
   };
   user.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.code, 0);
-    assert.strictEqual(data.data.users.length, 2);
+    assert.strictEqual(data.users.length, 2);
   });
 });
 
@@ -173,8 +171,7 @@ it('should NOT query all users if the logged in user is not an admin', () => {
   };
   user.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 401);
-    assert.strictEqual(data.code, 1);
-    assert.strictEqual(data.data.error, 'Not Authorized');
+    assert.strictEqual(data.error, 'Not Authorized');
   });
 });
 
@@ -203,7 +200,7 @@ it('should edit an existing user', () => {
   };
   user.put(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.data.updateduser.fname, 'pooja');
+    assert.strictEqual(data.updateduser.fname, 'pooja');
   });
 });
 it('should delete a user', () => {
@@ -226,7 +223,7 @@ it('should delete a user', () => {
   };
   user.delete(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.data.deletedCount, 1);
+    assert.strictEqual(data.deletedCount, 1);
   });
 });
 

@@ -12,7 +12,7 @@
 
   $test.it('should retrieve workout logs', function () {
     $ironfyt.getWorkoutLogs = function (params, callback) {
-      callback(false, { data: { workoutlogs: [{ _id: 1 }, { _id: 2 }] } });
+      callback(false, { workoutlogs: [{ _id: 1 }, { _id: 2 }] });
     };
     page();
     let state = component.getState();

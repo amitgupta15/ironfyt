@@ -32,28 +32,28 @@ user.login = (payload, callback) => {
     if (email && password) {
       database.collection('users').findOne({ email: email }, function (error, user) {
         if (error) {
-          callback(400, { code: 1, data: { error: `Error occurred while finding the user ${error}` } });
+          callback(400, { error: `Error occurred while finding the user ${error}` });
         } else if (user) {
           bcrypt.compare(password, user.password, (error, same) => {
             if (error) {
-              callback(400, { code: 1, data: { error: `Error occurred while validating password ${error}` } });
+              callback(400, { error: `Error occurred while validating password ${error}` });
             } else if (same) {
               delete user.password; // Do not send back user password
               let token = getToken(user);
-              callback(201, { code: 0, data: { token, user } });
+              callback(201, { token, user });
             } else {
-              callback(401, { code: 1, data: { error: 'Wrong Username or Password' } });
+              callback(401, { error: 'Wrong Username or Password' });
             }
           });
         } else {
-          callback(400, { code: 1, data: { error: 'Wrong Username or Password' } });
+          callback(400, { error: 'Wrong Username or Password' });
         }
       });
     } else {
-      callback(400, { code: 1, data: { error: 'Please provide the email address and password to authenticate' } });
+      callback(400, { error: 'Please provide the email address and password to authenticate' });
     }
   } else {
-    callback(405, { code: 1, data: { error: 'Method not allowed' } });
+    callback(405, { error: 'Method not allowed' });
   }
 };
 
@@ -61,7 +61,7 @@ user.register = (payload, callback) => {
   const { method, buffer, options } = payload;
   let user = {};
   if (method.toLowerCase() !== 'post') {
-    callback(405, { code: 1, data: { error: 'Method not allowed' } });
+    callback(405, { error: 'Method not allowed' });
   } else {
     try {
       user = JSON.parse(buffer);
@@ -74,30 +74,31 @@ user.register = (payload, callback) => {
     if (user.email && user.password) {
       database.collection('users').findOne({ email: user.email }, function (error, u) {
         if (error) {
-          callback(400, { code: 1, data: { error: 'Error occurred while checking if user exists' } });
+          callback(400, { error: 'Error occurred while checking if user exists' });
         } else if (u) {
-          callback(400, { code: 1, data: { error: 'User exists' } });
+          callback(400, { error: 'User exists' });
         } else {
           bcrypt.hash(user.password, saltRounds, function (error, hashedPassword) {
             if (!error) {
               user.password = hashedPassword;
               database.collection('users').insertOne(user, function () {
-                callback(201, { code: 0, data: { message: 'Registration Successful' } });
+                callback(201, { message: 'Registration Successful' });
               });
             } else {
-              callback(400, { code: 1, data: { error: 'Error occurred while registering user' } });
+              callback(400, { error: 'Error occurred while registering user' });
             }
           });
         }
       });
     } else {
-      callback(400, { code: 1, data: { error: 'Please provide email and password for the user' } });
+      callback(400, { error: 'Please provide email and password for the user' });
     }
   }
 };
 
 let getToken = (user) => {
-  let limit = 60 * 60 * 24 * 5; // expires after 5 days
+  let limit = 60 * 60 * 24 * 5; // expires after 5 days sec * min * hours * days
+  // let limit = 120;
   let expires = Math.floor(Date.now() / 1000) + limit;
   let obj = {
     user: user,
@@ -152,25 +153,25 @@ user.get = (req, res) => {
       if (_id.length === 24) {
         usersCollection(req).findOne({ _id: ObjectId(_id) }, (error, userDoc) => {
           if (!error) {
-            res(200, { code: 0, data: { user: userDoc } });
+            res(200, { user: userDoc });
           } else {
-            res(400, { code: 1, data: { error: 'Error occurred while querying user' } });
+            res(400, { error: 'Error occurred while querying user' });
           }
         });
       } else {
-        res(400, { code: 1, data: { error: 'Invalid User Id' } });
+        res(400, { error: 'Invalid User Id' });
       }
     } else if (role === 'admin') {
       usersCollection(req)
         .find({})
         .toArray((error, users) => {
-          res(200, { code: 0, data: { users } });
+          res(200, { users });
         });
     } else {
-      res(400, { code: 1, data: { error: 'Please provide a valid user id' } });
+      res(400, { error: 'Please provide a valid user id' });
     }
   } else {
-    res(401, { code: 1, data: { error: 'Not Authorized' } });
+    res(401, { error: 'Not Authorized' });
   }
 };
 
@@ -182,7 +183,7 @@ user.put = (req, res) => {
   try {
     editUser = JSON.parse(buffer);
   } catch (error) {
-    res(400, { code: 1, data: { error: 'Invalid user data' } });
+    res(400, { error: 'Invalid user data' });
   }
   if (role === 'admin' || editUser._id === user._id) {
     if (editUser._id.length === 24) {
@@ -198,32 +199,32 @@ user.put = (req, res) => {
                   u.password = hashedPassword;
                   replaceUser(req, res, user, u);
                 } else {
-                  res(400, { code: 1, data: { error: `Error while encoding the password` } });
+                  res(400, { error: `Error while encoding the password` });
                 }
               });
             } else {
               replaceUser(req, res, user, u);
             }
           } else {
-            res(400, { code: 1, data: { error: `User not found for id: ${editUser._id}` } });
+            res(400, { error: `User not found for id: ${editUser._id}` });
           }
         } else {
-          res(400, { code: 1, data: { error: 'Error retrieving the user to be edited' } });
+          res(400, { error: 'Error retrieving the user to be edited' });
         }
       });
     } else {
-      res(400, { code: 1, data: { error: 'Invalid User Id' } });
+      res(400, { error: 'Invalid User Id' });
     }
   } else {
-    res(401, { code: 1, data: { error: 'Not Authorized' } });
+    res(401, { error: 'Not Authorized' });
   }
 };
 let replaceUser = (req, res, user, u) => {
   usersCollection(req).replaceOne({ _id: ObjectId(u._id) }, u, (error, result) => {
     if (!error) {
-      res(200, { code: 0, data: { updateduser: result.ops[0], user } });
+      res(200, { updateduser: result.ops[0], user });
     } else {
-      res(400, { code: 1, data: { error: `Error updating user` } });
+      res(400, { error: `Error updating user` });
     }
   });
 };
@@ -236,16 +237,16 @@ user.delete = (req, res) => {
     if (query._id && query._id.length === 24) {
       usersCollection(req).removeOne({ _id: ObjectId(query._id) }, (error, result) => {
         if (!error) {
-          res(200, { code: 0, data: { deletedCount: result.deletedCount, user: tokenpayload.user } });
+          res(200, { deletedCount: result.deletedCount, user: tokenpayload.user });
         } else {
-          res(400, { code: 1, data: { error: `Could not delete the user record` } });
+          res(400, { error: `Could not delete the user record` });
         }
       });
     } else {
-      res(400, { code: 1, data: { error: 'Invalid user id' } });
+      res(400, { error: 'Invalid user id' });
     }
   } else {
-    res(401, { code: 1, data: { error: `Not Authorized to delete a user` } });
+    res(401, { error: `Not Authorized to delete a user` });
   }
 };
 

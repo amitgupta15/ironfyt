@@ -37,9 +37,7 @@
   });
 
   ($ironfyt.loginPage = function () {
-    let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
-    let user = localStorage.getItem($ironfyt.AUTH_USER);
-    if (user) user = JSON.parse(user);
+    let { token, user } = $ironfyt.getCredentials();
     $ironfyt.loginComponent.setState({ token, user });
   })();
 
@@ -57,11 +55,11 @@
       let loginInfo = { email, password };
       $ironfyt.login(loginInfo, function (error, response) {
         if (error) {
-          let errorMessage = error.data && error.data.error ? error.data.error : 'Unknown error occurred';
+          let errorMessage = error.error ? error.error : 'Unknown error occurred';
           errorDiv.innerHTML = errorMessage;
         } else {
-          let token = response.data && response.data.token ? response.data.token : false;
-          let user = response.data && response.data.user ? JSON.stringify(response.data.user) : '';
+          let token = response.token ? response.token : false;
+          let user = response.user ? JSON.stringify(response.user) : '';
 
           if (token) {
             localStorage.setItem($ironfyt.AUTH_TOKEN, token);

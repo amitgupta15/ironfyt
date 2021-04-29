@@ -15,7 +15,7 @@ const user = require('./user');
 const handler = {};
 
 handler.healthcheck = (req, res) => {
-  res(302, { code: 0, data: { pathname: req.pathname, query: req.query } });
+  res(302, { pathname: req.pathname, query: req.query });
 };
 
 handler.workout = (req, res) => {
@@ -40,7 +40,7 @@ let handleRoute = (req, res, route, secure = true, allowedMethods = ['get', 'pos
   let { method, headers } = req;
   method = method.toLowerCase();
   if (allowedMethods.indexOf(method) < 0) {
-    res(405, { code: 1, data: { error: 'Method not allowed' } });
+    res(405, { error: 'Method not allowed' });
   } else {
     if (secure) {
       //check for valid token
@@ -63,13 +63,13 @@ let verifyToken = (headers, res, next) => {
         let tokenpayload = jwt.verify(token, jwt_key);
         next(tokenpayload);
       } catch (error) {
-        res(401, { code: 11, data: { error: 'Invalid or expired token' } });
+        res(401, { code: 1, error: 'Invalid or expired token' });
       }
     } else {
-      res(401, { code: 1, data: { error: 'Unauthorized request' } });
+      res(401, { error: 'Unauthorized request' });
     }
   } else {
-    res(401, { code: 1, data: { error: 'Unauthorized request' } });
+    res(401, { error: 'Unauthorized request' });
   }
 };
 module.exports = handler;

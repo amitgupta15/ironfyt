@@ -11,21 +11,6 @@
   $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
-  let validateReponse = function (error, callback) {
-    if (error && error.code === 11) {
-      $ironfyt.logout();
-    } else {
-      callback();
-    }
-  };
-
-  let getAuthHeader = function () {
-    let { token } = $ironfyt.getCredentials();
-    return {
-      Authorization: `Bearer ${token}`,
-    };
-  };
-
   $ironfyt.getCredentials = function () {
     let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
     let user = localStorage.getItem($ironfyt.AUTH_USER);
@@ -50,14 +35,11 @@
     let queryString = $hl.createQueryString(params);
     fetch.get(`/api/workoutlog?${queryString}`, { headers }, function (error, response) {
       validateReponse(error, function () {
-        if (response.code === 0) {
-          callback(false, response);
-        } else {
-          callback(response);
-        }
+        callback(false, response);
       });
     });
   };
+
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page
@@ -92,5 +74,21 @@
   // Common error template which can be shared across components to render error messages
   let errorTemplate = function (error) {
     return `<p class="error-div">${error.message}</p>`;
+  };
+
+  let validateReponse = function (error, callback) {
+    //Server will send back error code 1 if the token has expired
+    if (error && error.code === 1) {
+      $ironfyt.logout();
+    } else {
+      callback();
+    }
+  };
+
+  let getAuthHeader = function () {
+    let { token } = $ironfyt.getCredentials();
+    return {
+      Authorization: `Bearer ${token}`,
+    };
   };
 })();
