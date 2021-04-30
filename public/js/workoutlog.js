@@ -4,7 +4,7 @@
   let workoutlogTemplate = function (props) {
     let logs = props && props.logs ? props.logs : [];
     let user = props && props.user ? props.user : {};
-    let showingResultsFor = logs ? (logs[0].user[0] ? `${logs[0].user[0].fname} ${logs[0].user[0].lname}` : '') : '';
+    let showingResultsFor = logs && logs.user ? (logs[0].user[0] ? `${logs[0].user[0].fname} ${logs[0].user[0].lname}` : '') : '';
     let filter = props && props.filter ? props.filter : {};
     let name = function (log) {
       let nameString = log.user[0] ? `${log.user[0].fname} ${log.user[0].lname}` : ``;

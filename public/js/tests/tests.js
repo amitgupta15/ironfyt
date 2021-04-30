@@ -21,7 +21,9 @@
   let getCredentials = (app.getCredentials = function () {
     return {};
   });
-
+  let authenticateUser = (app.authenticateUser = function (callback) {
+    callback();
+  });
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -45,7 +47,7 @@
       app.logout = logout;
       app.getWorkoutLogs = getWorkoutLogs;
       app.getCredentials = getCredentials;
-
+      app.authenticateUser = authenticateUser;
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
     },

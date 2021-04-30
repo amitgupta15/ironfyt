@@ -60,7 +60,7 @@
           if (token) {
             localStorage.setItem($ironfyt.AUTH_TOKEN, token);
             localStorage.setItem($ironfyt.AUTH_USER, user);
-            $ironfyt.navigateToUrl(`workoutlog.html`);
+            $ironfyt.navigateToUrl(`/`);
           } else {
             errorDiv.innerHTML = 'Problem retrieving authorization token. Contact Administrator';
           }

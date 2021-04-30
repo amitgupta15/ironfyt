@@ -1,5 +1,5 @@
 (function () {
-  ('use strict');
+  'use strict';
 
   // Create a global variable and expose it the world.
   var $ironfyt = {};
@@ -16,6 +16,15 @@
     let user = localStorage.getItem($ironfyt.AUTH_USER);
     user = user ? JSON.parse(user) : null;
     return { token, user };
+  };
+
+  $ironfyt.authenticateUser = function (callback) {
+    let { token, user } = $ironfyt.getCredentials();
+    if (token && user) {
+      callback(false, { user });
+    } else {
+      callback({ message: `You are either not logged in or not authorized to view this page.` });
+    }
   };
 
   $ironfyt.login = function (loginInfo, callback) {
@@ -68,7 +77,7 @@
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};
-    return `<div>Logged in as: ${user.fname} ${user.lname}</div>`;
+    return `<div><a href="/">Home</a> Logged in as: ${user.fname} ${user.lname}</div>`;
   };
 
   // Common error template which can be shared across components to render error messages
