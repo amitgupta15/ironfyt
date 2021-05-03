@@ -61,9 +61,6 @@ it('should edit an existing workout log', () => {
       database: {
         collection: () => {
           return {
-            findOne: (option, callback) => {
-              callback(false, { _id: '012345678901234567890123', name: 'workout 1' });
-            },
             replaceOne: (_id, data, callback) => {
               callback(false, { ops: [{ notes: 'workout 1' }] });
             },
@@ -74,7 +71,7 @@ it('should edit an existing workout log', () => {
     query: {},
     tokenpayload: {},
   };
-  workoutlog.put(req, function (statusCode, response) {
+  workoutlog.post(req, function (statusCode, response) {
     assert.strictEqual(statusCode, 200);
     assert.strictEqual(response.workoutlog.notes, 'workout 1');
   });

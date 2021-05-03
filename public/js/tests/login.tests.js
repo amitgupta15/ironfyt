@@ -36,7 +36,7 @@
     $test.dispatchHTMLEvent('submit', '#login-form');
     $test.assert(selector.innerHTML.includes('<div id="error-info"></div>'));
     $test.assert(navigateToUrlCalled === true);
-    $test.assert(_urlname === 'workoutlog.html');
+    $test.assert(_urlname === '/');
   });
 
   $test.it('should check if user is already logged in', function () {

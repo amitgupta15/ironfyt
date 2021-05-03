@@ -52,60 +52,33 @@ workoutlog.post = (req, res) => {
   } catch (error) {
     res(400, { error: 'Invalid Workout Log data' });
   }
+
   workoutlog.user_id = workoutlog.user_id ? new ObjectId(workoutlog.user_id) : null;
   workoutlog.workout_id = workoutlog.workout_id ? new ObjectId(workoutlog.workout_id) : null;
-  workoutlog.date = workoutlog.date ? new Date(workoutlog.date) : Date.now();
+  workoutlog.date = workoutlog.date ? new Date(workoutlog.date) : new Date();
   workoutlog.duration = workoutlog.duration ? workoutlog.duration : null;
   workoutlog.load = workoutlog.load ? workoutlog.load : null;
   workoutlog.rounds = workoutlog.rounds ? workoutlog.rounds : null;
   workoutlog.notes = workoutlog.notes ? workoutlog.notes : null;
-
-  workoutlogsCollection(req).insertOne(workoutlog, (error, result) => {
-    if (!error) {
-      res(200, { workoutlog: result.ops[0], user });
-    } else {
-      res(400, { error: `Error occurred while creating a new workout log ${error}` });
-    }
-  });
-};
-
-workoutlog.put = (req, res) => {
-  let { tokenpayload, buffer } = req;
-  let user = tokenpayload.user;
-  let wolog;
-  try {
-    wolog = JSON.parse(buffer);
-  } catch (error) {
-    res(400, { error: 'Invalid Workout Log data' });
-  }
-  if (wolog._id && wolog._id.length === 24) {
-    workoutlogsCollection(req).findOne({ _id: ObjectId(wolog._id) }, (error, workoutlog) => {
+  delete workoutlog.user;
+  delete workoutlog.workout;
+  if (workoutlog._id && workoutlog._id.length === 24) {
+    workoutlog._id = new ObjectId(workoutlog._id);
+    workoutlogsCollection(req).replaceOne({ _id: ObjectId(workoutlog._id) }, workoutlog, function (error, result) {
       if (!error) {
-        if (workoutlog) {
-          if (wolog.user_id) workoutlog.user_id = new ObjectId(wolog.user_id);
-          if (wolog.workout_id) workoutlog.workout_id = new ObjectId(wolog.workout_id);
-          if (wolog.date) workoutlog.date = new Date(wolog.date);
-          if (wolog.duration) workoutlog.duration = wolog.duration;
-          if (wolog.load) workoutlog.load = wolog.load;
-          if (wolog.rounds) workoutlog.rounds = wolog.rounds;
-          if (wolog.notes) workoutlog.notes = wolog.notes;
-
-          workoutlogsCollection(req).replaceOne({ _id: ObjectId(wolog._id) }, workoutlog, function (error, result) {
-            if (!error) {
-              res(200, { workoutlog: result.ops[0], user });
-            } else {
-              res(400, { error: `Error updating workout log` });
-            }
-          });
-        } else {
-          res(400, { error: `Workout log not found for ID ${_id}` });
-        }
+        res(200, { workoutlog: result.ops[0], user });
       } else {
-        res(400, { error: 'Error occurred while retrieving existing record' });
+        res(400, { error: `Error updating workout log` });
       }
     });
   } else {
-    res(400, { error: 'Invalid or missing workout log id' });
+    workoutlogsCollection(req).insertOne(workoutlog, (error, result) => {
+      if (!error) {
+        res(200, { workoutlog: result.ops[0], user });
+      } else {
+        res(400, { error: `Error occurred while creating a new workout log ${error}` });
+      }
+    });
   }
 };
 

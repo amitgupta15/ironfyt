@@ -100,7 +100,7 @@
         httpRequest.open('DELETE', url);
         httpRequest.send();
       },
-      post: function (url, data, callback) {
+      post: function (url, payload, callback) {
         var httpRequest = new XMLHttpRequest();
         httpRequest.addEventListener('load', function () {
           let response = {};
@@ -118,8 +118,17 @@
           }
         });
         httpRequest.open('POST', url);
+        payload = payload.toString() !== '{}' ? payload : {};
+        if (payload.headers) {
+          let headers = payload.headers;
+          if (typeof headers === 'object') {
+            for (var key in headers) {
+              httpRequest.setRequestHeader(key, headers[key]);
+            }
+          }
+        }
         httpRequest.setRequestHeader('Content-Type', 'application/json');
-        httpRequest.send(JSON.stringify(data));
+        httpRequest.send(JSON.stringify(payload.data));
       },
       put: function (url, data, callback) {
         var httpRequest = new XMLHttpRequest();

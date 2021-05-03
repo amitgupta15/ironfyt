@@ -24,6 +24,10 @@
   let authenticateUser = (app.authenticateUser = function (callback) {
     callback();
   });
+  let saveWorkoutLog = (app.saveWorkoutLog = function (obj, callback) {
+    callback();
+  });
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -48,6 +52,8 @@
       app.getWorkoutLogs = getWorkoutLogs;
       app.getCredentials = getCredentials;
       app.authenticateUser = authenticateUser;
+      app.saveWorkoutLog = saveWorkoutLog;
+
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
     },

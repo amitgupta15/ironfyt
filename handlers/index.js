@@ -23,7 +23,7 @@ handler.workout = (req, res) => {
 };
 
 handler.workoutlog = (req, res) => {
-  handleRoute(req, res, workoutlog, true);
+  handleRoute(req, res, workoutlog, true, ['get', 'post', 'delete']);
 };
 
 handler.user = (req, res) => {
