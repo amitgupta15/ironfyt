@@ -25,6 +25,7 @@
             ${log.duration ? `<strong>Duration: </strong>${log.duration}<br/>` : ''}
             ${log.load ? `<strong>Load: </strong>${log.load}<br/>` : ''}
             ${log.notes ? `<strong>Notes: </strong>${$hl.replaceNewLineWithBR(log.notes)}<br/>` : ''}
+            ${log.modality ? `<strong>Modality: </strong>${log.modality.map((mod) => mod)}<br/>` : ''}
             ${
               workout.name
                 ? `<strong>Workout: </strong><br/>

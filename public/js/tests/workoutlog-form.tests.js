@@ -64,5 +64,44 @@
     $test.assert($hl.formatDateForInputField(_workoutlog.date) === '2020-01-01');
     $test.assert(_workoutlog.notes === 'Some notes');
   });
+
+  $test.it('should show workout list dialog when select-workout-btn is clicked', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({});
+
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
+    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
+    $test.assert(selector.innerHTML.includes('<div id="selected-workout-div" style="display:none">'));
+    $test.assert(document.getElementById('wolog-workout-id').value === '');
+  });
+
+  $test.it('should close the workout list dialog when close button is clicked', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({});
+
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
+    $test.dispatchHTMLEvent('click', '#close-workout-list-modal');
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
+  });
+
+  $test.it('should populate the workout and close the workout list model when a workout is selected', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({});
+
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
+
+    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
+    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="" style="display: none;">'));
+    $test.assert(selector.innerHTML.includes('<div id="selected-workout-div" style="display: block;">'));
+    $test.assert(selector.innerHTML.includes('<span id="selected-workout-span">Linda</span>'));
+    $test.assert(selector.innerHTML.includes('<input type="hidden" id="wolog-workout-id" value="6070eec7f20f85401bca47a1">'));
+  });
+
   console.groupEnd();
 })();
