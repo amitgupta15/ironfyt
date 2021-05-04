@@ -20,7 +20,7 @@
             let workout = log.workout && log.workout.length ? log.workout[0] : {};
             return `
           <div><br/>
-            <strong>Date: </strong>${new Date(log.date).toLocaleDateString()}<br/>
+            <strong>Date: </strong>${new Date(log.date).toLocaleDateString()} <a href="workoutlog-form.html?_id=${log._id}">Edit</a> <button id="delete-${log._id}">Delete</button><br/>
             ${log.rounds ? `<strong>Rounds: </strong>${log.rounds}<br/>` : ''}
             ${log.duration ? `<strong>Duration: </strong>${log.duration}<br/>` : ''}
             ${log.load ? `<strong>Load: </strong>${log.load}<br/>` : ''}
@@ -80,6 +80,19 @@
     });
   };
 
+  let deleteWorkoutLog = function (targetId) {
+    let _id = targetId.substring(7, targetId.length);
+    if (_id.length === 24) {
+      $ironfyt.deleteWorkoutLog(_id, function (error, response) {
+        if (!error) {
+          $ironfyt.navigateToUrl('workoutlog.html');
+        }
+      });
+    } else {
+      console.error('Invalid ID');
+    }
+  };
+
   ($ironfyt.workoutlogPage = function () {
     let { user } = $ironfyt.getCredentials();
     user = user ? user : {};
@@ -93,4 +106,10 @@
   })();
 
   $hl.eventListener('click', 'toggle-logs-btn', handleToggleLogsEvent);
+  document.addEventListener('click', function (event) {
+    let idregex = new RegExp(/^delete-([a-zA-Z]|\d){24}/gm);
+    if (idregex.test(event.target.id)) {
+      deleteWorkoutLog(event.target.id);
+    }
+  });
 })();

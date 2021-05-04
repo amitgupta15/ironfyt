@@ -45,5 +45,18 @@
     selector.innerHTML = component.template({ filter: {} });
     $test.assert(selector.innerHTML.includes('<button id="toggle-logs-btn">Show My Logs</button>'));
   });
+
+  $test.it('should delete a workoutlog', function () {
+    let id;
+    $ironfyt.deleteWorkoutLog = function (_id, callback) {
+      id = _id;
+      callback();
+    };
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = `<button id="delete-012345678901234567890123">Delete</button>`;
+    $test.dispatchHTMLEvent('click', '#delete-012345678901234567890123');
+
+    $test.assert(id === '012345678901234567890123');
+  });
   console.groupEnd();
 })();

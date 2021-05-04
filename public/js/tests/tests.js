@@ -27,6 +27,9 @@
   let saveWorkoutLog = (app.saveWorkoutLog = function (obj, callback) {
     callback();
   });
+  let deleteWorkoutLog = (app.deleteWorkoutLog = function (_id, callback) {
+    callback();
+  });
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -53,6 +56,7 @@
       app.getCredentials = getCredentials;
       app.authenticateUser = authenticateUser;
       app.saveWorkoutLog = saveWorkoutLog;
+      app.deleteWorkoutLog = deleteWorkoutLog;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

@@ -58,6 +58,15 @@
     });
   };
 
+  $ironfyt.deleteWorkoutLog = function (_id, callback) {
+    let headers = getAuthHeader();
+    fetch.delete(`/api/workoutlog?_id=${_id}`, { headers }, function (error, response) {
+      validateReponse(error, function () {
+        callback(false, response);
+      });
+    });
+  };
+
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page

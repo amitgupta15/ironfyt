@@ -75,7 +75,7 @@
         }
         httpRequest.send();
       },
-      delete: function (url, callback) {
+      delete: function (url, options, callback) {
         var requestListener = function () {
           if (httpRequest.readyState === XMLHttpRequest.DONE) {
             try {
@@ -98,6 +98,15 @@
           callback({ message: 'Error Connecting to the Server', error: error });
         });
         httpRequest.open('DELETE', url);
+        options = options.toString() !== '{}' ? options : {};
+        if (options.headers) {
+          let headers = options.headers;
+          if (typeof headers === 'object') {
+            for (var key in headers) {
+              httpRequest.setRequestHeader(key, headers[key]);
+            }
+          }
+        }
         httpRequest.send();
       },
       post: function (url, payload, callback) {
