@@ -11,8 +11,12 @@ it('should query a workout for a given id', () => {
       database: {
         collection: () => {
           return {
-            findOne: (option, callback) => {
-              callback(false, { name: 'workout 1' });
+            aggregate: () => {
+              return {
+                toArray: (callback) => {
+                  callback(false, [{ name: 'workout 1' }]);
+                },
+              };
             },
           };
         },
@@ -23,7 +27,7 @@ it('should query a workout for a given id', () => {
   };
   workout.get(req, function (statusCode, data) {
     assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.workout.name, 'workout 1');
+    assert.strictEqual(data.workouts[0].name, 'workout 1');
   });
 });
 
@@ -33,7 +37,7 @@ it('should query all workouts if no id is provided', () => {
       database: {
         collection: () => {
           return {
-            find: () => {
+            aggregate: () => {
               return {
                 toArray: (callback) => {
                   callback(false, [{ name: 'workout 1' }, { name: 'workout 2' }]);

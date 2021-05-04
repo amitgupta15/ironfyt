@@ -1,11 +1,7 @@
 (function () {
   'use strict';
-  let workoutList = [
-    { _id: '6070eec7f20f85401bca47a1', name: 'Linda' },
-    { _id: '6070eec7f20f85401bca47a0', name: 'Workout 20.2' },
-    { _id: '6070eec7f20f85401bca47a2', name: 'Annie' },
-  ];
   let workoutlogFormTemplate = function (props) {
+    let workouts = props.workouts ? props.workouts : [];
     let workoutlog = props.workoutlog ? props.workoutlog : {};
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
@@ -63,7 +59,7 @@
         <br/><br/>
         <h3>Select a workout&nbsp;&nbsp;&nbsp;&nbsp;<span id="close-workout-list-modal">X</span></h3>
         <br/>
-        ${workoutList.map((workout) => `<div id="workout-${workout._id}">${workout.name}</div><br/>`).join('')}
+        ${workouts.map((workout) => `<div id="workout-${workout._id}">${workout.name}</div><br/>`).join('')}
       </div>
     </div>
     `;
@@ -75,6 +71,7 @@
       validationError: {},
       workoutlog: {},
       user: {},
+      workouts: [],
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutlogFormTemplate);
@@ -85,11 +82,11 @@
   }));
 
   let renderWorkoutInfo = function (props) {
-    console.log(props);
+    let workouts = props && props.workouts ? props.workouts : [];
     let workoutlog = props && props.workoutlog ? props.workoutlog : {};
     let workout_id = workoutlog && workoutlog.workout_id ? workoutlog.workout_id : '';
     if (workout_id) {
-      let workout = workoutList.filter((workout) => workout._id === workout_id)[0];
+      let workout = workouts.filter((workout) => workout._id === workout_id)[0];
 
       let selectWorkoutBtn = document.getElementById('select-workout-btn');
       selectWorkoutBtn.disabled = true;
@@ -162,7 +159,9 @@
 
   let selectWorkout = function (targetId) {
     let _id = targetId.substring(8, targetId.length);
-    let workout = workoutList.filter((workout) => workout._id === _id)[0];
+    let state = component.getState();
+    let workouts = state.workouts ? state.workouts : [];
+    let workout = workouts.filter((workout) => workout._id === _id)[0];
 
     let dialog = document.getElementById('select-workout-modal');
     dialog.style.display = 'none';
@@ -209,20 +208,27 @@
     $ironfyt.authenticateUser(function (error, auth) {
       let user = auth && auth.user ? auth.user : {};
       if (!error) {
-        let params = $hl.getParams();
-        let _id = params && params._id ? params._id : false;
-        if (_id) {
-          $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
-            if (!error) {
-              let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : {};
-              component.setState({ workoutlog, user });
+        $ironfyt.getWorkouts({}, function (error, response) {
+          if (!error) {
+            let workouts = response && response.workouts ? response.workouts : [];
+            let params = $hl.getParams();
+            let _id = params && params._id ? params._id : false;
+            if (_id) {
+              $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
+                if (!error) {
+                  let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : {};
+                  component.setState({ workouts, workoutlog, user });
+                } else {
+                  component.setState({ error });
+                }
+              });
             } else {
-              component.setState({ error });
+              component.setState({ user, workouts });
             }
-          });
-        } else {
-          component.setState({ user });
-        }
+          } else {
+            component.setState({ error });
+          }
+        });
       } else {
         component.setState({ error });
       }

@@ -3,33 +3,40 @@
 const ObjectId = require('mongodb').ObjectID;
 
 const workout = {};
-
 workout.get = (req, res) => {
   let { query, tokenpayload } = req;
   let user = tokenpayload.user;
-  if (query._id) {
-    if (query._id.length === 24) {
-      workoutsCollection(req).findOne({ _id: ObjectId(query._id) }, (error, result) => {
-        if (!error) {
-          res(200, { workout: result, user: user });
-        } else {
-          res(400, { error: `Could not find a workout record for _id ${query._id}` });
+  if (Object.keys(query).length) {
+    for (let key in query) {
+      if (query[key].length !== 24) {
+        res(400, { error: `Invalid ID : ${key}` });
+        return;
+      } else {
+        try {
+          query[key] = ObjectId(query[key]);
+        } catch (error) {
+          res(400, { error: 'Invalid Object ID' });
+          return;
         }
-      });
-    } else {
-      res(400, { error: `Invalid workout id` });
+      }
     }
-  } else {
-    workoutsCollection(req)
-      .find({})
-      .toArray((error, workouts) => {
-        if (!error) {
-          res(200, { workouts, user });
-        } else {
-          res(400, { error: `Error occurred while retrieving workouts` });
-        }
-      });
   }
+  workoutsCollection(req)
+    .aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' },
+      },
+    ])
+    .toArray((error, workouts) => {
+      if (!error) {
+        res(200, { workouts, user });
+      } else {
+        res(400, { error: `Error occurred while retrieving workouts` });
+      }
+    });
 };
 
 workout.post = (req, res) => {

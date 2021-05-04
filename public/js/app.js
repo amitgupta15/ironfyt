@@ -67,6 +67,16 @@
     });
   };
 
+  $ironfyt.getWorkouts = function (params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`/api/workout?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, function () {
+        callback(false, response);
+      });
+    });
+  };
+
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page

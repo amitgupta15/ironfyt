@@ -89,8 +89,9 @@
   });
 
   $test.it('should populate the workout and close the workout list model when a workout is selected', function () {
+    component.setState({ workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda' }] });
     let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template({});
+    selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
 
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
     $test.dispatchHTMLEvent('click', '#select-workout-btn');
