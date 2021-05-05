@@ -6,7 +6,7 @@
   self.$ironfyt = $ironfyt;
 
   let fetch = $hl.fetch;
-  let serverUrl = 'http://localhost:3000';
+  let serverUrl = '';
 
   $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
@@ -28,7 +28,7 @@
   };
 
   $ironfyt.login = function (loginInfo, callback) {
-    fetch.post(`${serverUrl}/login`, loginInfo, function (error, response) {
+    fetch.post(`${serverUrl}/login`, { data: loginInfo }, function (error, response) {
       callback(error, response);
     });
   };
