@@ -22,7 +22,7 @@
           <div><br/>
             <strong>Date: </strong>${new Date(log.date).toLocaleDateString()} <a href="workoutlog-form.html?_id=${log._id}">Edit</a> <button id="delete-${log._id}">Delete</button><br/>
             ${log.rounds ? `<strong>Rounds: </strong>${log.rounds}<br/>` : ''}
-            ${log.duration ? `<strong>Duration: </strong>${log.duration}<br/>` : ''}
+            ${log.duration ? `<strong>Duration: </strong>${log.duration.hours ? log.duration.hours : '00'}:${log.duration.minutes ? log.duration.minutes : '00'}:${log.duration.seconds ? log.duration.seconds : '00'}<br/>` : ''}
             ${log.load ? `<strong>Load: </strong>${log.load}<br/>` : ''}
             ${log.notes ? `<strong>Notes: </strong>${$hl.replaceNewLineWithBR(log.notes)}<br/>` : ''}
             ${log.modality ? `<strong>Modality: </strong>${log.modality.map((mod) => mod)}<br/>` : ''}
