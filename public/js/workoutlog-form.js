@@ -18,7 +18,8 @@
           <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
         </div>
         <div id="selected-workout-div" style="display:none">
-          <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-span"></span>
+          <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span"></span>
+          <div id="selected-workout-detail-div" style="display:none"></div>
           <input type="hidden" id="wolog-workout-id" value="">
         </div>
         <div>
@@ -59,7 +60,16 @@
         <br/><br/>
         <h3>Select a workout&nbsp;&nbsp;&nbsp;&nbsp;<span id="close-workout-list-modal">X</span></h3>
         <br/>
-        ${workouts.map((workout) => `<div id="workout-${workout._id}">${workout.name}</div><br/>`).join('')}
+        ${workouts
+          .map(
+            (workout) => `
+            <div>
+              <div id="workout-${workout._id}"><span id="show-detail-${workout._id}"> &gt; </span>${workout.name}</div>
+              <div id="workout-detail-${workout._id}" style="display:none">${workout.description}</div>
+              <br/>
+            </div>`
+          )
+          .join('')}
       </div>
     </div>
     `;
@@ -94,7 +104,7 @@
 
       let selectedWorkoutDiv = document.getElementById('selected-workout-div');
       selectedWorkoutDiv.style.display = 'block';
-      let selectedWorkoutSpan = document.getElementById('selected-workout-span');
+      let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
       selectedWorkoutSpan.innerHTML = workout.name;
 
       let wologWorkoutId = document.getElementById('wolog-workout-id');
@@ -145,16 +155,18 @@
 
   let handleSelectWorkoutEvent = function (event) {
     let dialog = document.getElementById('select-workout-modal');
+    dialog.style.display = 'block';
+
     let selectWorkoutBtn = document.getElementById('select-workout-btn');
     selectWorkoutBtn.disabled = true;
-    dialog.style.display = 'block';
   };
 
   let handleCloseWorkoutListModalEvent = function (event) {
     let dialog = document.getElementById('select-workout-modal');
+    dialog.style.display = 'none';
+
     let selectWorkoutBtn = document.getElementById('select-workout-btn');
     selectWorkoutBtn.disabled = false;
-    dialog.style.display = 'none';
   };
 
   let selectWorkout = function (targetId) {
@@ -172,11 +184,27 @@
 
     let selectedWorkoutDiv = document.getElementById('selected-workout-div');
     selectedWorkoutDiv.style.display = 'block';
-    let selectedWorkoutSpan = document.getElementById('selected-workout-span');
+    let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
     selectedWorkoutSpan.innerHTML = workout.name;
+
+    let selectedWorkoutDetailDiv = document.getElementById('selected-workout-detail-div');
+    selectedWorkoutDetailDiv.innerHTML = workout.description;
 
     let wologWorkoutId = document.getElementById('wolog-workout-id');
     wologWorkoutId.value = workout._id;
+  };
+
+  let showWorkoutDetail = function (targetId) {
+    let _id = targetId.substring(12, targetId.length);
+    let workoutShowDetailSpan = document.getElementById(`show-detail-${_id}`);
+    let workoutDetailDiv = document.getElementById(`workout-detail-${_id}`);
+    if (workoutDetailDiv.style.display === 'none') {
+      workoutDetailDiv.style.display = 'block';
+      workoutShowDetailSpan.innerHTML = '^ ';
+    } else {
+      workoutDetailDiv.style.display = 'none';
+      workoutShowDetailSpan.innerHTML = '> ';
+    }
   };
 
   let handleUnselectWorkoutEvent = function (event) {
@@ -185,7 +213,7 @@
 
     let selectedWorkoutDiv = document.getElementById('selected-workout-div');
     selectedWorkoutDiv.style.display = 'none';
-    let selectedWorkoutSpan = document.getElementById('selected-workout-span');
+    let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
     selectedWorkoutSpan.innerHTML = '';
 
     let selectWorkoutBtn = document.getElementById('select-workout-btn');
@@ -193,14 +221,28 @@
     selectWorkoutBtn.style.display = 'block';
   };
 
+  let toggleSelectedWorkoutDetailDisplay = function (event) {
+    let div = document.getElementById('selected-workout-detail-div');
+
+    div.style.display = div.style.display === 'none' ? 'block' : 'none';
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
+  $hl.eventListener('click', 'selected-workout-name-span', toggleSelectedWorkoutDetailDisplay);
   document.addEventListener('click', function (event) {
     let idregex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
     if (idregex.test(event.target.id)) {
       selectWorkout(event.target.id);
+    }
+  });
+
+  document.addEventListener('click', function (event) {
+    let idregex = new RegExp(/^show-detail-([a-zA-Z]|\d){24}/gm);
+    if (idregex.test(event.target.id)) {
+      showWorkoutDetail(event.target.id);
     }
   });
 
