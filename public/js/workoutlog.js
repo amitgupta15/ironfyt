@@ -23,9 +23,19 @@
             <strong>Date: </strong>${new Date(log.date).toLocaleDateString()} <a href="workoutlog-form.html?_id=${log._id}">Edit</a> <button id="delete-${log._id}">Delete</button><br/>
             ${log.rounds ? `<strong>Rounds: </strong>${log.rounds}<br/>` : ''}
             ${log.duration ? `<strong>Duration: </strong>${log.duration.hours ? log.duration.hours : '00'}:${log.duration.minutes ? log.duration.minutes : '00'}:${log.duration.seconds ? log.duration.seconds : '00'}<br/>` : ''}
-            ${log.load ? `<strong>Load: </strong>${log.load}<br/>` : ''}
+            ${
+              log.roundinfo
+                ? log.roundinfo
+                    .map(function (item) {
+                      return ` ${item.rounds ? `<strong>Rounds: </strong> ${item.rounds} ` : ''} 
+                      ${item.load ? `<strong>Load: </strong> ${item.load} ${item.unit ? item.unit : ''} ` : ''}
+                      ${item.reps ? `<strong>Reps: </strong> ${item.reps}` : ''}<br/>`;
+                    })
+                    .join('')
+                : ''
+            }
             ${log.notes ? `<strong>Notes: </strong>${$hl.replaceNewLineWithBR(log.notes)}<br/>` : ''}
-            ${log.modality ? `<strong>Modality: </strong>${log.modality.map((mod) => mod)}<br/>` : ''}
+            ${log.modality && log.modality.length ? `<strong>Modality: </strong>${log.modality.map((mod) => mod)}<br/>` : ''}
             ${
               workout.name
                 ? `<strong>Workout: </strong><br/>

@@ -265,57 +265,111 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   // });
 
   // Load field
-  db.collection('logs')
-    .find({})
-    .toArray(function (error, docs) {
-      let loads = docs.map((item) => {
-        return { _id: item._id, load: item.load };
-      });
-      let finalArray = [];
-      console.log(`Total docs: ${loads.length}`);
-      let nullLoads = loads.filter((item) => item.load === null || item.load === undefined);
-      console.log(`-- Null Load: ${nullLoads.length}`);
-      let notNullLoads = loads.filter((item) => item.load !== null && item.load !== undefined);
-      console.log(`-- Non Null Load: ${notNullLoads.length}`);
-      notNullLoads = notNullLoads.map((item) => {
-        return { ...item, load: item.load.trim().split(' ') };
-      });
-      let oneTwoFieldLoads = notNullLoads
-        .filter((item) => item.load.length === 1 || item.load.length === 2)
-        .map((item) => {
-          return { ...item, load: item.load[0].includes('l') ? item.load[0].substring(0, item.load[0].indexOf('l')) : item.load[0] };
-        })
-        .map((item) => {
-          return { ...item, load: item.load.includes('/') ? item.load.split('/') : [item.load] };
-        });
-      console.log(`---- One Field Load: ${oneTwoFieldLoads.length}`);
-      oneTwoFieldLoads.forEach((item) => {
-        finalArray.push({ _id: item._id, load: item.load, unit: 'lbs' });
-      });
-      let moreThanTwoFieldLoads = notNullLoads.filter((item) => item.load.length > 2);
-      console.log(`---- More than Two fields loads: ${moreThanTwoFieldLoads.length} --> Handle Manually`);
-      console.log(moreThanTwoFieldLoads);
-      console.log(`Final Array Length: ${finalArray.length}`);
+  // db.collection('logs')
+  //   .find({})
+  //   .toArray(function (error, docs) {
+  //     let loads = docs.map((item) => {
+  //       return { _id: item._id, load: item.load };
+  //     });
+  //     let finalArray = [];
+  //     console.log(`Total docs: ${loads.length}`);
+  //     let nullLoads = loads.filter((item) => item.load === null || item.load === undefined);
+  //     console.log(`-- Null Load: ${nullLoads.length}`);
+  //     let notNullLoads = loads.filter((item) => item.load !== null && item.load !== undefined);
+  //     console.log(`-- Non Null Load: ${notNullLoads.length}`);
+  //     notNullLoads = notNullLoads.map((item) => {
+  //       return { ...item, load: item.load.trim().split(' ') };
+  //     });
+  //     let oneTwoFieldLoads = notNullLoads
+  //       .filter((item) => item.load.length === 1 || item.load.length === 2)
+  //       .map((item) => {
+  //         return { ...item, load: item.load[0].includes('l') ? item.load[0].substring(0, item.load[0].indexOf('l')) : item.load[0] };
+  //       })
+  //       .map((item) => {
+  //         return { ...item, load: item.load.includes('/') ? item.load.split('/') : [item.load] };
+  //       });
+  //     console.log(`---- One Field Load: ${oneTwoFieldLoads.length}`);
+  //     oneTwoFieldLoads.forEach((item) => {
+  //       finalArray.push({ _id: item._id, load: item.load, unit: 'lbs' });
+  //     });
+  //     let moreThanTwoFieldLoads = notNullLoads.filter((item) => item.load.length > 2);
+  //     console.log(`---- More than Two fields loads: ${moreThanTwoFieldLoads.length} --> Handle Manually`);
+  //     console.log(moreThanTwoFieldLoads);
+  //     console.log(`Final Array Length: ${finalArray.length}`);
 
-      // finalArray.forEach((item) => console.log(item));
+  // finalArray.forEach((item) => console.log(item));
 
-      // *** CAUTION: FOLLOWING CODE UPDATES THE TABLE - BE CAREFUL ***
-      // finalArray.forEach((item) => {
-      //   db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, doc) {
-      //     let roundinfo = [];
-      //     item.load.forEach((load) => {
-      //       roundinfo.push({ rounds: null, reps: null, load: load, unit: 'lbs' });
-      //     });
-      //     doc.roundinfo = roundinfo;
-      //     db.collection('logs').replaceOne({ _id: doc._id }, doc, function (error, result) {
-      //       if (error) {
-      //         console.error(error);
-      //       } else {
-      //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
-      //       }
-      //     });
-      //   });
-      // });
-      // *** CAUTION: ABOVE CODE UPDATES THE TABLE - BE CAREFUL ***
-    });
+  // *** CAUTION: FOLLOWING CODE UPDATES THE TABLE - BE CAREFUL ***
+  // finalArray.forEach((item) => {
+  //   db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, doc) {
+  //     let roundinfo = [];
+  //     item.load.forEach((load) => {
+  //       roundinfo.push({ rounds: null, reps: null, load: load, unit: 'lbs' });
+  //     });
+  //     doc.roundinfo = roundinfo;
+  //     db.collection('logs').replaceOne({ _id: doc._id }, doc, function (error, result) {
+  //       if (error) {
+  //         console.error(error);
+  //       } else {
+  //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //       }
+  //     });
+  //   });
+  // });
+  // *** CAUTION: ABOVE CODE UPDATES THE TABLE - BE CAREFUL ***
+  // });
+  // db.collection('logs')
+  //   .find({})
+  //   .toArray(function (error, docs) {
+  //     let nullRounds = docs.filter((doc) => doc.rounds === null || doc.rounds === undefined);
+  //     nullRounds.forEach((doc) => {
+  //       delete doc.load;
+  //       delete doc.rounds;
+  //       db.collection('logs').replaceOne({ _id: ObjectId(doc._id) }, doc, function (error, result) {
+  //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //       });
+  //     });
+  //     // let notNullRounds = docs.filter((doc) => doc.rounds !== null && doc.rounds !== undefined);
+  //     // console.log(`Total: ${docs.length}`);
+  //     // console.log(`-- Null Rounds: ${nullRounds.length}`);
+  //     // console.log(`-- Not Null Rounds: ${notNullRounds.length}`);
+  //     // let lengthTwoOrLess = notNullRounds.filter((doc) => doc.rounds.length <= 2);
+  //     // let twoOrMore = notNullRounds.filter((doc) => doc.rounds.length > 2);
+  //     // Do this one first
+  //     // console.log(`---- <= 2: ${lengthTwoOrLess.length}`);
+  //     // lengthTwoOrLess.forEach((doc) => {
+  //     //   delete doc.load;
+  //     //   doc.notes = `Rounds: ${doc.rounds}\n${doc.notes ? doc.notes : ''}`;
+  //     //   if (doc.roundinfo && doc.roundinfo.length) {
+  //     //     doc.roundinfo[0].rounds = doc.rounds;
+  //     //   } else {
+  //     //     doc.roundinfo = [{ rounds: doc.rounds, load: null, unit: null, reps: null }];
+  //     //   }
+  //     //   delete doc.rounds;
+  //     //   db.collection('logs').replaceOne({ _id: ObjectId(doc._id) }, doc, function (error, result) {
+  //     //     console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //     //   });
+  //     // });
+  //     // console.log(`---- > 2: ${twoOrMore.length}`);
+  //     // Do this second
+  //     // twoOrMore.forEach((doc) => {
+  //     //   delete doc.load;
+  //     //   doc.notes = `Rounds: ${doc.rounds}\n${doc.notes ? doc.notes : ''}`;
+  //     //   delete doc.rounds;
+  //     //   db.collection('logs').replaceOne({ _id: ObjectId(doc._id) }, doc, function (error, result) {
+  //     //     console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //     //   });
+  //     // });
+  //   });
+  // db.collection('logs')
+  //   .find({})
+  //   .toArray(function (error, docs) {
+  //     let noRoundInfo = docs.filter((doc) => !('roundinfo' in doc));
+  //     noRoundInfo.forEach((item) => {
+  //       item.roundinfo = [{ rounds: null, load: null, unit: null, reps: null }];
+  //       db.collection('logs').replaceOne({ _id: ObjectId(item._id) }, item, function (error, result) {
+  //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //       });
+  //     });
+  //   });
 });

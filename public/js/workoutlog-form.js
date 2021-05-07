@@ -61,9 +61,11 @@
         <div>
           <div>
             <p>Rounds & Load</p>
-            ${workoutlog.roundinfo
-              .map(function (item, index) {
-                return `
+            ${
+              workoutlog.roundinfo
+                ? workoutlog.roundinfo
+                    .map(function (item, index) {
+                      return `
               <fieldset>
                 ${index > 0 ? `<button type="button" id="delete-round-info-${index}">Delete</button>` : `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`}
                 <label for="wolog-rounds-${index}">Rounds</label>
@@ -74,26 +76,19 @@
                 <input type="number" name="wolog-reps-${index}" id="wolog-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">
                 <label for="wolog-unit-${index}">Unit</label>
                 <select name="wolog-unit-${index}" id="wolog-unit-${index}">
-                  <option value="-1"> </option>
+                  <option value=""> </option>
                   <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
                   <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
                   <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
                 </select>
               </fieldset>`;
-              })
-              .join('')}
+                    })
+                    .join('')
+                : ''
+            }
             
           </div>
           <button type="button" id="add-new-round-info">Add More Rounds</button>
-        </div>
-        <br/>
-        <div>
-          <label for="wolog-load">Load</label>
-          <input type="text" name="wolog-load" id="wolog-load" value="${workoutlog.load ? workoutlog.load : ''}" placeholder="135 lbs.">
-        </div>
-        <div>
-          <label for="wolog-rounds">Rounds</label>
-          <input type="text" name="wolog-rounds" id="wolog-rounds" value="${workoutlog.rounds ? workoutlog.rounds : ''}" placeholder="5">
         </div>
         <br/>
         <div>
@@ -188,8 +183,6 @@
 
     let date = $hl.getDateObjFromHTMLDateInput(elements['wolog-date'].value);
     workoutlog.date = date instanceof Date && !isNaN(date) ? date : '';
-    workoutlog.load = elements['wolog-load'].value.trim();
-    workoutlog.rounds = elements['wolog-rounds'].value.trim();
     workoutlog.notes = elements['wolog-notes'].value.trim();
     workoutlog.user_id = workoutlog.user_id ? workoutlog.user_id : state.user._id;
 
@@ -230,8 +223,8 @@
       (elements['wolog-duration-hours'].value === '' || parseInt(elements['wolog-duration-hours'].value) === 0) &&
       (elements['wolog-duration-minutes'].value === '' || parseInt(elements['wolog-duration-minutes'].value) === 0) &&
       (elements['wolog-duration-seconds'].value === '' || parseInt(elements['wolog-duration-seconds'].value) === 0) &&
-      elements['wolog-load'].value.trim() === '' &&
-      elements['wolog-rounds'].value.trim() === '' &&
+      (elements['wolog-load-0'].value === '' || parseInt(elements['wolog-load-0'].value) === 0) &&
+      (elements['wolog-rounds-0'].value === '' || parseInt(elements['wolog-rounds-0'].value) === 0) &&
       elements['wolog-notes'].value.trim() === ''
     ) {
       validationError.catchAll = 'Please enter a value in one of the fields or add notes.';
