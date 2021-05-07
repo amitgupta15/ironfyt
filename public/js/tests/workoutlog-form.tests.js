@@ -36,6 +36,9 @@
   $test.it('should handle invalid form data', function () {
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
+    let form = document.querySelector('#workout-log-form');
+    // Component sets the default date to today's date. Overwriting the default date here to generate an error
+    form.elements['wolog-date'].value = '';
     $test.dispatchHTMLEvent('submit', '#workout-log-form');
     let state = component.getState();
     $test.assert(state.validationError.date === 'Please enter a date for the log');
@@ -58,9 +61,7 @@
 
     $test.dispatchHTMLEvent('submit', '#workout-log-form');
     let state = component.getState();
-    $test.assert(JSON.stringify(state.validationError) === '{}');
-    $test.assert($hl.formatDateForInputField(state.workoutlog.date) === '2020-01-01');
-    $test.assert(state.workoutlog.notes === 'Some notes');
+    $test.assert(state.validationError === '');
     $test.assert($hl.formatDateForInputField(_workoutlog.date) === '2020-01-01');
     $test.assert(_workoutlog.notes === 'Some notes');
   });
@@ -140,6 +141,35 @@
     // Hide workout detail
     $test.dispatchHTMLEvent('click', '#selected-workout-name-span');
     $test.assert(selector.innerHTML.includes('<div id="selected-workout-detail-div" style="display: none;">Do 15 reps of each set</div>'));
+  });
+
+  $test.it('should add/remove round/load info block while preserving the form state', function () {
+    $test.assert(component.getState().workoutlog === '');
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    let form = document.querySelector('#workout-log-form');
+    form.elements['wolog-date'].value = '2021-05-07';
+
+    $test.dispatchHTMLEvent('click', '#add-new-round-info');
+    let workoutlog = component.getState().workoutlog;
+
+    $test.assert(workoutlog.roundinfo.length === 2);
+    $test.assert($hl.formatDateForInputField(workoutlog.date) === '2021-05-07');
+  });
+
+  $test.it('should remove round/load info block while preserving the form state', function () {
+    let roundinfo = [
+      { rounds: 0, reps: 0, load: 0, unit: null },
+      { rounds: 0, reps: 0, load: 0, unit: null },
+    ];
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({ workoutlog: { roundinfo } });
+
+    $test.dispatchHTMLEvent('click', '#delete-round-info-1');
+
+    let workoutlog = component.getState().workoutlog;
+    $test.assert(workoutlog.roundinfo.length === 1);
   });
   console.groupEnd();
 })();

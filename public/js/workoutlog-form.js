@@ -1,8 +1,31 @@
 (function () {
   'use strict';
+
+  // Default roundinfo object
+  let newRoundInfo = {
+    rounds: null,
+    load: null,
+    unit: null,
+    reps: null,
+  };
+  // Default workout log
+  let newWorkoutLog = {
+    date: new Date(),
+    workout_id: null,
+    user_id: null,
+    duration: {
+      hour: null,
+      minutes: null,
+      seconds: null,
+    },
+    roundinfo: [newRoundInfo],
+    modality: [],
+    location: null,
+    notes: null,
+  };
   let workoutlogFormTemplate = function (props) {
     let workouts = props.workouts ? props.workouts : [];
-    let workoutlog = props.workoutlog ? props.workoutlog : {};
+    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
     return `
@@ -36,21 +59,30 @@
         </div>
         <br/>
         <div>
-          <div id="round-info-block">
-            <fieldset>
-              <legend>Rounds & Load</legend>
-              <label for="wolog-round-1">Rounds</label>
-              <input type="number" name="wolog-round-1" id="wolog-round-1" placeholder="Rounds">
-              <label for="wolog-load-1">Load</label>
-              <input type="number" name="wolog-load-1" id="wolog-load-1" placeholder="Load">
-              <label for="wolog-unit-1">Unit</label>
-              <select name="wolog-unit-1" id="wolog-unit-1">
-                <option value="-1"> </option>
-                <option value="lbs">lbs</option>
-                <option value="kgs">kgs</option>
-                <option value="pood">pood</option>
-              </select>
-            </fieldset>
+          <div>
+            <p>Rounds & Load</p>
+            ${workoutlog.roundinfo
+              .map(function (item, index) {
+                return `
+              <fieldset>
+                ${index > 0 ? `<button type="button" id="delete-round-info-${index}">Delete</button>` : `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`}
+                <label for="wolog-rounds-${index}">Rounds</label>
+                <input type="number" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds">
+                <label for="wolog-load-${index}">Load</label>
+                <input type="number" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
+                <label for="wolog-reps-${index}">Reps</label>
+                <input type="number" name="wolog-reps-${index}" id="wolog-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">
+                <label for="wolog-unit-${index}">Unit</label>
+                <select name="wolog-unit-${index}" id="wolog-unit-${index}">
+                  <option value="-1"> </option>
+                  <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
+                  <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
+                  <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
+                </select>
+              </fieldset>`;
+              })
+              .join('')}
+            
           </div>
           <button type="button" id="add-new-round-info">Add More Rounds</button>
         </div>
@@ -116,7 +148,7 @@
     state: {
       error: '',
       validationError: {},
-      workoutlog: {},
+      workoutlog: newWorkoutLog,
       user: {},
       workouts: [],
     },
@@ -149,24 +181,23 @@
     }
   };
 
-  let handleWorkoutLogFormSubmitEvent = function (event) {
-    event.preventDefault();
+  let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
     let state = component.getState();
+    let workoutlog = state.workoutlog ? state.workoutlog : newWorkoutLog;
 
-    // Create/update the workoutlog object
-    let workoutlog = state.workoutlog ? state.workoutlog : {};
     let date = $hl.getDateObjFromHTMLDateInput(elements['wolog-date'].value);
     workoutlog.date = date instanceof Date && !isNaN(date) ? date : '';
-    // workoutlog.duration = elements['wolog-duration'].value.trim();
     workoutlog.load = elements['wolog-load'].value.trim();
     workoutlog.rounds = elements['wolog-rounds'].value.trim();
     workoutlog.notes = elements['wolog-notes'].value.trim();
     workoutlog.user_id = workoutlog.user_id ? workoutlog.user_id : state.user._id;
+
     workoutlog.modality = [];
     for (var i = 0; i < elements['wolog-modality'].length; i++) {
       if (elements['wolog-modality'][i].checked) workoutlog.modality.push(elements['wolog-modality'][i].value);
     }
+
     workoutlog.location = elements['wolog-location'].value.trim();
     workoutlog.workout_id = elements['wolog-workout-id'].value.trim();
 
@@ -176,7 +207,21 @@
       seconds: elements['wolog-duration-seconds'].value ? parseInt(elements['wolog-duration-seconds'].value) : 0,
     };
 
-    // Validate Form input
+    let roundinfo = [];
+    for (var i = 0; i < workoutlog.roundinfo.length; i++) {
+      let rounds = parseInt(elements[`wolog-rounds-${i}`].value);
+      let load = parseInt(elements[`wolog-load-${i}`].value);
+      let reps = parseInt(elements[`wolog-reps-${i}`].value);
+      let unit = elements[`wolog-unit-${i}`].value;
+      roundinfo.push({ rounds, load, reps, unit });
+    }
+    workoutlog.roundinfo = roundinfo;
+
+    return workoutlog;
+  };
+
+  let validateFormInput = function () {
+    let elements = document.querySelector('#workout-log-form').elements;
     let validationError = {};
     if (elements['wolog-date'].value === '') {
       validationError.date = 'Please enter a date for the log';
@@ -191,11 +236,14 @@
     ) {
       validationError.catchAll = 'Please enter a value in one of the fields or add notes.';
     }
+    return validationError;
+  };
 
-    // Set the state
-    component.setState({ workoutlog, validationError });
+  let handleWorkoutLogFormSubmitEvent = function (event) {
+    event.preventDefault();
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    let validationError = validateFormInput();
 
-    // If there is no error then save the workout log
     if (JSON.stringify(validationError) === '{}') {
       $ironfyt.saveWorkoutLog(workoutlog, function (error, response) {
         if (error) {
@@ -204,6 +252,8 @@
           $ironfyt.navigateToUrl('workoutlog.html');
         }
       });
+    } else {
+      component.setState({ workoutlog, validationError });
     }
   };
 
@@ -281,24 +331,45 @@
     div.style.display = div.style.display === 'none' ? 'block' : 'none';
   };
 
+  let handleAddNewRoundInfoEvent = function (event) {
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    workoutlog.roundinfo.push(newRoundInfo);
+    component.setState({ workoutlog });
+  };
+
+  let deleteRoundInfo = function (targetId) {
+    let prefix = 'delete-round-info-';
+    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    let roundinfo = workoutlog.roundinfo;
+    roundinfo.splice(index, 1);
+    component.setState({ workoutlog });
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
   $hl.eventListener('click', 'selected-workout-name-span', toggleSelectedWorkoutDetailDisplay);
+  $hl.eventListener('click', 'add-new-round-info', handleAddNewRoundInfoEvent);
   document.addEventListener('click', function (event) {
-    let idregex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
-    if (idregex.test(event.target.id)) {
+    let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
+    if (selectWorkoutRegex.test(event.target.id)) {
       selectWorkout(event.target.id);
+    }
+
+    let showWorkoutDetailRegex = new RegExp(/^show-detail-([a-zA-Z]|\d){24}/gm);
+    if (showWorkoutDetailRegex.test(event.target.id)) {
+      showWorkoutDetail(event.target.id);
+    }
+
+    let deleteRoundInfoRegex = new RegExp(/^delete-round-info-\d+/gm);
+    if (deleteRoundInfoRegex.test(event.target.id)) {
+      deleteRoundInfo(event.target.id);
     }
   });
 
-  document.addEventListener('click', function (event) {
-    let idregex = new RegExp(/^show-detail-([a-zA-Z]|\d){24}/gm);
-    if (idregex.test(event.target.id)) {
-      showWorkoutDetail(event.target.id);
-    }
-  });
+  //delete-round-info-
 
   ($ironfyt.workoutlogFormPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
@@ -312,7 +383,7 @@
             if (_id) {
               $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
                 if (!error) {
-                  let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : {};
+                  let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
                   component.setState({ workouts, workoutlog, user });
                 } else {
                   component.setState({ error });
