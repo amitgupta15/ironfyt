@@ -252,8 +252,6 @@
     let workouts = state.workouts ? state.workouts : [];
     let workout = workouts.filter((workout) => workout._id === _id)[0];
 
-    // Save the current state of the form
-    // Save the selected workout
     let workoutlog = createWorkoutLogObjFromFormElements();
     workoutlog.workout = [workout];
     component.setState({ workoutlog });
