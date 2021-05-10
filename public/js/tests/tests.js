@@ -50,7 +50,6 @@
       $hl.getParams = getParams;
 
       teardownComponents();
-
       localStorage.setItem = localStroageSetItem;
       app.navigateToUrl = navigateToUrl;
       app.login = login;

@@ -231,11 +231,24 @@
   };
 
   let handleSelectWorkoutEvent = function (event) {
-    let dialog = document.getElementById('select-workout-modal');
-    dialog.style.display = 'block';
-
     let selectWorkoutBtn = document.getElementById('select-workout-btn');
     selectWorkoutBtn.disabled = true;
+    // Get the current state of the form to save the intermediate state
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    $ironfyt.getWorkouts({}, function (error, response) {
+      if (!error) {
+        let workouts = response && response.workouts ? response.workouts : [];
+        component.setState({ workouts });
+
+        let selectWorkoutBtn = document.getElementById('select-workout-btn');
+        selectWorkoutBtn.disabled = true;
+
+        let dialog = document.getElementById('select-workout-modal');
+        dialog.style.display = 'block';
+      } else {
+        component.setState({ error, workoutlog });
+      }
+    });
   };
 
   let handleCloseWorkoutListModalEvent = function (event) {
@@ -323,33 +336,24 @@
     }
   });
 
-  //delete-round-info-
-
   ($ironfyt.workoutlogFormPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       let user = auth && auth.user ? auth.user : {};
       if (!error) {
-        $ironfyt.getWorkouts({}, function (error, response) {
-          if (!error) {
-            let workouts = response && response.workouts ? response.workouts : [];
-            let params = $hl.getParams();
-            let _id = params && params._id ? params._id : false;
-            if (_id) {
-              $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
-                if (!error) {
-                  let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
-                  component.setState({ workouts, workoutlog, user });
-                } else {
-                  component.setState({ error });
-                }
-              });
+        let params = $hl.getParams();
+        let _id = params && params._id ? params._id : false;
+        if (_id) {
+          $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
+            if (!error) {
+              let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
+              component.setState({ workoutlog, user });
             } else {
-              component.setState({ user, workouts });
+              component.setState({ error });
             }
-          } else {
-            component.setState({ error });
-          }
-        });
+          });
+        } else {
+          component.setState({ user });
+        }
       } else {
         component.setState({ error });
       }

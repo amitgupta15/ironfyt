@@ -88,20 +88,20 @@
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
   });
 
-  $test.it('should populate the workout and close the workout list modal when a workout is selected', function () {
-    component.setState({ workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda' }] });
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
-
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
-    $test.dispatchHTMLEvent('click', '#select-workout-btn');
-    $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
-    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
-    let state = component.getState();
-    $test.assert(state.workoutlog.workout[0]._id === '6070eec7f20f85401bca47a1');
-    $test.assert(state.workoutlog.workout[0].name === 'Linda');
-  });
+  // $test.it('should populate the workout and close the workout list modal when a workout is selected', function () {
+  //   component.setState({ workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda' }] });
+  //   let selector = document.querySelector('#selector');
+  //   selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
+  //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+  //   $test.dispatchHTMLEvent('click', '#select-workout-btn');
+  //   // $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
+  //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
+  //   $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
+  //   let state = component.getState();
+  //   $test.assert(state.workoutlog.workout[0]._id === '6070eec7f20f85401bca47a1');
+  //   $test.assert(state.workoutlog.workout[0].name === 'Linda');
+  //   console.log(selector.innerHTML);
+  // });
 
   $test.it('should show/hide workout details in the workout list', function () {
     let state = { workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda', description: 'Do 15 reps of each set' }] };
@@ -166,6 +166,20 @@
 
     let workoutlog = component.getState().workoutlog;
     $test.assert(workoutlog.roundinfo.length === 1);
+  });
+
+  $test.it('should fetch workouts when "select workout" button is clicked', function () {
+    $ironfyt.getWorkouts = function (filter, callback) {
+      callback(false, [
+        { _id: 1, name: 'Workout 1' },
+        { _id: 2, name: 'Workout 2' },
+      ]);
+    };
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({});
+    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    let state = component.getState();
+    console.log(state.workouts);
   });
   console.groupEnd();
 })();
