@@ -28,6 +28,7 @@
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
+    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
     <div class="container">
       <h1>Workout Log</h1>
@@ -37,14 +38,17 @@
           <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date">
           ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
         </div>
-        <div id="select-workout-btn-div">
-          <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
-        </div>
-        <div id="selected-workout-div" style="display:none">
-          <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span"></span>
-          <div id="selected-workout-detail-div" style="display:none"></div>
-          <input type="hidden" id="wolog-workout-id" value="">
-        </div>
+        ${
+          workout
+            ? `<div id="selected-workout-div">
+                <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">${workout.name}</span>
+                <div id="selected-workout-detail-div" style="display:none">${workout.description}</div>
+                </div>`
+            : `<div id="select-workout-btn-div">
+            <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
+            </div>`
+        }
+        <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
         <br/>
         <div>
           <fieldset>
@@ -150,31 +154,7 @@
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutlogFormTemplate);
     },
-    afterRender: function (props) {
-      renderWorkoutInfo(props);
-    },
   }));
-
-  let renderWorkoutInfo = function (props) {
-    let workouts = props && props.workouts ? props.workouts : [];
-    let workoutlog = props && props.workoutlog ? props.workoutlog : {};
-    let workout_id = workoutlog && workoutlog.workout_id ? workoutlog.workout_id : '';
-    if (workout_id) {
-      let workout = workouts.filter((workout) => workout._id === workout_id)[0];
-
-      let selectWorkoutBtn = document.getElementById('select-workout-btn');
-      selectWorkoutBtn.disabled = true;
-      selectWorkoutBtn.style.display = 'none';
-
-      let selectedWorkoutDiv = document.getElementById('selected-workout-div');
-      selectedWorkoutDiv.style.display = 'block';
-      let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
-      selectedWorkoutSpan.innerHTML = workout.name;
-
-      let wologWorkoutId = document.getElementById('wolog-workout-id');
-      wologWorkoutId.value = workout._id;
-    }
-  };
 
   let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
@@ -272,23 +252,14 @@
     let workouts = state.workouts ? state.workouts : [];
     let workout = workouts.filter((workout) => workout._id === _id)[0];
 
+    // Save the current state of the form
+    // Save the selected workout
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    workoutlog.workout = [workout];
+    component.setState({ workoutlog });
+
     let dialog = document.getElementById('select-workout-modal');
     dialog.style.display = 'none';
-
-    let selectWorkoutBtn = document.getElementById('select-workout-btn');
-    selectWorkoutBtn.disabled = true;
-    selectWorkoutBtn.style.display = 'none';
-
-    let selectedWorkoutDiv = document.getElementById('selected-workout-div');
-    selectedWorkoutDiv.style.display = 'block';
-    let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
-    selectedWorkoutSpan.innerHTML = workout.name;
-
-    let selectedWorkoutDetailDiv = document.getElementById('selected-workout-detail-div');
-    selectedWorkoutDetailDiv.innerHTML = workout.description;
-
-    let wologWorkoutId = document.getElementById('wolog-workout-id');
-    wologWorkoutId.value = workout._id;
   };
 
   let showWorkoutDetail = function (targetId) {
@@ -305,17 +276,9 @@
   };
 
   let handleUnselectWorkoutEvent = function (event) {
-    let wologWorkoutId = document.getElementById('wolog-workout-id');
-    wologWorkoutId.value = '';
-
-    let selectedWorkoutDiv = document.getElementById('selected-workout-div');
-    selectedWorkoutDiv.style.display = 'none';
-    let selectedWorkoutSpan = document.getElementById('selected-workout-name-span');
-    selectedWorkoutSpan.innerHTML = '';
-
-    let selectWorkoutBtn = document.getElementById('select-workout-btn');
-    selectWorkoutBtn.disabled = false;
-    selectWorkoutBtn.style.display = 'block';
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    workoutlog.workout = [];
+    component.setState({ workoutlog });
   };
 
   let toggleSelectedWorkoutDetailDisplay = function (event) {

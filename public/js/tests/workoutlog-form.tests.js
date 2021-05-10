@@ -74,7 +74,6 @@
     $test.dispatchHTMLEvent('click', '#select-workout-btn');
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
     $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
-    $test.assert(selector.innerHTML.includes('<div id="selected-workout-div" style="display:none">'));
     $test.assert(document.getElementById('wolog-workout-id').value === '');
   });
 
@@ -89,7 +88,7 @@
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
   });
 
-  $test.it('should populate the workout and close the workout list model when a workout is selected', function () {
+  $test.it('should populate the workout and close the workout list modal when a workout is selected', function () {
     component.setState({ workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda' }] });
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
@@ -97,12 +96,11 @@
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
     $test.dispatchHTMLEvent('click', '#select-workout-btn');
     $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
-
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
-    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="" style="display: none;">'));
-    $test.assert(selector.innerHTML.includes('<div id="selected-workout-div" style="display: block;">'));
-    $test.assert(selector.innerHTML.includes('<span id="selected-workout-name-span">Linda</span>'));
-    $test.assert(selector.innerHTML.includes('<input type="hidden" id="wolog-workout-id" value="6070eec7f20f85401bca47a1">'));
+    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
+    let state = component.getState();
+    $test.assert(state.workoutlog.workout[0]._id === '6070eec7f20f85401bca47a1');
+    $test.assert(state.workoutlog.workout[0].name === 'Linda');
   });
 
   $test.it('should show/hide workout details in the workout list', function () {
@@ -125,12 +123,10 @@
   });
 
   $test.it('should show/hide workout details for the selected workout', function () {
-    let state = { workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda', description: 'Do 15 reps of each set' }] };
+    let state = { workoutlog: { workout: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda', description: 'Do 15 reps of each set' }] } };
     component.setState(state);
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template(state);
-
-    $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
 
     $test.assert(selector.innerHTML.includes('<span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">Linda</span>'));
 
