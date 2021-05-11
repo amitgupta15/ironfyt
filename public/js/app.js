@@ -77,6 +77,16 @@
     });
   };
 
+  $ironfyt.getUsers = function (params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`/api/user?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, function () {
+        callback(false, response);
+      });
+    });
+  };
+
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page
@@ -102,6 +112,10 @@
     window.location.href = page;
   };
 
+  // Check if the user is an admin
+  $ironfyt.isAdmin = function (user) {
+    return typeof user === 'object' && user.role && user.role === 'admin' ? true : false;
+  };
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};

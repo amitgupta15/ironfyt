@@ -34,6 +34,10 @@
     callback();
   });
 
+  let getUsers = (app.getUsers = function (params, callback) {
+    callback();
+  });
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -60,6 +64,7 @@
       app.saveWorkoutLog = saveWorkoutLog;
       app.deleteWorkoutLog = deleteWorkoutLog;
       app.getWorkouts = getWorkouts;
+      app.getUsers = getUsers;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
