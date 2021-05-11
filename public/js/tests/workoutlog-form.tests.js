@@ -170,16 +170,20 @@
 
   $test.it('should fetch workouts when "select workout" button is clicked', function () {
     $ironfyt.getWorkouts = function (filter, callback) {
-      callback(false, [
-        { _id: 1, name: 'Workout 1' },
-        { _id: 2, name: 'Workout 2' },
-      ]);
+      callback(false, {
+        workouts: [
+          { _id: 1, name: 'Workout 1' },
+          { _id: 2, name: 'Workout 2' },
+        ],
+      });
     };
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
-    $test.dispatchHTMLEvent('click', '#select-workout-btn');
     let state = component.getState();
-    console.log(state.workouts);
+    $test.assert(state.workouts.length === 0);
+    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    state = component.getState();
+    $test.assert(state.workouts.length === 2);
   });
   console.groupEnd();
 })();

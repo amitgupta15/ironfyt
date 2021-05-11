@@ -40,11 +40,11 @@
         </div>
         ${
           workout
-            ? `<div id="selected-workout-div">
+            ? `<div>
                 <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">${workout.name}</span>
                 <div id="selected-workout-detail-div" style="display:none">${workout.description}</div>
                 </div>`
-            : `<div id="select-workout-btn-div">
+            : `<div>
             <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
             </div>`
         }
