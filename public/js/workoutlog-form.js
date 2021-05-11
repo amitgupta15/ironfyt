@@ -222,7 +222,7 @@
         if (error) {
           console.error(error);
         } else {
-          $ironfyt.navigateToUrl('workoutlog.html');
+          $ironfyt.navigateToUrl('workoutlogs.html');
         }
       });
     } else {

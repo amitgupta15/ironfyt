@@ -116,5 +116,32 @@
     $test.assert(state.selectedUser._id === '123456789012345678901233');
     $test.assert(state.user._id === '123456789012345678901234');
   });
+
+  $test.it('should delete a log', function () {
+    let id, navigateToUrl;
+    $ironfyt.deleteWorkoutLog = function (_id, callback) {
+      id = _id;
+      callback(false);
+    };
+    $ironfyt.navigateToUrl = function (url) {
+      navigateToUrl = url;
+    };
+
+    let props = { user: { _id: `123456789012345678901233` }, selectedUser: { _id: `123456789012345678901233` }, workoutlogs: [{ _id: '111111111111111111111111' }, { _id: '222222222222222222222222' }] };
+    component.setState(props);
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(props);
+
+    $test.assert(selector.innerHTML.includes('<button id="delete-222222222222222222222222">Delete</button>'));
+
+    let state = component.getState();
+    $test.assert(state.workoutlogs.length === 2);
+
+    $test.dispatchHTMLEvent('click', '#delete-222222222222222222222222');
+    state = component.getState();
+
+    $test.assert(id === '222222222222222222222222');
+    $test.assert(navigateToUrl === 'workoutlogs.html');
+  });
   console.groupEnd();
 })();

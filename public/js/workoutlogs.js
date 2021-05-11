@@ -7,8 +7,55 @@
     let selectedUser = props && props.selectedUser ? props.selectedUser : {};
     let title = `${$ironfyt.isAdmin(user) && JSON.stringify(selectedUser) === '{}' && workoutlogs.length ? 'All Logs' : `${selectedUser.fname}'s Logs`} (${workoutlogs.length})`;
     let loglink = $ironfyt.isAdmin(user) ? (JSON.stringify(selectedUser) !== '{}' ? `<div><a href="workoutlogs.html">All Logs</a></div>` : `<div><a href="workoutlogs.html?user_id=${user._id}">My Logs</a></div>`) : ``;
-    return `${loglink}
-    <h2>${title}</h2>`;
+
+    return `
+    <div class="container">
+      ${loglink}
+      <h2>${title}</h2>
+      <hr/><br/>
+      ${workoutlogs
+        .map((log) => {
+          let workout = log.workout && log.workout.length ? log.workout[0] : {};
+          let name = function (log) {
+            let nameString = log.user[0] ? `${log.user[0].fname} ${log.user[0].lname}` : ``;
+            let urlString = nameString ? `<a href="workoutlogs.html?user_id=${log.user[0]._id}">${nameString}</a>` : ``;
+            return nameString ? `<br/><br/><strong>User: </strong> ${urlString}<br/>` : ``;
+          };
+          return `
+            <p><strong>${new Date(log.date).toLocaleDateString()}</strong> <a href="workoutlog-form.html?_id=${log._id}">Edit</a> <button id="delete-${log._id}">Delete</button></p>
+            ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? log.duration.hours : '00'}:${log.duration.minutes ? log.duration.minutes : '00'}:${log.duration.seconds ? log.duration.seconds : '00'}</p>` : ''}
+            ${
+              log.roundinfo
+                ? log.roundinfo
+                    .map(function (item) {
+                      return ` ${item.rounds ? `<p><strong>Rounds: </strong> ${item.rounds}&nbsp;&nbsp;&nbsp;` : ''} 
+                      ${item.load ? `<strong>Load: </strong> ${item.load} ${item.unit ? item.unit : ''}&nbsp;&nbsp;&nbsp;` : ''}
+                      ${item.reps ? `<strong>Reps: </strong> ${item.reps}` : ''}</p>`;
+                    })
+                    .join('')
+                : ''
+            }
+            ${log.notes ? `<strong>Notes: </strong>${$hl.replaceNewLineWithBR(log.notes)}<br/>` : ''}
+            ${log.modality && log.modality.length ? `<strong>Modality: </strong>${log.modality.map((mod) => mod)}<br/>` : ''}
+            ${
+              workout.name
+                ? `<strong>Workout: </strong><br/>
+                  ${workout.name ? `<a href="workout.html?user_id=${user._id}&workout_id=${workout._id}">${workout.name}</a><br/>` : ''}
+                  ${workout.type ? `${workout.type}<br/>` : ''}
+                  ${workout.timecap ? `${workout.timecap}<br/>` : ''}
+                  ${workout.reps ? `${workout.reps}<br/>` : ''}
+                  ${workout.rounds ? `${workout.rounds}<br/>` : ''}
+                  ${workout.description ? `${$hl.replaceNewLineWithBR(workout.description)}` : ''}<br/>`
+                : ''
+            }
+            ${JSON.stringify(selectedUser) === '{}' ? name(log) : ``}
+            <br/>
+            <hr/>
+            `;
+        })
+        .join('')}
+    </div>
+    `;
   };
 
   let component = ($ironfyt.workoutlogsComponent = Component('[data-app=workoutlogs-list]', {
@@ -27,6 +74,20 @@
     return logs.sort(function (a, b) {
       return new Date(b['date']) - new Date(a['date']);
     });
+  };
+
+  let deleteWorkoutLog = function (targetId) {
+    let prefix = 'delete-';
+    let _id = targetId.substring(prefix.length, targetId.length);
+    if (_id.length === 24) {
+      $ironfyt.deleteWorkoutLog(_id, function (error, response) {
+        if (!error) {
+          $ironfyt.navigateToUrl('workoutlogs.html');
+        }
+      });
+    } else {
+      console.error('Invalid ID');
+    }
   };
 
   ($ironfyt.workoutlogsPage = function () {
@@ -78,4 +139,11 @@
       }
     });
   })();
+
+  document.addEventListener('click', function (event) {
+    let idregex = new RegExp(/^delete-([a-zA-Z]|\d){24}/gm);
+    if (idregex.test(event.target.id)) {
+      deleteWorkoutLog(event.target.id);
+    }
+  });
 })();
