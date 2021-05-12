@@ -8,14 +8,15 @@
         <hr/>
         ${workouts
           .map(
-            (workout) => `
-        <h4>${workout.name}</h4>
+            (workout) => `<br/>
+        <p><strong>${workout.name}</strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> </p>
         ${workout.type ? `<strong>Type:</strong> ${workout.type}<br/>` : ''}
         ${workout.timecap ? `<strong>Timecap:</strong> ${workout.timecap}<br/>` : ''}
-        ${workout.reps ? `${workout.reps}<br/>` : ''}
-        ${workout.rounds ? `${workout.rounds}<br/>` : ''}
+        ${workout.reps ? `<strong>Reps:</strong> ${workout.reps}<br/>` : ''}
+        ${workout.rounds ? `<strong>Rounds:</strong> ${workout.rounds}<br/>` : ''}
+        ${workout.modality && workout.modality.length ? `<strong>Modality:</strong> ${workout.modality.map((modality) => modality)}<br/>` : ''}
         ${workout.description ? `${$hl.replaceNewLineWithBR(workout.description)}` : ''}
-        <br/><hr/>`
+        <br/><br/><hr/>`
           )
           .join('')}`;
   };
