@@ -27,5 +27,21 @@
     $test.assert(state.workouts.length === 2);
   });
 
+  $test.it('should delete a workout', function () {
+    let _filter, _url;
+    $ironfyt.deleteWorkout = function (filter, callback) {
+      _filter = filter;
+      callback(false);
+    };
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
+    };
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({ workouts: [{ _id: '012345678901234567890123' }] });
+    $test.dispatchHTMLEvent('click', '#delete-workout-012345678901234567890123');
+    $test.assert(_filter === '012345678901234567890123');
+    $test.assert(_url === 'workouts.html');
+  });
   console.groupEnd();
 })();

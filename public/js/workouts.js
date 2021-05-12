@@ -9,7 +9,7 @@
         ${workouts
           .map(
             (workout) => `<br/>
-        <p><strong>${workout.name}</strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> </p>
+        <p><strong>${workout.name}</strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> <button type="button" id="delete-workout-${workout._id}">Delete</button></p>
         ${workout.type ? `<strong>Type:</strong> ${workout.type}<br/>` : ''}
         ${workout.timecap ? `<strong>Timecap:</strong> ${workout.timecap}<br/>` : ''}
         ${workout.reps ? `<strong>Reps:</strong> ${workout.reps}<br/>` : ''}
@@ -31,6 +31,26 @@
       return $ironfyt.pageTemplate(props, workoutsTemplate);
     },
   }));
+
+  let deleteWorkout = function (targetId) {
+    let prefix = 'delete-workout-';
+    let _id = targetId.substring(prefix.length, targetId.length);
+    if (_id.length === 24) {
+      $ironfyt.deleteWorkout(_id, function (error, response) {
+        if (!error) {
+          $ironfyt.navigateToUrl('workouts.html');
+        }
+      });
+    } else {
+      component.setState({ error: { message: 'Invalid ID' } });
+    }
+  };
+  document.addEventListener('click', function (event) {
+    let idregex = new RegExp(/^delete-workout-([a-zA-Z]|\d){24}/gm);
+    if (idregex.test(event.target.id)) {
+      deleteWorkout(event.target.id);
+    }
+  });
 
   ($ironfyt.workoutsPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {

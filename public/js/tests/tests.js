@@ -40,6 +40,9 @@
   let saveWorkout = (app.saveWorkout = function (obj, callback) {
     callback();
   });
+  let deleteWorkout = (app.deleteWorkout = function (_id, callback) {
+    callback();
+  });
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -68,6 +71,7 @@
       app.getWorkouts = getWorkouts;
       app.getUsers = getUsers;
       app.saveWorkout = saveWorkout;
+      app.deleteWorkout = deleteWorkout;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
