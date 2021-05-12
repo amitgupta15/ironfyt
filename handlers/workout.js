@@ -58,6 +58,7 @@ workout.post = (req, res) => {
     workout.rounds = workout.rounds ? workout.rounds : null;
     workout.type = workout.type ? workout.type : null;
     workout.user_id = workout.user_id ? new ObjectId(workout.user_id) : null;
+    workout.modality = workout.modality ? workout.modality : null;
     workoutsCollection(req).insertOne(workout, (error, result) => {
       if (!error) {
         res(200, { workout: result.ops[0], user });
@@ -83,6 +84,7 @@ workout.put = (req, res) => {
             if (wo.type) workout.type = wo.type;
             if (wo.rounds) workout.rounds = wo.rounds;
             if (wo.timecap) workout.timecap = wo.timecap;
+            if (wo.modality) workout.modality = wo.modality;
             workoutsCollection(req).replaceOne({ _id: ObjectId(wo._id) }, workout, function (error, result) {
               if (!error) {
                 res(200, { workout: result.ops[0], user });
