@@ -130,8 +130,7 @@
     $test.assert(_workout.reps === '21-15-9');
     $test.assert(_workout.description === 'Thrusters and Pull-ups');
 
-    // $test.assert(_url === 'workout-detail.html?_id=1234');
-    $test.assert(_url === 'workouts.html');
+    $test.assert(_url === 'workout-detail.html?_id=1234');
   });
   console.groupEnd();
 })();

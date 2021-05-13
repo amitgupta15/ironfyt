@@ -117,8 +117,7 @@
         if (!error) {
           let savedWorkout = response && response.workout ? response.workout : false;
           if (savedWorkout) {
-            // $ironfyt.navigateToUrl(`workout-detail.html?_id=${savedWorkout._id}`);
-            $ironfyt.navigateToUrl(`workouts.html`);
+            $ironfyt.navigateToUrl(`workout-detail.html?_id=${savedWorkout._id}`);
           } else {
             component.setState({ error: { message: 'Looks like some error occurred while saving the workout. Try again.' } });
           }
