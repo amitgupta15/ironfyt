@@ -32,13 +32,19 @@
     $hl.getParams = function () {
       return { _id: '012345678901234567890123' };
     };
-    let _filter;
+    let _filter, _logfilter;
     $ironfyt.getWorkouts = function (filter, callback) {
       _filter = filter;
       callback(false);
     };
+    $ironfyt.getWorkoutLogs = function (filter, callback) {
+      _logfilter = filter;
+      callback(false);
+    };
     page();
     $test.assert(_filter._id === '012345678901234567890123');
+    $test.assert(_logfilter.user_id === '123456789012345678901234');
+    $test.assert(_logfilter.workout_id === '012345678901234567890123');
   });
   console.groupEnd();
 })();

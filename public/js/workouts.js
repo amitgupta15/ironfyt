@@ -9,7 +9,7 @@
         ${workouts
           .map(
             (workout) => `<br/>
-        <p><strong>${workout.name}</strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> <button type="button" id="delete-workout-${workout._id}">Delete</button></p>
+        <p><strong><a href="workout-detail.html?_id=${workout._id}">${workout.name}</a></strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> <button type="button" id="delete-workout-${workout._id}">Delete</button></p>
         ${workout.type ? `<strong>Type:</strong> ${workout.type}<br/>` : ''}
         ${workout.timecap ? `<strong>Timecap:</strong> ${workout.timecap}<br/>` : ''}
         ${workout.reps ? `<strong>Reps:</strong> ${workout.reps}<br/>` : ''}
