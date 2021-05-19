@@ -12,8 +12,8 @@
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('logs' in component.state);
-    $test.assert('year' in component.state);
-    $test.assert('month' in component.state);
+    $test.assert('startdate' in component.state);
+    $test.assert('enddate' in component.state);
   });
 
   $test.it('should not allow unauthorized user to view the calendar page', function () {
@@ -29,24 +29,21 @@
     $ironfyt.authenticateUser = function (callback) {
       callback(false, { _id: 1 });
     };
+    $hl.getParams = function () {
+      return {
+        startdate: '2021-01-15T00:00:00',
+      };
+    };
     let _filter;
     $ironfyt.getWorkoutLogs = function (filter, callback) {
       _filter = filter;
       callback(false, { workoutlogs: [{}, {}] });
     };
     page();
-    let startdate = new Date(_filter.startdate);
-    let enddate = new Date(_filter.enddate);
-    let today = new Date();
-    let startMonth = new Date(today.getFullYear(), today.getMonth());
-    let endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    $test.assert(startdate.getMonth() === startMonth.getMonth());
-    $test.assert(startdate.getFullYear() === startMonth.getFullYear());
-    $test.assert(enddate.getMonth() === endMonth.getMonth());
-    $test.assert(enddate.getFullYear() === endMonth.getFullYear());
     let state = component.getState();
     $test.assert(state.logs.length === 2);
+    $test.assert(state.startdate === '2021-01-01T00:00:00.000Z');
+    $test.assert(state.enddate === '2021-01-31T23:59:59.000Z');
   });
   console.groupEnd();
 })();
