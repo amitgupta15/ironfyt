@@ -372,4 +372,14 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //       });
   //     });
   //   });
+
+  //Change data type to date for workout logs
+  // db.collection('logs')
+  //   .find()
+  //   .forEach((log) => {
+  //     log.date = new Date(log.date);
+  //     db.collection('logs').replaceOne({ _id: ObjectId(log._id) }, log, function (error, result) {
+  //       console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //     });
+  //   });
 });

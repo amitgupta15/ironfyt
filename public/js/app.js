@@ -43,27 +43,21 @@
     let headers = getAuthHeader();
     let queryString = $hl.createQueryString(params);
     fetch.get(`/api/workoutlog?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 
   $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
     let headers = getAuthHeader();
     fetch.post(`/api/workoutlog`, { headers, data: workoutlog }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 
   $ironfyt.deleteWorkoutLog = function (_id, callback) {
     let headers = getAuthHeader();
     fetch.delete(`/api/workoutlog?_id=${_id}`, { headers }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 
@@ -71,7 +65,7 @@
     let headers = getAuthHeader();
     let queryString = $hl.createQueryString(params);
     fetch.get(`/api/workout?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, function () {
+      validateReponse(error, function (error) {
         callback(false, response);
       });
     });
@@ -81,27 +75,21 @@
     let headers = getAuthHeader();
     let queryString = $hl.createQueryString(params);
     fetch.get(`/api/user?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 
   $ironfyt.saveWorkout = function (workout, callback) {
     let headers = getAuthHeader();
     fetch.post(`/api/workout`, { headers, data: workout }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 
   $ironfyt.deleteWorkout = function (_id, callback) {
     let headers = getAuthHeader();
     fetch.delete(`/api/workout?_id=${_id}`, { headers }, function (error, response) {
-      validateReponse(error, function () {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
   /**
@@ -144,12 +132,14 @@
     return `<p class="error-div">${error.message}</p>`;
   };
 
-  let validateReponse = function (error, callback) {
+  let validateReponse = function (error, response, callback) {
     //Server will send back error code 1 if the token has expired
     if (error && error.code === 1) {
       $ironfyt.logout();
+    } else if (error && error.code !== 1) {
+      callback(error, response);
     } else {
-      callback();
+      callback(false, response);
     }
   };
 

@@ -4,28 +4,44 @@ const ObjectId = require('mongodb').ObjectID;
 
 const workoutlog = {};
 
-workoutlog.get = (req, res) => {
-  let { query, tokenpayload } = req;
-  let user = tokenpayload.user;
+let queryParser = (query, res) => {
+  let filter = {};
   if (Object.keys(query).length) {
     for (let key in query) {
-      if (query[key].length !== 24) {
-        res(400, { error: `Invalid ID : ${key}` });
-        return;
-      } else {
-        try {
-          query[key] = ObjectId(query[key]);
-        } catch (error) {
-          res(400, { error: 'Invalid Object ID' });
+      if (key === '_id' || key === 'workout_id' || key === 'user_id') {
+        if (query[key].length !== 24) {
+          res(400, { message: `Invalid ID : ${key}` });
           return;
+        } else {
+          try {
+            filter[key] = ObjectId(query[key]);
+          } catch (error) {
+            res(400, { message: 'Invalid Object ID' });
+            return;
+          }
         }
+      }
+      if (key === 'startdate') {
+        let date = new Date(query[key]);
+        filter['date'] = { ...filter['date'], $gte: date };
+      }
+      if (key === 'enddate') {
+        let date = new Date(query[key]);
+        filter['date'] = { ...filter['date'], $lte: date };
       }
     }
   }
+  return filter;
+};
+workoutlog.get = (req, res) => {
+  let { query, tokenpayload } = req;
+  let user = tokenpayload.user;
+  let filter = {};
+  filter = queryParser(query, res);
   workoutlogsCollection(req)
     .aggregate([
       {
-        $match: query,
+        $match: filter,
       },
       {
         $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' },

@@ -46,7 +46,7 @@
             try {
               let response = JSON.parse(httpRequest.response);
               if (httpRequest.status >= 400) {
-                console.error(`Bad Response ${response}`);
+                console.error(`Bad Response ${JSON.stringify(response)}`);
                 callback(response);
               } else {
                 callback(false, response);

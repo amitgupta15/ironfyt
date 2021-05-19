@@ -10,6 +10,7 @@
       <p><a href="workoutlog-form.html">New Log</a></p>
       <p><a href="workouts.html">Workouts</a></p>
       <p><a href="workout-form.html">New Workout</a></p>
+      <p><a href="workoutlog-calendar.html">My Calendar</a></p>
       `;
     },
   });
