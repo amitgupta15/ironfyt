@@ -8,12 +8,14 @@
 
   $test.it('should create a workoutLogCalendar component successfully', function () {
     $test.assert(component.selector === '[data-app=workoutlog-calendar]');
-    $test.assert(Object.keys(component.state).length === 5);
+    $test.assert(Object.keys(component.state).length === 7);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('logs' in component.state);
-    $test.assert('startdate' in component.state);
-    $test.assert('enddate' in component.state);
+    $test.assert('displayUser' in component.state);
+    $test.assert('month' in component.state);
+    $test.assert('year' in component.state);
+    $test.assert('days' in component.state);
   });
 
   $test.it('should not allow unauthorized user to view the calendar page', function () {
@@ -25,25 +27,63 @@
     $test.assert(state.error === 'Unauthorized User');
   });
 
-  $test.it("should fetch the user's workout logs for the given month", function () {
+  $test.it('should take month and year url parameters and create a days array of size 42', function () {
     $ironfyt.authenticateUser = function (callback) {
-      callback(false, { _id: 1 });
+      callback(false);
     };
+
     $hl.getParams = function () {
-      return {
-        startdate: '2021-01-15T00:00:00',
-      };
+      return { month: '0', year: '2021' }; // January 2021
     };
+
     let _filter;
     $ironfyt.getWorkoutLogs = function (filter, callback) {
       _filter = filter;
-      callback(false, { workoutlogs: [{}, {}] });
+      callback(false, {
+        workoutlogs: [
+          { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
+          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th' },
+        ],
+      });
+    };
+
+    page();
+    let state = component.getState();
+    $test.assert(state.month === 0);
+    $test.assert(state.year === 2021);
+    $test.assert(new Date(state.days[0].date).getDate() === 27);
+    $test.assert(state.days[0].class === 'prev-month');
+    $test.assert(new Date(state.days[5].date).getDate() === 1);
+    $test.assert(state.days[5].class === 'curr-month');
+    $test.assert(new Date(state.days[36].date).getDate() === 1);
+    $test.assert(new Date(state.days[36].date).getMonth() === 1);
+    $test.assert(state.days[36].class === 'next-month');
+    $test.assert(new Date(state.days[41].date).getDate() === 6);
+    $test.assert(state.days.length === 42);
+    $test.assert(state.days[3].log._id === 2);
+    $test.assert(state.days[7].log._id === 1);
+  });
+
+  $test.it("should only let admin to view another user's calendar", function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123456789012345678901234' } });
+    };
+    $hl.getParams = function () {
+      return {
+        user_id: '012345678901234567891111',
+      };
     };
     page();
     let state = component.getState();
-    $test.assert(state.logs.length === 2);
-    $test.assert(state.startdate === '2021-01-01T00:00:00.000Z');
-    $test.assert(state.enddate === '2021-01-31T23:59:59.000Z');
+    $test.assert(state.error.message === "You are not authorized to view this user's calendar");
+
+    component.setState({ error: '' });
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123456789012345678901234', role: 'admin' } });
+    };
+    state = component.getState();
+    $test.assert(state.error === '');
   });
+
   console.groupEnd();
 })();
