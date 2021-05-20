@@ -8,10 +8,9 @@
 
   $test.it('should create a workoutLogCalendar component successfully', function () {
     $test.assert(component.selector === '[data-app=workoutlog-calendar]');
-    $test.assert(Object.keys(component.state).length === 7);
+    $test.assert(Object.keys(component.state).length === 6);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
-    $test.assert('logs' in component.state);
     $test.assert('displayUser' in component.state);
     $test.assert('month' in component.state);
     $test.assert('year' in component.state);

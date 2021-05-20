@@ -9,7 +9,6 @@
 
   let component = ($ironfyt.workoutLogCalendarComponent = Component('[data-app=workoutlog-calendar]', {
     state: {
-      logs: [],
       error: '',
       user: {},
       month: null,
@@ -89,7 +88,6 @@
             if (!error) {
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
               days = addLogsToDays(logs, days);
-              console.log(days);
               if (user_id !== user._id) {
                 $ironfyt.getUsers({ _id: user_id }, function (error, response) {
                   if (!error) {
