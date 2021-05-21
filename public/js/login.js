@@ -42,7 +42,7 @@
     let form = document.getElementById('login-form');
     let errorDiv = document.getElementById('error-info');
 
-    let email = form.elements['email'].value.trim();
+    let email = form.elements['email'].value.trim().toLowerCase();
     let password = form.elements['password'].value.trim();
     if (email === '' || password === '') {
       errorDiv.innerHTML = `Please enter a valid email address and password`;
@@ -54,8 +54,8 @@
           let errorMessage = error.error ? error.error : 'Unknown error occurred';
           errorDiv.innerHTML = errorMessage;
         } else {
-          let token = response.token ? response.token : false;
-          let user = response.user ? JSON.stringify(response.user) : '';
+          let token = response && response.token ? response.token : false;
+          let user = response && response.user ? JSON.stringify(response.user) : '';
 
           if (token) {
             localStorage.setItem($ironfyt.AUTH_TOKEN, token);

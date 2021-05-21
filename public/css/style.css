@@ -11,7 +11,8 @@ html {
 }
 
 body {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   font-size: 1rem;
@@ -22,3 +23,26 @@ body {
   padding: 0 15px;
   max-width: 900px;
 }
+
+/** Calendar **/
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.date-cell {
+  padding: 5px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.prev-month,
+.next-month {
+  color: #aaa;
+}
+
+.today-date-cell {
+  color: green;
+}
+
+/** End Calendar **/

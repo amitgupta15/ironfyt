@@ -3,8 +3,23 @@
 
   let workoutLogCalendarTemplate = function (props) {
     let displayUser = props && props.displayUser ? props.displayUser : {};
-    console.log(props);
-    return `<h1>Calendar - ${displayUser.fname}</h1>`;
+    let days = props && props.days ? props.days : [];
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return `<div class="container">
+              <h2>Activity Calendar - ${displayUser.fname}</h2><br/>
+              <div class="calendar-grid">
+                <div class="date-cell">S</div>
+                <div class="date-cell">M</div>
+                <div class="date-cell">T</div>
+                <div class="date-cell">W</div>
+                <div class="date-cell">T</div>
+                <div class="date-cell">F</div>
+                <div class="date-cell">S</div>
+                ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - today === 0 ? `today-date-cell` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+              </div>
+            </div>`;
   };
 
   let component = ($ironfyt.workoutLogCalendarComponent = Component('[data-app=workoutlog-calendar]', {

@@ -45,5 +45,22 @@
 
     $test.assert(selector.innerHTML.includes('You are already logged in Amit Gupta'));
   });
+
+  $test.it('should convert the username/email id to lower case', function () {
+    let _loginInfo;
+    $ironfyt.login = function (loginInfo, callback) {
+      _loginInfo = loginInfo;
+      callback(false);
+    };
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    let form = document.querySelector('#login-form');
+    form.elements['email'].value = 'AmitGupta15@gmail.com';
+    form.elements['password'].value = 'apassword';
+
+    $test.dispatchHTMLEvent('submit', '#login-form');
+    $test.assert(_loginInfo.email === 'amitgupta15@gmail.com');
+  });
   console.groupEnd();
 })();
