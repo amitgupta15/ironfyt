@@ -1,3 +1,26 @@
+/** 
+Colors used 
+#ddd
+#eee
+#454545
+#brown
+#000
+#aaa
+green
+
+Sky Blue Crayola - #5adbff
+Red RYB - #F4442E
+Raisin Black - #1E1E24
+Neon Blue - #6874E8
+Bitter Lime - #CAFE48
+**/
+
+:root {
+  --main-color: #5adbff;
+  --secondary-color: #6874eb;
+  --text-color: #1e1e24;
+}
+
 html {
   box-sizing: border-box;
 }
@@ -11,13 +34,44 @@ html {
 }
 
 body {
-  /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
   font-size: 1rem;
+  color: var(--text-color);
 }
 
+.top-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  height: 3rem;
+  align-items: center;
+}
+
+.top-bar > div:first-of-type {
+  padding-left: 10px;
+}
+
+.top-bar > div:last-of-type {
+  padding-right: 10px;
+}
+
+.page-title {
+  color: var(--main-color);
+  font-size: 1.2rem;
+}
+
+.profile-icon {
+  color: var(--secondary-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.top-bar-menu > a {
+  text-decoration: none;
+  color: var(--text-color);
+}
 .container {
   margin: 10px auto;
   padding: 0 15px;
@@ -25,6 +79,28 @@ body {
 }
 
 /** Calendar **/
+.calendar-month-control-bar {
+  display: flex;
+  justify-content: space-between;
+  height: 3rem;
+  align-items: center;
+  border: 1px solid #ddd;
+  background-color: var(--main-color);
+}
+.calendar-month-control-bar > div:first-of-type {
+  font-weight: 600;
+  font-size: 1rem;
+  padding-left: 10px;
+}
+.calendar-month-control-bar > div:nth-of-type(2) {
+  text-align: center;
+  font-size: 1rem;
+}
+.calendar-month-control-bar > div:last-of-type {
+  text-align: right;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -35,14 +111,28 @@ body {
   text-align: center;
   font-weight: 600;
 }
-
+.date-cell.header {
+  color: var(--main-color);
+}
 .prev-month,
 .next-month {
   color: #aaa;
 }
 
 .today-date-cell {
-  color: green;
+  color: var(--main-color);
 }
 
+.month-control {
+  font-size: 2rem;
+  /* width: 48px; */
+  padding: 5px;
+  border: none;
+}
+
+#today-btn {
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 1rem;
+}
 /** End Calendar **/

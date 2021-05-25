@@ -8,13 +8,14 @@
 
   $test.it('should create a workoutLogCalendar component successfully', function () {
     $test.assert(component.selector === '[data-app=workoutlog-calendar]');
-    $test.assert(Object.keys(component.state).length === 6);
+    $test.assert(Object.keys(component.state).length === 7);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('displayUser' in component.state);
     $test.assert('month' in component.state);
     $test.assert('year' in component.state);
     $test.assert('days' in component.state);
+    $test.assert('pageTitle' in component.state);
   });
 
   $test.it('should not allow unauthorized user to view the calendar page', function () {
@@ -82,6 +83,25 @@
     };
     state = component.getState();
     $test.assert(state.error === '');
+  });
+
+  $test.it('should change month when prev, next or today button is clicked', function () {
+    let _url;
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
+    };
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    component.setState({ month: 0, year: 2021 });
+    $test.dispatchHTMLEvent('click', '#prev-month-btn');
+    $test.assert(_url === 'workoutlog-calendar.html?year=2020&month=11');
+
+    $test.dispatchHTMLEvent('click', '#next-month-btn');
+    $test.assert(_url === 'workoutlog-calendar.html?year=2021&month=1');
+
+    $test.dispatchHTMLEvent('click', '#today-btn');
+    let date = new Date();
+    $test.assert(_url === `workoutlog-calendar.html?year=${date.getFullYear()}&month=${date.getMonth()}`);
   });
 
   console.groupEnd();

@@ -124,7 +124,15 @@
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};
-    return `<div><a href="/">Home</a> Logged in as: ${user.fname} ${user.lname}</div>`;
+    let pageTitle = props && props.pageTitle ? props.pageTitle : '';
+    return `
+    <div class="top-bar">
+      <div class="top-bar-menu">
+        <a href="/">Home</a>
+      </div>
+      <div class="page-title">${pageTitle}</div>
+      <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+    </div>`;
   };
 
   // Common error template which can be shared across components to render error messages

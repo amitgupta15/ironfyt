@@ -1,25 +1,37 @@
 (function () {
   'use strict';
 
+  let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
   let workoutLogCalendarTemplate = function (props) {
     let displayUser = props && props.displayUser ? props.displayUser : {};
+    let user = props && props.user ? props.user : {};
     let days = props && props.days ? props.days : [];
+    let month = props && typeof props.month === 'number' ? props.month : '';
+    let year = props && props.year ? props.year : '';
     let today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    return `<div class="container">
-              <h2>Activity Calendar - ${displayUser.fname}</h2><br/>
-              <div class="calendar-grid">
-                <div class="date-cell">S</div>
-                <div class="date-cell">M</div>
-                <div class="date-cell">T</div>
-                <div class="date-cell">W</div>
-                <div class="date-cell">T</div>
-                <div class="date-cell">F</div>
-                <div class="date-cell">S</div>
-                ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - today === 0 ? `today-date-cell` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
-              </div>
-            </div>`;
+    return `
+    <div class="calendar-month-control-bar">
+      <div>${months[month]} ${year}</div>
+      <div>${displayUser.fname}</div>
+      <div>
+        <button id="today-btn">Today</button>
+        <button class="month-control" id="prev-month-btn"><</button>
+        <button class="month-control" id="next-month-btn">></button>
+      </div>
+    </div>
+    <div class="calendar-grid">
+      <div class="date-cell header">S</div>
+      <div class="date-cell header">M</div>
+      <div class="date-cell header">T</div>
+      <div class="date-cell header">W</div>
+      <div class="date-cell header">T</div>
+      <div class="date-cell header">F</div>
+      <div class="date-cell header">S</div>
+      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - today === 0 ? `today-date-cell` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+    </div>
+    `;
   };
 
   let component = ($ironfyt.workoutLogCalendarComponent = Component('[data-app=workoutlog-calendar]', {
@@ -30,6 +42,7 @@
       year: null,
       displayUser: {},
       days: [],
+      pageTitle: 'Activity',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutLogCalendarTemplate);
@@ -83,22 +96,42 @@
     }
     return days;
   };
+
+  let handleChangeMonthEvent = function (event) {
+    let state = component.getState();
+    let month = state.month;
+    let year = state.year;
+    let date;
+    if (event.target.id === 'today-btn') {
+      date = new Date();
+    }
+    if (event.target.id === 'prev-month-btn') {
+      date = new Date(year, month - 1);
+    }
+    if (event.target.id === 'next-month-btn') {
+      date = new Date(year, month + 1);
+    }
+    month = date.getMonth();
+    year = date.getFullYear();
+    $ironfyt.navigateToUrl(`workoutlog-calendar.html?year=${year}&month=${month}`);
+  };
+
   ($ironfyt.workoutLogCalendarPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
         let user = auth && auth.user ? auth.user : {};
-        let today = new Date();
         let params = $hl.getParams();
-        let month = params && params.month ? parseInt(params.month) : today.getMonth();
-        let year = params && params.year ? parseInt(params.year) : today.getFullYear();
-        let days = getDaysForGrid(year, month);
-        let startdate = days[0].date.toISOString();
-        let enddate = days[41].date.toISOString();
 
         let user_id = params && params.user_id && params.user_id.length === 24 ? params.user_id : user._id;
         if (user_id !== user._id && user.role !== 'admin') {
           component.setState({ error: { message: "You are not authorized to view this user's calendar" } });
         } else {
+          let today = new Date();
+          let month = params && params.month ? parseInt(params.month) : today.getMonth();
+          let year = params && params.year ? parseInt(params.year) : today.getFullYear();
+          let days = getDaysForGrid(year, month);
+          let startdate = days[0].date.toISOString();
+          let enddate = days[41].date.toISOString();
           $ironfyt.getWorkoutLogs({ startdate, enddate, user_id }, function (error, response) {
             if (!error) {
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
@@ -123,4 +156,8 @@
       }
     });
   })();
+
+  $hl.eventListener('click', 'prev-month-btn', handleChangeMonthEvent);
+  $hl.eventListener('click', 'next-month-btn', handleChangeMonthEvent);
+  $hl.eventListener('click', 'today-btn', handleChangeMonthEvent);
 })();
