@@ -12,6 +12,7 @@
     let month = props && typeof props.month === 'number' ? props.month : '';
     let year = props && props.year ? props.year : '';
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
+    console.log(selectedDay);
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
@@ -24,13 +25,38 @@
     </div>
     <div class="calendar-grid">
       ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
-      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - selectedDay.date === 0 ? `selected-date-cell` : ``} ${'log' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
     </div>
     <div class="selected-day-control-bar">
-      <div>${selectedDay.date ? `${longDays[selectedDay.date.getDay()]}, ${months[selectedDay.date.getMonth()]} ${selectedDay.date.getDate()}, ${selectedDay.date.getFullYear()}` : ''}</div>
+      <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
+      <div>
+        <button class="month-control" id="prev-day-btn"><</button>
+        <button class="month-control" id="next-day-btn">></button>
+      </div>
     </div>
     <div class="day-detail-container">
-      ${selectedDay.log ? JSON.stringify(selectedDay.log) : 'No Logs'}
+      ${
+        selectedDay.logs
+          ? `
+        <div class="day-log-detail">
+          ${selectedDay.logs
+            .map(
+              (log) => `
+          ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
+          ${log.workout && log.workout.length ? `<div><strong>Workout: </strong>${log.workout[0].name}</div>` : ''}
+          ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>` : ''}
+          ${
+            log.roundinfo && log.roundinfo.length
+              ? `${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`).join('\n')}`
+              : ''
+          }
+          ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
+          `
+            )
+            .join('<br/>')}
+        </div>`
+          : `<div class="no-logs">No Logs</div>`
+      }
     </div>
     `;
   };
@@ -94,8 +120,9 @@
         let logs = days[i].logs ? days[i].logs : [];
         logs.push(workoutLogs[j]);
         days[i] = { ...days[i], logs };
-        // ++i;
         ++j;
+        // Not incrementing i here because logs may have more than one record for the date.
+        // It is necessary to only increment j to catch all logs for a given day
       }
     }
     return days;
@@ -183,4 +210,16 @@
   $hl.eventListener('click', 'prev-month-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'next-month-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'today-btn', handleChangeMonthEvent);
+
+  document.addEventListener('click', function (event) {
+    let regex = new RegExp(/^date-cell-\d+/);
+    let targetId = event.target.id;
+    if (regex.test(targetId)) {
+      let prefix = 'date-cell-';
+      let cellId = parseInt(event.target.id.substring(prefix.length, event.target.id.length));
+      let state = component.getState();
+      let days = state.days;
+      component.setState({ selectedDay: days[cellId] });
+    }
+  });
 })();
