@@ -8,7 +8,7 @@
 
   $test.it('should create a workoutLogCalendar component successfully', function () {
     $test.assert(component.selector === '[data-app=workoutlog-calendar]');
-    $test.assert(Object.keys(component.state).length === 7);
+    $test.assert(Object.keys(component.state).length === 8);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('displayUser' in component.state);
@@ -16,6 +16,7 @@
     $test.assert('year' in component.state);
     $test.assert('days' in component.state);
     $test.assert('pageTitle' in component.state);
+    $test.assert('selectedDay' in component.state);
   });
 
   $test.it('should not allow unauthorized user to view the calendar page', function () {
@@ -60,8 +61,8 @@
     $test.assert(state.days[36].class === 'next-month');
     $test.assert(new Date(state.days[41].date).getDate() === 6);
     $test.assert(state.days.length === 42);
-    $test.assert(state.days[3].log._id === 2);
-    $test.assert(state.days[7].log._id === 1);
+    $test.assert(state.days[3].logs[0]._id === 2);
+    $test.assert(state.days[7].logs[0]._id === 1);
   });
 
   $test.it("should only let admin to view another user's calendar", function () {
@@ -104,5 +105,38 @@
     $test.assert(_url === `workoutlog-calendar.html?year=${date.getFullYear()}&month=${date.getMonth()}`);
   });
 
+  $test.it('should set selectedDay to an appropriate item from days array upon initial page load', function () {
+    let date = new Date();
+    date.setHours(0, 0, 0, 0);
+
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123456789012345678901234', role: 'admin' } });
+    };
+
+    $ironfyt.getWorkoutLogs = function (filter, callback) {
+      callback(false, {
+        workoutlogs: [
+          { _id: 1, date: date, notes: 'log for January 3rd 2021' },
+          { _id: 2, date: date, notes: 'log for 30th' },
+        ],
+      });
+    };
+    page();
+    let state = component.getState();
+    $test.assert(new Date(state.selectedDay.date) - date === 0);
+    $test.assert(state.selectedDay.logs.length === 2);
+    $test.assert(state.selectedDay.logs[0].notes === 'log for January 3rd 2021');
+    $test.assert(state.selectedDay.logs[1].notes === 'log for 30th');
+
+    $hl.getParams = function () {
+      return { month: '0', year: '2021' }; // January 2021
+    };
+    page();
+    state = component.getState();
+    let selectedDate = new Date(state.selectedDay.date);
+    $test.assert(selectedDate.getMonth() === 0);
+    $test.assert(selectedDate.getFullYear() === 2021);
+    $test.assert(selectedDate.getDate() === 1);
+  });
   console.groupEnd();
 })();

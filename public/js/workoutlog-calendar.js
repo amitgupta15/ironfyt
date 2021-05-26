@@ -2,15 +2,16 @@
   'use strict';
 
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  let longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  let shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let veryShortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   let workoutLogCalendarTemplate = function (props) {
     let displayUser = props && props.displayUser ? props.displayUser : {};
-    let user = props && props.user ? props.user : {};
     let days = props && props.days ? props.days : [];
     let month = props && typeof props.month === 'number' ? props.month : '';
     let year = props && props.year ? props.year : '';
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
+    let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
@@ -22,14 +23,14 @@
       </div>
     </div>
     <div class="calendar-grid">
-      <div class="date-cell header">S</div>
-      <div class="date-cell header">M</div>
-      <div class="date-cell header">T</div>
-      <div class="date-cell header">W</div>
-      <div class="date-cell header">T</div>
-      <div class="date-cell header">F</div>
-      <div class="date-cell header">S</div>
-      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - today === 0 ? `today-date-cell` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+      ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
+      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - selectedDay.date === 0 ? `selected-date-cell` : ``} ${'log' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+    </div>
+    <div class="selected-day-control-bar">
+      <div>${selectedDay.date ? `${longDays[selectedDay.date.getDay()]}, ${months[selectedDay.date.getMonth()]} ${selectedDay.date.getDate()}, ${selectedDay.date.getFullYear()}` : ''}</div>
+    </div>
+    <div class="day-detail-container">
+      ${selectedDay.log ? JSON.stringify(selectedDay.log) : 'No Logs'}
     </div>
     `;
   };
@@ -43,6 +44,7 @@
       displayUser: {},
       days: [],
       pageTitle: 'Activity',
+      selectedDay: {},
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutLogCalendarTemplate);
@@ -77,26 +79,45 @@
     });
   };
 
-  let addLogsToDays = function (logs, days) {
-    if (logs.length) {
-      logs = sortLogsByDateAsc(logs);
+  let addLogsToDays = function (workoutLogs, days) {
+    if (workoutLogs.length) {
+      workoutLogs = sortLogsByDateAsc(workoutLogs);
     }
     let i = 0,
       j = 0;
-    while (i < days.length && j < logs.length) {
+    while (i < days.length && j < workoutLogs.length) {
       let dayDate = new Date(days[i].date);
-      let logDate = new Date(logs[j].date);
+      let logDate = new Date(workoutLogs[j].date);
       if (dayDate < logDate) ++i;
       else if (dayDate > logDate) ++j;
       else {
-        days[i] = { ...days[i], log: logs[j] };
-        ++i;
+        let logs = days[i].logs ? days[i].logs : [];
+        logs.push(workoutLogs[j]);
+        days[i] = { ...days[i], logs };
+        // ++i;
         ++j;
       }
     }
     return days;
   };
 
+  /**
+   * If displaying calendar for the current month, then selected day on page load will be today.
+   * If displaying calendar for any other month/year, then selected day on page load will be first day of the month (took inspiration from Google calendar)
+   * @param {*} days
+   * @param {*} month
+   * @param {*} year
+   * @returns
+   */
+  let selectDayOnPageLoad = function (days, month, year) {
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (month === today.getMonth() && year === today.getFullYear()) {
+      return days.filter((day) => day.date - today === 0)[0];
+    } else {
+      return days.filter((day) => day.date.getMonth() === month && day.date.getFullYear() === year && day.date.getDate() === 1)[0];
+    }
+  };
   let handleChangeMonthEvent = function (event) {
     let state = component.getState();
     let month = state.month;
@@ -136,16 +157,18 @@
             if (!error) {
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
               days = addLogsToDays(logs, days);
+              let selectedDay = selectDayOnPageLoad(days, month, year);
+
               if (user_id !== user._id) {
                 $ironfyt.getUsers({ _id: user_id }, function (error, response) {
                   if (!error) {
-                    component.setState({ user, days, month, year, displayUser: response.user });
+                    component.setState({ user, days, month, year, displayUser: response.user, selectedDay });
                   } else {
                     component.setState({ error });
                   }
                 });
               }
-              component.setState({ user, days, month, year, displayUser: user });
+              component.setState({ user, days, month, year, displayUser: user, selectedDay });
             } else {
               component.setState({ error });
             }
