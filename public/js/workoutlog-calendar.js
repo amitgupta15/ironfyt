@@ -18,8 +18,8 @@
       <div>${displayUser.fname}</div>
       <div>
         <button id="today-btn">Today</button>
-        <button class="month-control" id="prev-month-btn"><</button>
-        <button class="month-control" id="next-month-btn">></button>
+        <button class="month-control" id="prev-month-btn">&#9668;</button>
+        <button class="month-control" id="next-month-btn">&#9658;</button>
       </div>
     </div>
     <div class="calendar-grid">
@@ -27,13 +27,15 @@
       ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
     </div>
     <div class="selected-day-control-bar">
+      <div>Log</div>
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
       <div>
-        <button class="day-control" id="prev-day-btn"><</button>
-        <button class="day-control" id="next-day-btn">></button>
+        <button class="day-control" id="prev-day-btn">&#9668;</button>
+        <button class="day-control" id="next-day-btn">&#9658;</button>
       </div>
     </div>
     <div class="day-detail-container">
+      <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">Add Log</button></div>
       ${
         selectedDay.logs
           ? `
@@ -47,6 +49,7 @@
               ? `<div>
               <strong>Workout: </strong><span class="workout-name-calendar-view" id="workout-name-calendar-view-${log.workout[0]._id}"><span id="workout-show-detail-indicator-${log.workout[0]._id}">&#9658;</span> ${log.workout[0].name}</span>
               <div class="workout-detail-calendar-view  hide-view" id="workout-detail-calendar-view-${log.workout[0]._id}">
+                ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
                 ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
                 ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
                 ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}

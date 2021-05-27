@@ -19,6 +19,7 @@ Bitter Lime - #CAFE48
   --main-color: #5adbff;
   --secondary-color: #6874eb;
   --text-color: #1e1e24;
+  --btn-primary-color: #cafe48;
 }
 
 html {
@@ -94,11 +95,14 @@ body {
   font-size: 1rem;
   padding-left: 10px;
 }
-.calendar-month-control-bar > div:nth-of-type(2) {
+.calendar-month-control-bar > div:nth-of-type(2),
+.selected-day-control-bar > div:nth-of-type(2) {
+  font-weight: 600;
   text-align: center;
   font-size: 1rem;
 }
-.calendar-month-control-bar > div:last-of-type {
+.calendar-month-control-bar > div:last-of-type,
+.selected-day-control-bar > div:last-of-type {
   text-align: right;
   padding-right: 10px;
   padding-bottom: 10px;
@@ -148,7 +152,7 @@ body {
 .day-detail-container {
   max-width: 100vw;
   word-wrap: break-word;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 .no-logs {
@@ -178,4 +182,18 @@ body {
 
 .show-view {
   display: block;
+}
+
+.add-log-btn-bar-calendar-view {
+  margin: 10px;
+}
+
+#add-log-btn-calendar-view {
+  width: 100%;
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+  height: 2.5rem;
+  font-size: 1.3rem;
+  color: var(--main-color);
+  /* background-color: var(--btn-primary-color); */
 }
