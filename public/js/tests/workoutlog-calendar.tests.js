@@ -138,5 +138,51 @@
     $test.assert(selectedDate.getFullYear() === 2021);
     $test.assert(selectedDate.getDate() === 1);
   });
+
+  $test.it('should set the selectedDay to an appropriate item from days array upon clicking prev and next day button', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123456789012345678901234', role: 'admin' } });
+    };
+
+    $ironfyt.getWorkoutLogs = function (filter, callback) {
+      callback(false, {
+        workoutlogs: [
+          { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
+          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th' },
+        ],
+      });
+    };
+    $hl.getParams = function () {
+      return { month: '0', year: '2021' }; // January 2021
+    };
+    page();
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    let state = component.getState();
+    component.setState({ selectedDay: state.days[1] });
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 1);
+
+    $test.dispatchHTMLEvent('click', '#prev-day-btn');
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 0);
+
+    $test.dispatchHTMLEvent('click', '#prev-day-btn');
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 0); //Clicking prev button won't have any effect if the index was already 0
+
+    component.setState({ selectedDay: state.days[40] });
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 40);
+
+    $test.dispatchHTMLEvent('click', '#next-day-btn');
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 41);
+
+    $test.dispatchHTMLEvent('click', '#next-day-btn');
+    state = component.getState();
+    $test.assert(state.selectedDay.index === 41); // Clicking next button won't have any effect if the index is already 41
+  });
   console.groupEnd();
 })();

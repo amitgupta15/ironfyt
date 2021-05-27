@@ -132,7 +132,8 @@ body {
   border: 1px solid var(--main-color);
 }
 
-.month-control {
+.month-control,
+.day-control {
   font-size: 2rem;
   padding: 5px;
   border: none;

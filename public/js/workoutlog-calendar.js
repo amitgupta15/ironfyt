@@ -12,7 +12,6 @@
     let month = props && typeof props.month === 'number' ? props.month : '';
     let year = props && props.year ? props.year : '';
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
-    console.log(selectedDay);
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
@@ -30,8 +29,8 @@
     <div class="selected-day-control-bar">
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
       <div>
-        <button class="month-control" id="prev-day-btn"><</button>
-        <button class="month-control" id="next-day-btn">></button>
+        <button class="day-control" id="prev-day-btn"><</button>
+        <button class="day-control" id="next-day-btn">></button>
       </div>
     </div>
     <div class="day-detail-container">
@@ -82,7 +81,6 @@
     let daysInPrevMonth = new Date(year, month, 0).getDate();
     let firstDayInCalendarMonth = new Date(year, month).getDay();
     let daysInCalendarMonth = new Date(year, month + 1, 0).getDate();
-
     for (var i = 0; i < firstDayInCalendarMonth; i++) {
       days.push({ date: new Date(year, month - 1, daysInPrevMonth - firstDayInCalendarMonth + i + 1), class: 'prev-month' });
     }
@@ -96,6 +94,11 @@
         days.push({ date: new Date(year, month + 1, i), class: 'next-month' });
       }
     }
+
+    // Add index information to each object in the days array. Used for setting prev and next selectedDay
+    days = days.map((day, index) => {
+      return { ...day, index };
+    });
     return days;
   };
 
@@ -164,6 +167,23 @@
     $ironfyt.navigateToUrl(`workoutlog-calendar.html?year=${year}&month=${month}`);
   };
 
+  let handleChangeDayEvent = function (event) {
+    let state = component.getState();
+    let selectedDay = state.selectedDay;
+    let days = state.days;
+    if (event.target.id === 'prev-day-btn') {
+      if (parseInt(selectedDay.index) > 0) {
+        selectedDay = days[parseInt(selectedDay.index) - 1];
+      }
+    }
+    if (event.target.id === 'next-day-btn') {
+      if (parseInt(selectedDay.index) < 41) {
+        selectedDay = days[parseInt(selectedDay.index) + 1];
+      }
+    }
+    component.setState({ selectedDay });
+  };
+
   ($ironfyt.workoutLogCalendarPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
@@ -210,6 +230,8 @@
   $hl.eventListener('click', 'prev-month-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'next-month-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'today-btn', handleChangeMonthEvent);
+  $hl.eventListener('click', 'prev-day-btn', handleChangeDayEvent);
+  $hl.eventListener('click', 'next-day-btn', handleChangeDayEvent);
 
   document.addEventListener('click', function (event) {
     let regex = new RegExp(/^date-cell-\d+/);
