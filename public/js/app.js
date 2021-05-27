@@ -65,9 +65,7 @@
     let headers = getAuthHeader();
     let queryString = $hl.createQueryString(params);
     fetch.get(`/api/workout?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, function (error) {
-        callback(false, response);
-      });
+      validateReponse(error, response, callback);
     });
   };
 

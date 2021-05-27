@@ -148,6 +148,7 @@ body {
 .day-detail-container {
   max-width: 100vw;
   word-wrap: break-word;
+  font-size: 1.3rem;
 }
 
 .no-logs {
@@ -156,4 +157,25 @@ body {
 }
 .day-log-detail {
   padding: 10px;
+}
+
+.workout-name-calendar-view {
+  color: var(--main-color);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.workout-detail-calendar-view {
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+}
+
+.hide-view {
+  display: none;
+}
+
+.show-view {
+  display: block;
 }
