@@ -27,7 +27,6 @@
       ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
     </div>
     <div class="selected-day-control-bar">
-      <div>Log</div>
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
       <div>
         <button class="day-control" id="prev-day-btn">&#9668;</button>
@@ -43,32 +42,36 @@
           ${selectedDay.logs
             .map(
               (log) => `
-          ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
-          ${
-            log.workout && log.workout.length
-              ? `<div>
-              <strong>Workout: </strong><span class="workout-name-calendar-view" id="workout-name-calendar-view-${log.workout[0]._id}"><span id="workout-show-detail-indicator-${log.workout[0]._id}">&#9658;</span> ${log.workout[0].name}</span>
-              <div class="workout-detail-calendar-view  hide-view" id="workout-detail-calendar-view-${log.workout[0]._id}">
-                ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
-                ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
-                ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
-                ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
-                ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
-                ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
+              <div class="day-log-detail-container-calendar-view">
+                ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
+                ${
+                  log.workout && log.workout.length
+                    ? `<div>
+                    <strong>Workout: </strong><span class="workout-name-calendar-view" id="workout-name-calendar-view-${log.workout[0]._id}"><span id="workout-show-detail-indicator-${log.workout[0]._id}">&#9658;</span> ${log.workout[0].name}</span>
+                    <div class="workout-detail-calendar-view  hide-view" id="workout-detail-calendar-view-${log.workout[0]._id}">
+                      ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
+                      ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
+                      ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
+                      ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
+                      ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
+                      ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
+                    </div>
+                  </div>`
+                    : ''
+                }
+                ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>` : ''}
+                ${
+                  log.roundinfo && log.roundinfo.length
+                    ? `${log.roundinfo
+                        .map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`)
+                        .join('\n')}`
+                    : ''
+                }
+                ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
               </div>
-            </div>`
-              : ''
-          }
-          ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>` : ''}
-          ${
-            log.roundinfo && log.roundinfo.length
-              ? `${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`).join('\n')}`
-              : ''
-          }
-          ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
-          `
+              `
             )
-            .join('<br/>')}
+            .join('')}
         </div>`
           : `<div class="no-logs">No Logs</div>`
       }
@@ -200,6 +203,14 @@
     component.setState({ selectedDay });
   };
 
+  let handleAddLogEvent = function (event) {
+    let state = component.getState();
+    let selectedDay = state.selectedDay;
+    let date = new Date(selectedDay.date).toISOString();
+    let user_id = state.displayUser._id;
+    $ironfyt.navigateToUrl(`workoutlog-form.html?date=${date}&user_id=${user_id}`);
+  };
+
   ($ironfyt.workoutLogCalendarPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
@@ -248,6 +259,7 @@
   $hl.eventListener('click', 'today-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'prev-day-btn', handleChangeDayEvent);
   $hl.eventListener('click', 'next-day-btn', handleChangeDayEvent);
+  $hl.eventListener('click', 'add-log-btn-calendar-view', handleAddLogEvent);
 
   document.addEventListener('click', function (event) {
     let targetId = event.target.id;

@@ -195,5 +195,14 @@ body {
   height: 2.5rem;
   font-size: 1.3rem;
   color: var(--main-color);
-  /* background-color: var(--btn-primary-color); */
+}
+
+.day-log-detail-container-calendar-view {
+  padding-bottom: 20px;
+  padding-top: 20px;
+  border-bottom: 1px solid var(--main-color);
+}
+
+.day-log-detail-container-calendar-view:first-of-type {
+  border-top: 1px solid var(--main-color);
 }
