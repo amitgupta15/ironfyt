@@ -249,7 +249,20 @@
     page();
 
     $test.dispatchHTMLEvent('click', '#add-log-btn-calendar-view');
-    $test.assert(_url === 'workoutlog-form.html?date=2021-01-01T08:00:00.000Z&user_id=123456789012345678901234');
+    $test.assert(_url === 'workoutlog-form.html?date=2021-01-01T08:00:00.000Z&user_id=123456789012345678901234&ref=workoutlog-calendar.html');
+  });
+
+  $test.it('should handle edit log event', function () {
+    let _url;
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
+    };
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({ selectedDay: { logs: [{ _id: '123456789012345678909999' }] } });
+    component.setState({ displayUser: { _id: '012345678901234567892222' } });
+    $test.dispatchHTMLEvent('click', '#edit-log-btn-123456789012345678909999');
+    $test.assert(_url === 'workoutlog-form.html?_id=123456789012345678909999&user_id=012345678901234567892222&ref=workoutlog-calendar.html');
   });
   console.groupEnd();
 })();

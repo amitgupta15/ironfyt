@@ -46,10 +46,14 @@
   });
 
   $test.it('should handle valid form data', function () {
-    let _workoutlog;
+    let _workoutlog, _url;
     $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
       _workoutlog = workoutlog;
       callback();
+    };
+
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
     };
 
     let selector = document.querySelector('#selector');
@@ -64,6 +68,13 @@
     $test.assert(state.validationError === '');
     $test.assert($hl.formatDateForInputField(_workoutlog.date) === '2020-01-01');
     $test.assert(_workoutlog.notes === 'Some notes');
+    $test.assert(_url === 'workoutlogs.html?ref=workoutlog-form.html');
+
+    $hl.getParams = function () {
+      return { ref: 'workoutlog-calendar.html', user_id: '123456789012345678901234' };
+    };
+    $test.dispatchHTMLEvent('submit', '#workout-log-form');
+    $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-form.html&user_id=123456789012345678901234&year=2020&month=0&date=1');
   });
 
   $test.it('should show workout list dialog when select-workout-btn is clicked', function () {

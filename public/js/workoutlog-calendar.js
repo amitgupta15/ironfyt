@@ -43,6 +43,10 @@
             .map(
               (log) => `
               <div class="day-log-detail-container-calendar-view">
+                <div class="day-log-detail-container-calendar-view-btn-bar">
+                  <button class="day-log-detail-edit-btn" id="edit-log-btn-${log._id}">Edit Log</button>
+                  <button class="day-log-detail-delete-btn" id="delete-log-btn-${log._id}">Delete Log</button>
+                </div>
                 ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
                 ${
                   log.workout && log.workout.length
@@ -159,13 +163,13 @@
    * @param {*} year
    * @returns
    */
-  let selectDayOnPageLoad = function (days, month, year) {
+  let selectDayOnPageLoad = function (days, date, month, year) {
     let today = new Date();
     today.setHours(0, 0, 0, 0);
     if (month === today.getMonth() && year === today.getFullYear()) {
       return days.filter((day) => day.date - today === 0)[0];
     } else {
-      return days.filter((day) => day.date.getMonth() === month && day.date.getFullYear() === year && day.date.getDate() === 1)[0];
+      return days.filter((day) => day.date.getMonth() === month && day.date.getFullYear() === year && day.date.getDate() === (date ? date : 1))[0];
     }
   };
   let handleChangeMonthEvent = function (event) {
@@ -209,7 +213,7 @@
     let selectedDay = state.selectedDay;
     let date = new Date(selectedDay.date).toISOString();
     let user_id = state.displayUser._id;
-    $ironfyt.navigateToUrl(`workoutlog-form.html?date=${date}&user_id=${user_id}`);
+    $ironfyt.navigateToUrl(`workoutlog-form.html?date=${date}&user_id=${user_id}&ref=workoutlog-calendar.html`);
   };
 
   ($ironfyt.workoutLogCalendarPage = function () {
@@ -225,6 +229,7 @@
           let today = new Date();
           let month = params && params.month ? parseInt(params.month) : today.getMonth();
           let year = params && params.year ? parseInt(params.year) : today.getFullYear();
+          let date = params && params.date ? parseInt(params.date) : false;
           let days = getDaysForGrid(year, month);
           let startdate = days[0].date.toISOString();
           let enddate = days[41].date.toISOString();
@@ -232,7 +237,7 @@
             if (!error) {
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
               days = addLogsToDays(logs, days);
-              let selectedDay = selectDayOnPageLoad(days, month, year);
+              let selectedDay = selectDayOnPageLoad(days, date, month, year);
 
               if (user_id !== user._id) {
                 $ironfyt.getUsers({ _id: user_id }, function (error, response) {
@@ -266,13 +271,24 @@
 
   document.addEventListener('click', function (event) {
     let targetId = event.target.id;
+    let state = component.getState();
+
+    // Handle date cell click
     let dateCellRegex = new RegExp(/^date-cell-\d+/);
     if (dateCellRegex.test(targetId)) {
       let prefix = 'date-cell-';
       let cellId = parseInt(event.target.id.substring(prefix.length, event.target.id.length));
-      let state = component.getState();
       let days = state.days;
       component.setState({ selectedDay: days[cellId] });
+    }
+
+    // Handle edit button click
+    let editBtnRegex = new RegExp(/^edit-log-btn-([a-zA-Z]|\d){24}/);
+    if (editBtnRegex.test(targetId)) {
+      let prefix = 'edit-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      let user_id = state.displayUser._id;
+      $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&user_id=${user_id}&ref=workoutlog-calendar.html`);
     }
   });
 

@@ -218,11 +218,15 @@
     let validationError = validateFormInput();
 
     if (JSON.stringify(validationError) === '{}') {
+      let params = $hl.getParams();
+      let ref = params && params.ref ? params.ref : 'workoutlogs.html';
+      let user_id = params && params.user_id ? `&user_id=${params.user_id}` : false;
+      let date = ref === 'workoutlog-calendar.html' ? `&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}` : false;
       $ironfyt.saveWorkoutLog(workoutlog, function (error, response) {
         if (error) {
           console.error(error);
         } else {
-          $ironfyt.navigateToUrl('workoutlogs.html');
+          $ironfyt.navigateToUrl(`${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}`);
         }
       });
     } else {

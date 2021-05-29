@@ -19,7 +19,8 @@ Bitter Lime - #CAFE48
   --main-color: #5adbff;
   --secondary-color: #6874eb;
   --text-color: #1e1e24;
-  --btn-primary-color: #cafe48;
+  --btn-primary: #5adbff;
+  --btn-delete: #f4442e;
 }
 
 html {
@@ -190,19 +191,41 @@ body {
 
 #add-log-btn-calendar-view {
   width: 100%;
-  border: 1px solid var(--main-color);
+  border: 1px solid var(--btn-primary);
   border-radius: 5px;
   height: 2.5rem;
   font-size: 1.3rem;
-  color: var(--main-color);
+  color: var(--btn-primary);
 }
 
 .day-log-detail-container-calendar-view {
   padding-bottom: 20px;
-  padding-top: 20px;
+  padding-top: 10px;
   border-bottom: 1px solid var(--main-color);
 }
 
 .day-log-detail-container-calendar-view:first-of-type {
   border-top: 1px solid var(--main-color);
+}
+
+.day-log-detail-container-calendar-view-btn-bar {
+  text-align: right;
+}
+
+.day-log-detail-edit-btn {
+  border: 1px solid var(--btn-primary);
+  border-radius: 5px;
+  height: 1.5rem;
+  width: 4rem;
+  font-size: 0.7rem;
+  color: var(--btn-primary);
+}
+
+.day-log-detail-delete-btn {
+  border: 1px solid var(--btn-delete);
+  border-radius: 5px;
+  height: 1.5rem;
+  width: 4rem;
+  font-size: 0.7rem;
+  color: var(--btn-delete);
 }
