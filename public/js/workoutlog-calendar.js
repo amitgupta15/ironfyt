@@ -12,10 +12,11 @@
     let month = props && typeof props.month === 'number' ? props.month : '';
     let year = props && props.year ? props.year : '';
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
+    let user = props && props.user ? props.user : {};
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
-      <div>${displayUser.fname}</div>
+      <div id="display-name-calendar-view">${displayUser._id !== user._id ? displayUser.fname : ''}</div>
       <div>
         <button id="today-btn">Today</button>
         <button class="month-control" id="prev-month-btn">&#9668;</button>
@@ -24,7 +25,7 @@
     </div>
     <div class="calendar-grid">
       ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
-      ${days.map((day, index) => `<div class="date-cell ${day.class} ${day.date - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${day.date.getDate()}</div>`).join('')}
+      ${days.map((day, index) => `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}</div>`).join('')}
     </div>
     <div class="selected-day-control-bar">
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
@@ -34,7 +35,6 @@
       </div>
     </div>
     <div class="day-detail-container">
-      <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">Add Log</button></div>
       ${
         selectedDay.logs
           ? `
@@ -73,8 +73,9 @@
             )
             .join('')}
         </div>`
-          : `<div class="no-logs">No Logs</div>`
+          : ``
       }
+      <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">Add Log</button></div>
     </div>
     `;
   };
@@ -236,13 +237,15 @@
               if (user_id !== user._id) {
                 $ironfyt.getUsers({ _id: user_id }, function (error, response) {
                   if (!error) {
-                    component.setState({ user, days, month, year, displayUser: response.user, selectedDay });
+                    let displayUser = response && response.user ? response.user : {};
+                    component.setState({ user, days, month, year, displayUser: displayUser, selectedDay });
                   } else {
                     component.setState({ error });
                   }
                 });
+              } else {
+                component.setState({ user, days, month, year, displayUser: user, selectedDay });
               }
-              component.setState({ user, days, month, year, displayUser: user, selectedDay });
             } else {
               component.setState({ error });
             }

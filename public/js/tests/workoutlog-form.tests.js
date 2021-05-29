@@ -185,5 +185,50 @@
     state = component.getState();
     $test.assert(state.workouts.length === 2);
   });
+
+  $test.it('should accept and validate date and user_id url param', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
+    };
+    let getWorkoutLogsCalled = false;
+    $ironfyt.getWorkoutLogs = function (filter, callback) {
+      getWorkoutLogsCalled = true;
+    };
+    $hl.getParams = function () {
+      return { date: '2021-05-28T07:00:00.000', user_id: '6070f1035b7f1e4066cb9450' };
+    };
+    page();
+    $test.assert(getWorkoutLogsCalled === false); // Because no _id provided in the url params, so no workoutlog is being fetched.
+    let state = component.getState();
+    $test.assert(state.workoutlog.date === '2021-05-28T07:00:00.000');
+    $test.assert(state.workoutlog.user_id === '6070f1035b7f1e4066cb9450');
+  });
+
+  $test.it("should not let a non-admin user edit another user's workout log", function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
+    };
+
+    $hl.getParams = function () {
+      return { date: '2021-05-28T07:00:00.000', user_id: '123456789012345678901234' };
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.error.message === 'You cannot edit a workout log for another user!');
+  });
+
+  $test.it("should let an admin edit another user's workout log", function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450', role: 'admin' } });
+    };
+
+    $hl.getParams = function () {
+      return { date: '2021-05-28T07:00:00.000', user_id: '123456789012345678901234' };
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.workoutlog.date === '2021-05-28T07:00:00.000');
+    $test.assert(state.workoutlog.user_id === '123456789012345678901234');
+  });
   console.groupEnd();
 })();

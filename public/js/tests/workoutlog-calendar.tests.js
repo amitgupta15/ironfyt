@@ -86,6 +86,44 @@
     $test.assert(state.error === '');
   });
 
+  $test.it("should only show a user's name on the calendar if a user is not the one logged in", function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123456789012345678901234', role: 'admin', fname: 'Admin' } });
+    };
+    $ironfyt.getUsers = function (filter, callback) {
+      callback(false, { user: { _id: '012345678901234567891111', fname: 'Amit' } });
+    };
+    $ironfyt.getWorkoutLogs = function (filter, callback) {
+      callback(false, {
+        workoutlogs: [
+          { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
+          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th' },
+        ],
+      });
+    };
+    $hl.getParams = function () {
+      return {
+        user_id: '012345678901234567891111',
+      };
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.displayUser.fname === 'Amit');
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(state);
+    $test.assert(selector.innerHTML.includes('<div id="display-name-calendar-view">Amit</div>'));
+
+    $hl.getParams = function () {
+      return {
+        user_id: '123456789012345678901234',
+      };
+    };
+    page();
+    state = component.getState();
+    selector.innerHTML = component.template(state);
+    $test.assert(selector.innerHTML.includes('<div id="display-name-calendar-view"></div>'));
+  });
+
   $test.it('should change month when prev, next or today button is clicked', function () {
     let _url;
     $ironfyt.navigateToUrl = function (url) {

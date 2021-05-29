@@ -342,7 +342,12 @@
       if (!error) {
         let params = $hl.getParams();
         let _id = params && params._id ? params._id : false;
-        if (_id) {
+        let date = params && params.date ? params.date : false;
+        let user_id = params && params.user_id ? params.user_id : false;
+
+        if (_id && _id.length !== 24) {
+          component.setState({ error: { message: 'Invalid ID' } });
+        } else if (_id && _id.length === 24) {
           $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
             if (!error) {
               let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
@@ -351,6 +356,18 @@
               component.setState({ error });
             }
           });
+        } else if (date) {
+          let workoutlog = newWorkoutLog;
+          workoutlog.date = date;
+          if (user_id && user.role === 'admin' && user_id !== user._id) {
+            workoutlog.user_id = user_id;
+          } else if (user_id && user.role !== 'admin' && user_id !== user._id) {
+            component.setState({ error: { message: 'You cannot edit a workout log for another user!' } });
+            return;
+          } else {
+            workoutlog.user_id = user._id;
+          }
+          component.setState({ workoutlog, user });
         } else {
           component.setState({ user });
         }
