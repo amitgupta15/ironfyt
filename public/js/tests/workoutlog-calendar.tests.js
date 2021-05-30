@@ -264,5 +264,33 @@
     $test.dispatchHTMLEvent('click', '#edit-log-btn-123456789012345678909999');
     $test.assert(_url === 'workoutlog-form.html?_id=123456789012345678909999&user_id=012345678901234567892222&ref=workoutlog-calendar.html');
   });
+
+  $test.it('should handle delete log event', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({ selectedDay: { logs: [{ _id: '123456789012345678909999' }] } });
+
+    $test.dispatchHTMLEvent('click', '#delete-log-btn-123456789012345678909999');
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="delete-log-confirmation-dialog" style="display: flex;">'));
+    let state = component.getState();
+    $test.assert(state.deleteLogId === '123456789012345678909999');
+
+    $test.dispatchHTMLEvent('click', '#cancel-delete-log-btn');
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="delete-log-confirmation-dialog" style="display: none;">'));
+    state = component.getState();
+    $test.assert(state.deleteLogId === null);
+
+    //Finally delete the log
+    $ironfyt.deleteWorkoutLog = function (_id, callback) {
+      callback(false);
+    };
+    let _url;
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
+    };
+    component.setState({ selectedDay: { date: '2021-01-01T08:00:00.000Z' }, displayUser: { _id: '012345678901234567892222' } });
+    $test.dispatchHTMLEvent('click', '#delete-log-btn-123456789012345678909999');
+    $test.dispatchHTMLEvent('click', '#confirm-delete-log-btn');
+    $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-calendar.html&user_id=012345678901234567892222&month=0&year=2021&date=1');
+  });
   console.groupEnd();
 })();

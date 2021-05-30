@@ -81,6 +81,15 @@
       }
       <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">Add Log</button></div>
     </div>
+    <div class="modal-container" id="delete-log-confirmation-dialog">
+      <div class="modal-dialog">
+        <p>Are you sure, you want to delete the log?</p>
+        <div class="modal-dialog-btn-bar">
+          <button class="delete" id="confirm-delete-log-btn">Delete</button>
+          <button class="cancel" id="cancel-delete-log-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
     `;
   };
 
@@ -216,6 +225,36 @@
     $ironfyt.navigateToUrl(`workoutlog-form.html?date=${date}&user_id=${user_id}&ref=workoutlog-calendar.html`);
   };
 
+  let showDeleteConfirmationDialog = function (_id) {
+    component.setState({ deleteLogId: _id });
+    let deleteConfirmationDialog = document.querySelector('#delete-log-confirmation-dialog');
+    deleteConfirmationDialog.style.display = 'flex';
+  };
+
+  let handleCancelDeleteLogEvent = function () {
+    component.setState({ deleteLogId: null });
+    let deleteConfirmationDialog = document.querySelector('#delete-log-confirmation-dialog');
+    deleteConfirmationDialog.style.display = 'none';
+  };
+
+  let handleConfirmDeleteLogEvent = function () {
+    let state = component.getState();
+    let user_id = state.displayUser._id;
+    let selectedDate = state.selectedDay.date;
+
+    if (state.deleteLogId) {
+      $ironfyt.deleteWorkoutLog(state.deleteLogId, function (error, result) {
+        if (!error) {
+          $ironfyt.navigateToUrl(`workoutlog-calendar.html?ref=workoutlog-calendar.html&user_id=${user_id}&month=${new Date(selectedDate).getMonth()}&year=${new Date(selectedDate).getFullYear()}&date=${new Date(selectedDate).getDate()}`);
+        } else {
+          component.setState({ error });
+        }
+      });
+    } else {
+      component.setState({ error: { message: 'No log found to delete' } });
+    }
+  };
+
   ($ironfyt.workoutLogCalendarPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
@@ -268,6 +307,8 @@
   $hl.eventListener('click', 'prev-day-btn', handleChangeDayEvent);
   $hl.eventListener('click', 'next-day-btn', handleChangeDayEvent);
   $hl.eventListener('click', 'add-log-btn-calendar-view', handleAddLogEvent);
+  $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
+  $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
 
   document.addEventListener('click', function (event) {
     let targetId = event.target.id;
@@ -289,6 +330,14 @@
       let _id = event.target.id.substring(prefix.length, event.target.id.length);
       let user_id = state.displayUser._id;
       $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&user_id=${user_id}&ref=workoutlog-calendar.html`);
+    }
+
+    // Handle delete button click
+    let deleteBtnRegex = new RegExp(/^delete-log-btn-([a-zA-Z]|\d){24}/);
+    if (deleteBtnRegex.test(targetId)) {
+      let prefix = 'delete-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      showDeleteConfirmationDialog(_id);
     }
   });
 
