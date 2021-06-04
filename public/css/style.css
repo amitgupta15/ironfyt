@@ -21,6 +21,9 @@ Bitter Lime - #CAFE48
   --text-color: #1e1e24;
   --btn-primary: #5adbff;
   --btn-delete: #f4442e;
+  --big-font-size: 1rem;
+  --normal-font-size: 1rem;
+  --small-font-size: 1rem;
 }
 
 html {
@@ -41,6 +44,18 @@ body {
   padding: 0;
   font-size: 1rem;
   color: var(--text-color);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 
 .top-bar {
@@ -244,6 +259,8 @@ body {
 
 .modal-dialog {
   border: 1px solid var(--main-color);
+  max-width: 95vw;
+  text-align: center;
   padding: 20px;
   border-radius: 5px;
   background-color: white;
@@ -269,4 +286,178 @@ body {
 .modal-dialog-btn-bar button.cancel {
   border: 1px solid var(--btn-primary);
   color: var(--btn-primary);
+}
+
+/** Form **/
+
+.form-container {
+  padding: 10px;
+  font-size: var(--big-font-size);
+  /* color: var(--main-color); */
+}
+
+.form-flex-group {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.form-group-label {
+  margin-right: 10px;
+}
+.form-input-group {
+  position: relative;
+}
+.form-input {
+  height: 52px;
+  box-sizing: border-box;
+  padding-top: 20px;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: var(--big-font-size);
+  border: none;
+  border: 1px solid #d2d2d7;
+  outline: none;
+  border-radius: 5px;
+  color: var(--text-color);
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.form-input:focus,
+.form-input:active {
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid var(--main-color);
+}
+.duration-input {
+  width: 52px;
+  text-align: center;
+  margin-right: 15px;
+}
+
+.rounds-input {
+  margin-right: 10px;
+  width: 80px;
+  padding-left: 5px;
+}
+
+.form-input::placeholder {
+  visibility: hidden;
+}
+.form-label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  color: #d2d2d7;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+  font-size: var(--big-font-size);
+}
+.duration-label {
+  left: 20px;
+}
+.rounds-label {
+  left: 5px;
+}
+
+.show-time-separator {
+  position: relative;
+}
+
+.show-time-separator::after {
+  content: ':';
+  position: absolute;
+  right: 5px;
+  top: 16px;
+  font-size: var(--big-font-size);
+}
+
+.form-input:focus ~ label,
+.form-input:not(:placeholder-shown) ~ label {
+  color: var(--main-color);
+  top: 5px;
+  font-size: var(--normal-font-size);
+}
+
+.margin-bottom-15px {
+  margin-bottom: 15px;
+}
+
+.wolog-form-delete-btn {
+  border: 1px solid var(--btn-delete);
+  color: var(--btn-delete);
+  height: 48px;
+  width: 48px;
+  font-size: 24px;
+  margin-left: 5px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.switch input:checked + .slider {
+  background-color: #2196f3;
+}
+
+.switch input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+.switch input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+input:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+input:disabled ~ label {
+  color: darkgray;
 }

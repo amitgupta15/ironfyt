@@ -7,10 +7,13 @@
   let page = $ironfyt.workoutlogFormPage;
 
   $test.it('should create a workoutlogformComponent', function () {
+    $test.assert(Object.keys(component.state).length === 6);
     $test.assert('error' in component.state);
     $test.assert('validationError' in component.state);
     $test.assert('user' in component.state);
     $test.assert('workoutlog' in component.state);
+    $test.assert('workouts' in component.state);
+    $test.assert('pageTitle' in component.state);
     $test.assert(component.selector === '[data-app=workoutlog-form]');
   });
 
@@ -31,6 +34,7 @@
     let state = component.getState();
     $test.assert(state.error === '');
     $test.assert(state.user._id === 1);
+    $test.assert(state.pageTitle === 'New Log');
   });
 
   $test.it('should handle invalid form data', function () {
@@ -213,6 +217,7 @@
     let state = component.getState();
     $test.assert(state.workoutlog.date === '2021-05-28T07:00:00.000');
     $test.assert(state.workoutlog.user_id === '6070f1035b7f1e4066cb9450');
+    $test.assert(state.pageTitle === 'New Log');
   });
 
   $test.it("should not let a non-admin user edit another user's workout log", function () {
@@ -240,6 +245,7 @@
     let state = component.getState();
     $test.assert(state.workoutlog.date === '2021-05-28T07:00:00.000');
     $test.assert(state.workoutlog.user_id === '123456789012345678901234');
+    $test.assert(state.pageTitle === 'New Log');
   });
   console.groupEnd();
 })();

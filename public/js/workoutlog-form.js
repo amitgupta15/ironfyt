@@ -30,99 +30,111 @@
     let validationError = props.validationError ? props.validationError : {};
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
-    <div class="container">
-      <h1>Workout Log</h1>
-      <form id="workout-log-form">
-        <div>
-          <label for="wolog-date">Date <span>*</span></label>
-          <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date">
-          ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
+    <form id="workout-log-form" class="form-container">
+      <div>
+        <label for="wolog-date">Date</label>
+        <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date">
+        ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
+      </div>
+      ${
+        workout
+          ? `<div>
+              <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">${workout.name}</span>
+              <div id="selected-workout-detail-div" style="display:none">${workout.description}</div>
+              </div>`
+          : `<div>
+          <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
+          </div>`
+      }
+      <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
+      <br/>
+      <div class="form-flex-group margin-bottom-15px">
+        <div class="form-group-label">Time</div>
+        <div class="form-flex-group">
+          <div class="form-input-group show-time-separator">
+            <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H">
+            <label for="wolog-duration-hours" class="form-label duration-label">H</label>
+          </div>
+          <div class="form-input-group show-time-separator">
+            <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M">
+            <label for="wolog-duration-minutes" class="form-label duration-label">M</label>
+          </div>
+          <div class="form-input-group">
+            <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder ="S">
+            <label for="wolog-duration-seconds" class="form-label duration-label">S</label>
+          </div>
         </div>
-        ${
-          workout
-            ? `<div>
-                <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">${workout.name}</span>
-                <div id="selected-workout-detail-div" style="display:none">${workout.description}</div>
-                </div>`
-            : `<div>
-            <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
-            </div>`
-        }
-        <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-        <br/>
-        <div>
-          <fieldset>
-            <legend>Duration</legend>
-            <label for="wolog-duration-hours">Hours</label>
-            <input type="number" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="Hr">
-            <label for="wolog-duration-minutes">Minutes</label>
-            <input type="number" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="Min.">
-            <label for="wolog-duration-seconds">Seconds</label>
-            <input type="number" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="Secs.">
-          </fieldset>
-        </div>
-        <br/>
+      </div>
+      <div class="form-flex-group margin-bottom-15px">
+        <!--div class="form-group-label">Rounds</div-->
         <div>
           <div>
-            <p>Rounds & Load</p>
-            ${
-              workoutlog.roundinfo
-                ? workoutlog.roundinfo
-                    .map(function (item, index) {
-                      return `
-              <fieldset>
-                ${index > 0 ? `<button type="button" id="delete-round-info-${index}">Delete</button>` : `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`}
-                <label for="wolog-rounds-${index}">Rounds</label>
-                <input type="number" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds">
-                <label for="wolog-load-${index}">Load</label>
-                <input type="number" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
-                <label for="wolog-reps-${index}">Reps</label>
-                <input type="number" name="wolog-reps-${index}" id="wolog-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">
-                <label for="wolog-unit-${index}">Unit</label>
-                <select name="wolog-unit-${index}" id="wolog-unit-${index}">
-                  <option value=""> </option>
-                  <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
-                  <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
-                  <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
-                </select>
-              </fieldset>`;
-                    })
-                    .join('')
-                : ''
-            }
-            
+         ${
+           workoutlog.roundinfo
+             ? workoutlog.roundinfo
+                 .map(function (item, index) {
+                   return `
+          <div class="form-flex-group margin-bottom-15px">
+            <div class="form-input-group">
+              <input type="number" class="form-input rounds-input" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds">    
+              <label for="wolog-rounds-${index}" class="form-label rounds-label">Rounds</label>
+            </div>      
+            <div class="form-input-group">
+              <input type="number" class="form-input rounds-input" name="wolog-reps-${index}" id="wolog-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">
+              <label for="wolog-reps-${index}" class="form-label rounds-label">Reps</label>
+            </div>
+            <div class="form-input-group">  
+              <input type="number" class="form-input rounds-input" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
+              <label for="wolog-load-${index}" class="form-label rounds-label">Load</label>
+            </div>
+            <div class="form-input-group">
+              <label for="wolog-unit-${index}" class="form-label hide-view">Unit</label>
+              <select class="form-input" name="wolog-unit-${index}" id="wolog-unit-${index}">
+                <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
+                <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
+                <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
+              </select>
+            </div>
+            <div>${index > 0 ? `<button type="button" class="wolog-form-delete-btn" id="delete-round-info-${index}">X</button>` : ``}</div>
           </div>
-          <button type="button" id="add-new-round-info">Add More Rounds</button>
+           `;
+                 })
+                 .join('')
+             : ''
+         }
+        <button type="button" id="add-new-round-info">Add More Rounds</button>
+      </div>
         </div>
-        <br/>
-        <div>
-        <fieldset>
-          <legend>Modality</legend>
-          <label for="wolog-modality-m">Metabolic Conditioning</label>
-          <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}>
-          <label for="wolog-modality-g">Gymnastics</label>
-          <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''}>
-          <label for="wolog-modality-w">Weight Lifting</label>
-          <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''}>
-        </fieldset>
-        </div>
-        <br/>
-        <div>
-          <label for="wolog-location">Location</label>
-          <input type="text" name="wolog-location" id="wolog-location" placeholder="Location" value="${workoutlog.location ? workoutlog.location : ''}">
-        </div>
-        <br/>
-        <div>
-          <label for="wolog-notes">Notes</label>
-          <textarea row=3 col=12 name="wolog-notes" id="wolog-notes" placeholder="Notes">${workoutlog.notes ? workoutlog.notes : ''}</textarea>
-          ${validationError.catchAll ? `<div id="error-catch-all">${validationError.catchAll}` : ''}
-        </div>
-        <div>
-          <button type="submit" id="submit-wolog">Save</button>
-          <button type="button" id="cancel-submit-wolog" onclick="window.history.back()">Cancel</button>
-        </div>
-      </form>
-    </div>
+      </div>
+      
+      <br/>
+      <div>
+      <fieldset>
+        <legend>Modality</legend>
+        <label for="wolog-modality-m">Metabolic Conditioning</label>
+        <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}>
+        <label for="wolog-modality-g">Gymnastics</label>
+        <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''}>
+        <label for="wolog-modality-w">Weight Lifting</label>
+        <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''}>
+      </fieldset>
+      </div>
+      <br/>
+      <div>
+        <label for="wolog-location">Location</label>
+        <input type="text" name="wolog-location" id="wolog-location" placeholder="Location" value="${workoutlog.location ? workoutlog.location : ''}">
+      </div>
+      <br/>
+      <div>
+        <label for="wolog-notes">Notes</label>
+        <textarea row=3 col=12 name="wolog-notes" id="wolog-notes" placeholder="Notes">${workoutlog.notes ? workoutlog.notes : ''}</textarea>
+        ${validationError.catchAll ? `<div id="error-catch-all">${validationError.catchAll}` : ''}
+      </div>
+      <div>
+        <button type="submit" id="submit-wolog">Save</button>
+        <button type="button" id="cancel-submit-wolog" onclick="window.history.back()">Cancel</button>
+      </div>
+    </form>
     <div id="select-workout-modal" style="display:none;">
       <div class="container">
         <br/><br/>
@@ -150,6 +162,7 @@
       workoutlog: newWorkoutLog,
       user: {},
       workouts: [],
+      pageTitle: 'Log',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutlogFormTemplate);
@@ -355,7 +368,7 @@
           $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
             if (!error) {
               let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
-              component.setState({ workoutlog, user });
+              component.setState({ workoutlog, user, pageTitle: 'Edit Log' });
             } else {
               component.setState({ error });
             }
@@ -371,9 +384,9 @@
           } else {
             workoutlog.user_id = user._id;
           }
-          component.setState({ workoutlog, user });
+          component.setState({ workoutlog, user, pageTitle: 'New Log' });
         } else {
-          component.setState({ user });
+          component.setState({ user, pageTitle: 'New Log' });
         }
       } else {
         component.setState({ error });
