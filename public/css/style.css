@@ -308,11 +308,13 @@ input[type='number'] {
 .form-input-group {
   position: relative;
 }
+
 .form-input {
   height: 52px;
+  width: 100%;
   box-sizing: border-box;
   padding-top: 20px;
-  padding-left: 0;
+  padding-left: 5px;
   padding-right: 0;
   font-size: var(--big-font-size);
   border: none;
@@ -331,6 +333,7 @@ input[type='number'] {
   border: 1px solid var(--main-color);
 }
 .duration-input {
+  padding-left: 0;
   width: 52px;
   text-align: center;
   margin-right: 15px;
@@ -338,8 +341,11 @@ input[type='number'] {
 
 .rounds-input {
   margin-right: 10px;
-  width: 80px;
-  padding-left: 5px;
+  width: 70px;
+}
+
+.wolog-exercise-input {
+  width: 280px;
 }
 
 .form-input::placeholder {
@@ -347,8 +353,8 @@ input[type='number'] {
 }
 .form-label {
   position: absolute;
-  top: 15px;
-  left: 0;
+  top: 17px;
+  left: 5px;
   color: #d2d2d7;
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
@@ -359,7 +365,7 @@ input[type='number'] {
   left: 20px;
 }
 .rounds-label {
-  left: 5px;
+  top: 17px;
 }
 
 .show-time-separator {
@@ -394,6 +400,7 @@ input[type='number'] {
   margin-left: 5px;
 }
 
+/* Not yet incorporated in the main code */
 .switch {
   position: relative;
   display: inline-block;
@@ -461,3 +468,45 @@ input:disabled {
 input:disabled ~ label {
   color: darkgray;
 }
+
+.wolog-exericse-add-btn {
+  display: none;
+  position: absolute;
+  border: 1px solid white;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  height: 48px;
+  top: 2px;
+  right: 2px;
+  font-size: 1rem;
+  z-index: 1000;
+  background-color: var(--btn-primary);
+}
+.autocomplete-exercise-list {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-exercise-list div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-exercise-list div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+/* End - Not yet incorporated in the main code */

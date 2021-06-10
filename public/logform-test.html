@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <form class="form-container">
+    <form class="form-container" autocomplete="off">
       <div class="form-flex-group margin-bottom-15px">
         <label class="switch form-group-label">
           <input type="checkbox" id="duration-switch" />
@@ -34,9 +34,11 @@
           <input type="checkbox" id="rounds-switch" />
           <span class="slider round"></span>
         </label>
-        <div class="form-input-group">
-          <input type="number" class="form-input rounds-input" name="wolog-rounds" id="wolog-rounds" value="" placeholder="Rounds" disabled />
-          <label for="wolog-rounds" class="form-label rounds-label">Rounds</label>
+        <div class="form-flex-group">
+          <div class="form-input-group">
+            <input type="number" class="form-input rounds-input" name="wolog-rounds" id="wolog-rounds" value="" placeholder="Rounds" disabled />
+            <label for="wolog-rounds" class="form-label rounds-label">Rounds</label>
+          </div>
         </div>
       </div>
       <div class="form-flex-group">
@@ -44,10 +46,12 @@
           <input type="checkbox" id="exercise-switch" />
           <span class="slider round"></span>
         </label>
-        <div>
+        <div class="form-flex-group">
           <div class="form-input-group">
-            <input type="text" class="form-input" name="wolog-exercise" id="wolog-exericse" placeholder="Add an Exercise..." />
-            <label for="wolog-exericse" class="form-label">Add an Exercise...</label>
+            <input class="form-input wolog-exercise-input" name="wolog-exercise" id="wolog-exercise" placeholder="Record by Exercise, Reps & Load" disabled />
+            <label for="wolog-exercise" class="form-label" id="wolog-exercise-input-label">Record Exercise, Reps & Load</label>
+            <button type="button" id="wolog-exericse-add-btn" class="wolog-exericse-add-btn">Add</button>
+            <div id="autocomplete-exercise-list" class="autocomplete-exercise-list"></div>
           </div>
         </div>
       </div>
@@ -87,6 +91,24 @@
         disableField(roundsInputField);
       }
     }
+
+    function toggleExerciseFields() {
+      let exerciseSwitch = document.querySelector('#exercise-switch');
+      let exerciseInputField = document.querySelector('#wolog-exercise');
+      let exerciseInputFieldLabel = document.querySelector('#wolog-exercise-input-label');
+      let exerciseAddButton = document.querySelector('#wolog-exericse-add-btn');
+
+      if (exerciseSwitch.checked) {
+        enableField(exerciseInputField);
+        exerciseInputFieldLabel.innerHTML = 'Exercise Name';
+        exerciseAddButton.style.display = 'block';
+      } else {
+        disableField(exerciseInputField);
+        exerciseInputFieldLabel.innerHTML = 'Record Exercise, Reps & Load';
+        exerciseAddButton.style.display = 'none';
+      }
+    }
+
     document.addEventListener('click', function (event) {
       if (event.target.id === 'duration-switch') {
         toggleDurationFields();
@@ -94,6 +116,45 @@
       if (event.target.id === 'rounds-switch') {
         toggleRoundsFields();
       }
+      if (event.target.id === 'exercise-switch') {
+        toggleExerciseFields();
+      }
     });
+
+    let exercises = ['Deadlift', 'Overhead Squat', 'Overhead Lunges', 'Bench Press', 'Squat', 'Back Squat', 'Front Squat'];
+
+    // Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
+
+    /**
+     * takes two arguments, the input field and the list of items to be used for auto complete
+     * */
+    let autocomplete = function (textField, list) {
+      let autocompleteDiv = document.getElementById('autocomplete-exercise-list');
+      // Execute the function when someone writes something in the input field
+      textField.addEventListener('input', function (event) {
+        //Capture the input value
+        let textFieldValue = this.value;
+        //Close any open lists of autocompleted values
+        if (!textFieldValue) {
+          //If no textfield value then clean the list
+          autocompleteDiv.innerHTML = '';
+          return false;
+        }
+        let autocompleteList = '';
+        for (let i = 0; i < list.length; i++) {
+          if (list[i].toLowerCase().includes(textFieldValue.toLowerCase())) {
+            let subStringIndex = list[i].toLowerCase().indexOf(textFieldValue.toLowerCase());
+            // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
+            if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) {
+              let stringToHighlight = list[i].substr(subStringIndex, textFieldValue.length);
+              autocompleteList += `<div>${list[i].replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
+            }
+          }
+        }
+        autocompleteDiv.innerHTML = autocompleteList;
+      });
+    };
+
+    autocomplete(document.getElementById('wolog-exercise'), exercises);
   </script>
 </html>
