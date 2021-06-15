@@ -41,7 +41,7 @@
           </div>
         </div>
       </div>
-      <div class="form-flex-group">
+      <div class="form-flex-group margin-bottom-15px">
         <label class="switch form-group-label">
           <input type="checkbox" id="exercise-switch" />
           <span class="slider round"></span>
@@ -55,8 +55,40 @@
           </div>
         </div>
       </div>
+      <div class="form-flex-group">
+        <div id="added-exercises">
+          <div class="form-flex-group">
+            <div>Deadlift</div>
+            <div class="form-input-group">
+              <input type="number" class="form-input rounds-input" value="" placeholder="Reps" />
+              <label for="wolog-rounds" class="form-label rounds-label">Reps</label>
+            </div>
+            <div class="form-input-group">
+              <input type="number" class="form-input rounds-input" value="" placeholder="Intensity" />
+              <label for="wolog-rounds" class="form-label rounds-label">Intensity</label>
+            </div>
+            <div>
+              <div class="form-input-group">
+                <select class="form-input">
+                  <option value=""></option>
+                  <option value="">lbs</option>
+                  <option value="">kgs</option>
+                  <option value="">pood</option>
+                  <option value="">mtr</option>
+                  <option value="">miles</option>
+                  <option value="">minutes</option>
+                  <option value="">feet</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="copy"></button>
+            <div>Del</div>
+          </div>
+        </div>
+      </div>
     </form>
   </body>
+  <script src="js/vendor/helper-library.js"></script>
   <script>
     function disableField(name) {
       name['disabled'] = true;
@@ -108,7 +140,17 @@
         exerciseAddButton.style.display = 'none';
       }
     }
+    function addExercise() {
+      //validate if an exercise is in the input field
 
+      let addedExercisesDiv = document.getElementById('added-exercises');
+      addedExercisesDiv.innerHTML =
+        addedExercisesDiv.innerHTML +
+        `<label class="switch form-group-label">
+          <input type="checkbox" id="exercise-switch" />
+          <span class="slider round"></span> 
+        </label>Reps<div>Deadlift</div>`;
+    }
     document.addEventListener('click', function (event) {
       if (event.target.id === 'duration-switch') {
         toggleDurationFields();
@@ -118,6 +160,20 @@
       }
       if (event.target.id === 'exercise-switch') {
         toggleExerciseFields();
+      }
+      if (event.target.id === 'wolog-exericse-add-btn') {
+        addExercise();
+      }
+
+      let exerciseListRegex = new RegExp(/^exercise-list-item-\d+/);
+      matchedExerciseId = $hl.matchClosestSelector(event.target, exerciseListRegex);
+      if (matchedExerciseId) {
+        let prefix = 'exercise-list-item-';
+        let _id = matchedExerciseId.substr(prefix.length);
+        let wologExerciseInputField = document.getElementById('wolog-exercise');
+        wologExerciseInputField.value = exercises[parseInt(_id)];
+        let autocompleteDiv = document.getElementById('autocomplete-exercise-list');
+        autocompleteDiv.innerHTML = '';
       }
     });
 
@@ -147,7 +203,7 @@
             // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
             if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) {
               let stringToHighlight = list[i].substr(subStringIndex, textFieldValue.length);
-              autocompleteList += `<div>${list[i].replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
+              autocompleteList += `<div id="exercise-list-item-${i}">${list[i].replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
             }
           }
         }

@@ -343,7 +343,6 @@ input[type='number'] {
   margin-right: 10px;
   width: 70px;
 }
-
 .wolog-exercise-input {
   width: 280px;
 }
@@ -366,6 +365,12 @@ input[type='number'] {
 }
 .rounds-label {
   top: 17px;
+}
+
+.date-label {
+  left: 8px;
+  font-size: 0.8rem !important;
+  /* display: none; */
 }
 
 .show-time-separator {
@@ -508,5 +513,14 @@ input:disabled ~ label {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+.copy {
+  display: block;
+  background-image: url('../images/baseline_content_copy_black_24dp.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 24px;
+  border: none;
 }
 /* End - Not yet incorporated in the main code */

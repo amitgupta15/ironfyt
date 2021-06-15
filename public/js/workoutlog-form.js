@@ -30,10 +30,12 @@
     let validationError = props.validationError ? props.validationError : {};
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
-    <form id="workout-log-form" class="form-container">
-      <div>
-        <label for="wolog-date">Date</label>
-        <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date">
+    <form id="workout-log-form" class="form-container" autocomplete="off">
+      <div class="form-flex-group margin-bottom-15px">
+        <div class="form-input-group">
+          <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date" class="form-input"/>
+          <label for="wolog-date" class="form-label date-label">Date</label>
+        </div>
         ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
       </div>
       ${
