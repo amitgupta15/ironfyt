@@ -1,5 +1,5 @@
 (function () {
-  'use strict';
+  ('use strict');
 
   let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   let longDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -50,17 +50,17 @@
                 ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
                 ${
                   log.workout && log.workout.length
-                    ? `<div>
-                    <strong>Workout: </strong><span class="workout-name-calendar-view" id="workout-name-calendar-view-${log.workout[0]._id}"><span id="workout-show-detail-indicator-${log.workout[0]._id}">&#9658;</span> ${log.workout[0].name}</span>
-                    <div class="workout-detail-calendar-view  hide-view" id="workout-detail-calendar-view-${log.workout[0]._id}">
-                      ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
-                      ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
-                      ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
-                      ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
-                      ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
-                      ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
-                    </div>
-                  </div>`
+                    ? `<details>
+                        <summary>${log.workout[0].name}</summary>
+                        <div class="workout-detail-view">
+                        ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
+                        ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
+                        ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
+                        ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
+                        ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
+                        ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
+                        </div>
+                      </details>`
                     : ''
                 }
                 ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>` : ''}
@@ -338,29 +338,6 @@
       let prefix = 'delete-log-btn-';
       let _id = event.target.id.substring(prefix.length, event.target.id.length);
       showDeleteConfirmationDialog(_id);
-    }
-  });
-
-  document.addEventListener('click', function (event) {
-    let matchedId = false;
-    let workoutNameCalendarViewRegex = new RegExp(/workout-name-calendar-view-([a-zA-Z]|\d){24}/);
-    matchedId = $hl.matchClosestSelector(event.target, workoutNameCalendarViewRegex);
-    if (matchedId) {
-      let prefix = 'workout-name-calendar-view-';
-      let _id = matchedId.substring(prefix.length, matchedId.length);
-      let detailView = document.getElementById(`workout-detail-calendar-view-${_id}`);
-
-      if (detailView.classList.contains('hide-view')) {
-        detailView.classList.remove('hide-view');
-        detailView.classList.add('show-view');
-        let indicator = document.getElementById(`workout-show-detail-indicator-${_id}`);
-        indicator.innerHTML = '&#9660;';
-      } else {
-        detailView.classList.remove('show-view');
-        detailView.classList.add('hide-view');
-        let indicator = document.getElementById(`workout-show-detail-indicator-${_id}`);
-        indicator.innerHTML = '&#9658;';
-      }
     }
   });
 })();

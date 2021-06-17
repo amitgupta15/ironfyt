@@ -1,5 +1,5 @@
 (function () {
-  'use strict';
+  ('use strict');
 
   // Default roundinfo object
   let newRoundInfo = {
@@ -23,6 +23,29 @@
     location: null,
     notes: null,
   };
+  let selectedWorkoutTemplate = function (props) {
+    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
+    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
+    return `
+    <div class="flex">
+      <button type="button" id="unselect-workout"></button>
+      <div class="flex-align-self-center">
+        <details>
+          <summary>${workout.name}</summary>
+          <div class="workout-detail-view">
+          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
+          ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
+          ${workout.timecap ? `<p><strong>Time Cap:</strong> ${workout.timecap}</p>` : ''}
+          ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
+          ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
+          ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
+          </div>
+        </details>
+        
+      </div>
+    </div>`;
+  };
+
   let workoutlogFormTemplate = function (props) {
     let workouts = props.workouts ? props.workouts : [];
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
@@ -40,12 +63,9 @@
       </div>
       ${
         workout
-          ? `<div>
-              <span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">${workout.name}</span>
-              <div id="selected-workout-detail-div" style="display:none">${workout.description}</div>
-              </div>`
+          ? selectedWorkoutTemplate(props)
           : `<div>
-          <button type="button" id="select-workout-btn">Select a Workout (If you want to attach an existing workout)</button>
+          <button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button>
           </div>`
       }
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
@@ -250,7 +270,7 @@
   };
 
   let handleSelectWorkoutEvent = function (event) {
-    let selectWorkoutBtn = document.getElementById('select-workout-btn');
+    let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
     selectWorkoutBtn.disabled = true;
     // Get the current state of the form to save the intermediate state
     let workoutlog = createWorkoutLogObjFromFormElements();
@@ -259,7 +279,7 @@
         let workouts = response && response.workouts ? response.workouts : [];
         component.setState({ workouts });
 
-        let selectWorkoutBtn = document.getElementById('select-workout-btn');
+        let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
         selectWorkoutBtn.disabled = true;
 
         let dialog = document.getElementById('select-workout-modal');
@@ -274,7 +294,7 @@
     let dialog = document.getElementById('select-workout-modal');
     dialog.style.display = 'none';
 
-    let selectWorkoutBtn = document.getElementById('select-workout-btn');
+    let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
     selectWorkoutBtn.disabled = false;
   };
 
@@ -311,12 +331,6 @@
     component.setState({ workoutlog });
   };
 
-  let toggleSelectedWorkoutDetailDisplay = function (event) {
-    let div = document.getElementById('selected-workout-detail-div');
-
-    div.style.display = div.style.display === 'none' ? 'block' : 'none';
-  };
-
   let handleAddNewRoundInfoEvent = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
     workoutlog.roundinfo.push(newRoundInfo);
@@ -333,10 +347,9 @@
   };
 
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
-  $hl.eventListener('click', 'select-workout-btn', handleSelectWorkoutEvent);
+  $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
-  $hl.eventListener('click', 'selected-workout-name-span', toggleSelectedWorkoutDetailDisplay);
   $hl.eventListener('click', 'add-new-round-info', handleAddNewRoundInfoEvent);
   document.addEventListener('click', function (event) {
     let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);

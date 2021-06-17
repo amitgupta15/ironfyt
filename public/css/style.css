@@ -179,19 +179,6 @@ input[type='number'] {
   padding: 10px;
 }
 
-.workout-name-calendar-view {
-  color: var(--main-color);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.workout-detail-calendar-view {
-  padding: 10px;
-  margin-bottom: 5px;
-  border: 1px solid var(--main-color);
-  border-radius: 5px;
-}
-
 .hide-view {
   display: none;
 }
@@ -204,7 +191,8 @@ input[type='number'] {
   margin: 10px;
 }
 
-#add-log-btn-calendar-view {
+#add-log-btn-calendar-view,
+#select-workout-btn-wolog {
   width: 100%;
   border: 1px solid var(--btn-primary);
   border-radius: 5px;
@@ -405,6 +393,41 @@ input[type='number'] {
   margin-left: 5px;
 }
 
+#unselect-workout {
+  background: url(../images/outline_remove_circle_outline_black_24dp.png);
+  background-size: cover;
+  cursor: pointer;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: none;
+  flex: 0 0 24px;
+  margin-right: 5px;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.flex-align-self-center {
+  align-self: center;
+}
+
+summary {
+  border: none;
+  outline: none;
+  color: var(--main-color);
+  font-weight: 600;
+  /* font-size: 1rem; */
+}
+
+.workout-detail-view {
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+}
+
 /* Not yet incorporated in the main code */
 .switch {
   position: relative;
@@ -523,4 +546,5 @@ input:disabled ~ label {
   width: 24px;
   border: none;
 }
+
 /* End - Not yet incorporated in the main code */

@@ -81,14 +81,14 @@
     $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-form.html&user_id=123456789012345678901234&year=2020&month=0&date=1');
   });
 
-  $test.it('should show workout list dialog when select-workout-btn is clicked', function () {
+  $test.it('should show workout list dialog when select-workout-btn-wolog is clicked', function () {
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
 
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
-    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
-    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
+    $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn-wolog" disabled="">'));
     $test.assert(document.getElementById('wolog-workout-id').value === '');
   });
 
@@ -97,7 +97,7 @@
     selector.innerHTML = component.template({});
 
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
-    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
     $test.dispatchHTMLEvent('click', '#close-workout-list-modal');
     $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
@@ -108,10 +108,10 @@
   //   let selector = document.querySelector('#selector');
   //   selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
   //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn');
+  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
   //   // $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
   //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
-  //   $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn" disabled="">'));
+  //   $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn-wolog" disabled="">'));
   //   let state = component.getState();
   //   $test.assert(state.workoutlog.workout[0]._id === '6070eec7f20f85401bca47a1');
   //   $test.assert(state.workoutlog.workout[0].name === 'Linda');
@@ -135,23 +135,6 @@
     // Hide Details
     $test.assert(selector.innerHTML.includes('<span id="show-detail-6070eec7f20f85401bca47a1">&gt; </span>Linda'));
     $test.assert(selector.innerHTML.includes('<div id="workout-detail-6070eec7f20f85401bca47a1" style="display: none;">Do 15 reps of each set</div>'));
-  });
-
-  $test.it('should show/hide workout details for the selected workout', function () {
-    let state = { workoutlog: { workout: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda', description: 'Do 15 reps of each set' }] } };
-    component.setState(state);
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template(state);
-
-    $test.assert(selector.innerHTML.includes('<span id="unselect-workout">X</span>&nbsp;&nbsp;<span id="selected-workout-name-span">Linda</span>'));
-
-    // Show workout detail
-    $test.dispatchHTMLEvent('click', '#selected-workout-name-span');
-    $test.assert(selector.innerHTML.includes('<div id="selected-workout-detail-div" style="display: block;">Do 15 reps of each set</div>'));
-
-    // Hide workout detail
-    $test.dispatchHTMLEvent('click', '#selected-workout-name-span');
-    $test.assert(selector.innerHTML.includes('<div id="selected-workout-detail-div" style="display: none;">Do 15 reps of each set</div>'));
   });
 
   $test.it('should add/remove round/load info block while preserving the form state', function () {
@@ -196,7 +179,7 @@
     selector.innerHTML = component.template({});
     let state = component.getState();
     $test.assert(state.workouts.length === 0);
-    $test.dispatchHTMLEvent('click', '#select-workout-btn');
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
     state = component.getState();
     $test.assert(state.workouts.length === 2);
   });
