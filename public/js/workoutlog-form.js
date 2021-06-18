@@ -27,9 +27,10 @@
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
-    <div class="flex">
+    <div class="flex block-with-border margin-bottom-15px">
       <button type="button" id="unselect-workout"></button>
       <div class="flex-align-self-center">
+        <div class="block-with-border-label">Selected Workout</div>
         <details>
           <summary>${workout.name}</summary>
           <div class="workout-detail-view">
@@ -41,7 +42,6 @@
           ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
           </div>
         </details>
-        
       </div>
     </div>`;
   };
@@ -55,21 +55,34 @@
     return `
     <form id="workout-log-form" class="form-container" autocomplete="off">
       <div class="form-flex-group margin-bottom-15px">
-        <div class="form-input-group">
+        <div class="form-input-group flex-width-100">
           <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date" class="form-input"/>
           <label for="wolog-date" class="form-label date-label">Date</label>
         </div>
         ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
       </div>
-      ${
-        workout
-          ? selectedWorkoutTemplate(props)
-          : `<div>
-          <button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button>
-          </div>`
-      }
+      ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-15px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-      <br/>
+      <div class="form-flex-group margin-bottom-15px block-with-border">
+        <div class="block-with-border-label">Modality</div>
+        <label class="switch small">
+          <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
+          <span class="slider small round"></span>
+        </label>
+        <div>Cardio</div>
+        <label class="switch small">
+          <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
+          <span class="slider small round"></span>
+        </label>
+        <div>Body Weight</div>
+        <label class="switch small">
+          <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
+          <span class="slider small round"></span>
+        </label>
+        <div>Weights</div>
+      </div>
+      
+
       <div class="form-flex-group margin-bottom-15px">
         <div class="form-group-label">Time</div>
         <div class="form-flex-group">
@@ -130,17 +143,6 @@
       </div>
       
       <br/>
-      <div>
-      <fieldset>
-        <legend>Modality</legend>
-        <label for="wolog-modality-m">Metabolic Conditioning</label>
-        <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}>
-        <label for="wolog-modality-g">Gymnastics</label>
-        <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''}>
-        <label for="wolog-modality-w">Weight Lifting</label>
-        <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''}>
-      </fieldset>
-      </div>
       <br/>
       <div>
         <label for="wolog-location">Location</label>
