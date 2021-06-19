@@ -51,7 +51,7 @@
                 ${
                   log.workout && log.workout.length
                     ? `<details>
-                        <summary>${log.workout[0].name}</summary>
+                        <summary class="summary">${log.workout[0].name}</summary>
                         <div class="workout-detail-view">
                         ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
                         ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}

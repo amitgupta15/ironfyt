@@ -423,7 +423,7 @@ input[type='number'] {
 }
 
 .block-with-border {
-  border: 1px solid lightgray;
+  border: 1px solid #e9e9e9;
   border-radius: 5px;
   padding: 5px;
   position: relative;
@@ -436,7 +436,12 @@ input[type='number'] {
   font-size: var(--big-font-size);
   color: var(--main-color);
 }
-summary {
+.block-with-border-switch {
+  position: absolute;
+  top: 5px;
+  right: 3px;
+}
+.summary {
   border: none;
   outline: none;
   color: var(--main-color);

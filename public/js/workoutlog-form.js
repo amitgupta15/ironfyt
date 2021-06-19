@@ -14,7 +14,7 @@
     workout_id: null,
     user_id: null,
     duration: {
-      hour: null,
+      hours: null,
       minutes: null,
       seconds: null,
     },
@@ -46,8 +46,29 @@
     </div>`;
   };
 
-  let workoutlogFormTemplate = function (props) {
+  let workoutListModalTemplate = function (props) {
     let workouts = props.workouts ? props.workouts : [];
+    return `
+    <div id="select-workout-modal" style="display:none;">
+      <div class="container">
+        <br/><br/>
+        <h3>Select a workout&nbsp;&nbsp;&nbsp;&nbsp;<span id="close-workout-list-modal">X</span></h3>
+        <br/>
+        ${workouts
+          .map(
+            (workout) => `
+            <div>
+              <div id="workout-${workout._id}"><span id="show-detail-${workout._id}"> &gt; </span>${workout.name}</div>
+              <div id="workout-detail-${workout._id}" style="display:none">${workout.description}</div>
+              <br/>
+            </div>`
+          )
+          .join('')}
+      </div>
+    </div>`;
+  };
+
+  let workoutlogFormTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
@@ -81,21 +102,25 @@
         </label>
         <div>Weights</div>
       </div>
-      
-
-      <div class="form-flex-group margin-bottom-15px">
-        <div class="form-group-label">Time</div>
+      <div class="form-flex-group margin-bottom-15px block-with-border">
+        <div class="block-with-border-label">Duration</div>
+        <div class="block-with-border-switch">
+          <label class="switch small form-group-label">
+            <input type="checkbox" id="duration-switch"/>
+            <span class="slider small round"></span>
+          </label>
+        </div>
         <div class="form-flex-group">
           <div class="form-input-group show-time-separator">
-            <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H">
+            <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" disabled />
             <label for="wolog-duration-hours" class="form-label duration-label">H</label>
           </div>
           <div class="form-input-group show-time-separator">
-            <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M">
+            <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" disabled />
             <label for="wolog-duration-minutes" class="form-label duration-label">M</label>
           </div>
           <div class="form-input-group">
-            <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder ="S">
+            <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" disabled />
             <label for="wolog-duration-seconds" class="form-label duration-label">S</label>
           </div>
         </div>
@@ -159,23 +184,7 @@
         <button type="button" id="cancel-submit-wolog" onclick="window.history.back()">Cancel</button>
       </div>
     </form>
-    <div id="select-workout-modal" style="display:none;">
-      <div class="container">
-        <br/><br/>
-        <h3>Select a workout&nbsp;&nbsp;&nbsp;&nbsp;<span id="close-workout-list-modal">X</span></h3>
-        <br/>
-        ${workouts
-          .map(
-            (workout) => `
-            <div>
-              <div id="workout-${workout._id}"><span id="show-detail-${workout._id}"> &gt; </span>${workout.name}</div>
-              <div id="workout-detail-${workout._id}" style="display:none">${workout.description}</div>
-              <br/>
-            </div>`
-          )
-          .join('')}
-      </div>
-    </div>
+    ${workoutListModalTemplate(props)}
     `;
   };
 
@@ -191,7 +200,77 @@
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutlogFormTemplate);
     },
+    afterRender: function (props) {
+      setDurationSwitch(props);
+    },
   }));
+
+  /**
+   * After render, check if duration switch needs to be turned on.
+   * I decided against directly storing the duration switch state because it is a derived state. I did not want to have to render the whole form and save the partial state
+   * every time a user turns on or off the duration switch.
+   * In the curren approach I check if duration information is present in the state and accordingly I set the duration switch on or off.
+   * Duration switch also calls toggleDurationFields() to enable/disable the fields.
+   * @param {*} props
+   */
+  let setDurationSwitch = function (props) {
+    let durationSwitch = document.getElementById('duration-switch');
+    let duration = props.workoutlog && props.workoutlog.duration ? props.workoutlog.duration : {};
+    if (JSON.stringify(duration) !== '{}') {
+      let hours = duration.hours !== null && parseInt(duration.hours) !== 0;
+      let minutes = duration.minutes !== null && parseInt(duration.minutes) !== 0;
+      let seconds = duration.seconds !== null && parseInt(duration.seconds) !== 0;
+      if (hours || minutes || seconds) {
+        durationSwitch.checked = true;
+      }
+    } else {
+      durationSwitch.checked = false;
+    }
+    toggleDurationFields();
+  };
+
+  /**
+   * Enables/disabled the hours, minutes, seconds fields based on the state of duration switch.
+   * Wipes out the values from the fields when the fields are disabled.
+   * Re-populates the duration values if present in the state
+   */
+  let toggleDurationFields = function () {
+    let durationSwitch = document.querySelector('#duration-switch');
+    let hourInput = document.querySelector('#wolog-duration-hours');
+    let minuteInput = document.querySelector('#wolog-duration-minutes');
+    let secondInput = document.querySelector('#wolog-duration-seconds');
+    if (durationSwitch.checked) {
+      enableField(hourInput);
+      enableField(minuteInput);
+      enableField(secondInput);
+      let state = component.getState();
+      let duration = state.workoutlog && state.workoutlog.duration ? state.workoutlog.duration : {};
+      hourInput.value = parseInt(duration.hours) !== 0 ? duration.hours : '';
+      minuteInput.value = parseInt(duration.minutes) !== 0 ? duration.minutes : '';
+      secondInput.value = parseInt(duration.seconds) !== 0 ? duration.seconds : '';
+    } else {
+      disableField(hourInput);
+      disableField(minuteInput);
+      disableField(secondInput);
+    }
+  };
+
+  /**
+   * Helper function to disable a field and set the value to empty string
+   * @param {*} name - field name
+   */
+  function disableField(name) {
+    name['disabled'] = true;
+    name['value'] = '';
+  }
+
+  /**
+   * Helper function to enable a field
+   * @param {*} name - field name
+   */
+  function enableField(name) {
+    name['disabled'] = false;
+  }
 
   let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
@@ -353,12 +432,14 @@
   $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
   $hl.eventListener('click', 'add-new-round-info', handleAddNewRoundInfoEvent);
+  $hl.eventListener('click', 'duration-switch', toggleDurationFields);
   document.addEventListener('click', function (event) {
+    //Select a workout from the list
     let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
     if (selectWorkoutRegex.test(event.target.id)) {
       selectWorkout(event.target.id);
     }
-
+    // Show workout detail for each workout in the list - can be achieve with detail/summary - refactor
     let showWorkoutDetailRegex = new RegExp(/^show-detail-([a-zA-Z]|\d){24}/gm);
     if (showWorkoutDetailRegex.test(event.target.id)) {
       showWorkoutDetail(event.target.id);

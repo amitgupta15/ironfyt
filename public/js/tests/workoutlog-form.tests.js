@@ -230,5 +230,47 @@
     $test.assert(state.workoutlog.user_id === '123456789012345678901234');
     $test.assert(state.pageTitle === 'New Log');
   });
+
+  $test.it('should set the status of duration switch and enable/disable duration fields based on duration data', function () {
+    let selector = document.querySelector('#selector');
+    let state = {};
+    component.setState(state);
+    selector.innerHTML = component.template(state);
+    component.afterRender(state);
+    let durationSwitch = document.getElementById('duration-switch');
+    let hourInput = document.querySelector('#wolog-duration-hours');
+    let minuteInput = document.querySelector('#wolog-duration-minutes');
+    let secondInput = document.querySelector('#wolog-duration-seconds');
+    $test.assert(durationSwitch.checked === false);
+    $test.assert(hourInput.disabled === true);
+    $test.assert(minuteInput.disabled === true);
+    $test.assert(secondInput.disabled === true);
+
+    state = { workoutlog: { duration: { hours: null, minutes: 30, seconds: null } } };
+    component.afterRender(state);
+    $test.assert(durationSwitch.checked === true);
+    $test.assert(hourInput.disabled === false);
+    $test.assert(minuteInput.disabled === false);
+    $test.assert(secondInput.disabled === false);
+
+    durationSwitch.checked = false;
+    $test.dispatchHTMLEvent('click', '#duration-switch');
+    $test.assert(hourInput.disabled === true);
+    $test.assert(hourInput.value === '');
+    $test.assert(minuteInput.disabled === true);
+    $test.assert(minuteInput.value === '');
+    $test.assert(secondInput.disabled === true);
+    $test.assert(secondInput.value === '');
+
+    component.setState({ workoutlog: { duration: { hours: 10, minutes: 20, seconds: 30 } } });
+    durationSwitch.checked = true;
+    $test.dispatchHTMLEvent('click', '#duration-switch');
+    $test.assert(hourInput.disabled === false);
+    $test.assert(hourInput.value === '10');
+    $test.assert(minuteInput.disabled === false);
+    $test.assert(minuteInput.value === '20');
+    $test.assert(secondInput.disabled === false);
+    $test.assert(secondInput.value === '30');
+  });
   console.groupEnd();
 })();
