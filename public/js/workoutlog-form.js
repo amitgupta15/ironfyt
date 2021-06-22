@@ -6,7 +6,6 @@
     rounds: null,
     load: null,
     unit: null,
-    reps: null,
   };
   // Default workout log
   let newWorkoutLog = {
@@ -68,6 +67,109 @@
     </div>`;
   };
 
+  let modalityTemplate = function (workoutlog) {
+    return `
+      <div class="form-flex-group margin-bottom-15px block-with-border">
+        <div class="block-with-border-label">Modality</div>
+        <div class="form-flex-group margin-top-5px">
+          <label class="switch small">
+            <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
+            <span class="slider small round"></span>
+          </label>
+          <div>Cardio</div>
+          <label class="switch small">
+            <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
+            <span class="slider small round"></span>
+          </label>
+          <div>Body Weight</div>
+          <label class="switch small">
+            <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
+            <span class="slider small round"></span>
+          </label>
+          <div>Weights</div>
+        </div>
+      </div>`;
+  };
+
+  let durationTemplate = function (workoutlog) {
+    return `
+    <div class="form-flex-group margin-bottom-15px block-with-border">
+      <div class="block-with-border-label">Duration</div>
+      <div class="block-with-border-switch">
+        <label class="switch small form-group-label">
+          <input type="checkbox" id="duration-switch"/>
+          <span class="slider small round"></span>
+        </label>
+      </div>
+      <div class="form-flex-group margin-top-5px">
+        <div class="form-input-group show-time-separator">
+          <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" disabled />
+          <label for="wolog-duration-hours" class="form-label duration-label">H</label>
+        </div>
+        <div class="form-input-group show-time-separator">
+          <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" disabled />
+          <label for="wolog-duration-minutes" class="form-label duration-label">M</label>
+        </div>
+        <div class="form-input-group">
+          <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" disabled />
+          <label for="wolog-duration-seconds" class="form-label duration-label">S</label>
+        </div>
+      </div>
+    </div>
+    `;
+  };
+
+  let roundsTemplate = function (workoutlog) {
+    return `
+    <div class="form-flex-group margin-bottom-15px block-with-border">
+        <div class="block-with-border-label">Rounds & Load/Distance/Cal</div>
+        <div class="block-with-border-switch">
+          <label class="switch small form-group-label">
+            <input type="checkbox" id="rounds-switch"/>
+            <span class="slider small round"></span>
+          </label>
+        </div>
+        <div class="margin-top-10px">
+         ${
+           workoutlog.roundinfo
+             ? workoutlog.roundinfo
+                 .map(function (item, index) {
+                   return `
+                  <div class="form-flex-group margin-bottom-15px">
+                    <div class="form-input-group">
+                      <input type="number" class="form-input rounds-input" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds" disabled>    
+                      <label for="wolog-rounds-${index}" class="form-label rounds-label">Rounds</label>
+                    </div>      
+                    <div class="form-input-group">  
+                      <input type="number" class="form-input rounds-input" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load" disabled>
+                      <label for="wolog-load-${index}" class="form-label rounds-label">Load</label>
+                    </div>
+                    <div class="form-input-group">
+                      <label for="wolog-unit-${index}" class="form-label hide-view">Unit</label>
+                      <select class="form-input" name="wolog-unit-${index}" id="wolog-unit-${index}" disabled>
+                        <option value=""></option>
+                        <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
+                        <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
+                        <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
+                        <option value="pood" ${item.unit === 'calories' ? 'selected' : ''}>calories</option>
+                        <option value="pood" ${item.unit === 'miles' ? 'selected' : ''}>miles</option>
+                        <option value="pood" ${item.unit === 'feet' ? 'selected' : ''}>feet</option>
+                        <option value="pood" ${item.unit === 'meters' ? 'selected' : ''}>meters</option>
+                        <option value="pood" ${item.unit === 'minutes' ? 'selected' : ''}>minutes</option>
+                      </select>
+                    </div>
+                    <div>${index > 0 ? `<button type="button" class="wolog-form-delete-btn" id="delete-round-info-${index}">X</button>` : ``}</div>
+                  </div>
+                  `;
+                 })
+                 .join('')
+             : ''
+         }
+          <button type="button" id="add-new-round-info">Add More Rounds</button>
+        </div>
+      </div>
+    `;
+  };
   let workoutlogFormTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
@@ -84,91 +186,9 @@
       </div>
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-15px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-      <div class="form-flex-group margin-bottom-15px block-with-border">
-        <div class="block-with-border-label">Modality</div>
-        <label class="switch small">
-          <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
-          <span class="slider small round"></span>
-        </label>
-        <div>Cardio</div>
-        <label class="switch small">
-          <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
-          <span class="slider small round"></span>
-        </label>
-        <div>Body Weight</div>
-        <label class="switch small">
-          <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
-          <span class="slider small round"></span>
-        </label>
-        <div>Weights</div>
-      </div>
-      <div class="form-flex-group margin-bottom-15px block-with-border">
-        <div class="block-with-border-label">Duration</div>
-        <div class="block-with-border-switch">
-          <label class="switch small form-group-label">
-            <input type="checkbox" id="duration-switch"/>
-            <span class="slider small round"></span>
-          </label>
-        </div>
-        <div class="form-flex-group">
-          <div class="form-input-group show-time-separator">
-            <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" disabled />
-            <label for="wolog-duration-hours" class="form-label duration-label">H</label>
-          </div>
-          <div class="form-input-group show-time-separator">
-            <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" disabled />
-            <label for="wolog-duration-minutes" class="form-label duration-label">M</label>
-          </div>
-          <div class="form-input-group">
-            <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" disabled />
-            <label for="wolog-duration-seconds" class="form-label duration-label">S</label>
-          </div>
-        </div>
-      </div>
-      <div class="form-flex-group margin-bottom-15px">
-        <!--div class="form-group-label">Rounds</div-->
-        <div>
-          <div>
-         ${
-           workoutlog.roundinfo
-             ? workoutlog.roundinfo
-                 .map(function (item, index) {
-                   return `
-          <div class="form-flex-group margin-bottom-15px">
-            <div class="form-input-group">
-              <input type="number" class="form-input rounds-input" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds">    
-              <label for="wolog-rounds-${index}" class="form-label rounds-label">Rounds</label>
-            </div>      
-            <div class="form-input-group">
-              <input type="number" class="form-input rounds-input" name="wolog-reps-${index}" id="wolog-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">
-              <label for="wolog-reps-${index}" class="form-label rounds-label">Reps</label>
-            </div>
-            <div class="form-input-group">  
-              <input type="number" class="form-input rounds-input" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
-              <label for="wolog-load-${index}" class="form-label rounds-label">Load</label>
-            </div>
-            <div class="form-input-group">
-              <label for="wolog-unit-${index}" class="form-label hide-view">Unit</label>
-              <select class="form-input" name="wolog-unit-${index}" id="wolog-unit-${index}">
-                <option value="lbs" ${item.unit === 'lbs' ? 'selected' : ''}>lbs</option>
-                <option value="kgs" ${item.unit === 'kgs' ? 'selected' : ''}>kgs</option>
-                <option value="pood" ${item.unit === 'pood' ? 'selected' : ''}>pood</option>
-              </select>
-            </div>
-            <div>${index > 0 ? `<button type="button" class="wolog-form-delete-btn" id="delete-round-info-${index}">X</button>` : ``}</div>
-          </div>
-           `;
-                 })
-                 .join('')
-             : ''
-         }
-        <button type="button" id="add-new-round-info">Add More Rounds</button>
-      </div>
-        </div>
-      </div>
-      
-      <br/>
-      <br/>
+      ${modalityTemplate(workoutlog)}
+      ${durationTemplate(workoutlog)}
+      ${roundsTemplate(workoutlog)}
       <div>
         <label for="wolog-location">Location</label>
         <input type="text" name="wolog-location" id="wolog-location" placeholder="Location" value="${workoutlog.location ? workoutlog.location : ''}">
@@ -202,6 +222,7 @@
     },
     afterRender: function (props) {
       setDurationSwitch(props);
+      setRoundsSwitch(props);
     },
   }));
 
@@ -230,6 +251,32 @@
   };
 
   /**
+   * After render, check if rounds switch needs to be turned on.
+   * Rounds switch also calls toggleRoundsFields() to enable/disable the fields.
+   * @param {*} props
+   */
+  let setRoundsSwitch = function (props) {
+    let roundsSwitch = document.getElementById('rounds-switch');
+    let roundinfo = props.workoutlog && props.workoutlog.roundinfo ? props.workoutlog.roundinfo : [];
+    let switchOnCount = 0;
+    if (roundinfo.length > 0) {
+      console.log(roundinfo);
+      for (let i = 0; i < roundinfo.length; i++) {
+        let rounds = roundinfo[i].rounds !== null && parseInt(roundinfo[i].rounds) !== 0 && !isNaN(roundinfo[i].rounds);
+        let load = roundinfo[i].load !== null && parseInt(roundinfo[i].load) !== 0 && !isNaN(roundinfo[i].load);
+        console.log(rounds, load);
+        if (rounds || load) {
+          switchOnCount++;
+        }
+      }
+      roundsSwitch.checked = switchOnCount > 0;
+    } else {
+      roundsSwitch.checked = false;
+    }
+    toggleRoundsFields();
+  };
+
+  /**
    * Enables/disabled the hours, minutes, seconds fields based on the state of duration switch.
    * Wipes out the values from the fields when the fields are disabled.
    * Re-populates the duration values if present in the state
@@ -255,6 +302,34 @@
     }
   };
 
+  /**
+   * Enable/disable rounds, load, unit fields based on the state of rounds switch.
+   * Wipe out the values from the fields when the fields are disabled.
+   * Re-populate the values on enable if the values are present in the state
+   */
+  let toggleRoundsFields = function () {
+    let roundsSwitch = document.querySelector('#rounds-switch');
+    let state = component.getState();
+    let roundinfo = state.workoutlog.roundinfo;
+    for (let i = 0; i < roundinfo.length; i++) {
+      let roundsInputField = document.querySelector(`#wolog-rounds-${i}`);
+      let loadInputField = document.querySelector(`#wolog-load-${i}`);
+      let unitSelect = document.querySelector(`#wolog-unit-${i}`);
+      console.log(unitSelect.value);
+      if (roundsSwitch.checked) {
+        enableField(roundsInputField);
+        enableField(loadInputField);
+        enableField(unitSelect);
+        roundsInputField.value = roundinfo[i].rounds !== null ? roundinfo[i].rounds : '';
+        loadInputField.value = roundinfo[i].load !== null ? roundinfo[i].load : '';
+        unitSelect.value = roundinfo[i].unit !== null ? roundinfo[i].unit : '';
+      } else {
+        disableField(roundsInputField);
+        disableField(loadInputField);
+        disableField(unitSelect);
+      }
+    }
+  };
   /**
    * Helper function to disable a field and set the value to empty string
    * @param {*} name - field name
@@ -300,9 +375,8 @@
     for (var i = 0; i < workoutlog.roundinfo.length; i++) {
       let rounds = parseInt(elements[`wolog-rounds-${i}`].value);
       let load = parseInt(elements[`wolog-load-${i}`].value);
-      let reps = parseInt(elements[`wolog-reps-${i}`].value);
       let unit = elements[`wolog-unit-${i}`].value;
-      roundinfo.push({ rounds, load, reps, unit });
+      roundinfo.push({ rounds, load, unit });
     }
     workoutlog.roundinfo = roundinfo;
 
@@ -433,6 +507,7 @@
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
   $hl.eventListener('click', 'add-new-round-info', handleAddNewRoundInfoEvent);
   $hl.eventListener('click', 'duration-switch', toggleDurationFields);
+  $hl.eventListener('click', 'rounds-switch', toggleRoundsFields);
   document.addEventListener('click', function (event) {
     //Select a workout from the list
     let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);

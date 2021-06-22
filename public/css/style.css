@@ -381,6 +381,12 @@ input[type='number'] {
 .margin-bottom-15px {
   margin-bottom: 15px;
 }
+.margin-top-5px {
+  margin-top: 5px;
+}
+.margin-top-10px {
+  margin-top: 10px;
+}
 
 .wolog-form-delete-btn {
   border: 1px solid var(--btn-delete);
@@ -431,14 +437,14 @@ input[type='number'] {
 }
 .block-with-border-label {
   position: absolute;
-  top: 2px;
+  top: 5px;
   left: 7px;
   font-size: var(--big-font-size);
   color: var(--main-color);
 }
 .block-with-border-switch {
   position: absolute;
-  top: 5px;
+  top: 3px;
   right: 3px;
 }
 .summary {
@@ -537,7 +543,9 @@ input[type='number'] {
 .slider.round:before {
   border-radius: 50%;
 }
-
+select:disabled {
+  background-color: #aaa;
+}
 /***Not yet incorporated in the main code***/
 
 input:disabled {
