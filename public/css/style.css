@@ -381,23 +381,33 @@ input[type='number'] {
 .margin-bottom-15px {
   margin-bottom: 15px;
 }
+.margin-bottom-5px {
+  margin-bottom: 5px;
+}
 .margin-top-5px {
   margin-top: 5px;
 }
 .margin-top-10px {
   margin-top: 10px;
 }
-
-.wolog-form-delete-btn {
-  border: 1px solid var(--btn-delete);
-  color: var(--btn-delete);
-  height: 48px;
-  width: 48px;
-  font-size: 24px;
-  margin-left: 5px;
+.margin-left-5px {
+  margin-left: 5px !important;
 }
 
-#unselect-workout {
+.copy-btn {
+  display: block;
+  background-image: url('../images/baseline_content_copy_black_24dp.png');
+  background-color: #fff;
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 24px;
+  margin-right: 5px;
+  margin-left: 5px;
+  border: none;
+}
+
+.remove-btn {
   background: url(../images/outline_remove_circle_outline_black_24dp.png);
   background-size: cover;
   cursor: pointer;
@@ -426,6 +436,14 @@ input[type='number'] {
   font-family: inherit;
   -webkit-appearance: textfield;
   -moz-appearance: textfield;
+}
+#wolog-location {
+  width: 80vw;
+}
+#wolog-notes {
+  width: 80vw;
+  height: 90px;
+  padding-top: 25px;
 }
 
 .block-with-border {
@@ -595,15 +613,6 @@ input:disabled ~ label {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
-}
-.copy {
-  display: block;
-  background-image: url('../images/baseline_content_copy_black_24dp.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  height: 24px;
-  width: 24px;
-  border: none;
 }
 
 /* End - Not yet incorporated in the main code */
