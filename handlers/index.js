@@ -11,6 +11,7 @@ const jwt_key = process.env.JWT_KEY;
 const workout = require('./workout');
 const workoutlog = require('./workoutlog');
 const user = require('./user');
+const movement = require('./movement');
 
 const handler = {};
 
@@ -28,6 +29,10 @@ handler.workoutlog = (req, res) => {
 
 handler.user = (req, res) => {
   handleRoute(req, res, user, true, ['get', 'put', 'delete']);
+};
+
+handler.movement = (req, res) => {
+  handleRoute(req, res, movement, true, ['get']);
 };
 /**
  *

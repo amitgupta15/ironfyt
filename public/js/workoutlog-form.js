@@ -21,6 +21,7 @@
     modality: [],
     location: null,
     notes: null,
+    movements: [],
   };
   let units = ['lbs', 'kgs', 'pood', 'calories', 'miles', 'feet', 'meters', 'minutes'];
 
@@ -167,13 +168,67 @@
       </div>
     `;
   };
-  let workoutlogFormTemplate = function (props) {
+
+  let movementsTemplate = function (props) {
+    return `
+    <div class="form-flex-group margin-bottom-5px block-with-border">
+      <div class="block-with-border-label">Movement x Reps x Load/Distance/...</div>
+      <div class="block-with-border-switch">
+        <label class="switch small form-group-label">
+          <input type="checkbox" id="movement-switch"/>
+          <span class="slider small round"></span>
+        </label>
+      </div>
+      <div class="form-flex-group margin-top-5px">
+        <div class="form-input-group">
+          <input class="form-input" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." disabled />
+          <label for="wolog-add-movement" class="form-label" id="wolog-add-movement-input-label">Add a movement...</label>
+          <button type="button" id="wolog-movement-add-btn" class="wolog-movement-add-btn">Add</button>
+          <input type="hidden" id="selected-movement-index" value="">
+          <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
+        </div>
+      </div>
+    </div>
+    `;
+  };
+
+  let notesTemplate = function (workoutlog) {
+    return `
+    <div class="form-flex-group margin-bottom-5px">
+      <div class="form-input-group">
+        <textarea class="form-input" name="wolog-notes" id="wolog-notes" placeholder="Notes" disabled>
+          ${workoutlog.notes ? workoutlog.notes : ''}
+        </textarea>
+        <label for="wolog-notes" class="form-label">
+          Notes
+        </label>
+      </div>
+      <label class="switch small form-group-label margin-left-5px">
+        <input type="checkbox" id="notes-switch" />
+        <span class="slider small round"></span>
+      </label>
+    </div>`;
+  };
+
+  let locationTemplate = function (workoutlog) {
+    return `
+    <div class="form-flex-group margin-bottom-5px">
+      <div class="form-input-group">
+        <input type="text" class="form-input" name="wolog-location" id="wolog-location" value="${workoutlog.location ? workoutlog.location : ''}" placeholder="Location" disabled />
+        <label for="wolog-location" class="form-label">Location</label>
+      </div>
+      <label class="switch small form-group-label margin-left-5px">
+        <input type="checkbox" id="location-switch"/>
+        <span class="slider small round"></span>
+      </label>
+    </div>
+    `;
+  };
+  let dateTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
-    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
-    <form id="workout-log-form" class="form-container" autocomplete="off">
       <div class="form-flex-group margin-bottom-5px">
         <div class="form-input-group flex-width-100">
           <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date" class="form-input"/>
@@ -181,37 +236,26 @@
         </div>
         ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
       </div>
+    `;
+  };
+  let workoutlogFormTemplate = function (props) {
+    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
+    let validationError = props.validationError ? props.validationError : {};
+    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
+    return `
+    <form id="workout-log-form" class="form-container" autocomplete="off">
+      ${dateTemplate(props)}  
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
       ${modalityTemplate(workoutlog)}
       ${durationTemplate(workoutlog)}
       ${roundsTemplate(workoutlog)}
-      <div class="form-flex-group margin-bottom-5px">
-        <div class="form-input-group">
-          <input type="text" class="form-input" name="wolog-location" id="wolog-location" value="${workoutlog.location ? workoutlog.location : ''}" placeholder="Location" disabled />
-          <label for="wolog-location" class="form-label">Location</label>
-        </div>
-        <label class="switch small form-group-label margin-left-5px">
-          <input type="checkbox" id="location-switch"/>
-          <span class="slider small round"></span>
-        </label>
-      </div>
-      <div class="form-flex-group margin-bottom-5px">
-        <div class="form-input-group">
-          <textarea class="form-input" name="wolog-notes" id="wolog-notes" placeholder="Notes" disabled>${workoutlog.notes ? workoutlog.notes : ''}</textarea>
-          <label for="wolog-notes" class="form-label">Notes</label>
-        </div>
-        <label class="switch small form-group-label margin-left-5px">
-          <input type="checkbox" id="notes-switch"/>
-          <span class="slider small round"></span>
-        </label>
-      </div>
-      <div>
-        ${validationError.catchAll ? `<div id="error-catch-all">${validationError.catchAll}` : ''}
-      </div>
-      <div>
-        <button type="submit" id="submit-wolog">Save</button>
-        <button type="button" id="cancel-submit-wolog" onclick="window.history.back()">Cancel</button>
+      ${movementsTemplate(props)}
+      ${notesTemplate(workoutlog)}
+      ${locationTemplate(workoutlog)}
+      ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}` : ''}
+      <div class="submit-btn-bar margin-top-5px">
+        <button type="submit" id="submit-wolog" class="submit-btn">Save</button>
       </div>
     </form>
     ${workoutListModalTemplate(props)}
@@ -226,15 +270,19 @@
       user: {},
       workouts: [],
       pageTitle: 'Log',
+      movements: [],
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutlogFormTemplate);
     },
     afterRender: function (props) {
-      setDurationSwitch(props);
-      setRoundsSwitch(props);
-      setLocationSwitch(props);
-      setNotesSwitch(props)
+      if (props.error === '') {
+        setDurationSwitch(props);
+        setRoundsSwitch(props);
+        setLocationSwitch(props);
+        setNotesSwitch(props);
+        autocomplete(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
+      }
     },
   }));
 
@@ -316,7 +364,6 @@
     }
     toggleNotesTextarea();
   };
-  
 
   /**
    * Enables/disabled the hours, minutes, seconds fields based on the state of duration switch.
@@ -409,6 +456,43 @@
   };
 
   /**
+   * Enable/disable movement, reps, load, unit fields based on the state of movement switch.
+   * Wipe out the values from the fields when the fields are disabled.
+   * Re-populate the values on enable if the values are present in the state
+   */
+  let toggleMovementFields = function () {
+    let movementSwitch = document.querySelector('#movement-switch');
+    let movementAddButton = document.querySelector('#wolog-movement-add-btn');
+    // let state = component.getState();
+    // let movements = state.workoutlog && state.workoutlog.movements ? state.workoutlog.movements : [];
+    let addMovementTextField = document.getElementById('wolog-add-movement');
+    if (movementSwitch.checked) {
+      enableField(addMovementTextField);
+      movementAddButton.style.display = 'block';
+    } else {
+      disableField(addMovementTextField);
+      movementAddButton.style.display = 'none';
+    }
+    // for (let i = 0; i < movements.length; i++) {
+    //   let roundsInputField = document.querySelector(`#wolog-rounds-${i}`);
+    //   let loadInputField = document.querySelector(`#wolog-load-${i}`);
+    //   let unitSelect = document.querySelector(`#wolog-unit-${i}`);
+    //   if (roundsSwitch.checked) {
+    //     enableField(roundsInputField);
+    //     enableField(loadInputField);
+    //     enableField(unitSelect);
+    //     roundsInputField.value = roundinfo[i].rounds !== null ? roundinfo[i].rounds : '';
+    //     loadInputField.value = roundinfo[i].load !== null ? roundinfo[i].load : '';
+    //     unitSelect.value = roundinfo[i].unit !== null ? roundinfo[i].unit : '';
+    //   } else {
+    //     disableField(roundsInputField);
+    //     disableField(loadInputField);
+    //     disableField(unitSelect);
+    //   }
+    // }
+  };
+
+  /**
    * Helper function to disable a field and set the value to empty string
    * @param {*} name - field name
    */
@@ -424,6 +508,53 @@
   function enableField(name) {
     name['disabled'] = false;
   }
+
+  /**
+   * Adds a movement to the list of movements and shows the relevent fields to enter movement data
+   * @param {*} event
+   */
+  let addMovement = function (event) {
+    event.preventDefault();
+    let addMovementField = document.getElementById('wolog-add-movement');
+    let selectedMovementIndexField = document.getElementById('selected-movement-index');
+    let state = component.getState();
+    let movements = state.movements ? state.movements : [];
+    if (addMovementField.value.trim()) {
+      let index = selectedMovementIndexField.value ? parseInt(selectedMovementIndexField.value) : -1;
+      let selectedMovement = movements[index] && movements[index].movement.trim().toLowerCase() === addMovementField.value.trim().toLowerCase() ? movements[index] : { movement: addMovementField.value.trim() };
+    }
+  };
+  /**
+   * takes two arguments, the input field and the list of items to be used for auto complete
+   * Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
+   * */
+
+  let autocomplete = function (textField, list) {
+    let autocompleteDiv = document.getElementById('autocomplete-movement-list');
+    // Execute the function when someone writes something in the input field
+    textField.addEventListener('input', function (event) {
+      //Capture the input value
+      let textFieldValue = this.value;
+      //Close any open lists of autocompleted values
+      if (!textFieldValue) {
+        //If no textfield value then clean the list
+        autocompleteDiv.innerHTML = '';
+        return false;
+      }
+      let autocompleteList = '';
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].movement.toLowerCase().includes(textFieldValue.toLowerCase())) {
+          let subStringIndex = list[i].movement.toLowerCase().indexOf(textFieldValue.toLowerCase());
+          // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
+          if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) {
+            let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
+            autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
+          }
+        }
+      }
+      autocompleteDiv.innerHTML = autocompleteList;
+    });
+  };
 
   let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
@@ -487,6 +618,11 @@
     let validationError = validateFormInput();
 
     if (JSON.stringify(validationError) === '{}') {
+      //Disable submit button to avoid multiple submissions
+      let submitButton = document.getElementById('submit-wolog');
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Saving...';
+
       let params = $hl.getParams();
       let ref = params && params.ref ? params.ref : 'workoutlogs.html';
       let user_id = params && params.user_id ? `&user_id=${params.user_id}` : false;
@@ -590,6 +726,19 @@
     component.setState({ workoutlog });
   };
 
+  let populateMovementTextField = function (matchedMovementId) {
+    let prefix = 'movement-list-item-';
+    let index = matchedMovementId.substr(prefix.length);
+    let wologAddMovementField = document.getElementById('wolog-add-movement');
+    let selectedMovementIndexField = document.getElementById('selected-movement-index');
+    let state = component.getState();
+    let movements = state.movements ? state.movements : [];
+    wologAddMovementField.value = movements[parseInt(index)].movement;
+    selectedMovementIndexField.value = index;
+    let autocompleteDiv = document.getElementById('autocomplete-movement-list');
+    autocompleteDiv.innerHTML = '';
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
@@ -598,6 +747,8 @@
   $hl.eventListener('click', 'rounds-switch', toggleRoundsFields);
   $hl.eventListener('click', 'location-switch', toggleLocationField);
   $hl.eventListener('click', 'notes-switch', toggleNotesTextarea);
+  $hl.eventListener('click', 'movement-switch', toggleMovementFields);
+  $hl.eventListener('click', 'wolog-movement-add-btn', addMovement);
   document.addEventListener('click', function (event) {
     //Select a workout from the list
     let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
@@ -619,46 +770,70 @@
     if (copyRoundInfoRegex.test(event.target.id)) {
       copyRoundInfo(event.target.id);
     }
+
+    let movementListRegex = new RegExp(/^movement-list-item-\d+/);
+    matchedMovementId = $hl.matchClosestSelector(event.target, movementListRegex);
+    if (matchedMovementId) {
+      populateMovementTextField(matchedMovementId);
+    }
   });
 
   ($ironfyt.workoutlogFormPage = function () {
+    let state = { pageTitle: 'New Log' };
     $ironfyt.authenticateUser(function (error, auth) {
+      if (error) {
+        component.setState({ error });
+        return;
+      }
       let user = auth && auth.user ? auth.user : {};
-      if (!error) {
+      state.user = user;
+
+      $ironfyt.getMovements({}, function (error, response) {
+        if (error) {
+          component.setState({ error });
+          return;
+        }
+        state.movements = response && response.movements ? response.movements : [];
+
         let params = $hl.getParams();
         let _id = params && params._id ? params._id : false;
         let date = params && params.date ? params.date : false;
         let user_id = params && params.user_id ? params.user_id : false;
+        let isAdmin = user.role === 'admin';
 
+        if (user_id && user_id !== user._id && !isAdmin) {
+          component.setState({ error: { message: 'You cannot edit a workout log for another user!' } });
+          return;
+        }
         if (_id && _id.length !== 24) {
           component.setState({ error: { message: 'Invalid ID' } });
-        } else if (_id && _id.length === 24) {
+          return;
+        }
+        if (_id) {
           $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
-            if (!error) {
-              let workoutlog = response.workoutlogs.length ? response.workoutlogs[0] : newWorkoutLog;
-              component.setState({ workoutlog, user, pageTitle: 'Edit Log' });
-            } else {
+            if (error) {
               component.setState({ error });
+              return;
+            }
+            let workoutlog = response.workoutlogs.length && (response.workoutlogs[0].user_id === user._id || user.role === 'admin') ? response.workoutlogs[0] : false;
+            if (workoutlog) {
+              state.pageTitle = 'Edit Log';
+              state.workoutlog = workoutlog;
+              component.setState(state);
+            } else {
+              component.setState({ error: { message: 'Sorry, either no log found or you are not authorized to edit the log' } });
             }
           });
         } else if (date) {
           let workoutlog = newWorkoutLog;
           workoutlog.date = date;
-          if (user_id && user.role === 'admin' && user_id !== user._id) {
-            workoutlog.user_id = user_id;
-          } else if (user_id && user.role !== 'admin' && user_id !== user._id) {
-            component.setState({ error: { message: 'You cannot edit a workout log for another user!' } });
-            return;
-          } else {
-            workoutlog.user_id = user._id;
-          }
-          component.setState({ workoutlog, user, pageTitle: 'New Log' });
+          workoutlog.user_id = user_id && user.role === 'admin' && user_id !== user._id ? user_id : user._id;
+          state.workoutlog = workoutlog;
+          component.setState(state);
         } else {
-          component.setState({ user, pageTitle: 'New Log' });
+          component.setState(state);
         }
-      } else {
-        component.setState({ error });
-      }
+      });
     });
   })();
 })();

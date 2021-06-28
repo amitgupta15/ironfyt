@@ -382,4 +382,37 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //       console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
   //     });
   //   });
+  // let movements = [
+  //   'Clean',
+  //   'Squat Clean',
+  //   'Power Clean',
+  //   'Hang Power Clean',
+  //   'Dumbbell Clean',
+  //   'Clean & Jerk',
+  //   'Push Jerk',
+  //   'Push Press',
+  //   'Shoulder Press',
+  //   'Squat',
+  //   'Back Squat',
+  //   'Front Squat',
+  //   'Overhead Squat',
+  //   'Dumbbell Squat',
+  //   'Dumbbell Overhead Squat',
+  //   'Deadlift',
+  //   'Sumo Deadlift',
+  //   'Sumo Deadlift High Pull (SDHP)',
+  //   'Running',
+  //   'Yoga',
+  //   'Walking',
+  //   'Push-ups',
+  //   'Pull-ups',
+  //   'Weighted Pull-ups',
+  //   'Bench Press',
+  //   'Rope Climb',
+  //   'Battle Rope Slams',
+  // ].forEach((movement) => {
+  //   db.collection('movements').insertOne({ movement }, function (error, result) {
+  //     console.log(result.ops[0]);
+  //   });
+  // });
 });

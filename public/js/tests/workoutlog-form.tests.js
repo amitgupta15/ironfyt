@@ -7,13 +7,14 @@
   let page = $ironfyt.workoutlogFormPage;
 
   $test.it('should create a workoutlogformComponent', function () {
-    $test.assert(Object.keys(component.state).length === 6);
+    $test.assert(Object.keys(component.state).length === 7);
     $test.assert('error' in component.state);
     $test.assert('validationError' in component.state);
     $test.assert('user' in component.state);
     $test.assert('workoutlog' in component.state);
     $test.assert('workouts' in component.state);
     $test.assert('pageTitle' in component.state);
+    $test.assert('movements' in component.state);
     $test.assert(component.selector === '[data-app=workoutlog-form]');
   });
 
@@ -220,6 +221,12 @@
     $ironfyt.authenticateUser = function (callback) {
       callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
     };
+    // log is for a different user from the one logged in.
+    $ironfyt.getWorkoutLogs = function (params, callback) {
+      if (params._id === '60a42872175ed060322c0183') {
+        callback(false, { workoutlogs: [{ _id: '60a42872175ed060322c0183', user: { _id: '123456789012345678901234' } }] });
+      }
+    };
 
     $hl.getParams = function () {
       return { date: '2021-05-28T07:00:00.000', user_id: '123456789012345678901234' };
@@ -227,6 +234,13 @@
     page();
     let state = component.getState();
     $test.assert(state.error.message === 'You cannot edit a workout log for another user!');
+    component.setState({ error: '' });
+    $hl.getParams = function () {
+      return { _id: '60a42872175ed060322c0183' };
+    };
+    page();
+    state = component.getState();
+    $test.assert(state.error.message === 'Sorry, either no log found or you are not authorized to edit the log');
   });
 
   $test.it("should let an admin edit another user's workout log", function () {
@@ -246,7 +260,7 @@
 
   $test.it('should set the status of duration switch and enable/disable duration fields based on duration data', function () {
     let selector = document.querySelector('#selector');
-    let state = {};
+    let state = { error: '' };
     component.setState(state);
     selector.innerHTML = component.template(state);
     component.afterRender(state);
@@ -259,7 +273,7 @@
     $test.assert(minuteInput.disabled === true);
     $test.assert(secondInput.disabled === true);
 
-    state = { workoutlog: { duration: { hours: null, minutes: 30, seconds: null } } };
+    state = { error: '', workoutlog: { duration: { hours: null, minutes: 30, seconds: null } } };
     component.afterRender(state);
     $test.assert(durationSwitch.checked === true);
     $test.assert(hourInput.disabled === false);
@@ -275,7 +289,7 @@
     $test.assert(secondInput.disabled === true);
     $test.assert(secondInput.value === '');
 
-    component.setState({ workoutlog: { duration: { hours: 10, minutes: 20, seconds: 30 } } });
+    component.setState({ error: '', workoutlog: { duration: { hours: 10, minutes: 20, seconds: 30 } } });
     durationSwitch.checked = true;
     $test.dispatchHTMLEvent('click', '#duration-switch');
     $test.assert(hourInput.disabled === false);
@@ -288,7 +302,7 @@
 
   $test.it('should set the status of rounds switch and enable/disable rounds fields based on rounds data', function () {
     let selector = document.querySelector('#selector');
-    let state = {};
+    let state = { error: '' };
     component.setState(state);
     selector.innerHTML = component.template(state);
     component.afterRender(state);
@@ -301,7 +315,7 @@
     $test.assert(roundsInputField.disabled === true);
     $test.assert(loadInputField.disabled === true);
 
-    state = { workoutlog: { roundinfo: [{ rounds: 1, load: 30, unit: 'lbs' }] } };
+    state = { error: '', workoutlog: { roundinfo: [{ rounds: 1, load: 30, unit: 'lbs' }] } };
     component.setState(state);
     component.afterRender(state);
     $test.assert(roundsSwitch.checked === true);
@@ -318,7 +332,7 @@
     $test.assert(loadInputField.disabled === true);
     $test.assert(loadInputField.value === '');
 
-    component.setState({ workoutlog: { roundinfo: [{ rounds: 1, load: 30, unit: 'lbs' }] } });
+    component.setState({ error: '', workoutlog: { roundinfo: [{ rounds: 1, load: 30, unit: 'lbs' }] } });
     roundsSwitch.checked = true;
     $test.dispatchHTMLEvent('click', '#rounds-switch');
     $test.assert(unitSelect.disabled === false);
@@ -331,7 +345,7 @@
 
   $test.it('should set the status of location switch and enable/disable location field based on location data', function () {
     let selector = document.querySelector('#selector');
-    let state = {};
+    let state = { error: '' };
     component.setState(state);
     selector.innerHTML = component.template(state);
     component.afterRender(state);
@@ -340,7 +354,7 @@
     $test.assert(locationSwitch.checked === false);
     $test.assert(locationInputField.disabled === true);
 
-    state = { workoutlog: { location: 'Home Gym' } };
+    state = { error: '', workoutlog: { location: 'Home Gym' } };
     component.setState(state);
     component.afterRender(state);
     $test.assert(locationSwitch.checked === true);
@@ -359,7 +373,7 @@
 
   $test.it('should set the status of notes switch and enable/disable notes field based on notes data', function () {
     let selector = document.querySelector('#selector');
-    let state = {};
+    let state = { error: '' };
     component.setState(state);
     selector.innerHTML = component.template(state);
     component.afterRender(state);
@@ -368,7 +382,7 @@
     $test.assert(notesSwitch.checked === false);
     $test.assert(notesInputField.disabled === true);
 
-    state = { workoutlog: { notes: 'Do better next time' } };
+    state = { error: '', workoutlog: { notes: 'Do better next time' } };
     component.setState(state);
     component.afterRender(state);
     $test.assert(notesSwitch.checked === true);
@@ -383,6 +397,66 @@
     $test.dispatchHTMLEvent('click', '#notes-switch');
     $test.assert(notesInputField.disabled === false);
     $test.assert(notesInputField.value === 'Do better next time');
+  });
+
+  $test.it('should set the status of movements switch and enable/disable movement fields based on movements data', function () {
+    let selector = document.querySelector('#selector');
+    let state = { error: '' };
+    selector.innerHTML = component.template(state);
+    let movementSwitch = document.getElementById('movement-switch');
+    let addMovementTextField = document.querySelector('#wolog-add-movement');
+    let movementAddButton = document.querySelector('#wolog-movement-add-btn');
+
+    $test.assert(addMovementTextField.disabled === true);
+    $test.assert(addMovementTextField.disabled === true);
+    $test.assert(movementAddButton.style.display === '');
+
+    // Simulate checking the movement checkbox
+    movementSwitch.checked = true;
+    $test.dispatchHTMLEvent('click', '#movement-switch');
+    $test.assert(movementSwitch.checked === true);
+    $test.assert(addMovementTextField.disabled === false);
+    $test.assert(movementAddButton.style.display === 'block');
+
+    // Simulate unchecking the movement checkbox
+    movementSwitch.checked = false;
+    $test.dispatchHTMLEvent('click', '#movement-switch');
+    $test.assert(movementSwitch.checked === false);
+    $test.assert(addMovementTextField.disabled === true);
+    $test.assert(movementAddButton.style.display === 'none');
+  });
+
+  $test.it('should show available movements when adding a movement - auto-complete', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
+    };
+    $ironfyt.getMovements = function (params, callback) {
+      callback(false, {
+        movements: [
+          { _id: 1, movement: 'Back Squat' },
+          { _id: 2, movement: 'Bench Press' },
+          { _id: 3, movement: 'Squat' },
+        ],
+      });
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.movements.length === 3);
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(state);
+    component.afterRender(state);
+    let addMovementField = document.querySelector('#wolog-add-movement');
+    addMovementField.value = 'b';
+    $test.dispatchHTMLEvent('input', '#wolog-add-movement');
+    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0"><strong>B</strong>ack Squat</div><div id="movement-list-item-1"><strong>B</strong>ench Press</div>'));
+    addMovementField.value = 'sq';
+    $test.dispatchHTMLEvent('input', '#wolog-add-movement');
+    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0">Back <strong>Sq</strong>uat</div><div id="movement-list-item-2"><strong>Sq</strong>uat</div>'));
+
+    $test.dispatchHTMLEvent('click', '#movement-list-item-0');
+    $test.assert(addMovementField.value === 'Back Squat');
+    $test.assert(document.getElementById('selected-movement-index').value === '0');
   });
   console.groupEnd();
 })();

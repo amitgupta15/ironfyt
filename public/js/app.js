@@ -76,6 +76,13 @@
       validateReponse(error, response, callback);
     });
   };
+  $ironfyt.getMovements = function (params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`/api/movement?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
 
   $ironfyt.saveWorkout = function (workout, callback) {
     let headers = getAuthHeader();

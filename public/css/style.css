@@ -58,6 +58,10 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+.error {
+  color: red;
+  font-size: 0.8rem;
+}
 .top-bar {
   display: flex;
   flex-wrap: nowrap;
@@ -191,8 +195,7 @@ input[type='number'] {
   margin: 10px;
 }
 
-#add-log-btn-calendar-view,
-#select-workout-btn-wolog {
+#add-log-btn-calendar-view {
   width: 100%;
   border: 1px solid var(--btn-primary);
   border-radius: 5px;
@@ -201,6 +204,15 @@ input[type='number'] {
   color: var(--btn-primary);
 }
 
+#select-workout-btn-wolog {
+  width: 100%;
+  border: 1px solid var(--btn-primary);
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--btn-primary);
+}
 .day-log-detail-container-calendar-view {
   padding-bottom: 20px;
   padding-top: 10px;
@@ -331,9 +343,6 @@ input[type='number'] {
   margin-right: 10px;
   width: 70px;
 }
-.wolog-exercise-input {
-  width: 280px;
-}
 
 .form-input::placeholder {
   visibility: hidden;
@@ -394,6 +403,23 @@ input[type='number'] {
   margin-left: 5px !important;
 }
 
+.submit-btn-bar {
+  width: 100%;
+  text-align: center;
+}
+.submit-btn {
+  width: 100%;
+  background-color: var(--btn-primary);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 1.1rem;
+  color: white;
+  font-weight: 600;
+}
+.submit-btn:disabled {
+  background-color: lightgray;
+}
 .copy-btn {
   display: block;
   background-image: url('../images/baseline_content_copy_black_24dp.png');
@@ -439,11 +465,20 @@ input[type='number'] {
 }
 #wolog-location {
   width: 80vw;
+  margin-left: 6px;
 }
 #wolog-notes {
+  margin-left: 6px;
   width: 80vw;
   height: 90px;
   padding-top: 25px;
+}
+#wolog-add-movement {
+  width: 80vw;
+}
+#wolog-notes ~ label,
+#wolog-location ~ label {
+  left: 11px;
 }
 
 .block-with-border {
@@ -465,12 +500,9 @@ input[type='number'] {
   top: 3px;
   right: 3px;
 }
-.summary {
+details > summary {
   border: none;
   outline: none;
-  color: var(--main-color);
-  font-weight: 600;
-  font-size: 1.2rem;
 }
 
 .workout-detail-view {
@@ -564,17 +596,20 @@ input[type='number'] {
 select:disabled {
   background-color: #aaa;
 }
-/***Not yet incorporated in the main code***/
 
-input:disabled {
+input:disabled,
+textarea:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-input:disabled ~ label {
+input:disabled ~ label,
+textarea:disabled ~ label {
   color: darkgray;
 }
-
-.wolog-exericse-add-btn {
+textarea {
+  font-family: inherit;
+}
+.wolog-movement-add-btn {
   display: none;
   position: absolute;
   border: 1px solid white;
@@ -588,7 +623,7 @@ input:disabled ~ label {
   z-index: 1000;
   background-color: var(--btn-primary);
 }
-.autocomplete-exercise-list {
+.autocomplete-movement-list {
   position: absolute;
   border: 1px solid #d4d4d4;
   border-bottom: none;
@@ -599,13 +634,13 @@ input:disabled ~ label {
   left: 0;
   right: 0;
 }
-.autocomplete-exercise-list div {
+.autocomplete-movement-list div {
   padding: 10px;
   cursor: pointer;
   background-color: #fff;
   border-bottom: 1px solid #d4d4d4;
 }
-.autocomplete-exercise-list div:hover {
+.autocomplete-movement-list div:hover {
   /*when hovering an item:*/
   background-color: #e9e9e9;
 }
@@ -614,5 +649,3 @@ input:disabled ~ label {
   background-color: DodgerBlue !important;
   color: #ffffff;
 }
-
-/* End - Not yet incorporated in the main code */
