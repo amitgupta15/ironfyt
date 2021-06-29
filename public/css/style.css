@@ -473,9 +473,7 @@ input[type='number'] {
   height: 90px;
   padding-top: 25px;
 }
-#wolog-add-movement {
-  width: 80vw;
-}
+
 #wolog-notes ~ label,
 #wolog-location ~ label {
   left: 11px;
@@ -648,4 +646,19 @@ textarea {
   /*when navigating through the items using the arrow keys:*/
   background-color: DodgerBlue !important;
   color: #ffffff;
+}
+.add-movement-input-group {
+  width: 80vw;
+  position: relative;
+}
+
+.wolog-movement-name {
+  font-size: 0.8rem;
+  width: 70px;
+  margin-right: 5px;
+}
+
+.wolog-movement-attr {
+  width: 50px;
+  margin-right: 5px;
 }

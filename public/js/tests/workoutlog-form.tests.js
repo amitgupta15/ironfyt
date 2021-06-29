@@ -424,6 +424,13 @@
     $test.assert(movementSwitch.checked === false);
     $test.assert(addMovementTextField.disabled === true);
     $test.assert(movementAddButton.style.display === 'none');
+
+    component.setState({ workoutlog: { movements: [{ _id: 1, movement: 'Bench Press' }] } });
+    state = component.getState();
+    component.afterRender(state);
+    $test.assert(movementSwitch.checked);
+    $test.assert(addMovementTextField.disabled === false);
+    $test.assert(movementAddButton.style.display === 'block');
   });
 
   $test.it('should show available movements when adding a movement - auto-complete', function () {
@@ -457,6 +464,46 @@
     $test.dispatchHTMLEvent('click', '#movement-list-item-0');
     $test.assert(addMovementField.value === 'Back Squat');
     $test.assert(document.getElementById('selected-movement-index').value === '0');
+  });
+
+  $test.it('should add movement to the log when the add button is clicked', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
+    };
+    $ironfyt.getMovements = function (params, callback) {
+      callback(false, {
+        movements: [
+          { _id: 1, movement: 'Back Squat' },
+          { _id: 2, movement: 'Bench Press' },
+          { _id: 3, movement: 'Squat' },
+        ],
+      });
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.movements.length === 3);
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(state);
+    component.afterRender(state);
+    let addMovementField = document.querySelector('#wolog-add-movement');
+    addMovementField.value = 'sq';
+    $test.dispatchHTMLEvent('input', '#wolog-add-movement');
+    $test.dispatchHTMLEvent('click', '#movement-list-item-0');
+    $test.assert(addMovementField.value === 'Back Squat');
+    $test.assert(document.getElementById('selected-movement-index').value === '0');
+    $test.dispatchHTMLEvent('click', '#wolog-movement-add-btn');
+    state = component.getState();
+    $test.assert(state.workoutlog.movements[0]._id === 1);
+    $test.assert(state.workoutlog.movements[0].movement === 'Back Squat');
+    $test.assert(addMovementField.value === '');
+
+    addMovementField.value = 'Deadlift'; //this is not in the list
+    $test.dispatchHTMLEvent('click', '#wolog-movement-add-btn');
+    state = component.getState();
+    $test.assert(state.workoutlog.movements[1].hasOwnProperty('_id') === false);
+    $test.assert(state.workoutlog.movements[1].movement === 'Deadlift');
+    $test.assert(addMovementField.value === '');
   });
   console.groupEnd();
 })();

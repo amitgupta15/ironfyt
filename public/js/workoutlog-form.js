@@ -169,7 +169,8 @@
     `;
   };
 
-  let movementsTemplate = function (props) {
+  let movementsTemplate = function (workoutlog) {
+    let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
     return `
     <div class="form-flex-group margin-bottom-5px block-with-border">
       <div class="block-with-border-label">Movement x Reps x Load/Distance/...</div>
@@ -179,15 +180,48 @@
           <span class="slider small round"></span>
         </label>
       </div>
-      <div class="form-flex-group margin-top-5px">
-        <div class="form-input-group">
-          <input class="form-input" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." disabled />
-          <label for="wolog-add-movement" class="form-label" id="wolog-add-movement-input-label">Add a movement...</label>
-          <button type="button" id="wolog-movement-add-btn" class="wolog-movement-add-btn">Add</button>
+      <div class="margin-top-5px">
+        <div class="form-input-group margin-bottom-5px">
+          <div class="add-movement-input-group">
+            <input class="form-input" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." disabled />
+            <label for="wolog-add-movement" class="form-label" id="wolog-add-movement-input-label">Add a movement...</label>
+            <button type="button" id="wolog-movement-add-btn" class="wolog-movement-add-btn">Add</button>
+          </div>
           <input type="hidden" id="selected-movement-index" value="">
           <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
         </div>
-      </div>
+        ${movements
+          .map(function (item, index) {
+            return `
+            <div class="form-flex-group margin-bottom-5px">
+              <div class="wolog-movement-name">
+                ${item.movement}
+                <input type="hidden" name="wolog-movement-obj-${index}" id="wolog-movement-obj-${index}" value=${JSON.stringify(item)}>
+              </div>
+              <div class="form-input-group">
+                <input type="number" class="form-input wolog-movement-attr" name="wolog-movement-reps-${index}" id="wolog-movement-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">    
+                <label for="wolog-movement-reps-${index}" class="form-label rounds-label">Reps</label>
+              </div>      
+              <div class="form-input-group">  
+                <input type="number" class="form-input wolog-movement-attr" name="wolog-movement-load-${index}" id="wolog-movement-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
+                <label for="wolog-movement-load-${index}" class="form-label rounds-label">Load</label>
+              </div>
+              <div class="form-input-group">
+                <label for="wolog-movement-unit-${index}" class="form-label hide-view">Unit</label>
+                <select class="form-input" name="wolog-movement-unit-${index}" id="wolog-movement-unit-${index}">
+                  <option value=""></option>
+                  ${units.map((unit) => `<option value="${unit}" ${item.unit && item.unit.toLowerCase() === unit.toLowerCase() ? 'selected' : ''}>${unit}</option>`)}
+                </select>
+              </div>
+              <button type="button" class="copy-btn" id="copy-movement-info-${index}"></button>
+              ${index > 0 ? `<button type="button" class="remove-btn" id="delete-movement-info-${index}"></button>` : ``}
+              <div>
+              </div>
+            </div>
+            `;
+          })
+          .join('')}
+      </div>      
     </div>
     `;
   };
@@ -247,13 +281,13 @@
       ${dateTemplate(props)}  
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-      ${modalityTemplate(workoutlog)}
       ${durationTemplate(workoutlog)}
       ${roundsTemplate(workoutlog)}
-      ${movementsTemplate(props)}
+      ${movementsTemplate(workoutlog)}
       ${notesTemplate(workoutlog)}
+      ${modalityTemplate(workoutlog)}
       ${locationTemplate(workoutlog)}
-      ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}` : ''}
+      ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}</div>` : ''}
       <div class="submit-btn-bar margin-top-5px">
         <button type="submit" id="submit-wolog" class="submit-btn">Save</button>
       </div>
@@ -281,6 +315,7 @@
         setRoundsSwitch(props);
         setLocationSwitch(props);
         setNotesSwitch(props);
+        setMovementSwitch(props);
         autocomplete(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
       }
     },
@@ -363,6 +398,22 @@
       notesSwitch.checked = false;
     }
     toggleNotesTextarea();
+  };
+
+  /**
+   * After render, check if movements switch needs to be turned on.
+   * movements switch also calls toggleMovementFields() to enable/disable the field
+   * @param {*} props
+   */
+  let setMovementSwitch = function (props) {
+    let movementSwitch = document.getElementById('movement-switch');
+    let movements = props.workoutlog && props.workoutlog.movements ? props.workoutlog.movements : [];
+    if (movements.length) {
+      movementSwitch.checked = true;
+    } else {
+      movementSwitch.checked = false;
+    }
+    toggleMovementFields();
   };
 
   /**
@@ -463,8 +514,6 @@
   let toggleMovementFields = function () {
     let movementSwitch = document.querySelector('#movement-switch');
     let movementAddButton = document.querySelector('#wolog-movement-add-btn');
-    // let state = component.getState();
-    // let movements = state.workoutlog && state.workoutlog.movements ? state.workoutlog.movements : [];
     let addMovementTextField = document.getElementById('wolog-add-movement');
     if (movementSwitch.checked) {
       enableField(addMovementTextField);
@@ -473,23 +522,6 @@
       disableField(addMovementTextField);
       movementAddButton.style.display = 'none';
     }
-    // for (let i = 0; i < movements.length; i++) {
-    //   let roundsInputField = document.querySelector(`#wolog-rounds-${i}`);
-    //   let loadInputField = document.querySelector(`#wolog-load-${i}`);
-    //   let unitSelect = document.querySelector(`#wolog-unit-${i}`);
-    //   if (roundsSwitch.checked) {
-    //     enableField(roundsInputField);
-    //     enableField(loadInputField);
-    //     enableField(unitSelect);
-    //     roundsInputField.value = roundinfo[i].rounds !== null ? roundinfo[i].rounds : '';
-    //     loadInputField.value = roundinfo[i].load !== null ? roundinfo[i].load : '';
-    //     unitSelect.value = roundinfo[i].unit !== null ? roundinfo[i].unit : '';
-    //   } else {
-    //     disableField(roundsInputField);
-    //     disableField(loadInputField);
-    //     disableField(unitSelect);
-    //   }
-    // }
   };
 
   /**
@@ -522,6 +554,10 @@
     if (addMovementField.value.trim()) {
       let index = selectedMovementIndexField.value ? parseInt(selectedMovementIndexField.value) : -1;
       let selectedMovement = movements[index] && movements[index].movement.trim().toLowerCase() === addMovementField.value.trim().toLowerCase() ? movements[index] : { movement: addMovementField.value.trim() };
+      let workoutlog = createWorkoutLogObjFromFormElements();
+      workoutlog.movements.push(selectedMovement);
+      component.setState({ workoutlog });
+      addMovementField.value = '';
     }
   };
   /**
@@ -590,6 +626,19 @@
     }
     workoutlog.roundinfo = roundinfo;
 
+    let movements = [];
+    let movementlength = workoutlog && workoutlog.movements ? workoutlog.movements.length : 0;
+    for (var i = 0; i < movementlength; i++) {
+      let movement = elements[`wolog-movement-obj-${i}`] ? JSON.parse(elements[`wolog-movement-obj-${i}`].value) : {};
+      let reps = elements[`wolog-movement-reps-${i}`] ? parseInt(elements[`wolog-movement-reps-${i}`].value) : null;
+      let load = elements[`wolog-movement-load-${i}`] ? parseInt(elements[`wolog-movement-load-${i}`].value) : null;
+      let unit = elements[`wolog-movement-unit-${i}`] ? elements[`wolog-movement-unit-${i}`].value : null;
+      movement.reps = reps ? reps : null;
+      movement.load = load ? load : null;
+      movement.unit = unit ? unit : null;
+      movements.push(movement);
+    }
+    workoutlog.movements = movements;
     return workoutlog;
   };
 
