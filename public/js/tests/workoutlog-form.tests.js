@@ -41,7 +41,7 @@
   $test.it('should handle invalid form data', function () {
     component.setState({ workoutlog: {} });
     let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template({});
+    selector.innerHTML = component.template({ workoutlog: { movements: [{ _id: '1', movement: 'squat' }], roundinfo: [{ rounds: null, load: null, unit: null }] } });
     let form = document.querySelector('#workout-log-form');
     // Component sets the default date to today's date. Overwriting the default date here to generate an error
     form.elements['wolog-date'].value = '';
@@ -504,6 +504,48 @@
     $test.assert(state.workoutlog.movements[1].hasOwnProperty('_id') === false);
     $test.assert(state.workoutlog.movements[1].movement === 'Deadlift');
     $test.assert(addMovementField.value === '');
+  });
+
+  $test.it('should copy movement block while preserving the form state', function () {
+    let state = { workoutlog: { movements: [{ movement: 'Clean', reps: 10, load: 135, unit: 'lbs' }] } };
+    component.setState(state);
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(state);
+
+    $test.dispatchHTMLEvent('click', '#copy-movement-0');
+    let workoutlog = component.getState().workoutlog;
+    $test.assert(workoutlog.movements.length === 2);
+    $test.assert(workoutlog.movements[1].movement === 'Clean');
+    $test.assert(workoutlog.movements[1].reps === 10);
+    $test.assert(workoutlog.movements[1].load === 135);
+    $test.assert(workoutlog.movements[1].unit === 'lbs');
+  });
+
+  $test.it('should remove movement block while preserving the form state', function () {
+    let state = {
+      workoutlog: {
+        movements: [
+          { movement: 'Clean', reps: null, load: null, unit: null },
+          { movement: 'Clean', reps: null, load: null, unit: null },
+        ],
+      },
+    };
+    component.setState(state);
+
+    let workoutlog = component.getState().workoutlog;
+    $test.assert(workoutlog.movements.length === 2);
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template(state);
+    $test.dispatchHTMLEvent('click', '#delete-movement-0');
+
+    workoutlog = component.getState().workoutlog;
+    $test.assert(workoutlog.movements.length === 1);
+
+    $test.dispatchHTMLEvent('click', '#delete-movement-0');
+    workoutlog = component.getState().workoutlog;
+    $test.assert(workoutlog.movements.length === 0);
   });
   console.groupEnd();
 })();

@@ -194,10 +194,7 @@
           .map(function (item, index) {
             return `
             <div class="form-flex-group margin-bottom-5px">
-              <div class="wolog-movement-name">
-                ${item.movement}
-                <input type="hidden" name="wolog-movement-obj-${index}" id="wolog-movement-obj-${index}" value=${JSON.stringify(item)}>
-              </div>
+              <div class="wolog-movement-name" id="wolog-movement-data-${index}" data-id=${item._id ? item._id : ''}>${item.movement}</div>
               <div class="form-input-group">
                 <input type="number" class="form-input wolog-movement-attr" name="wolog-movement-reps-${index}" id="wolog-movement-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">    
                 <label for="wolog-movement-reps-${index}" class="form-label rounds-label">Reps</label>
@@ -213,8 +210,8 @@
                   ${units.map((unit) => `<option value="${unit}" ${item.unit && item.unit.toLowerCase() === unit.toLowerCase() ? 'selected' : ''}>${unit}</option>`)}
                 </select>
               </div>
-              <button type="button" class="copy-btn" id="copy-movement-info-${index}"></button>
-              ${index > 0 ? `<button type="button" class="remove-btn" id="delete-movement-info-${index}"></button>` : ``}
+              <button type="button" class="copy-btn" id="copy-movement-${index}"></button>
+              <button type="button" class="remove-btn" id="delete-movement-${index}"></button>
               <div>
               </div>
             </div>
@@ -629,14 +626,16 @@
     let movements = [];
     let movementlength = workoutlog && workoutlog.movements ? workoutlog.movements.length : 0;
     for (var i = 0; i < movementlength; i++) {
-      let movement = elements[`wolog-movement-obj-${i}`] ? JSON.parse(elements[`wolog-movement-obj-${i}`].value) : {};
-      let reps = elements[`wolog-movement-reps-${i}`] ? parseInt(elements[`wolog-movement-reps-${i}`].value) : null;
-      let load = elements[`wolog-movement-load-${i}`] ? parseInt(elements[`wolog-movement-load-${i}`].value) : null;
-      let unit = elements[`wolog-movement-unit-${i}`] ? elements[`wolog-movement-unit-${i}`].value : null;
-      movement.reps = reps ? reps : null;
-      movement.load = load ? load : null;
-      movement.unit = unit ? unit : null;
-      movements.push(movement);
+      let movementDiv = document.querySelector(`#wolog-movement-data-${i}`);
+      let movementObj = {};
+      if (movementDiv && movementDiv.dataset.id) {
+        movementObj._id = movementDiv.dataset.id;
+      }
+      movementObj.movement = movementDiv ? movementDiv.innerHTML.trim() : '';
+      movementObj.reps = elements[`wolog-movement-reps-${i}`] && elements[`wolog-movement-reps-${i}`].value ? parseInt(elements[`wolog-movement-reps-${i}`].value) : null;
+      movementObj.load = elements[`wolog-movement-load-${i}`] && elements[`wolog-movement-load-${i}`].value ? parseInt(elements[`wolog-movement-load-${i}`].value) : null;
+      movementObj.unit = elements[`wolog-movement-unit-${i}`] && elements[`wolog-movement-unit-${i}`].value ? elements[`wolog-movement-unit-${i}`].value : null;
+      movements.push(movementObj);
     }
     workoutlog.movements = movements;
     return workoutlog;
@@ -645,6 +644,15 @@
   let validateFormInput = function () {
     let elements = document.querySelector('#workout-log-form').elements;
     let validationError = {};
+
+    let empty_movement_reps = true;
+    let empty_movement_load = true;
+    if (elements['wolog-movement-reps-0']) {
+      empty_movement_reps = elements['wolog-movement-reps-0'].value === '' || elements['wolog-movement-reps-0'].value === 0;
+    }
+    if (elements['wolog-movement-load-0']) {
+      empty_movement_load = elements['wolog-movement-load-0'].value === '' || elements['wolog-movement-load-0'].value === 0;
+    }
     if (elements['wolog-date'].value === '') {
       validationError.date = 'Please enter a date for the log';
     }
@@ -654,7 +662,9 @@
       (elements['wolog-duration-seconds'].value === '' || parseInt(elements['wolog-duration-seconds'].value) === 0) &&
       (elements['wolog-load-0'].value === '' || parseInt(elements['wolog-load-0'].value) === 0) &&
       (elements['wolog-rounds-0'].value === '' || parseInt(elements['wolog-rounds-0'].value) === 0) &&
-      elements['wolog-notes'].value.trim() === ''
+      elements['wolog-notes'].value.trim() === '' &&
+      empty_movement_load &&
+      empty_movement_reps
     ) {
       validationError.catchAll = 'Please enter a value in one of the fields or add notes.';
     }
@@ -775,6 +785,37 @@
     component.setState({ workoutlog });
   };
 
+  let deleteMovement = function (targetId) {
+    let prefix = 'delete-movement-';
+    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    let movements = workoutlog.movements;
+    movements.splice(index, 1);
+    component.setState({ workoutlog });
+  };
+
+  let copyMovement = function (targetId) {
+    let prefix = 'copy-movement-';
+    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+    let movementDiv = document.getElementById(`wolog-movement-data-${index}`);
+    let repsInputField = document.getElementById(`wolog-movement-reps-${index}`);
+    let loadInputField = document.getElementById(`wolog-movement-load-${index}`);
+    let unitSelect = document.getElementById(`wolog-movement-unit-${index}`);
+
+    let movement = {};
+    if (movementDiv.dataset.id) {
+      movement._id = movementDiv.dataset.id;
+    }
+    movement.movement = movementDiv.innerHTML.trim();
+    movement.reps = repsInputField.value ? parseInt(repsInputField.value) : null;
+    movement.load = loadInputField.value ? parseInt(loadInputField.value) : null;
+    movement.unit = unitSelect.value ? unitSelect.value : '';
+
+    let workoutlog = createWorkoutLogObjFromFormElements();
+    workoutlog.movements.push(movement);
+    component.setState({ workoutlog });
+  };
+
   let populateMovementTextField = function (matchedMovementId) {
     let prefix = 'movement-list-item-';
     let index = matchedMovementId.substr(prefix.length);
@@ -824,6 +865,16 @@
     matchedMovementId = $hl.matchClosestSelector(event.target, movementListRegex);
     if (matchedMovementId) {
       populateMovementTextField(matchedMovementId);
+    }
+
+    let copyMovementRegex = new RegExp(/^copy-movement-\d+/gm);
+    if (copyMovementRegex.test(event.target.id)) {
+      copyMovement(event.target.id);
+    }
+
+    let deleteMovementRegex = new RegExp(/^delete-movement-\d+/gm);
+    if (deleteMovementRegex.test(event.target.id)) {
+      deleteMovement(event.target.id);
     }
   });
 
