@@ -17,6 +17,7 @@
       minutes: null,
       seconds: null,
     },
+    totalreps: null,
     roundinfo: [newRoundInfo],
     modality: [],
     location: null,
@@ -96,7 +97,7 @@
 
   let durationTemplate = function (workoutlog) {
     return `
-    <div class="form-flex-group margin-bottom-5px block-with-border">
+    <div class="form-flex-group block-with-border duration-block">
       <div class="block-with-border-label">Duration</div>
       <div class="block-with-border-switch">
         <label class="switch small form-group-label">
@@ -104,7 +105,7 @@
           <span class="slider small round"></span>
         </label>
       </div>
-      <div class="form-flex-group margin-top-5px">
+      <div class="form-flex-group margin-top-10px">
         <div class="form-input-group show-time-separator">
           <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" disabled />
           <label for="wolog-duration-hours" class="form-label duration-label">H</label>
@@ -255,6 +256,25 @@
     </div>
     `;
   };
+  let totalRepsTemplate = function (workoutlog) {
+    return `
+    <div class="form-flex-group block-with-border total-reps-block">
+      <div class="block-with-border-label">Total Reps</div>
+      <div class="block-with-border-switch">
+        <label class="switch small form-group-label">
+          <input type="checkbox" id="total-reps-switch"/>
+          <span class="slider small round"></span>
+        </label>
+      </div>
+      <div class="form-flex-group margin-top-10px">
+        <div class="form-input-group">
+          <input type="number" class="form-input rounds-input" name="wolog-total-reps" id="wolog-total-reps" value="${workoutlog.totalreps ? workoutlog.totalreps : ''}" placeholder="Reps" disabled>    
+          <label for="wolog-total-reps" class="form-label rounds-label">Reps</label>
+        </div>      
+      </div>
+    </div>
+    `;
+  };
   let dateTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
@@ -278,7 +298,10 @@
       ${dateTemplate(props)}  
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-      ${durationTemplate(workoutlog)}
+      <div class="form-flex-group margin-bottom-5px">
+        ${durationTemplate(workoutlog)}
+        ${totalRepsTemplate(workoutlog)}
+      </div>
       ${roundsTemplate(workoutlog)}
       ${movementsTemplate(workoutlog)}
       ${notesTemplate(workoutlog)}
@@ -313,6 +336,7 @@
         setLocationSwitch(props);
         setNotesSwitch(props);
         setMovementSwitch(props);
+        setTotalRepsSwitch(props);
         autocomplete(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
       }
     },
@@ -411,6 +435,22 @@
       movementSwitch.checked = false;
     }
     toggleMovementFields();
+  };
+
+  /**
+   * After render, check if totalReps switch needs to be turned on.
+   * totalReps switch also calls toggleTotalRepsFeild() to enable/disable the field
+   * @param {*} props
+   */
+  let setTotalRepsSwitch = function (props) {
+    let totalRepsSwitch = document.getElementById('total-reps-switch');
+    let totalReps = props.workoutlog && props.workoutlog.totalreps ? props.workoutlog.totalreps : '';
+    if (totalReps) {
+      totalRepsSwitch.checked = true;
+    } else {
+      totalRepsSwitch.checked = false;
+    }
+    toggleTotalRepsFeild();
   };
 
   /**
@@ -522,6 +562,23 @@
   };
 
   /**
+   * Enable/disable totalreps field based on the state of totalreps switch.
+   * Wipe out the value from the field when the field is disabled.
+   * Re-populate the value on enable if the value is present in the state
+   */
+  let toggleTotalRepsFeild = function () {
+    let totalRepsSwitch = document.getElementById('total-reps-switch');
+    let totalRepsFeild = document.getElementById('wolog-total-reps');
+    let state = component.getState();
+    let totalReps = state.workoutlog && state.workoutlog.totalreps ? state.workoutlog.totalreps : '';
+    if (totalRepsSwitch.checked) {
+      enableField(totalRepsFeild);
+      totalRepsFeild.value = totalReps;
+    } else {
+      disableField(totalRepsFeild);
+    }
+  };
+  /**
    * Helper function to disable a field and set the value to empty string
    * @param {*} name - field name
    */
@@ -579,10 +636,10 @@
         if (list[i].movement.toLowerCase().includes(textFieldValue.toLowerCase())) {
           let subStringIndex = list[i].movement.toLowerCase().indexOf(textFieldValue.toLowerCase());
           // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
-          if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) {
-            let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
-            autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
-          }
+          // if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) { //Suspending this check for now. In some cases, this check can be misleading
+          let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
+          autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
+          // }
         }
       }
       autocompleteDiv.innerHTML = autocompleteList;
@@ -638,6 +695,8 @@
       movements.push(movementObj);
     }
     workoutlog.movements = movements;
+
+    workoutlog.totalreps = elements[`wolog-total-reps`].value ? parseInt(elements[`wolog-total-reps`].value) : null;
     return workoutlog;
   };
 
@@ -664,7 +723,8 @@
       (elements['wolog-rounds-0'].value === '' || parseInt(elements['wolog-rounds-0'].value) === 0) &&
       elements['wolog-notes'].value.trim() === '' &&
       empty_movement_load &&
-      empty_movement_reps
+      empty_movement_reps &&
+      (elements['wolog-total-reps'].value === '' || parseInt(elements['wolog-total-reps'].value) === 0)
     ) {
       validationError.catchAll = 'Please enter a value in one of the fields or add notes.';
     }
@@ -839,6 +899,8 @@
   $hl.eventListener('click', 'notes-switch', toggleNotesTextarea);
   $hl.eventListener('click', 'movement-switch', toggleMovementFields);
   $hl.eventListener('click', 'wolog-movement-add-btn', addMovement);
+  $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsFeild);
+
   document.addEventListener('click', function (event) {
     //Select a workout from the list
     let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);

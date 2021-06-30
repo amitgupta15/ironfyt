@@ -662,3 +662,12 @@ textarea {
   width: 50px;
   margin-right: 5px;
 }
+
+.duration-block {
+  width: 55vw;
+  margin-right: 5px;
+}
+
+.total-reps-block {
+  width: 39vw;
+}

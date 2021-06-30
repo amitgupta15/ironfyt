@@ -547,5 +547,34 @@
     workoutlog = component.getState().workoutlog;
     $test.assert(workoutlog.movements.length === 0);
   });
+
+  $test.it('should set the status of total reps switch and enable/disable wolog-total-reps field based on totalreps data', function () {
+    let selector = document.querySelector('#selector');
+    let state = { error: '' };
+    component.setState(state);
+    selector.innerHTML = component.template(state);
+    component.afterRender(state);
+    let totalRepsSwitch = document.getElementById('total-reps-switch');
+    let totalRepsInputField = document.querySelector('#wolog-total-reps');
+    $test.assert(totalRepsSwitch.checked === false);
+    $test.assert(totalRepsInputField.disabled === true);
+
+    state = { error: '', workoutlog: { totalreps: 150 } };
+    component.setState(state);
+    component.afterRender(state);
+    $test.assert(totalRepsSwitch.checked === true);
+    $test.assert(totalRepsInputField.disabled === false);
+
+    totalRepsSwitch.checked = false;
+    $test.dispatchHTMLEvent('click', '#total-reps-switch');
+    $test.assert(totalRepsInputField.disabled === true);
+    $test.assert(totalRepsInputField.value === '');
+
+    totalRepsSwitch.checked = true;
+    $test.dispatchHTMLEvent('click', '#total-reps-switch');
+    $test.assert(totalRepsInputField.disabled === false);
+    $test.assert(totalRepsInputField.value === '150');
+  });
+
   console.groupEnd();
 })();
