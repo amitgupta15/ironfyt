@@ -184,11 +184,11 @@ input[type='number'] {
 }
 
 .hide-view {
-  display: none;
+  display: none !important;
 }
 
 .show-view {
-  display: block;
+  display: block !important;
 }
 
 .add-log-btn-bar-calendar-view {
@@ -255,10 +255,12 @@ input[type='number'] {
   display: none;
   align-items: center;
   justify-content: center;
+  z-index: 200;
 }
 
 .modal-dialog {
   border: 1px solid var(--main-color);
+  position: relative;
   max-width: 95vw;
   text-align: center;
   padding: 20px;
@@ -287,7 +289,10 @@ input[type='number'] {
   border: 1px solid var(--btn-primary);
   color: var(--btn-primary);
 }
-
+.select-workout-modal {
+  text-align: left;
+  margin: 15px auto;
+}
 /** Form **/
 
 .form-container {
@@ -443,6 +448,19 @@ input[type='number'] {
   border: none;
   flex: 0 0 24px;
   margin-right: 5px;
+}
+
+#close-workout-list-modal-btn {
+  background: url(../images/baseline_close_black_24dp.png);
+  background-size: cover;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: transparent;
 }
 
 .flex {
@@ -618,7 +636,7 @@ textarea {
   top: 2px;
   right: 2px;
   font-size: 1rem;
-  z-index: 1000;
+  z-index: 100;
   background-color: var(--btn-primary);
 }
 .autocomplete-movement-list {

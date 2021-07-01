@@ -52,11 +52,10 @@
   let workoutListModalTemplate = function (props) {
     let workouts = props.workouts ? props.workouts : [];
     return `
-    <div id="select-workout-modal" style="display:none;">
-      <div class="container">
-        <br/><br/>
-        <h3>Select a workout&nbsp;&nbsp;&nbsp;&nbsp;<span id="close-workout-list-modal">X</span></h3>
-        <br/>
+    <div class="modal-container" id="select-workout-modal">
+      <div class="modal-dialog select-workout-modal">
+        <button id="close-workout-list-modal-btn">X</button>
+        
         ${workouts
           .map(
             (workout) => `
@@ -67,6 +66,10 @@
             </div>`
           )
           .join('')}
+        <div class="modal-dialog-btn-bar">
+          <button class="delete" id="">Delete</button>
+          <button class="cancel" id="">Cancel</button>
+        </div>
       </div>
     </div>`;
   };
@@ -772,7 +775,7 @@
         selectWorkoutBtn.disabled = true;
 
         let dialog = document.getElementById('select-workout-modal');
-        dialog.style.display = 'block';
+        dialog.classList.add('show-view');
       } else {
         component.setState({ error, workoutlog });
       }
@@ -781,7 +784,7 @@
 
   let handleCloseWorkoutListModalEvent = function (event) {
     let dialog = document.getElementById('select-workout-modal');
-    dialog.style.display = 'none';
+    dialog.classList.remove('show-view');
 
     let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
     selectWorkoutBtn.disabled = false;
@@ -891,7 +894,7 @@
 
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
-  $hl.eventListener('click', 'close-workout-list-modal', handleCloseWorkoutListModalEvent);
+  $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
   $hl.eventListener('click', 'duration-switch', toggleDurationFields);
   $hl.eventListener('click', 'rounds-switch', toggleRoundsFields);

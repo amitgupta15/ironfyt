@@ -88,10 +88,9 @@
     component.setState({ workoutlog: {} });
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
-
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
     $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
+    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal"'));
     $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn-wolog" disabled="">'));
     $test.assert(document.getElementById('wolog-workout-id').value === '');
   });
@@ -101,28 +100,12 @@
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
 
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
     $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: block;">'));
-    $test.dispatchHTMLEvent('click', '#close-workout-list-modal');
-    $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
+    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal">'));
+    $test.dispatchHTMLEvent('click', '#close-workout-list-modal-btn');
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
   });
-
-  // $test.it('should populate the workout and close the workout list modal when a workout is selected', function () {
-  //   component.setState({ workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda' }] });
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template({ workouts: [{ _id: '6070eec7f20f85401bca47a1' }] });
-  //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display:none;">'));
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   // $test.dispatchHTMLEvent('click', '#workout-6070eec7f20f85401bca47a1');
-  //   console.log(selector.innerHTML);
-  //   $test.assert(selector.innerHTML.includes('<div id="select-workout-modal" style="display: none;">'));
-  //   $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn-wolog" disabled="">'));
-  //   let state = component.getState();
-  //   $test.assert(state.workoutlog.workout[0]._id === '6070eec7f20f85401bca47a1');
-  //   $test.assert(state.workoutlog.workout[0].name === 'Linda');
-  //   console.log(selector.innerHTML);
-  // });
 
   $test.it('should show/hide workout details in the workout list', function () {
     component.setState({ workoutlog: {} });
@@ -146,7 +129,6 @@
 
   $test.it('should copy round/load info block while preserving the form state', function () {
     component.setState({ workoutlog: { roundinfo: [{ rounds: null, load: null, unit: null }] } });
-    // $test.assert(component.getState().workoutlog === '');
 
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template();
