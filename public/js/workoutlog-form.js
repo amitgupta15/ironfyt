@@ -55,21 +55,12 @@
     <div class="modal-container" id="select-workout-modal">
       <div class="modal-dialog select-workout-modal">
         <button id="close-workout-list-modal-btn">X</button>
-        
-        ${workouts
-          .map(
-            (workout) => `
-            <div>
-              <div id="workout-${workout._id}"><span id="show-detail-${workout._id}"> &gt; </span>${workout.name}</div>
-              <div id="workout-detail-${workout._id}" style="display:none">${workout.description}</div>
-              <br/>
-            </div>`
-          )
-          .join('')}
-        <div class="modal-dialog-btn-bar">
-          <button class="delete" id="">Delete</button>
-          <button class="cancel" id="">Cancel</button>
+        <div class="form-input-group margin-top-20px margin-bottom-15px">
+          <span id="search-workout-modal-icon"></span>
+          <input type="text" class="form-input" name="search-workout" id="search-workout" value="" placeholder="Search Workout..."/>
+          <label for="search-workout" class="form-label">Search Workout...</label>
         </div>
+        <div id="autocomplete-workout-list" class="autocomplete-workout-list"></div>
       </div>
     </div>`;
   };
@@ -649,6 +640,42 @@
     });
   };
 
+  let autoCompleteWorkoutSearch = function () {
+    let autocomleteDiv = document.getElementById('autocomplete-workout-list');
+    let textField = document.getElementById('search-workout');
+    let list = component.getState().workouts;
+    textField.addEventListener('input', function (event) {
+      let textFieldValue = this.value;
+      if (!textFieldValue) {
+        autocomleteDiv.innerHTML = '';
+        return false;
+      }
+      let autocompleteList = '';
+      for (let i = 0; i < list.length; i++) {
+        let subStringIndexName = list[i].name.toLowerCase().indexOf(textFieldValue.toLowerCase());
+        let subStringIndexDescription = list[i].description.toLowerCase().indexOf(textFieldValue.toLowerCase());
+        if (subStringIndexName > -1 || subStringIndexDescription > -1) {
+          let stringNameToHighlight = subStringIndexName > -1 ? list[i].name.substr(subStringIndexName, textFieldValue.length) : '';
+          let stringDescToHighlight = subStringIndexDescription > -1 ? list[i].description.substr(subStringIndexDescription, textFieldValue.length) : '';
+          let workout = list[i];
+          autocompleteList += `
+          <div id="workout-list-item-${i}" class="workout-search-result-item margin-bottom-5px">
+            <button type="button" id="select-workout-from-search-result-btn-${i}" class="select-workout-from-search-result-btn"></button>
+            <div>${workout.name.replace(stringNameToHighlight, `<strong>${stringNameToHighlight}</strong>`)}</div>
+            <div>
+            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
+            ${workout.type ? `<p>Type: ${workout.type}</p>` : ''}
+            ${workout.timecap ? `<p>Time Cap: ${workout.timecap}</p>` : ''}
+            ${workout.rounds ? `<p>Rounds: ${workout.rounds}</p>` : ''}
+            ${workout.reps ? `<p>Reps: ${workout.reps}</p>` : ''}
+            ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description.replace(stringDescToHighlight, `<strong>${stringDescToHighlight}</strong>`))}</p>` : ''}
+            </div>
+          </div>`;
+        }
+      }
+      autocomleteDiv.innerHTML = autocompleteList;
+    });
+  };
   let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
     let state = component.getState();
@@ -769,13 +796,10 @@
     $ironfyt.getWorkouts({}, function (error, response) {
       if (!error) {
         let workouts = response && response.workouts ? response.workouts : [];
-        component.setState({ workouts });
-
-        let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
-        selectWorkoutBtn.disabled = true;
-
+        component.setState({ workoutlog, workouts });
         let dialog = document.getElementById('select-workout-modal');
         dialog.classList.add('show-view');
+        autoCompleteWorkoutSearch();
       } else {
         component.setState({ error, workoutlog });
       }
@@ -791,30 +815,19 @@
   };
 
   let selectWorkout = function (targetId) {
-    let _id = targetId.substring(8, targetId.length);
+    let prefix = 'select-workout-from-search-result-btn-';
+    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+    let workoutlog = createWorkoutLogObjFromFormElements();
     let state = component.getState();
     let workouts = state.workouts ? state.workouts : [];
-    let workout = workouts.filter((workout) => workout._id === _id)[0];
-
-    let workoutlog = createWorkoutLogObjFromFormElements();
-    workoutlog.workout = [workout];
-    component.setState({ workoutlog });
-
+    //Store selected workout in an array. This is to maintain consistency with the query result which brings back the selected workout as an array.
+    //This is the side effect of MongoDB aggregate query
+    workoutlog.workout = [workouts[index]];
+    let autoCompleteWorkoutListDiv = document.getElementById('autocomplete-workout-list');
+    autoCompleteWorkoutListDiv.innerHTML = '';
     let dialog = document.getElementById('select-workout-modal');
-    dialog.style.display = 'none';
-  };
-
-  let showWorkoutDetail = function (targetId) {
-    let _id = targetId.substring(12, targetId.length);
-    let workoutShowDetailSpan = document.getElementById(`show-detail-${_id}`);
-    let workoutDetailDiv = document.getElementById(`workout-detail-${_id}`);
-    if (workoutDetailDiv.style.display === 'none') {
-      workoutDetailDiv.style.display = 'block';
-      workoutShowDetailSpan.innerHTML = '^ ';
-    } else {
-      workoutDetailDiv.style.display = 'none';
-      workoutShowDetailSpan.innerHTML = '> ';
-    }
+    dialog.classList.remove('show-view');
+    component.setState({ workoutlog });
   };
 
   let handleUnselectWorkoutEvent = function (event) {
@@ -905,17 +918,6 @@
   $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsFeild);
 
   document.addEventListener('click', function (event) {
-    //Select a workout from the list
-    let selectWorkoutRegex = new RegExp(/^workout-([a-zA-Z]|\d){24}/gm);
-    if (selectWorkoutRegex.test(event.target.id)) {
-      selectWorkout(event.target.id);
-    }
-    // Show workout detail for each workout in the list - can be achieve with detail/summary - refactor
-    let showWorkoutDetailRegex = new RegExp(/^show-detail-([a-zA-Z]|\d){24}/gm);
-    if (showWorkoutDetailRegex.test(event.target.id)) {
-      showWorkoutDetail(event.target.id);
-    }
-
     let deleteRoundInfoRegex = new RegExp(/^delete-round-info-\d+/gm);
     if (deleteRoundInfoRegex.test(event.target.id)) {
       deleteRoundInfo(event.target.id);
@@ -940,6 +942,11 @@
     let deleteMovementRegex = new RegExp(/^delete-movement-\d+/gm);
     if (deleteMovementRegex.test(event.target.id)) {
       deleteMovement(event.target.id);
+    }
+
+    let selectWorkoutItemRegex = new RegExp(/^select-workout-from-search-result-btn-\d+/gm);
+    if (selectWorkoutItemRegex.test(event.target.id)) {
+      selectWorkout(event.target.id);
     }
   });
 

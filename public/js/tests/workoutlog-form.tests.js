@@ -84,7 +84,7 @@
     $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-form.html&user_id=123456789012345678901234&year=2020&month=0&date=1');
   });
 
-  $test.it('should show workout list dialog when select-workout-btn-wolog is clicked', function () {
+  $test.it('should show search workout dialog when select-workout-btn-wolog is clicked', function () {
     component.setState({ workoutlog: {} });
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
@@ -95,7 +95,7 @@
     $test.assert(document.getElementById('wolog-workout-id').value === '');
   });
 
-  $test.it('should close the workout list dialog when close button is clicked', function () {
+  $test.it('should close the search workout dialog when close button is clicked', function () {
     component.setState({ workoutlog: {} });
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({});
@@ -107,24 +107,40 @@
     $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
   });
 
-  $test.it('should show/hide workout details in the workout list', function () {
-    component.setState({ workoutlog: {} });
-    let state = { workouts: [{ _id: '6070eec7f20f85401bca47a1', name: 'Linda', description: 'Do 15 reps of each set' }] };
-    component.setState(state);
+  $test.it('should show available workouts and let the user select a workout when searching for a workout - auto-complete', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
+    };
+    $ironfyt.getWorkouts = function (params, callback) {
+      callback(false, {
+        workouts: [
+          { _id: 1, name: 'Chest & Back', description: 'Do 100 push-ups' },
+          { _id: 2, name: 'DT', description: '155lb deadlift' },
+          { _id: 3, name: 'Fran', description: '21-15-9 Pull-ups and Thrusters' },
+        ],
+      });
+    };
     let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template(state);
-    $test.assert(selector.innerHTML.includes('<span id="show-detail-6070eec7f20f85401bca47a1"> &gt; </span>Linda'));
-    $test.assert(selector.innerHTML.includes('<div id="workout-detail-6070eec7f20f85401bca47a1" style="display:none">Do 15 reps of each set</div>'));
+    selector.innerHTML = component.template({});
 
-    $test.dispatchHTMLEvent('click', '#show-detail-6070eec7f20f85401bca47a1');
-    // Show details
-    $test.assert(selector.innerHTML.includes('<span id="show-detail-6070eec7f20f85401bca47a1">^ </span>Linda'));
-    $test.assert(selector.innerHTML.includes('<div id="workout-detail-6070eec7f20f85401bca47a1" style="display: block;">Do 15 reps of each set</div>'));
+    //Dispatch the following event to trigger getWorkouts api call
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
 
-    $test.dispatchHTMLEvent('click', '#show-detail-6070eec7f20f85401bca47a1');
-    // Hide Details
-    $test.assert(selector.innerHTML.includes('<span id="show-detail-6070eec7f20f85401bca47a1">&gt; </span>Linda'));
-    $test.assert(selector.innerHTML.includes('<div id="workout-detail-6070eec7f20f85401bca47a1" style="display: none;">Do 15 reps of each set</div>'));
+    let state = component.getState();
+    $test.assert(state.workouts.length === 3);
+    let searchWorkoutField = document.querySelector('#search-workout');
+    searchWorkoutField.value = 'fr';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.assert(selector.innerHTML.includes('<div><strong>Fr</strong>an</div>'));
+
+    searchWorkoutField.value = 'dt';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.assert(selector.innerHTML.includes('<div><strong>DT</strong></div>'));
+
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
+    state = component.getState();
+    $test.assert(state.workoutlog.workout[0]._id === 2);
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">')); //removed the 'show-view' class from the modal
   });
 
   $test.it('should copy round/load info block while preserving the form state', function () {
