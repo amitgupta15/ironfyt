@@ -49,8 +49,11 @@
     </div>`;
   };
 
+  let newWorkoutButton = function () {
+    return `<button id="create-new-workout-btn">New Workout</button>`;
+  };
+
   let workoutListModalTemplate = function (props) {
-    let workouts = props.workouts ? props.workouts : [];
     return `
     <div class="modal-container" id="select-workout-modal">
       <div class="modal-dialog select-workout-modal">
@@ -60,7 +63,7 @@
           <input type="text" class="form-input" name="search-workout" id="search-workout" value="" placeholder="Search Workout..."/>
           <label for="search-workout" class="form-label">Search Workout...</label>
         </div>
-        <div id="autocomplete-workout-list" class="autocomplete-workout-list"></div>
+        <div id="autocomplete-workout-list" class="autocomplete-workout-list">${newWorkoutButton()}</div>
       </div>
     </div>`;
   };
@@ -307,6 +310,7 @@
       </div>
     </form>
     ${workoutListModalTemplate(props)}
+    ${newWorkoutFormModalTemplate(props)}
     `;
   };
 
@@ -647,16 +651,18 @@
     textField.addEventListener('input', function (event) {
       let textFieldValue = this.value;
       if (!textFieldValue) {
-        autocomleteDiv.innerHTML = '';
+        autocomleteDiv.innerHTML = newWorkoutButton();
         return false;
       }
       let autocompleteList = '';
+      let count = 0;
       for (let i = 0; i < list.length; i++) {
         let subStringIndexName = list[i].name.toLowerCase().indexOf(textFieldValue.toLowerCase());
         let subStringIndexDescription = list[i].description.toLowerCase().indexOf(textFieldValue.toLowerCase());
         if (subStringIndexName > -1 || subStringIndexDescription > -1) {
           let stringNameToHighlight = subStringIndexName > -1 ? list[i].name.substr(subStringIndexName, textFieldValue.length) : '';
           let stringDescToHighlight = subStringIndexDescription > -1 ? list[i].description.substr(subStringIndexDescription, textFieldValue.length) : '';
+          count++;
           let workout = list[i];
           autocompleteList += `
           <div id="workout-list-item-${i}" class="workout-search-result-item margin-bottom-5px">
@@ -673,7 +679,8 @@
           </div>`;
         }
       }
-      autocomleteDiv.innerHTML = autocompleteList;
+      let countString = `<div class="margin-bottom-5px small-text">Found ${count} Workouts</div>`;
+      autocomleteDiv.innerHTML = `<div>${countString}${count === 0 ? newWorkoutButton() : ''}${autocompleteList}</div>`;
     });
   };
   let createWorkoutLogObjFromFormElements = function () {
@@ -905,6 +912,14 @@
     autocompleteDiv.innerHTML = '';
   };
 
+  let handleCreateNewWorkoutEvent = function (event) {
+    let selectWorkoutModal = document.getElementById('select-workout-modal');
+    let newWorkoutFormModal = document.getElementById('new-workout-form-modal');
+
+    selectWorkoutModal.classList.remove('show-view');
+    newWorkoutFormModal.classList.add('show-view');
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
@@ -916,6 +931,7 @@
   $hl.eventListener('click', 'movement-switch', toggleMovementFields);
   $hl.eventListener('click', 'wolog-movement-add-btn', addMovement);
   $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsFeild);
+  $hl.eventListener('click', 'create-new-workout-btn', handleCreateNewWorkoutEvent);
 
   document.addEventListener('click', function (event) {
     let deleteRoundInfoRegex = new RegExp(/^delete-round-info-\d+/gm);
@@ -949,6 +965,40 @@
       selectWorkout(event.target.id);
     }
   });
+
+  /* New Workout Dialog */
+  let newWorkoutFormModalTemplate = function (props) {
+    return `
+    <div class="modal-container" id="new-workout-form-modal">
+      <div class="modal-dialog new-workout-form-modal">
+        <button id="close-new-workout-form-modal-btn">X</button>
+        <div class="form-input-group margin-top-20px">
+          <input type="text" class="form-input" name="workout-name" id="workout-name" placeholder="Workout Name">
+          <label for="workout-name" class="form-label">Workout Name</label>
+        </div>
+        <div class="form-input-group margin-top-5px">
+          <select class="form-input" name="workout-type" id="workout-type" placeholder="Type">
+            <option></option>
+            <option selected>For Time</option>
+            <option>For Load</option>
+            <option>AMRAP</option>
+            <option>For Reps</option>
+            <option>Tabata</option>
+          </select>
+          <label for="workout-type" class="form-label">Type</label>
+        </div>
+      </div>
+    </div>
+    `;
+  };
+
+  let handleCloseNewWorkoutFormModalEvent = function (event) {
+    let newWorkoutFormModal = document.getElementById('new-workout-form-modal');
+    newWorkoutFormModal.classList.remove('show-view');
+  };
+
+  $hl.eventListener('click', 'close-new-workout-form-modal-btn', handleCloseNewWorkoutFormModalEvent);
+  /* End New Workout Dialog */
 
   ($ironfyt.workoutlogFormPage = function () {
     let state = { pageTitle: 'New Log' };

@@ -135,6 +135,7 @@
 
     searchWorkoutField.value = 'dt';
     $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.assert(selector.innerHTML.includes('Found 1 Workouts'));
     $test.assert(selector.innerHTML.includes('<div><strong>DT</strong></div>'));
 
     $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
@@ -574,5 +575,32 @@
     $test.assert(totalRepsInputField.value === '150');
   });
 
+  $test.it('should show create new workout dialog when new workout button is clicked', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    //Open the select workout dialog
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
+    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal">'));
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="new-workout-form-modal">'));
+
+    //Click on create new workout button
+    $test.dispatchHTMLEvent('click', '#create-new-workout-btn');
+    //show-view class is removed from select-workout-modal dialog
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
+    //show-view class is added to new-workout-form-modal dialog
+    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="new-workout-form-modal">'));
+  });
+
+  $test.it('should close the new workout form when close button is clicked', function () {
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+
+    $test.dispatchHTMLEvent('click', '#create-new-workout-btn');
+    //show-view class is added to new-workout-form-modal dialog
+    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="new-workout-form-modal">'));
+
+    $test.dispatchHTMLEvent('click', '#close-new-workout-form-modal-btn');
+    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="new-workout-form-modal">'));
+  });
   console.groupEnd();
 })();
