@@ -126,6 +126,22 @@
   $ironfyt.isAdmin = function (user) {
     return typeof user === 'object' && user.role && user.role === 'admin' ? true : false;
   };
+
+  // Format time cap to accommodate legacy string based timecap
+  $ironfyt.formatTimecap = function (timecap) {
+    let timecapStr = '';
+    if (typeof timecap === 'string') {
+      timecapStr = timecap;
+    } else if (typeof timecap === 'object' && timecap !== null) {
+      if (!(timecap.hours === null && timecap.minutes === null && timecap.seconds === null)) {
+        timecapStr += timecap.hours ? `${timecap.hours} hr ` : '';
+        timecapStr += timecap.minutes ? `${timecap.minutes} mins ` : '';
+        timecapStr += timecap.seconds ? `${timecap.seconds} secs` : '';
+      }
+    }
+    return timecapStr;
+  };
+
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};

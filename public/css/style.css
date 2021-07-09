@@ -374,7 +374,8 @@ input[type='number'] {
   left: 8px;
 }
 
-.show-time-separator {
+.show-time-separator,
+.show-time-separator-right-3px {
   position: relative;
 }
 
@@ -384,6 +385,18 @@ input[type='number'] {
   right: 5px;
   top: 16px;
   font-size: var(--big-font-size);
+}
+
+.show-time-separator-right-3px::after {
+  content: ':';
+  position: absolute;
+  right: 3px;
+  top: 16px;
+  font-size: var(--big-font-size);
+}
+
+.absolute-right {
+  right: 3px !important;
 }
 
 .form-input:focus ~ label,
@@ -411,7 +424,12 @@ input[type='number'] {
 .margin-left-5px {
   margin-left: 5px !important;
 }
-
+.margin-right-0 {
+  margin-right: 0px !important;
+}
+.margin-right-10px {
+  margin-right: 10px !important;
+}
 .small-text {
   font-size: 0.9rem;
 }
@@ -532,6 +550,15 @@ input[type='number'] {
   margin-left: 6px;
   width: 80vw;
   height: 90px;
+  padding-top: 25px;
+}
+#workout-scaling {
+  width: 70vw;
+  height: 70px;
+  padding-top: 25px;
+}
+#workout-description {
+  height: 120px;
   padding-top: 25px;
 }
 
@@ -756,4 +783,20 @@ textarea {
 
 .total-reps-block {
   width: 39vw;
+}
+
+.flex-auto {
+  flex: auto;
+}
+
+input:required,
+textarea:required {
+  border: 1px solid red;
+}
+input:valid,
+textarea:valid {
+  border: 1px solid var(--main-color);
+}
+.workout-modality-text {
+  font-size: 0.8rem;
 }
