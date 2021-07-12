@@ -34,7 +34,7 @@
     <div class="flex block-with-border margin-bottom-5px">
       <div class="flex-align-self-center">
         <div class="block-with-border-label">Selected Workout</div>
-        <details>
+        <details open>
           <summary>${workout.name}</summary>
           <div class="workout-detail-view">
           ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality[m.toLowerCase()]).join(', ')}</p>` : ``}
@@ -438,7 +438,7 @@
 
   /**
    * After render, check if totalReps switch needs to be turned on.
-   * totalReps switch also calls toggleTotalRepsFeild() to enable/disable the field
+   * totalReps switch also calls toggleTotalRepsField() to enable/disable the field
    * @param {*} props
    */
   let setTotalRepsSwitch = function (props) {
@@ -449,7 +449,7 @@
     } else {
       totalRepsSwitch.checked = false;
     }
-    toggleTotalRepsFeild();
+    toggleTotalRepsField();
   };
 
   /**
@@ -565,7 +565,7 @@
    * Wipe out the value from the field when the field is disabled.
    * Re-populate the value on enable if the value is present in the state
    */
-  let toggleTotalRepsFeild = function () {
+  let toggleTotalRepsField = function () {
     let totalRepsSwitch = document.getElementById('total-reps-switch');
     let totalRepsFeild = document.getElementById('wolog-total-reps');
     let state = component.getState();
@@ -837,6 +837,7 @@
     let dialog = document.getElementById('select-workout-modal');
     dialog.classList.remove('show-view');
     component.setState({ workoutlog });
+    enableFieldsForSelectedWorkout(workouts[index]);
   };
 
   let handleUnselectWorkoutEvent = function (event) {
@@ -922,6 +923,42 @@
     newWorkoutFormModal.classList.add('show-view');
   };
 
+  let enableFieldsForSelectedWorkout = function (workout) {
+    let type = workout.type ? workout.type.toLowerCase() : null;
+    let totalRepsSwitch = document.getElementById('total-reps-switch');
+    let durationSwitch = document.getElementById('duration-switch');
+    let movementSwitch = document.getElementById('movement-switch');
+    let roundsSwitch = document.getElementById('rounds-switch');
+    switch (type) {
+      case 'for time':
+        durationSwitch.checked = true;
+        toggleDurationFields();
+        break;
+      case 'for load':
+        movementSwitch.checked = true;
+        toggleMovementFields();
+        break;
+      case 'for reps':
+        totalRepsSwitch.checked = true;
+        toggleTotalRepsField();
+        break;
+      case 'amrap':
+        roundsSwitch.checked = true;
+        toggleRoundsFields();
+        break;
+      case 'tabata':
+        totalRepsSwitch.checked = true;
+        toggleTotalRepsField();
+        break;
+      default:
+        break;
+    }
+    let modalities = workout.modality ? workout.modality : [];
+    document.getElementById('modality-m').checked = modalities.indexOf('m') > -1;
+    document.getElementById('modality-g').checked = modalities.indexOf('g') > -1;
+    document.getElementById('modality-w').checked = modalities.indexOf('w') > -1;
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
@@ -932,7 +969,7 @@
   $hl.eventListener('click', 'notes-switch', toggleNotesTextarea);
   $hl.eventListener('click', 'movement-switch', toggleMovementFields);
   $hl.eventListener('click', 'wolog-movement-add-btn', addMovement);
-  $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsFeild);
+  $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsField);
   $hl.eventListener('click', 'create-new-workout-btn', handleCreateNewWorkoutEvent);
 
   document.addEventListener('click', function (event) {
@@ -1244,6 +1281,8 @@
       let workoutlog = state.workoutlog && typeof state.workoutlog === 'object' ? state.workoutlog : {};
       workoutlog.workout = [response.workout];
       component.setState({ workoutlog });
+
+      enableFieldsForSelectedWorkout(response.workout);
     });
   };
   $hl.eventListener('click', 'close-new-workout-form-modal-btn', handleCloseNewWorkoutFormModalEvent);

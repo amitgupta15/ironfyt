@@ -744,5 +744,89 @@
     let state = component.getState();
     $test.assert(state.workoutlog.workout[0].name === 'new workout');
   });
+
+  $test.it('should enable appropriate fields based on the type of workout saved', function () {
+    $ironfyt.saveWorkout = function (workout, callback) {
+      callback(false, { workout: { type: 'for time', name: 'new workout' } });
+    };
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+
+    $test.assert(document.getElementById('duration-switch').checked === false);
+    $test.assert(document.getElementById('wolog-duration-hours').disabled === true);
+    $test.assert(document.getElementById('wolog-duration-minutes').disabled === true);
+    $test.assert(document.getElementById('wolog-duration-seconds').disabled === true);
+
+    let workoutSaveBtn = document.querySelector('#save-new-workout-btn');
+    workoutSaveBtn.disabled = false;
+    $test.dispatchHTMLEvent('click', '#save-new-workout-btn');
+
+    $test.assert(document.getElementById('duration-switch').checked === true);
+    $test.assert(document.getElementById('wolog-duration-hours').disabled === false);
+    $test.assert(document.getElementById('wolog-duration-minutes').disabled === false);
+    $test.assert(document.getElementById('wolog-duration-seconds').disabled === false);
+  });
+
+  $test.it('should enable appropriate fields based on the type of workout selected', function () {
+    $ironfyt.getWorkouts = function (params, callback) {
+      callback(false, {
+        workouts: [
+          { _id: 1, type: 'For Time', name: 'Chest & Back', description: 'Do 100 push-ups', modality: ['g'] },
+          { _id: 2, type: 'For Reps', name: 'DT', description: '155lb deadlift', modality: ['g', 'm'] },
+          { _id: 3, type: 'AMRAP', name: 'Fran', description: '21-15-9 Pull-ups and Thrusters' },
+          { _id: 4, type: 'For Load', name: 'for load workout', description: '5-5-3-1 Deadlift' },
+          { _id: 5, type: 'Tabata', name: 'tabata workout', description: 'tabata something else' },
+        ],
+      });
+    };
+
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
+    let searchWorkoutField = document.getElementById('search-workout');
+
+    // Search and select "For Time" type workout
+    searchWorkoutField.value = 'ch';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-0');
+    $test.assert(document.getElementById('duration-switch').checked === true);
+    $test.assert(document.getElementById('wolog-duration-hours').disabled === false);
+    $test.assert(document.getElementById('wolog-duration-minutes').disabled === false);
+    $test.assert(document.getElementById('wolog-duration-seconds').disabled === false);
+
+    // Search and select "For Reps" type workout
+    searchWorkoutField.value = 'dt';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
+    $test.assert(document.getElementById('total-reps-switch').checked === true);
+    $test.assert(document.getElementById('wolog-total-reps').disabled === false);
+    $test.assert(document.getElementById('modality-g').checked === true);
+    //reset the fields
+    document.getElementById('total-reps-switch').checked = false;
+    document.getElementById('wolog-total-reps').disabled = true;
+
+    // Search and select "AMRAP" type workout
+    searchWorkoutField.value = '21-15';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-2');
+    $test.assert(document.getElementById('rounds-switch').checked === true);
+    $test.assert(document.getElementById('wolog-rounds-0').disabled === false);
+    $test.assert(document.querySelector(`#wolog-load-0`).disabled === false);
+    $test.assert(document.querySelector(`#wolog-unit-0`).disabled === false);
+
+    // Search and select "For Load" type workout
+    searchWorkoutField.value = 'for load';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-3');
+    $test.assert(document.getElementById('movement-switch').checked === true);
+
+    // Search and select "Tabata" type workout
+    searchWorkoutField.value = 'tabata';
+    $test.dispatchHTMLEvent('input', '#search-workout');
+    $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-4');
+    $test.assert(document.getElementById('total-reps-switch').checked === true);
+    $test.assert(document.getElementById('wolog-total-reps').disabled === false);
+  });
   console.groupEnd();
 })();
