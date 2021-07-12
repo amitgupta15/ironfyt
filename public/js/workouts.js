@@ -3,21 +3,23 @@
 
   let workoutsTemplate = function (props) {
     let workouts = props && props.workouts ? props.workouts : [];
+
     return `<div class="container">
         <h1>Workouts</h1>
         <hr/>
         ${workouts
-          .map(
-            (workout) => `<br/>
+          .map((workout) => {
+            let timecap = $ironfyt.formatTimecap(workout.timecap);
+            return `<br/>
         <p><strong><a href="workout-detail.html?_id=${workout._id}">${workout.name}</a></strong> <a href="workout-form.html?_id=${workout._id}">Edit</a> <button type="button" id="delete-workout-${workout._id}">Delete</button></p>
         ${workout.type ? `<strong>Type:</strong> ${workout.type}<br/>` : ''}
-        ${workout.timecap ? `<strong>Timecap:</strong> ${workout.timecap}<br/>` : ''}
+        ${timecap ? `<strong>Timecap:</strong> ${timecap}<br/>` : ''}
         ${workout.reps ? `<strong>Reps:</strong> ${workout.reps}<br/>` : ''}
         ${workout.rounds ? `<strong>Rounds:</strong> ${workout.rounds}<br/>` : ''}
-        ${workout.modality && workout.modality.length ? `<strong>Modality:</strong> ${workout.modality.map((modality) => modality)}<br/>` : ''}
+        ${workout.modality && workout.modality.length ? `<strong>Modality:</strong> ${workout.modality.map((modality) => $ironfyt.formatModality[modality.toLowerCase()]).join(', ')}<br/>` : ''}
         ${workout.description ? `${$hl.replaceNewLineWithBR(workout.description)}` : ''}
-        <br/><br/><hr/>`
-          )
+        <br/><br/><hr/>`;
+          })
           .join('')}`;
   };
 

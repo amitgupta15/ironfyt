@@ -4,15 +4,16 @@
   let workoutDetailTemplate = function (props) {
     let workout = props && props.workout ? props.workout : {};
     let workoutlogs = props && props.workoutlogs && props.workoutlogs.length ? props.workoutlogs : [];
+    let timecap = $ironfyt.formatTimecap(workout.timecap);
     return `
     <div class="container">
       <h1>${workout.name}</h1>
       <p>
       ${workout.type ? `<strong>Type:</strong> ${workout.type}<br/>` : ''}
-        ${workout.timecap ? `<strong>Timecap:</strong> ${workout.timecap}<br/>` : ''}
+        ${timecap ? `<strong>Timecap:</strong> ${timecap}<br/>` : ''}
         ${workout.reps ? `<strong>Reps:</strong> ${workout.reps}<br/>` : ''}
         ${workout.rounds ? `<strong>Rounds:</strong> ${workout.rounds}<br/>` : ''}
-        ${workout.modality && workout.modality.length ? `<strong>Modality:</strong> ${workout.modality.map((modality) => modality)}<br/>` : ''}
+        ${workout.modality && workout.modality.length ? `<strong>Modality:</strong> ${workout.modality.map((modality) => $ironfyt.formatModality[modality]).join(', ')}<br/>` : ''}
         ${workout.description ? `${$hl.replaceNewLineWithBR(workout.description)}` : ''}
       </p><hr/><br/>
       <h3>Logs</h3>

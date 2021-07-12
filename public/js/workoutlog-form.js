@@ -25,11 +25,7 @@
     movements: [],
   };
   let units = ['lbs', 'kgs', 'pood', 'calories', 'miles', 'feet', 'meters', 'minutes'];
-  let modalityConversion = {
-    m: 'Cardio',
-    g: 'Body Weight',
-    w: 'Weight Lifting',
-  };
+
   let selectedWorkoutTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
@@ -41,7 +37,7 @@
         <details>
           <summary>${workout.name}</summary>
           <div class="workout-detail-view">
-          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => modalityConversion[m.toLowerCase()]).join(', ')}</p>` : ``}
+          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality[m.toLowerCase()]).join(', ')}</p>` : ``}
           ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
           ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
           ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
@@ -669,14 +665,15 @@
           let stringDescToHighlight = subStringIndexDescription > -1 ? list[i].description.substr(subStringIndexDescription, textFieldValue.length) : '';
           count++;
           let workout = list[i];
+          let timecap = $ironfyt.formatTimecap(workout.timecap);
           autocompleteList += `
           <div id="workout-list-item-${i}" class="workout-search-result-item margin-bottom-5px">
             <button type="button" id="select-workout-from-search-result-btn-${i}" class="select-workout-from-search-result-btn"></button>
             <div>${workout.name.replace(stringNameToHighlight, `<strong>${stringNameToHighlight}</strong>`)}</div>
             <div>
-            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
+            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => $ironfyt.formatModality[m]).join(', ')}</p>` : ``}
             ${workout.type ? `<p>Type: ${workout.type}</p>` : ''}
-            ${workout.timecap ? `<p>Time Cap: ${workout.timecap}</p>` : ''}
+            ${timecap ? `<p>Time Cap: ${timecap}</p>` : ''}
             ${workout.rounds ? `<p>Rounds: ${workout.rounds}</p>` : ''}
             ${workout.reps ? `<p>Reps: ${workout.reps}</p>` : ''}
             ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description.replace(stringDescToHighlight, `<strong>${stringDescToHighlight}</strong>`))}</p>` : ''}

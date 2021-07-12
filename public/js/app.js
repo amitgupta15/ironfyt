@@ -141,7 +141,12 @@
     }
     return timecapStr;
   };
-
+  // Format modality
+  $ironfyt.formatModality = {
+    m: 'Cardio',
+    g: 'Body Weight',
+    w: 'Weights',
+  };
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};
