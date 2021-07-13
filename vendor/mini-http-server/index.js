@@ -44,6 +44,7 @@ const mimeTypes = {
   '.png': 'image/png',
   '.ico': 'image/x-icon',
   '.json': 'application/json',
+  '.svg': 'image/svg+xml',
 };
 
 /**

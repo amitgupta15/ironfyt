@@ -13,6 +13,7 @@
     let year = props && props.year ? props.year : '';
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     let user = props && props.user ? props.user : {};
+    console.log(days);
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
@@ -25,7 +26,14 @@
     </div>
     <div class="calendar-grid">
       ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
-      ${days.map((day, index) => `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}</div>`).join('')}
+      ${days
+        .map(
+          (day, index) =>
+            `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}${
+              day.modalities && day.modalities.length ? day.modalities.map((m, i) => `<div class="modality-indicator-${i} modality-indicator-${m}">.</div>`).join('') : ''
+            }</div>`
+        )
+        .join('')}
     </div>
     <div class="selected-day-control-bar">
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
@@ -44,34 +52,40 @@
               (log) => `
               <div class="day-log-detail-container-calendar-view">
                 <div class="day-log-detail-container-calendar-view-btn-bar">
-                  <button class="day-log-detail-edit-btn" id="edit-log-btn-${log._id}">Edit Log</button>
-                  <button class="day-log-detail-delete-btn" id="delete-log-btn-${log._id}">Delete Log</button>
+                  <button class="day-log-detail-edit-btn" id="edit-log-btn-${log._id}"></button>
+                  <button class="day-log-detail-delete-btn" id="delete-log-btn-${log._id}"></button>
                 </div>
-                ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ''}
-                ${
-                  log.workout && log.workout.length
-                    ? `<details>
-                        <summary class="summary">${log.workout[0].name}</summary>
-                        <div class="workout-detail-view">
-                        ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => m.toUpperCase()).join(' ')}</p>` : ``}
-                        ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
-                        ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
-                        ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
-                        ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
-                        ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
-                        </div>
-                      </details>`
-                    : ''
-                }
-                ${log.duration ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>` : ''}
-                ${
-                  log.roundinfo && log.roundinfo.length
-                    ? `${log.roundinfo
-                        .map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`)
-                        .join('\n')}`
-                    : ''
-                }
-                ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
+                <div>
+                  ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
+                  ${
+                    log.workout && log.workout.length
+                      ? `<details>
+                          <summary class="summary">${log.workout[0].name}</summary>
+                          <div class="workout-detail-view">
+                          ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => $ironfyt.formatModality(m)).join(', ')}</p>` : ``}
+                          ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
+                          ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
+                          ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
+                          ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
+                          ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
+                          </div>
+                        </details>`
+                      : ''
+                  }
+                  ${
+                    log.duration && (parseInt(log.duration.hours) > 0 || parseInt(log.duration.minutes) > 0 || parseInt(log.duration.seconds) > 0)
+                      ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>`
+                      : ''
+                  }
+                  ${
+                    log.roundinfo && log.roundinfo.length
+                      ? `${log.roundinfo
+                          .map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`)
+                          .join('\n')}`
+                      : ''
+                  }
+                  ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
+                </div>
               </div>
               `
             )
@@ -154,8 +168,12 @@
       else if (dayDate > logDate) ++j;
       else {
         let logs = days[i].logs ? days[i].logs : [];
+        let modalities = days[i].modalities ? days[i].modalities : [];
+        let workoutModalities = workoutLogs[j].modality && workoutLogs[j].modality.length ? workoutLogs[j].modality : [];
+        modalities.push.apply(modalities, workoutModalities);
+        modalities = [...new Set(modalities)];
         logs.push(workoutLogs[j]);
-        days[i] = { ...days[i], logs };
+        days[i] = { ...days[i], logs, modalities };
         ++j;
         // Not incrementing i here because logs may have more than one record for the date.
         // It is necessary to only increment j to catch all logs for a given day

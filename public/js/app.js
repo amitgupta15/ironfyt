@@ -142,11 +142,15 @@
     return timecapStr;
   };
   // Format modality
-  $ironfyt.formatModality = {
-    m: 'Cardio',
-    g: 'Body Weight',
-    w: 'Weights',
+  $ironfyt.formatModality = function (modality) {
+    let modalities = {
+      m: 'C',
+      g: 'B',
+      w: 'W',
+    };
+    return modalities[modality];
   };
+
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};

@@ -37,7 +37,7 @@
         <details open>
           <summary>${workout.name}</summary>
           <div class="workout-detail-view">
-          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality[m.toLowerCase()]).join(', ')}</p>` : ``}
+          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality(m.toLowerCase())).join(', ')}</p>` : ``}
           ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
           ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
           ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
@@ -671,7 +671,7 @@
             <button type="button" id="select-workout-from-search-result-btn-${i}" class="select-workout-from-search-result-btn"></button>
             <div>${workout.name.replace(stringNameToHighlight, `<strong>${stringNameToHighlight}</strong>`)}</div>
             <div>
-            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => $ironfyt.formatModality[m]).join(', ')}</p>` : ``}
+            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => $ironfyt.formatModality(m)).join(', ')}</p>` : ``}
             ${workout.type ? `<p>Type: ${workout.type}</p>` : ''}
             ${timecap ? `<p>Time Cap: ${timecap}</p>` : ''}
             ${workout.rounds ? `<p>Rounds: ${workout.rounds}</p>` : ''}

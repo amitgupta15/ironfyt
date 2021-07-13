@@ -43,7 +43,8 @@
       callback(false, {
         workoutlogs: [
           { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
-          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th' },
+          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th', modality: ['m', 'g'] },
+          { _id: 3, date: '2020-12-30T08:00:00.000Z', notes: 'another log for 30th', modality: ['g', 'w'] },
         ],
       });
     };
@@ -61,6 +62,8 @@
     $test.assert(state.days[36].class === 'next-month');
     $test.assert(new Date(state.days[41].date).getDate() === 6);
     $test.assert(state.days.length === 42);
+    $test.assert(state.days[3].logs.length === 2);
+    $test.assert(state.days[3].modalities.length === 3);
     $test.assert(state.days[3].logs[0]._id === 2);
     $test.assert(state.days[7].logs[0]._id === 1);
   });
