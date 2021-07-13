@@ -13,7 +13,6 @@
     let year = props && props.year ? props.year : '';
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     let user = props && props.user ? props.user : {};
-    console.log(days);
     return `
     <div class="calendar-month-control-bar">
       <div>${months[month]} ${year}</div>
