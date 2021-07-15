@@ -29,22 +29,12 @@
   let selectedWorkoutTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
-    let timecap = $ironfyt.formatTimecap(workout.timecap);
+
     return `
     <div class="flex block-with-border margin-bottom-5px">
       <div class="flex-align-self-center">
         <div class="block-with-border-label">Selected Workout</div>
-        <details open>
-          <summary>${workout.name}</summary>
-          <div class="workout-detail-view">
-          ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality(m.toLowerCase())).join(', ')}</p>` : ``}
-          ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
-          ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
-          ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
-          ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
-          ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
-          </div>
-        </details>
+        ${$ironfyt.displayWorkoutDetail(workout)}
       </div>
       <button type="button" id="unselect-workout" class="remove-btn margin-left-5px"></button> 
     </div>`;

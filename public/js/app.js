@@ -151,6 +151,24 @@
     return modalities[modality];
   };
 
+  // Workout Details Template
+  $ironfyt.displayWorkoutDetail = function (workout, open = true) {
+    let timecap = $ironfyt.formatTimecap(workout.timecap);
+    return `
+    <details ${open ? `open` : ''}>
+      <summary>${workout.name}</summary>
+      <div class="workout-detail-view">
+      ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality(m.toLowerCase())).join(', ')}</p>` : ``}
+      ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
+      ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
+      ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
+      ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
+      ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
+      </div>
+    </details>
+    `;
+  };
+
   //Topbar template
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};

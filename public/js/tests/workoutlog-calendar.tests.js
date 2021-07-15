@@ -136,14 +136,14 @@
     selector.innerHTML = component.template();
     component.setState({ month: 0, year: 2021 });
     $test.dispatchHTMLEvent('click', '#prev-month-btn');
-    $test.assert(_url === 'workoutlog-calendar.html?year=2020&month=11');
+    $test.assert(_url === 'workoutlog-calendar.html?year=2020&month=11&date=1');
 
     $test.dispatchHTMLEvent('click', '#next-month-btn');
-    $test.assert(_url === 'workoutlog-calendar.html?year=2021&month=1');
+    $test.assert(_url === 'workoutlog-calendar.html?year=2021&month=1&date=1');
 
     $test.dispatchHTMLEvent('click', '#today-btn');
     let date = new Date();
-    $test.assert(_url === `workoutlog-calendar.html?year=${date.getFullYear()}&month=${date.getMonth()}`);
+    $test.assert(_url === `workoutlog-calendar.html?year=${date.getFullYear()}&month=${date.getMonth()}&date=${date.getDate()}`);
   });
 
   $test.it('should set selectedDay to an appropriate item from days array upon initial page load', function () {

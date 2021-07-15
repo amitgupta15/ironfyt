@@ -6,12 +6,10 @@
   let shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   let veryShortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-  let workoutLogCalendarTemplate = function (props) {
+  let monthControlBarTemplate = function (props) {
     let displayUser = props && props.displayUser ? props.displayUser : {};
-    let days = props && props.days ? props.days : [];
     let month = props && typeof props.month === 'number' ? props.month : '';
     let year = props && props.year ? props.year : '';
-    let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     let user = props && props.user ? props.user : {};
     return `
     <div class="calendar-month-control-bar">
@@ -23,6 +21,13 @@
         <button class="month-control" id="next-month-btn">&#9658;</button>
       </div>
     </div>
+    `;
+  };
+
+  let calendarGridTemplate = function (props) {
+    let days = props && props.days ? props.days : [];
+    let selectedDay = props && props.selectedDay ? props.selectedDay : {};
+    return `
     <div class="calendar-grid">
       ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
       ${days
@@ -34,6 +39,12 @@
         )
         .join('')}
     </div>
+    `;
+  };
+
+  let selectedDayControlBarTemplate = function (props) {
+    let selectedDay = props && props.selectedDay ? props.selectedDay : {};
+    return `
     <div class="selected-day-control-bar">
       <div>${selectedDay.date ? `${longDays[new Date(selectedDay.date).getDay()]}, ${months[new Date(selectedDay.date).getMonth()]} ${new Date(selectedDay.date).getDate()}, ${new Date(selectedDay.date).getFullYear()}` : ''}</div>
       <div>
@@ -41,6 +52,26 @@
         <button class="day-control" id="next-day-btn">&#9658;</button>
       </div>
     </div>
+    `;
+  };
+
+  let confirmDeleteLogModalDialogTemplate = function () {
+    return `
+    <div class="modal-container" id="delete-log-confirmation-dialog">
+      <div class="modal-dialog">
+        <p>Are you sure, you want to delete the log?</p>
+        <div class="modal-dialog-btn-bar">
+          <button class="delete" id="confirm-delete-log-btn">Delete</button>
+          <button class="cancel" id="cancel-delete-log-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+    `;
+  };
+
+  let displayLogOfTheDayTemplate = function (props) {
+    let selectedDay = props && props.selectedDay ? props.selectedDay : {};
+    return `
     <div class="day-detail-container">
       ${
         selectedDay.logs
@@ -56,34 +87,52 @@
                 </div>
                 <div>
                   ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
-                  ${
-                    log.workout && log.workout.length
-                      ? `<details>
-                          <summary class="summary">${log.workout[0].name}</summary>
-                          <div class="workout-detail-view">
-                          ${log.workout[0].modality && log.workout[0].modality.length ? `<p><strong>Modality: </strong>${log.workout[0].modality.map((m) => $ironfyt.formatModality(m)).join(', ')}</p>` : ``}
-                          ${log.workout[0].type ? `<p><strong>Type:</strong> ${log.workout[0].type}</p>` : ''}
-                          ${log.workout[0].timecap ? `<p><strong>Time Cap:</strong> ${log.workout[0].timecap}</p>` : ''}
-                          ${log.workout[0].rounds ? `<p><strong>Rounds:</strong> ${log.workout[0].rounds}</p>` : ''}
-                          ${log.workout[0].reps ? `<p><strong>Reps:</strong> ${log.workout[0].reps}</p>` : ''}
-                          ${log.workout[0].description ? `<p>${$hl.replaceNewLineWithBR(log.workout[0].description)}</p>` : ''}
-                          </div>
-                        </details>`
-                      : ''
-                  }
+                  ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false)}` : ''}
                   ${
                     log.duration && (parseInt(log.duration.hours) > 0 || parseInt(log.duration.minutes) > 0 || parseInt(log.duration.seconds) > 0)
                       ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>`
                       : ''
                   }
                   ${
-                    log.roundinfo && log.roundinfo.length
-                      ? `${log.roundinfo
-                          .map((roundinfo) => `${roundinfo.rounds ? `<strong>Rounds:</strong> ${roundinfo.rounds}` : ''}${roundinfo.load ? ` <strong>Load:</strong> ${roundinfo.load} ${roundinfo.unit}` : ``}${roundinfo.reps ? ` <strong>Reps:</strong> ${roundinfo.reps}` : ''}`)
-                          .join('\n')}`
+                    log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
+                      ? `<div class="flex">
+                          <div><strong>Rounds: </strong></div>
+                          <div class="margin-left-5px">${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
+                        </div>`
                       : ''
                   }
-                  ${log.notes ? `<p>${$hl.replaceNewLineWithBR(log.notes)}</p>` : ''}
+                  ${
+                    log.totalreps
+                      ? `<div class="flex">
+                          <div><strong>Total Reps:</strong></div>
+                          <div class="margin-left-5px">${log.totalreps}</div>
+                        </div>`
+                      : ``
+                  }
+                  ${
+                    log.movements && log.movements.length
+                      ? `<div>
+                          <div><strong>Movements: </strong></div>
+                          <div class="margin-left-5px">${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
+                        </div>`
+                      : ''
+                  }
+                  ${
+                    log.notes
+                      ? `<div>
+                          <div><strong>Notes: </strong></div>
+                          <div class="margin-left-5px">${$hl.replaceNewLineWithBR(log.notes)}</div>
+                        </div>`
+                      : ''
+                  }
+                  ${
+                    log.location
+                      ? `<div class="flex">
+                          <div><strong>Location: </strong></div>
+                          <div class="margin-left-5px">${log.location}</div>
+                        </div>`
+                      : ''
+                  }
                 </div>
               </div>
               `
@@ -94,15 +143,15 @@
       }
       <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">Add Log</button></div>
     </div>
-    <div class="modal-container" id="delete-log-confirmation-dialog">
-      <div class="modal-dialog">
-        <p>Are you sure, you want to delete the log?</p>
-        <div class="modal-dialog-btn-bar">
-          <button class="delete" id="confirm-delete-log-btn">Delete</button>
-          <button class="cancel" id="cancel-delete-log-btn">Cancel</button>
-        </div>
-      </div>
-    </div>
+    `;
+  };
+  let workoutLogCalendarTemplate = function (props) {
+    return `
+    ${monthControlBarTemplate(props)}
+    ${calendarGridTemplate(props)}
+    ${selectedDayControlBarTemplate(props)}
+    ${displayLogOfTheDayTemplate(props)}
+    ${confirmDeleteLogModalDialogTemplate()}
     `;
   };
 
@@ -182,22 +231,15 @@
   };
 
   /**
-   * If displaying calendar for the current month, then selected day on page load will be today.
-   * If displaying calendar for any other month/year, then selected day on page load will be first day of the month (took inspiration from Google calendar)
    * @param {*} days
    * @param {*} month
    * @param {*} year
    * @returns
    */
   let selectDayOnPageLoad = function (days, date, month, year) {
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (month === today.getMonth() && year === today.getFullYear()) {
-      return days.filter((day) => day.date - today === 0)[0];
-    } else {
-      return days.filter((day) => day.date.getMonth() === month && day.date.getFullYear() === year && day.date.getDate() === (date ? date : 1))[0];
-    }
+    return days.filter((day) => day.date.getMonth() === month && day.date.getFullYear() === year && day.date.getDate() === (date ? date : 1))[0];
   };
+
   let handleChangeMonthEvent = function (event) {
     let state = component.getState();
     let month = state.month;
@@ -214,7 +256,8 @@
     }
     month = date.getMonth();
     year = date.getFullYear();
-    $ironfyt.navigateToUrl(`workoutlog-calendar.html?year=${year}&month=${month}`);
+    selectedDate = date.getDate();
+    $ironfyt.navigateToUrl(`workoutlog-calendar.html?year=${year}&month=${month}&date=${selectedDate}`);
   };
 
   let handleChangeDayEvent = function (event) {
@@ -285,7 +328,7 @@
           let today = new Date();
           let month = params && params.month ? parseInt(params.month) : today.getMonth();
           let year = params && params.year ? parseInt(params.year) : today.getFullYear();
-          let date = params && params.date ? parseInt(params.date) : false;
+          let date = params && params.date ? parseInt(params.date) : month === today.getMonth() && year === today.getFullYear() ? today.getDate() : 1;
           let days = getDaysForGrid(year, month);
           let startdate = days[0].date.toISOString();
           let enddate = days[41].date.toISOString();
@@ -294,7 +337,6 @@
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
               days = addLogsToDays(logs, days);
               let selectedDay = selectDayOnPageLoad(days, date, month, year);
-
               if (user_id !== user._id) {
                 $ironfyt.getUsers({ _id: user_id }, function (error, response) {
                   if (!error) {
