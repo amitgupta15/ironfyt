@@ -11,7 +11,7 @@
       _page = page;
     };
 
-    $ironfyt.main();
+    $ironfyt.landingPage();
     $test.assert(_page === 'login.html');
   });
 

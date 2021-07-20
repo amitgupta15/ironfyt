@@ -237,6 +237,10 @@ input[type='number'] {
   border: none;
   color: transparent;
 }
+/* .day-log-detail-edit-btn.small {
+  width: 24px;
+  height: 24px;
+} */
 
 .day-log-detail-delete-btn {
   background: url(../images/delete_outline_24dp-google.svg);
@@ -436,6 +440,9 @@ input[type='number'] {
 .small-text {
   font-size: 0.9rem;
 }
+.muted-text {
+  color: #aaa;
+}
 
 .submit-btn-bar {
   width: 100%;
@@ -534,7 +541,9 @@ input[type='number'] {
 .flex-align-self-center {
   align-self: center;
 }
-
+.flex-align-self-end {
+  align-self: flex-end;
+}
 .flex-width-100 {
   width: 100%;
 }
@@ -855,4 +864,183 @@ textarea:valid {
   height: 5px;
   border: none;
   color: transparent;
+}
+
+.rounded-border-primary {
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+  padding: 10px;
+}
+.text-color-primary {
+  color: var(--main-color);
+}
+.text-color-secondary {
+  color: var(--secondary-color);
+}
+
+.text-align-right {
+  text-align: right;
+}
+.text-align-center {
+  text-align: center;
+}
+
+.group-home-btn,
+.group-home-btn-w-new-message-indicator {
+  background: url(../images/home_black_24dp.svg);
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+  border: none;
+  color: transparent;
+  position: relative;
+}
+
+.group-home-btn-w-new-message-indicator::after {
+  content: attr(data-new-messages);
+  display: block;
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  color: white;
+  height: 17px;
+  width: 17px;
+  background-color: red;
+  border: 1px solid red;
+  border-radius: 50%;
+  font-size: 0.7rem;
+}
+.workout-done {
+  position: relative;
+  /* margin-left: 5px; */
+  padding-left: 18px;
+  font-size: 0.9rem;
+  color: #2dad10;
+}
+.workout-done::before {
+  content: ' ';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* margin-left: 5px; */
+  background: url(../images/done_circle_green_24dp.svg);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+}
+
+.border-bottom-primary {
+  border-bottom: 1px solid var(--main-color);
+}
+
+.padding-bottom-5px {
+  padding-bottom: 5px;
+}
+.padding-bottom-10px {
+  padding-bottom: 10px;
+}
+.div-with-bg {
+  width: 34px;
+  height: 34px;
+  padding: 7px 5px 5px 5px;
+  border-radius: 50%;
+}
+
+.div-with-bg.blue {
+  background-color: #2196f3;
+  color: white;
+  border: 1px solid #2196f3;
+}
+
+.div-with-bg.yellow {
+  background-color: yellow;
+  color: black;
+  border: 1px solid yellow;
+}
+.div-with-bg.greenyellow {
+  background-color: greenyellow;
+  color: black;
+  border: 1px solid greenyellow;
+}
+
+.log-this-workout-btn,
+.activity-btn,
+.edit-log-for-this-workout-btn,
+.log-this-workout-btn-abs-position {
+  background-color: white;
+  color: var(--btn-primary);
+  padding: 5px;
+  border: 1px solid var(--btn-primary);
+  border-radius: 5px;
+  position: relative;
+  padding-left: 23px;
+  font-size: 0.9rem;
+}
+.log-this-workout-btn::before,
+.log-this-workout-btn-abs-position::before {
+  content: '';
+  display: block;
+  background: url(../images/add_circle_blue_24dp.svg);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+  left: 5px;
+  top: 6px;
+  position: absolute;
+}
+.activity-btn::before {
+  content: '';
+  display: block;
+  background: url(../images/calendar_outline_blue_24dp.svg);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+  left: 5px;
+  top: 6px;
+  position: absolute;
+}
+.edit-log-for-this-workout-btn::before {
+  content: '';
+  display: block;
+  background: url(../images/edit_google_24dp.svg);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+  left: 5px;
+  top: 6px;
+  position: absolute;
+}
+.log-this-workout-btn-abs-position {
+  position: absolute !important;
+  right: 5px;
+  bottom: 0;
+}
+
+.position-relative {
+  position: relative;
+}
+a.workout-history-link {
+  display: block;
+  color: #234af7;
+  text-decoration: none;
+  margin-top: 5px;
+  position: relative;
+  padding-left: 22px;
+}
+a.workout-history-link::before {
+  content: '';
+  background: url(../images/history_black_24dp.svg);
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: -2px;
+  left: 0;
+}
+
+.movie-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: bottom;
 }

@@ -176,7 +176,7 @@
     return `
     <div class="top-bar">
       <div class="top-bar-menu">
-        <a href="/">Home</a>
+        <a href="/links.html">Menu</a>
       </div>
       <div class="page-title">${pageTitle}</div>
       <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
