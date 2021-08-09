@@ -1022,7 +1022,7 @@ textarea:valid {
 }
 a.workout-history-link {
   display: block;
-  color: #234af7;
+  color: var(--main-color);
   text-decoration: none;
   margin-top: 5px;
   position: relative;

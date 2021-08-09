@@ -382,6 +382,8 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //       console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
   //     });
   //   });
+
+  /** Add Movements collection */
   // let movements = [
   //   'Clean',
   //   'Squat Clean',
@@ -412,6 +414,44 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //   'Battle Rope Slams',
   // ].forEach((movement) => {
   //   db.collection('movements').insertOne({ movement }, function (error, result) {
+  //     console.log(result.ops[0]);
+  //   });
+  // });
+
+  /** Add Groups collection */
+  // let groups = [
+  //   {
+  //     name: 'Special Ops Fitness',
+  //     admins: [new ObjectId('6070f1035b7f1e4066cb944e'), new ObjectId('6070f1035b7f1e4066cb9450')],
+  //   },
+  //   {
+  //     name: 'Sanjay Home Gym',
+  //     admins: [new ObjectId('6070f1035b7f1e4066cb9450')],
+  //   },
+  //   {
+  //     name: 'Amit Home Gym',
+  //     admins: [new ObjectId('6070f1035b7f1e4066cb944e')],
+  //   },
+  // ].forEach((group) => {
+  //   db.collection('groups').insertOne(group, function (error, result) {
+  //     console.log(result.ops[0]);
+  //   });
+  // });
+
+  /** Add Group WOD */
+  // let groupwods = [
+  //   {
+  //     group_id: new ObjectId('60f741dd0979942f96aad5fc'),
+  //     workout_id: new ObjectId('6070eec7f20f85401bca47a5'),
+  //     date: new Date('2021-06-20'),
+  //   },
+  //   {
+  //     group_id: new ObjectId('60f741dd0979942f96aad5fc'),
+  //     workout_id: new ObjectId('6070eec7f20f85401bca47a5'),
+  //     date: new Date('2021-07-20'),
+  //   },
+  // ].forEach((wod) => {
+  //   db.collection('groupwod').insertOne(wod, function (error, result) {
   //     console.log(result.ops[0]);
   //   });
   // });

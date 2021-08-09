@@ -46,6 +46,9 @@
   let getMovements = (app.getMovements = function (params, callback) {
     callback();
   });
+  let getGroupWod = (app.getGroupWod = function (params, callback) {
+    callback();
+  });
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -77,6 +80,7 @@
       app.saveWorkout = saveWorkout;
       app.deleteWorkout = deleteWorkout;
       app.getMovements = getMovements;
+      app.getGroupWod = getGroupWod;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

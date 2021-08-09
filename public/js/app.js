@@ -40,11 +40,7 @@
   };
 
   $ironfyt.getWorkoutLogs = function (params, callback) {
-    let headers = getAuthHeader();
-    let queryString = $hl.createQueryString(params);
-    fetch.get(`/api/workoutlog?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, response, callback);
-    });
+    getRequest('/api/workoutlog', params, callback);
   };
 
   $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
@@ -62,26 +58,19 @@
   };
 
   $ironfyt.getWorkouts = function (params, callback) {
-    let headers = getAuthHeader();
-    let queryString = $hl.createQueryString(params);
-    fetch.get(`/api/workout?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, response, callback);
-    });
+    getRequest('/api/workout', params, callback);
   };
 
   $ironfyt.getUsers = function (params, callback) {
-    let headers = getAuthHeader();
-    let queryString = $hl.createQueryString(params);
-    fetch.get(`/api/user?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, response, callback);
-    });
+    getRequest('/api/user', params, callback);
   };
+
   $ironfyt.getMovements = function (params, callback) {
-    let headers = getAuthHeader();
-    let queryString = $hl.createQueryString(params);
-    fetch.get(`/api/movement?${queryString}`, { headers }, function (error, response) {
-      validateReponse(error, response, callback);
-    });
+    getRequest('/api/movement', params, callback);
+  };
+
+  $ironfyt.getGroupWod = function (params, callback) {
+    getRequest('/api/groupwod', params, callback);
   };
 
   $ironfyt.saveWorkout = function (workout, callback) {
@@ -197,6 +186,14 @@
     } else {
       callback(false, response);
     }
+  };
+
+  let getRequest = function (path, params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`${path}?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
   };
 
   let getAuthHeader = function () {

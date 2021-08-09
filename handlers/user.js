@@ -96,6 +96,7 @@ user.register = (payload, callback) => {
   }
 };
 
+// Learned from YouTube Steve G
 let getToken = (user) => {
   let limit = 60 * 60 * 24 * 5; // expires after 5 days sec * min * hours * days
   // let limit = 120;
