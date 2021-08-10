@@ -778,7 +778,10 @@
       $ironfyt.saveWorkoutLog(workoutlog, function (error, response) {
         if (error) {
           console.error(error);
+          component.setState({ error });
         } else {
+          let workoutlog = response && response.workoutlog ? response.workoutlog : null;
+          $ironfyt.updatePersonalRecord(workoutlog); // Not handling the callback here since the client is only responsible for sending the query. There is nothing to handle here.
           $ironfyt.navigateToUrl(`${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}`);
         }
       });

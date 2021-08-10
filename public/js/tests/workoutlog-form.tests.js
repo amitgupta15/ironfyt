@@ -828,5 +828,25 @@
     $test.assert(document.getElementById('total-reps-switch').checked === true);
     $test.assert(document.getElementById('wolog-total-reps').disabled === false);
   });
+
+  $test.it('should check and process new personal record once the log is created', function () {
+    $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
+      callback(false, { workoutlog: { _id: '123412341234123412341234' } });
+    };
+    let _updatePersonalRecordCalled = false;
+    $ironfyt.updatePersonalRecord = function (workoutlog) {
+      _updatePersonalRecordCalled = true;
+    };
+    component.setState({ user: { _id: '555555555555555555555555' } });
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    let form = document.querySelector('#workout-log-form');
+    // Need to have some value to pass validation
+    form.elements['wolog-duration-minutes'].value = 30;
+    // Submit the form to trigger PR check
+    $test.dispatchHTMLEvent('submit', '#workout-log-form');
+    let state = component.getState();
+    $test.assert(_updatePersonalRecordCalled === true);
+  });
   console.groupEnd();
 })();

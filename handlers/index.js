@@ -13,6 +13,7 @@ const workoutlog = require('./workoutlog');
 const user = require('./user');
 const movement = require('./movement');
 const groupwod = require('./groupwod');
+const personalrecord = require('./personalrecord');
 
 const handler = {};
 
@@ -38,6 +39,10 @@ handler.movement = (req, res) => {
 
 handler.groupwod = (req, res) => {
   handleRoute(req, res, groupwod, true, ['get']);
+};
+
+handler.personalrecord = (req, res) => {
+  handleRoute(req, res, personalrecord, true, ['post', 'get']);
 };
 /**
  *
