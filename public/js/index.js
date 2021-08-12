@@ -12,34 +12,33 @@
       ${groupwods
         .map((groupwod) => {
           let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
-          let pr = groupwod && groupwod.pr ? groupwod.pr : {};
           return `
-        <div class="rounded-border-primary margin-top-10px">
-          <div class="flex margin-bottom-5px">
-            <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupwod.group.name}</h3></div>
-            <div class="flex-auto text-align-right">
-              <button class="group-home-btn-w-new-message-indicator" id="group-home-btn" data-new-messages="5"></button>
+            <div class="rounded-border-primary margin-top-10px">
+              <div class="flex margin-bottom-5px">
+                <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupwod.group.name}</h3></div>
+                <div class="flex-auto text-align-right">
+                  <button class="group-home-btn-w-new-message-indicator" id="group-home-btn" data-new-messages="5"></button>
+                </div>
+              </div>
+              <p class="margin-bottom-5px">
+                <span class="text-color-secondary">${new Date(groupwod.date).toLocaleDateString()}</span>
+              </p>
+              <details open>
+                <summary>${workout.name} <span class="workout-done">7/15/2021</span></summary>
+                <div class="workout-detail-view">
+                  ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality(m.toLowerCase())).join(', ')}</p>` : ``}
+                  ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
+                  ${workout.timecap ? `<p><strong>Time Cap:</strong> ${$ironfyt.formatTimecap(workout.timecap)}</p>` : ''}
+                  ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
+                  ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
+                  ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}` : ''}
+                </div>
+              </details>
+              <div class="margin-top-10px small-text">
+                <p class="muted-text">${prString(groupwod)}</p>
+                <p><a href="" class="workout-history-link">Workout Activity</a></p>
+              </div>
             </div>
-          </div>
-          <p class="margin-bottom-5px">
-            <span class="text-color-secondary">${new Date(groupwod.date).toLocaleDateString()}</span>
-          </p>
-          <details open>
-            <summary>${workout.name} <span class="workout-done">7/15/2021</span></summary>
-            <div class="workout-detail-view">
-              ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => $ironfyt.formatModality(m.toLowerCase())).join(', ')}</p>` : ``}
-              ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
-              ${workout.timecap ? `<p><strong>Time Cap:</strong> ${$ironfyt.formatTimecap(workout.timecap)}</p>` : ''}
-              ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
-              ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
-              ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}` : ''}
-            </div>
-          </details>
-          <div class="margin-top-10px small-text">
-            <p class="muted-text">${prString(pr)}</p>
-            <p><a href="" class="workout-history-link">Workout Activity</a></p>
-          </div>
-        </div>
         `;
         })
         .join('')}
@@ -65,12 +64,14 @@
       </div>
     </div>`;
   };
-  let prString = function (pr) {
-    let workoutType = pr && pr.workout && pr.workout.type ? pr.workout.type.toLowerCase() : null;
-    let prDate = pr && pr.log && pr.log.date ? pr.log.date : null;
+  let prString = function (groupwod) {
+    let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
+    let pr = groupwod && groupwod.pr && groupwod.pr.log ? groupwod.pr.log : {};
+    let workoutType = workout.type ? workout.type.toLowerCase() : null;
+    let prDate = pr && pr.date ? pr.date : null;
     let prstring = '';
     if (workoutType === 'for time') {
-      let duration = pr && pr.log && pr.log.duration ? pr.log.duration : {};
+      let duration = pr && pr.duration ? pr.duration : {};
       if (duration.hours || duration.minutes || duration.seconds) {
         prstring = `Your PR is <span class="text-color-secondary">${duration.hours ? `${duration.hours} hrs ` : ''} ${duration.minutes ? `${duration.minutes} mins ` : ''} ${duration.seconds ? `${duration.seconds} secs ` : ''}</span> on <span class="text-color-secondary">${
           prDate ? new Date(prDate).toLocaleDateString() : ''
@@ -78,19 +79,19 @@
       }
     }
     if (workoutType === 'amrap' || workoutType === 'tabata' || workoutType === 'for reps') {
-      let roundinfo = pr && pr.log && pr.log.roundinfo ? pr.log.roundinfo : [];
+      let roundinfo = pr && pr.roundinfo ? pr.roundinfo : [];
       let roundString = roundinfo
         .map(function (round) {
           return `${round.rounds ? round.rounds : ''} ${round.load ? ` X ${round.load} ${round.unit}` : ''}`;
         })
         .join(' , ');
-      let totalreps = pr && pr.log && pr.log.totalreps ? pr.log.totalreps : null;
+      let totalreps = pr && pr.totalreps ? pr.totalreps : null;
       if (roundString.trim() || totalreps) {
         prstring = `Your PR is <span class="text-color-secondary">${roundString.trim() ? `Rounds: ${roundString.trim()}` : ``} ${totalreps ? `Total Reps: ${totalreps}` : ``}</span> on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
       }
     }
     if (workoutType === 'for load') {
-      let movements = pr && pr.log && pr.log.movements ? pr.log.movements : [];
+      let movements = pr && pr.movements ? pr.movements : [];
       let movementString = movements
         .map(function (movement) {
           return `${movement.movement}: ${movement.reps} X ${movement.load} ${movement.unit}`;
@@ -137,20 +138,12 @@
           component.setState({ error });
           return;
         }
-        if (groupwods.length) {
-          groupwods = sortByDateDesc(groupwods);
-          groupwods.forEach(function (groupwod) {
-            $ironfyt.getPR({ workout_id: groupwod.workout._id, user_id: user._id }, function (error, pr) {
-              groupwod.pr = pr;
-              component.setState({ groupwods }); //TODO: Is there a way to avoid this setting of groupwod multiple times?
-            });
-          });
-        }
+        groupwods = sortByDateDesc(groupwods);
+        component.setState({ groupwods });
       });
     } else {
       $ironfyt.navigateToUrl('login.html');
     }
-    // console.log(component.getState());
   })();
 
   let sortByDateDesc = function (arr) {

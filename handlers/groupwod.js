@@ -14,6 +14,7 @@ groupwod.get = (req, res) => {
       res(400, { error });
     } else {
       let groups = result.groups ? result.groups : [];
+      let user_id = result._id;
       database
         .collection('groupwod')
         .aggregate([
@@ -47,7 +48,28 @@ groupwod.get = (req, res) => {
             },
           },
           {
-            $project: { _id: 0, group: { $arrayElemAt: ['$group', 0] }, date: 1, workout: { $arrayElemAt: ['$workout', 0] } },
+            $lookup: {
+              from: 'personalrecords',
+              let: { group_workout_id: '$workout_id' },
+              pipeline: [
+                { $match: { $expr: { $and: [{ $eq: ['$workout_id', '$$group_workout_id'] }, { $eq: ['$user_id', new ObjectId(user_id)] }] } } },
+                {
+                  $lookup: {
+                    from: 'logs',
+                    localField: 'workoutlog_id',
+                    foreignField: '_id',
+                    as: 'log',
+                  },
+                },
+                {
+                  $project: { _id: 0, log: { $arrayElemAt: ['$log', 0] } },
+                },
+              ],
+              as: 'pr',
+            },
+          },
+          {
+            $project: { _id: 0, group: { $arrayElemAt: ['$group', 0] }, date: 1, workout: { $arrayElemAt: ['$workout', 0] }, pr: { $arrayElemAt: ['$pr', 0] } },
           },
         ])
         .toArray(function (error, response) {
