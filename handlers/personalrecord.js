@@ -4,6 +4,48 @@ const ObjectId = require('mongodb').ObjectID;
 
 const pr = {};
 
+pr.get = function (req, res) {
+  let { query, options } = req;
+  let database = options.database;
+  let workout_id = query.workout_id && query.workout_id.length === 24 ? new ObjectId(query.workout_id) : null;
+  let user_id = query.user_id && query.user_id.length === 24 ? new ObjectId(query.user_id) : null;
+  if (workout_id && user_id) {
+    database
+      .collection('personalrecords')
+      .aggregate([
+        { $match: { workout_id, user_id } },
+        {
+          $lookup: {
+            from: 'logs',
+            foreignField: '_id',
+            localField: 'workoutlog_id',
+            as: 'logs',
+          },
+        },
+        {
+          $lookup: {
+            from: 'workouts',
+            foreignField: '_id',
+            localField: 'workout_id',
+            as: 'workouts',
+          },
+        },
+        {
+          $project: { _id: 0, log: { $arrayElemAt: ['$logs', 0] }, workout: { $arrayElemAt: ['$workouts', 0] } },
+        },
+      ])
+      .toArray((error, response) => {
+        if (error) {
+          console.error(error);
+        } else {
+          res(200, response[0]);
+        }
+      });
+  } else {
+    res(400, { error: 'Invalid workout_id or user_id' });
+  }
+};
+
 pr.post = function (req, res) {
   let { buffer, options } = req;
   let workoutlog;

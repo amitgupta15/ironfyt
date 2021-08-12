@@ -171,4 +171,35 @@ it('should test for "For Load" PR', () => {
   };
   assert.strictEqual(pr.isNewForLoadPR(prMovements, newMovements), true);
 });
+
+it('should get PR successfully', () => {
+  let req = {
+    options: {
+      database: {
+        collection: function (collectionName) {
+          if (collectionName === 'personalrecords') {
+            return {
+              aggregate: function () {
+                return {
+                  toArray: function (callback) {
+                    callback(false, []);
+                  },
+                };
+              },
+            };
+          }
+        },
+      },
+    },
+    query: {
+      workout_id: '123412341234123412341234',
+      user_id: '999999999999999999999999',
+    },
+  };
+  let _statusCode;
+  pr.get(req, (statusCode, data) => {
+    _statusCode = statusCode;
+  });
+  assert.strictEqual(_statusCode, 200);
+});
 console.groupEnd();

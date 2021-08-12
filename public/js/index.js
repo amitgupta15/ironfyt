@@ -9,9 +9,11 @@
         <button class="log-this-workout-btn" id="new-log-btn">New Log</button>
         <button class="activity-btn" id="activity-btn">Activity</button>        
       </div>
-      ${groupwods.map((groupwod) => {
-        let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
-        return `
+      ${groupwods
+        .map((groupwod) => {
+          let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
+          let pr = groupwod && groupwod.pr ? groupwod.pr : {};
+          return `
         <div class="rounded-border-primary margin-top-10px">
           <div class="flex margin-bottom-5px">
             <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupwod.group.name}</h3></div>
@@ -34,12 +36,13 @@
             </div>
           </details>
           <div class="margin-top-10px small-text">
-            <p class="muted-text">Your PR is <span class="text-color-secondary">30 mins 24 secs</span> on <span class="text-color-secondary">5/11/2020</span></p>
+            <p class="muted-text">${prString(pr)}</p>
             <p><a href="" class="workout-history-link">Workout Activity</a></p>
           </div>
         </div>
         `;
-      })}
+        })
+        .join('')}
       <div class="rounded-border-primary margin-top-10px">
         <div class="flex margin-bottom-5px">
           <div class="text-color-primary flex-align-self-center flex-auto"><h3>Kids @ Home</h3></div>
@@ -61,6 +64,43 @@
         </details>
       </div>
     </div>`;
+  };
+  let prString = function (pr) {
+    let workoutType = pr && pr.workout && pr.workout.type ? pr.workout.type.toLowerCase() : null;
+    let prDate = pr && pr.log && pr.log.date ? pr.log.date : null;
+    let prstring = '';
+    if (workoutType === 'for time') {
+      let duration = pr && pr.log && pr.log.duration ? pr.log.duration : {};
+      if (duration.hours || duration.minutes || duration.seconds) {
+        prstring = `Your PR is <span class="text-color-secondary">${duration.hours ? `${duration.hours} hrs ` : ''} ${duration.minutes ? `${duration.minutes} mins ` : ''} ${duration.seconds ? `${duration.seconds} secs ` : ''}</span> on <span class="text-color-secondary">${
+          prDate ? new Date(prDate).toLocaleDateString() : ''
+        }</span>`;
+      }
+    }
+    if (workoutType === 'amrap' || workoutType === 'tabata' || workoutType === 'for reps') {
+      let roundinfo = pr && pr.log && pr.log.roundinfo ? pr.log.roundinfo : [];
+      let roundString = roundinfo
+        .map(function (round) {
+          return `${round.rounds ? round.rounds : ''} ${round.load ? ` X ${round.load} ${round.unit}` : ''}`;
+        })
+        .join(' , ');
+      let totalreps = pr && pr.log && pr.log.totalreps ? pr.log.totalreps : null;
+      if (roundString.trim() || totalreps) {
+        prstring = `Your PR is <span class="text-color-secondary">${roundString.trim() ? `Rounds: ${roundString.trim()}` : ``} ${totalreps ? `Total Reps: ${totalreps}` : ``}</span> on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
+      }
+    }
+    if (workoutType === 'for load') {
+      let movements = pr && pr.log && pr.log.movements ? pr.log.movements : [];
+      let movementString = movements
+        .map(function (movement) {
+          return `${movement.movement}: ${movement.reps} X ${movement.load} ${movement.unit}`;
+        })
+        .join('<br/>');
+      if (movementString.trim()) {
+        prstring = `Your PR is <br/><span class="text-color-secondary">${movementString}</span><br/> on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
+      }
+    }
+    return prstring;
   };
   let component = ($ironfyt.landingPageComponent = Component('[data-app=landing]', {
     state: {
@@ -97,11 +137,25 @@
           component.setState({ error });
           return;
         }
-        component.setState({ groupwods });
+        if (groupwods.length) {
+          groupwods = sortByDateDesc(groupwods);
+          groupwods.forEach(function (groupwod) {
+            $ironfyt.getPR({ workout_id: groupwod.workout._id, user_id: user._id }, function (error, pr) {
+              groupwod.pr = pr;
+              component.setState({ groupwods }); //TODO: Is there a way to avoid this setting of groupwod multiple times?
+            });
+          });
+        }
       });
     } else {
       $ironfyt.navigateToUrl('login.html');
     }
     // console.log(component.getState());
   })();
+
+  let sortByDateDesc = function (arr) {
+    return arr.sort(function (a, b) {
+      return new Date(b['date']) - new Date(a['date']);
+    });
+  };
 })();
