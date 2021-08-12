@@ -52,9 +52,6 @@
   let updatePersonalRecord = (app.updatePersonalRecord = function (params, callback) {
     // callback();
   });
-  let getPR = (app.getPR = function (params, callback) {
-    callback();
-  });
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -88,7 +85,6 @@
       app.getMovements = getMovements;
       app.getGroupWod = getGroupWod;
       app.updatePersonalRecord = updatePersonalRecord;
-      app.getPR = getPR;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

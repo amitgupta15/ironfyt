@@ -73,10 +73,6 @@
     getRequest('/api/groupwod', params, callback);
   };
 
-  $ironfyt.getPR = function (params, callback) {
-    getRequest('/api/pr', params, callback);
-  };
-
   $ironfyt.saveWorkout = function (workout, callback) {
     let headers = getAuthHeader();
     fetch.post(`/api/workout`, { headers, data: workout }, function (error, response) {
