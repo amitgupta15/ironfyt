@@ -69,7 +69,15 @@ groupwod.get = (req, res) => {
             },
           },
           {
-            $project: { _id: 0, group: { $arrayElemAt: ['$group', 0] }, date: 1, workout: { $arrayElemAt: ['$workout', 0] }, pr: { $arrayElemAt: ['$pr', 0] } },
+            $lookup: {
+              from: 'logs',
+              let: { group_workout_id: '$workout_id', group_workout_date: '$date' },
+              pipeline: [{ $match: { $expr: { $and: [{ $eq: ['$workout_id', '$$group_workout_id'] }, { $eq: ['$user_id', new ObjectId(user_id)] }, { $eq: ['$date', '$$group_workout_date'] }] } } }],
+              as: 'log',
+            },
+          },
+          {
+            $project: { group: { $arrayElemAt: ['$group', 0] }, date: 1, workout: { $arrayElemAt: ['$workout', 0] }, pr: { $arrayElemAt: ['$pr', 0] }, log: { $arrayElemAt: ['$log', 0] } },
           },
         ])
         .toArray(function (error, response) {

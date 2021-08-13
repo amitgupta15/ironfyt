@@ -29,6 +29,10 @@ let queryParser = (query, res) => {
         let date = new Date(query[key]);
         filter['date'] = { ...filter['date'], $lte: date };
       }
+      if (key === 'date') {
+        let date = new Date(query[key]);
+        filter['date'] = date;
+      }
     }
   }
   return filter;

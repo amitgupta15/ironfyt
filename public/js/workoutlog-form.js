@@ -1020,6 +1020,7 @@
         let date = params && params.date ? params.date : false;
         let user_id = params && params.user_id ? params.user_id : false;
         let isAdmin = user.role === 'admin';
+        let workout_id = params && params.workout_id ? params.workout_id : false;
 
         if (user_id && user_id !== user._id && !isAdmin) {
           component.setState({ error: { message: 'You cannot edit a workout log for another user!' } });
@@ -1028,6 +1029,20 @@
         if (_id && _id.length !== 24) {
           component.setState({ error: { message: 'Invalid ID' } });
           return;
+        }
+        if (workout_id) {
+          $ironfyt.getWorkouts({ _id: workout_id }, function (error, response) {
+            if (error) {
+              component.setState({ error });
+              return;
+            }
+            let workoutlog = component.getState().workoutlog;
+            console.log(response.workouts);
+            workoutlog.workout = response.workouts;
+            component.setState({ workoutlog });
+
+            enableFieldsForSelectedWorkout(response.workouts[0]);
+          });
         }
         if (_id) {
           $ironfyt.getWorkoutLogs({ _id }, function (error, response) {

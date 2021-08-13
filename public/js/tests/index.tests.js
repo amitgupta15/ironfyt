@@ -26,5 +26,18 @@
     $test.assert(_page === 'login.html');
   });
 
+  $test.it('should navigate to workoutlog-form with appropriate parameters when log with wod button is clicked', function () {
+    let _url;
+    $ironfyt.navigateToUrl = function (url) {
+      _url = url;
+    };
+
+    let groupwods = [{ _id: '123412341234123412341234', workout: { _id: 'workout1' }, date: '2020-08-12T08:00:00.000Z' }];
+    component.setState({ groupwods });
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template({ groupwods });
+    $test.dispatchHTMLEvent('click', '#log-this-wod-btn-123412341234123412341234');
+    $test.assert(_url === 'workoutlog-form.html?workout_id=workout1&date=2020-08-12T08:00:00.000Z&ref=index.html');
+  });
   console.groupEnd();
 })();

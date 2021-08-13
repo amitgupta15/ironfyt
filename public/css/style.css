@@ -443,6 +443,9 @@ input[type='number'] {
 .muted-text {
   color: #aaa;
 }
+.groupwod-log-text {
+  color: #2dad10;
+}
 
 .submit-btn-bar {
   width: 100%;
