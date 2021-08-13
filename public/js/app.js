@@ -72,7 +72,9 @@
   $ironfyt.getGroupWod = function (params, callback) {
     getRequest('/api/groupwod', params, callback);
   };
-
+  $ironfyt.getPersonalRecord = function (params, callback) {
+    getRequest('/api/pr', params, callback);
+  };
   $ironfyt.saveWorkout = function (workout, callback) {
     let headers = getAuthHeader();
     fetch.post(`/api/workout`, { headers, data: workout }, function (error, response) {
@@ -90,7 +92,7 @@
   $ironfyt.updatePersonalRecord = function (workoutlog, callback) {
     let headers = getAuthHeader();
     fetch.post(`/api/pr`, { headers, data: workoutlog }, function (error, response) {
-      // validateReponse(error, response, callback);
+      validateReponse(error, response, callback);
     });
   };
   /**

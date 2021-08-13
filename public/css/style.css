@@ -18,6 +18,7 @@ Bitter Lime - #CAFE48
 :root {
   --main-color: #5adbff;
   --secondary-color: #6874eb;
+  --tertiary-color: #2dad10;
   --text-color: #1e1e24;
   --btn-primary: #5adbff;
   --btn-delete: #f4442e;
@@ -442,6 +443,9 @@ input[type='number'] {
 }
 .muted-text {
   color: #aaa;
+}
+.bold-text {
+  font-weight: 600;
 }
 .groupwod-log-text {
   color: #2dad10;
@@ -880,6 +884,9 @@ textarea:valid {
 .text-color-secondary {
   color: var(--secondary-color);
 }
+.text-color-tertiary {
+  color: var(--tertiary-color);
+}
 
 .text-align-right {
   text-align: right;
@@ -979,6 +986,7 @@ textarea:valid {
   position: relative;
   padding-left: 23px;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 .log-this-workout-btn::before,
 .log-this-workout-btn-abs-position::before {

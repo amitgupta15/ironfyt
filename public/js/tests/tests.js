@@ -50,7 +50,10 @@
     callback();
   });
   let updatePersonalRecord = (app.updatePersonalRecord = function (params, callback) {
-    // callback();
+    callback();
+  });
+  let getPersonalRecord = (app.getPersonalRecord = function (params, callback) {
+    callback();
   });
 
   let teardownComponents = function () {
@@ -85,6 +88,7 @@
       app.getMovements = getMovements;
       app.getGroupWod = getGroupWod;
       app.updatePersonalRecord = updatePersonalRecord;
+      app.getPersonalRecord = getPersonalRecord;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

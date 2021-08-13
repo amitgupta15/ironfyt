@@ -121,7 +121,7 @@ pr.isNewForLoadPR = (prLog, newLog) => {
 pr.isNewForTimePR = (prLog, newLog) => {
   let prDuration = prLog && prLog.duration ? prLog.duration.hours * 60 * 60 + prLog.duration.minutes * 60 + prLog.duration.seconds * 60 : 0; //convert everything to seconds
   let newDuration = newLog && newLog.duration ? newLog.duration.hours * 60 * 60 + newLog.duration.minutes * 60 + newLog.duration.seconds * 60 : 0; //convert everything to seconds
-  if (prDuration < newDuration || (prDuration === 0 && newDuration > 0)) {
+  if (newDuration < prDuration || (prDuration === 0 && newDuration > 0)) {
     return true;
   } else {
     return false;

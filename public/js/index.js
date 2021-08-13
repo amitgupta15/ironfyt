@@ -29,7 +29,7 @@
               ${logInfoBlock(groupwod)}
               <div class="margin-top-10px small-text">
                 <p class="muted-text">${prString(groupwod)}</p>
-                <div class="margin-top-10px"><a href="" class="workout-history-link">Workout Activity</a></div>
+                <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Activity</a></div>
               </div>
             </div>`;
         })
@@ -123,7 +123,7 @@
   $hl.eventListener('click', 'activity-btn', navigateEvent);
 
   document.addEventListener('click', function (event) {
-    let logthiswodbtnRegex = new RegExp(/^log-this-wod-btn-\d+/gm);
+    let logthiswodbtnRegex = new RegExp(/^log-this-wod-btn-([a-zA-Z]|\d){24}/gm);
     if (logthiswodbtnRegex.test(event.target.id)) {
       let prefix = 'log-this-wod-btn-';
       let groupwodId = event.target.id.substr(prefix.length);
