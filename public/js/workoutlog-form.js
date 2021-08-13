@@ -1030,20 +1030,6 @@
           component.setState({ error: { message: 'Invalid ID' } });
           return;
         }
-        if (workout_id) {
-          $ironfyt.getWorkouts({ _id: workout_id }, function (error, response) {
-            if (error) {
-              component.setState({ error });
-              return;
-            }
-            let workoutlog = component.getState().workoutlog;
-            console.log(response.workouts);
-            workoutlog.workout = response.workouts;
-            component.setState({ workoutlog });
-
-            enableFieldsForSelectedWorkout(response.workouts[0]);
-          });
-        }
         if (_id) {
           $ironfyt.getWorkoutLogs({ _id }, function (error, response) {
             if (error) {
@@ -1067,6 +1053,19 @@
           component.setState(state);
         } else {
           component.setState(state);
+        }
+        if (workout_id) {
+          $ironfyt.getWorkouts({ _id: workout_id }, function (error, response) {
+            if (error) {
+              component.setState({ error });
+              return;
+            }
+            let workoutlog = component.getState().workoutlog;
+            workoutlog.workout = response.workouts;
+            component.setState({ workoutlog });
+
+            enableFieldsForSelectedWorkout(response.workouts[0]);
+          });
         }
       });
     });

@@ -845,8 +845,26 @@
     form.elements['wolog-duration-minutes'].value = 30;
     // Submit the form to trigger PR check
     $test.dispatchHTMLEvent('submit', '#workout-log-form');
-    let state = component.getState();
     $test.assert(_updatePersonalRecordCalled === true);
+  });
+
+  $test.it('should set the date and workout if the form is loaded from the "Log this WOD" button from the home page', function () {
+    component.setState({ workoutlog: {} });
+    $hl.getParams = function () {
+      return {
+        workout_id: '123412341234123412341234',
+        date: '2021-01-01T08:00:00.000Z',
+      };
+    };
+    $ironfyt.getWorkouts = function (params, callback) {
+      callback(false, { workouts: [{ _id: '123412341234123412341234' }] });
+    };
+    let selector = document.querySelector('#selector');
+    selector.innerHTML = component.template();
+    page();
+    let state = component.getState();
+    $test.assert(state.workoutlog.date === '2021-01-01T08:00:00.000Z');
+    $test.assert(state.workoutlog.workout[0]._id === '123412341234123412341234');
   });
   console.groupEnd();
 })();
