@@ -17,7 +17,7 @@
 
   let workoutActivityTemplate = function (props) {
     let workoutlogs = props && props.workoutlogs ? props.workoutlogs : [];
-    let workout = workoutlogs.length && workoutlogs[0].workout && workoutlogs[0].workout[0] ? workoutlogs[0].workout[0] : {};
+    let workout = props && props.workout ? props.workout : {};
     let pr = props && props.pr ? props.pr : {};
     return `
     <div class="container">
@@ -29,6 +29,7 @@
         <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="log-this-workout-btn">Log This WOD</a>
       </div>
       <div class="day-log-detail">
+        ${workoutlogs.length === 0 ? 'No activity found' : ''}
         ${workoutlogs
           .map(function (log) {
             let isPr = log._id === pr._id;
@@ -101,6 +102,7 @@
       error: '',
       workoutlogs: [],
       pr: {},
+      workout: {},
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutActivityTemplate);
@@ -169,6 +171,14 @@
         let params = $hl.getParams();
         let workout_id = params && params.workout_id ? params.workout_id : false;
         if (workout_id && workout_id.length === 24) {
+          $ironfyt.getWorkouts({ _id: workout_id }, function (error, response) {
+            if (error) {
+              component.setState({ error });
+              return;
+            }
+            let workout = response && response.workouts ? response.workouts[0] : {};
+            component.setState({ workout });
+          });
           $ironfyt.getWorkoutLogs({ workout_id, user_id: user._id }, function (error, response) {
             if (error) {
               component.setState({ error });

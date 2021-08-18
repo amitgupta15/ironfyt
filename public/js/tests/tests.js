@@ -55,6 +55,9 @@
   let getPersonalRecord = (app.getPersonalRecord = function (params, callback) {
     callback();
   });
+  let getGroup = (app.getGroup = function (params, callback) {
+    callback();
+  });
 
   let teardownComponents = function () {
     for (var key in app) {
@@ -89,6 +92,7 @@
       app.getGroupWod = getGroupWod;
       app.updatePersonalRecord = updatePersonalRecord;
       app.getPersonalRecord = getPersonalRecord;
+      app.getGroup = getGroup;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

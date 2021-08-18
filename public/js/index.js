@@ -11,15 +11,15 @@
       </div>
       ${groupwods
         .map((groupwod) => {
-          // console.log(groupwod);
           let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
           let groupName = groupwod && groupwod.group && groupwod.group.name ? groupwod.group.name : '';
+          let groupid = groupwod && groupwod.group && groupwod.group._id ? groupwod.group._id : '';
           return `
             <div class="rounded-border-primary margin-top-10px">
               <div class="flex margin-bottom-5px">
                 <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupName}</h3></div>
                 <div class="flex-auto text-align-right">
-                  <button class="group-home-btn-w-new-message-indicator" id="group-home-btn" data-new-messages="5"></button>
+                  <button class="group-home-btn-w-new-message-indicator" id="group-home-btn-${groupid}" data-new-messages="5"></button>
                 </div>
               </div>
               <p class="margin-bottom-5px">
@@ -108,7 +108,6 @@
   }));
 
   let navToURL = {
-    'group-home-btn': 'group.html',
     'new-log-btn': 'workoutlog-form.html',
     'activity-btn': 'workoutlog-calendar.html',
   };
@@ -118,11 +117,17 @@
     $ironfyt.navigateToUrl(navToURL[targetId]);
   };
 
-  $hl.eventListener('click', 'group-home-btn', navigateEvent);
   $hl.eventListener('click', 'new-log-btn', navigateEvent);
   $hl.eventListener('click', 'activity-btn', navigateEvent);
 
   document.addEventListener('click', function (event) {
+    let groupIdRegex = new RegExp(/^group-home-btn-([a-zA-Z]|\d){24}/gm);
+    if (groupIdRegex.test(event.target.id)) {
+      let prefix = 'group-home-btn-';
+      let groupId = event.target.id.substr(prefix.length);
+      $ironfyt.navigateToUrl(`group.html?group_id=${groupId}`);
+    }
+
     let logthiswodbtnRegex = new RegExp(/^log-this-wod-btn-([a-zA-Z]|\d){24}/gm);
     if (logthiswodbtnRegex.test(event.target.id)) {
       let prefix = 'log-this-wod-btn-';

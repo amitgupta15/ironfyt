@@ -14,6 +14,7 @@ const user = require('./user');
 const movement = require('./movement');
 const groupwod = require('./groupwod');
 const personalrecord = require('./personalrecord');
+const group = require('./group');
 
 const handler = {};
 
@@ -44,6 +45,11 @@ handler.groupwod = (req, res) => {
 handler.personalrecord = (req, res) => {
   handleRoute(req, res, personalrecord, true, ['post', 'get']);
 };
+
+handler.group = (req, res) => {
+  handleRoute(req, res, group, true, ['get']);
+};
+
 /**
  *
  * @param {*} req - request object
