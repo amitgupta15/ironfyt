@@ -7,7 +7,7 @@
     <div class="container">
       <div>
         <button class="log-this-workout-btn" id="new-log-btn">New Log</button>
-        <button class="activity-btn" id="activity-btn">Activity</button>        
+        <button class="activity-btn" id="activity-btn">Logs</button>        
       </div>
       ${groupwods
         .map((groupwod) => {
@@ -19,7 +19,7 @@
               <div class="flex margin-bottom-5px">
                 <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupName}</h3></div>
                 <div class="flex-auto text-align-right">
-                  <button class="group-home-btn-w-new-message-indicator" id="group-home-btn-${groupid}" data-new-messages="5"></button>
+                  <button class="group-home-btn" id="group-home-btn-${groupid}" data-new-messages="5"></button>
                 </div>
               </div>
               <p class="margin-bottom-5px">
@@ -29,7 +29,7 @@
               ${logInfoBlock(groupwod)}
               <div class="margin-top-10px small-text">
                 <div class="muted-text">${prString(groupwod)}</div>
-                <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Activity</a></div>
+                <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Log</a></div>
               </div>
             </div>`;
         })
@@ -47,11 +47,7 @@
   let prString = function (groupwod) {
     let pr = groupwod && groupwod.pr && groupwod.pr.log ? groupwod.pr.log : {};
     let prDate = pr && pr.date ? pr.date : null;
-    let prstring = $ironfyt.displayWorkoutLogDetail(pr, 'text-color-secondary', true);
-    if (prstring.trim()) {
-      prstring = `Your PR is ${prstring} on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
-    }
-    return prstring;
+    return JSON.stringify(pr) === '{}' ? '' : `Your PR is ${$ironfyt.displayWorkoutLogDetail(pr, 'text-color-secondary', true)} on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
   };
   let logInfoBlock = function (groupwod) {
     let log = groupwod && groupwod.log ? groupwod.log : false;
