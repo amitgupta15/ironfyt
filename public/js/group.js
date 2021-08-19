@@ -11,9 +11,9 @@
       <h3>${group.name}</h3>
     </div>
     <div class="selected-day-control-bar">
-      <div><button class="day-control" id="prev-day-btn">&#9668;</button></div>
+      <div><button class="day-control" id="group-prev-day-btn">&#9668;</button></div>
       <div>${date ? date.toDateString() : ''}</div>
-      <div><button class="day-control" id="next-day-btn">&#9658;</button></div>
+      <div><button class="day-control" id="group-next-day-btn">&#9658;</button></div>
     </div>
     <div class="container">
       ${
@@ -33,51 +33,7 @@
               <div>
                 <div class="margin-bottom-5px text-color-secondary">${log.user.fname} ${log.user.lname} <span class="muted-text">(${log.user.username})</span> </div>
                 ${log.workout ? `${$ironfyt.displayWorkoutDetail(log.workout, false)}` : ``}
-                ${
-                  log.duration && (parseInt(log.duration.hours) > 0 || parseInt(log.duration.minutes) > 0 || parseInt(log.duration.seconds) > 0)
-                    ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>`
-                    : ''
-                }
-                ${
-                  log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
-                    ? `<div class="flex">
-                        <div><strong>Rounds: </strong></div>
-                        <div class="margin-left-5px">${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
-                      </div>`
-                    : ''
-                }
-                ${
-                  log.totalreps
-                    ? `<div class="flex">
-                        <div><strong>Total Reps:</strong></div>
-                        <div class="margin-left-5px">${log.totalreps}</div>
-                      </div>`
-                    : ``
-                }
-                ${
-                  log.movements && log.movements.length
-                    ? `<div>
-                        <div><strong>Movements: </strong></div>
-                        <div class="margin-left-5px">${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
-                      </div>`
-                    : ''
-                }
-                ${
-                  log.notes
-                    ? `<div>
-                        <div><strong>Notes: </strong></div>
-                        <div class="margin-left-5px">${$hl.replaceNewLineWithBR(log.notes)}</div>
-                      </div>`
-                    : ''
-                }
-                ${
-                  log.location
-                    ? `<div class="flex">
-                        <div><strong>Location: </strong></div>
-                        <div class="margin-left-5px">${log.location}</div>
-                      </div>`
-                    : ''
-                }
+                ${$ironfyt.displayWorkoutLogDetail(log)}
               </div>
             </div>`;
           })
@@ -99,6 +55,40 @@
     },
   }));
 
+  let handleDayChangeEvent = function (event) {
+    let state = component.getState();
+    let date = new Date(state.date);
+    let currentYear = date.getFullYear();
+    let currentMonth = date.getMonth();
+    let currentDate = date.getDate();
+    let group_id = state.group._id;
+    if (event.target.id === 'group-prev-day-btn') {
+      date = new Date(currentYear, currentMonth, currentDate - 1);
+    } else if (event.target.id === 'group-next-day-btn') {
+      date = new Date(currentYear, currentMonth, currentDate + 1);
+    }
+    getGroupActivity(group_id, date);
+  };
+
+  $hl.eventListener('click', 'group-prev-day-btn', handleDayChangeEvent);
+  $hl.eventListener('click', 'group-next-day-btn', handleDayChangeEvent);
+
+  let getGroupActivity = function (group_id, date) {
+    if (group_id) {
+      $ironfyt.getGroup({ _id: group_id, date }, function (error, response) {
+        if (error) {
+          component.setState({ error });
+          return;
+        }
+        let group = response && response.length ? response[0] : {};
+        component.setState({ group, date });
+      });
+    } else {
+      component.setState({ error: 'No Group Selected' });
+      return;
+    }
+  };
+
   ($ironfyt.groupPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (error) {
@@ -114,19 +104,7 @@
       if (usergroups.indexOf(group_id) < 0) {
         component.setState({ error: 'You are not allowed to view this group page' });
       }
-      if (group_id) {
-        $ironfyt.getGroup({ _id: group_id, date }, function (error, response) {
-          if (error) {
-            component.setState({ error });
-            return;
-          }
-          let group = response && response.length ? response[0] : {};
-          component.setState({ group, date });
-        });
-      } else {
-        component.setState({ error: 'No Group Selected' });
-        return;
-      }
+      getGroupActivity(group_id, date);
     });
   })();
 })();

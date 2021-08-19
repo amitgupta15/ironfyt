@@ -28,7 +28,7 @@
               ${$ironfyt.displayWorkoutDetail(workout)}
               ${logInfoBlock(groupwod)}
               <div class="margin-top-10px small-text">
-                <p class="muted-text">${prString(groupwod)}</p>
+                <div class="muted-text">${prString(groupwod)}</div>
                 <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Activity</a></div>
               </div>
             </div>`;
@@ -47,7 +47,7 @@
   let prString = function (groupwod) {
     let pr = groupwod && groupwod.pr && groupwod.pr.log ? groupwod.pr.log : {};
     let prDate = pr && pr.date ? pr.date : null;
-    let prstring = buildLogString(pr, groupwod, 'text-color-secondary');
+    let prstring = $ironfyt.displayWorkoutLogDetail(pr, 'text-color-secondary', true);
     if (prstring.trim()) {
       prstring = `Your PR is ${prstring} on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span>`;
     }
@@ -57,45 +57,17 @@
     let log = groupwod && groupwod.log ? groupwod.log : false;
     return `
     <div class="margin-top-10px">
-      ${log ? `<p class="groupwod-log-text small-text"><span class="workout-done"></span>${new Date(log.date).toLocaleDateString()}${buildLogString(log, groupwod, 'groupwod-log-text')}</p>` : `<button class="log-this-workout-btn" id="log-this-wod-btn-${groupwod._id}">Log This WOD</button>`}   
+      ${
+        log
+          ? `<div class="groupwod-log-text small-text">
+              <span class="workout-done"></span>${new Date(log.date).toLocaleDateString()}
+              ${$ironfyt.displayWorkoutLogDetail(log, 'groupwod-log-text', true)}
+            </div>`
+          : `<button class="log-this-workout-btn" id="log-this-wod-btn-${groupwod._id}">Log This WOD</button>`
+      }   
     </div>`;
   };
 
-  let buildLogString = function (log, groupwod, cssClass) {
-    let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
-    let workoutType = workout.type ? workout.type.toLowerCase() : null;
-    let logstring = '';
-    if (workoutType === 'for time') {
-      let duration = log && log.duration ? log.duration : {};
-      if (duration.hours || duration.minutes || duration.seconds) {
-        logstring = `<span class="${cssClass}">${duration.hours ? `${duration.hours} hrs ` : ''} ${duration.minutes ? `${duration.minutes} mins ` : ''} ${duration.seconds ? `${duration.seconds} secs ` : ''}</span>`;
-      }
-    }
-    if (workoutType === 'amrap' || workoutType === 'tabata' || workoutType === 'for reps') {
-      let roundinfo = log && log.roundinfo ? log.roundinfo : [];
-      let roundString = roundinfo
-        .map(function (round) {
-          return `${round.rounds ? round.rounds : ''} ${round.load ? ` X ${round.load} ${round.unit}` : ''}`;
-        })
-        .join(' , ');
-      let totalreps = log && log.totalreps ? log.totalreps : null;
-      if (roundString.trim() || totalreps) {
-        logstring = `<span class="${cssClass}">${roundString.trim() ? `Rounds: ${roundString.trim()}` : ``} ${totalreps ? `Total Reps: ${totalreps}` : ``}</span>`;
-      }
-    }
-    if (workoutType === 'for load') {
-      let movements = log && log.movements ? log.movements : [];
-      let movementString = movements
-        .map(function (movement) {
-          return `${movement.movement}: ${movement.reps} X ${movement.load} ${movement.unit}`;
-        })
-        .join('<br/>');
-      if (movementString.trim()) {
-        logstring = `<br/><span class="${cssClass}">${movementString}</span><br/>`;
-      }
-    }
-    return logstring;
-  };
   let component = ($ironfyt.landingPageComponent = Component('[data-app=landing]', {
     state: {
       user: {},

@@ -88,51 +88,7 @@
                 <div>
                   ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
                   ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false)}` : ''}
-                  ${
-                    log.duration && (parseInt(log.duration.hours) > 0 || parseInt(log.duration.minutes) > 0 || parseInt(log.duration.seconds) > 0)
-                      ? `<p><strong>Duration: </strong>${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>`
-                      : ''
-                  }
-                  ${
-                    log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
-                      ? `<div class="flex">
-                          <div><strong>Rounds: </strong></div>
-                          <div class="margin-left-5px">${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
-                        </div>`
-                      : ''
-                  }
-                  ${
-                    log.totalreps
-                      ? `<div class="flex">
-                          <div><strong>Total Reps:</strong></div>
-                          <div class="margin-left-5px">${log.totalreps}</div>
-                        </div>`
-                      : ``
-                  }
-                  ${
-                    log.movements && log.movements.length
-                      ? `<div>
-                          <div><strong>Movements: </strong></div>
-                          <div class="margin-left-5px">${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
-                        </div>`
-                      : ''
-                  }
-                  ${
-                    log.notes
-                      ? `<div>
-                          <div><strong>Notes: </strong></div>
-                          <div class="margin-left-5px">${$hl.replaceNewLineWithBR(log.notes)}</div>
-                        </div>`
-                      : ''
-                  }
-                  ${
-                    log.location
-                      ? `<div class="flex">
-                          <div><strong>Location: </strong></div>
-                          <div class="margin-left-5px">${log.location}</div>
-                        </div>`
-                      : ''
-                  }
+                  ${$ironfyt.displayWorkoutLogDetail(log)}
                 </div>
               </div>
               `

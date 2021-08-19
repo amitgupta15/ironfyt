@@ -58,5 +58,27 @@
     let state = component.getState();
     $test.assert(state.group.name === 'group 1');
   });
+
+  $test.it('should load the data for a given day when next button is clicked', function () {
+    let selector = document.querySelector('#selector');
+    component.setState({ group: { _id: '123456123456123456123456' }, date: '2021-01-05T08:00:00.000Z' });
+    let state = component.getState();
+    selector.innerHTML = component.template(state);
+
+    $test.dispatchHTMLEvent('click', '#group-next-day-btn');
+    state = component.getState();
+    $test.assert(state.date === '2021-01-06T08:00:00.000Z');
+  });
+
+  $test.it('should load the data for a given day when prev button is clicked', function () {
+    let selector = document.querySelector('#selector');
+    component.setState({ group: { _id: '123456123456123456123456' }, date: '2021-01-05T08:00:00.000Z' });
+    let state = component.getState();
+    selector.innerHTML = component.template(state);
+
+    $test.dispatchHTMLEvent('click', '#group-prev-day-btn');
+    state = component.getState();
+    $test.assert(state.date === '2021-01-04T08:00:00.000Z');
+  });
   console.groupEnd();
 })();
