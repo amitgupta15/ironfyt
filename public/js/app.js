@@ -136,6 +136,7 @@
     let timecapStr = '';
     if (typeof timecap === 'string') {
       timecapStr = timecap;
+      console.log(timecapStr);
     } else if (typeof timecap === 'object' && timecap !== null) {
       if (!(timecap.hours === null && timecap.minutes === null && timecap.seconds === null)) {
         timecapStr += timecap.hours ? `${timecap.hours} hr ` : '';
@@ -238,6 +239,20 @@
     </div>`;
   };
 
+  /**
+   * Reusable search bar template
+   * @param {*} inputId - id and name for the html input element
+   * @param {*} placeholder - placeholder text for the input element and label
+   * @returns html template to render a search bar
+   */
+  $ironfyt.searchBarTemplate = function (inputId, placeholder) {
+    return `
+    <div class="form-input-group margin-top-20px margin-bottom-15px">
+      <span class="search-input-icon"></span>
+      <input type="text" class="form-input search-input" name="${inputId}" id="${inputId}" value="" placeholder="${placeholder}"/>
+      <label for="${inputId}" class="form-label">${placeholder}</label>
+    </div>`;
+  };
   // Common error template which can be shared across components to render error messages
   let errorTemplate = function (error) {
     return `<p class="error-div">${error.message}</p>`;

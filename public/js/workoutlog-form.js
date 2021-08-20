@@ -49,11 +49,7 @@
     <div class="modal-container" id="select-workout-modal">
       <div class="modal-dialog select-workout-modal">
         <button id="close-workout-list-modal-btn">X</button>
-        <div class="form-input-group margin-top-20px margin-bottom-15px">
-          <span id="search-workout-modal-icon"></span>
-          <input type="text" class="form-input" name="search-workout" id="search-workout" value="" placeholder="Search Workout..."/>
-          <label for="search-workout" class="form-label">Search Workout...</label>
-        </div>
+        ${$ironfyt.searchBarTemplate('search-workout', 'Search Workout...')}
         <div id="autocomplete-workout-list" class="autocomplete-workout-list">${newWorkoutButton()}</div>
       </div>
     </div>`;
@@ -603,11 +599,16 @@
       addMovementField.value = '';
     }
   };
-  /**
-   * takes two arguments, the input field and the list of items to be used for auto complete
-   * Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
-   * */
 
+  /**
+   * This method is used to autocomplete the "movements" input field on the logs form.
+   * The method is called at the time of component creation in afterRender to make it ready for use
+   *
+   * Credit: Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
+   *
+   * @param {*} textField - Input field on which the autocomplete will attach itself to
+   * @param {*} list - List of data to use for autocomplete
+   */
   let autocomplete = function (textField, list) {
     let autocompleteDiv = document.getElementById('autocomplete-movement-list');
     // Execute the function when someone writes something in the input field

@@ -529,7 +529,7 @@ input[type='number'] {
   color: var(--main-color);
   font-size: 0.9rem;
 }
-#search-workout-modal-icon {
+.search-input-icon {
   background: url(../images/baseline_search_black_24dp.png);
   background-size: cover;
   cursor: pointer;
@@ -585,10 +585,10 @@ input[type='number'] {
 #wolog-location ~ label {
   left: 11px;
 }
-#search-workout {
+.search-input {
   padding-left: 40px;
 }
-#search-workout ~ label {
+.search-input ~ label {
   left: 40px;
 }
 
