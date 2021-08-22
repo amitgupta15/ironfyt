@@ -136,7 +136,6 @@
     let timecapStr = '';
     if (typeof timecap === 'string') {
       timecapStr = timecap;
-      console.log(timecapStr);
     } else if (typeof timecap === 'object' && timecap !== null) {
       if (!(timecap.hours === null && timecap.minutes === null && timecap.seconds === null)) {
         timecapStr += timecap.hours ? `${timecap.hours} hr ` : '';

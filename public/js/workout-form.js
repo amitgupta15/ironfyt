@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  // If the data type changes, make sure to update the search workout logs logic to account for data type change. Currently assuming string data type for reps etc.
   let newWorkout = {
     name: null,
     type: null,

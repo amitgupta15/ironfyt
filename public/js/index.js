@@ -125,28 +125,31 @@
     for (let i = 0; i < workoutlogs.length; i++) {
       let log = workoutlogs[i];
       let workout = log && log.workout && log.workout.length ? log.workout[0] : {};
-
       let notes = log.notes ? log.notes : '';
-      let notesMatchIndex = getMatchIndex(notes);
+      let notesMatchIndex = getSearchStringMatchIndex(notes);
 
       let workoutName = workout.name ? workout.name : '';
-      let workoutNameIndex = getMatchIndex(workoutName);
+      let workoutNameIndex = getSearchStringMatchIndex(workoutName);
 
       let workoutType = workout.type ? workout.type : '';
-      let workoutTypeIndex = getMatchIndex(workoutType);
+      let workoutTypeIndex = getSearchStringMatchIndex(workoutType);
 
       let workoutReps = workout.reps ? workout.reps : '';
-      let workoutRepsIndex = getMatchIndex(workoutReps);
+      let workoutRepsIndex = getSearchStringMatchIndex(workoutReps);
 
       let workoutDescription = workout.description ? workout.description : '';
-      let workoutDescriptionIndex = getMatchIndex(workoutDescription);
+      let workoutDescriptionIndex = getSearchStringMatchIndex(workoutDescription);
 
-      if (notesMatchIndex > -1 || workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1) {
+      let workoutTimecap = workout.timecap ? $ironfyt.formatTimecap(workout.timecap) : '';
+      let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap);
+
+      if (notesMatchIndex > -1 || workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
         log.notes = getHighligtedAttribute(notesMatchIndex, notes);
         workout.name = getHighligtedAttribute(workoutNameIndex, workoutName);
         workout.type = getHighligtedAttribute(workoutTypeIndex, workoutType);
         workout.reps = getHighligtedAttribute(workoutRepsIndex, workoutReps);
         workout.description = getHighligtedAttribute(workoutDescriptionIndex, workoutDescription);
+        workout.timecap = getHighligtedAttribute(workoutTimecapIndex, workoutTimecap);
 
         count++;
         autocompleteList += `
@@ -169,9 +172,10 @@
    * @param {String} inputFieldValue
    * @returns index of the matching text
    */
-  let getMatchIndex = function (attribute) {
-    let inputField = document.querySelector('#search-workout-logs-dashboard-input');
-    let inputFieldValue = inputField.value.trim();
+  let getSearchStringMatchIndex = function (attribute) {
+    //Get the search input field value
+    let inputFieldValue = document.querySelector('#search-workout-logs-dashboard-input').value.trim();
+    //return the index of the search string in attribute parameter passed to the function
     return attribute.toLowerCase().indexOf(inputFieldValue.toLowerCase());
   };
 
