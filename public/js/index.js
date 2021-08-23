@@ -154,8 +154,10 @@
         count++;
         autocompleteList += `
         <div class="workout-search-result-item margin-bottom-5px">
-          <div class="margin-bottom-5px">${new Date(log.date).toLocaleDateString()}</div>
-          <div class="muted-text"><strong>Workout:</strong>${$ironfyt.displayWorkoutDetail(workout)}</div>
+          <div class="margin-bottom-5px bold-text text-color-primary">Date: ${new Date(log.date).toLocaleDateString()}</div>
+          <div class="text-color-primary bold-text">Workout</div>
+          ${$ironfyt.displayWorkoutDetail(workout)}
+          <div class="text-color-primary bold-text">Log</div>
           ${$ironfyt.displayWorkoutLogDetail(log)}
         </div>
         `;

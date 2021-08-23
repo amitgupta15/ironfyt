@@ -1012,6 +1012,16 @@ textarea:valid {
   right: 5px;
   bottom: 0;
 }
+.btn-primary {
+  background-color: white;
+  color: var(--btn-primary);
+  padding: 5px;
+  border: 1px solid var(--btn-primary);
+  border-radius: 5px;
+  position: relative;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
 
 .position-relative {
   position: relative;
