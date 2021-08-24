@@ -8,12 +8,13 @@
 
   $test.it('should create workout activitiy component', function () {
     $test.assert(component.selector === '[data-app=workout-activity]');
-    $test.assert(Object.keys(component.state).length === 5);
+    $test.assert(Object.keys(component.state).length === 6);
     $test.assert('user' in component.state);
     $test.assert('workoutlogs' in component.state);
     $test.assert('error' in component.state);
     $test.assert('pr' in component.state);
     $test.assert('workout' in component.state);
+    $test.assert('pageTitle' in component.state);
   });
 
   $test.it('should not allow unauthorized user to view the calendar page', function () {

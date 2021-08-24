@@ -15,6 +15,7 @@
       <div>
         <button class="log-this-workout-btn" id="new-log-btn">New Log</button>
         <button class="activity-btn" id="activity-btn">Logs</button>        
+        <button class="workouts-btn" id="workouts-btn">Workouts</button>        
       </div>
       ${groupwods
         .map((groupwod) => {
@@ -95,6 +96,7 @@
   let navToURL = {
     'new-log-btn': 'workoutlog-form.html',
     'activity-btn': 'workoutlog-calendar.html',
+    'workouts-btn': 'workouts.html',
   };
 
   let navigateEvent = function (event) {
@@ -197,6 +199,7 @@
 
   $hl.eventListener('click', 'new-log-btn', navigateEvent);
   $hl.eventListener('click', 'activity-btn', navigateEvent);
+  $hl.eventListener('click', 'workouts-btn', navigateEvent);
   $hl.eventListener('input', 'search-workout-logs-dashboard-input', handleSearchLogsEvent);
 
   document.addEventListener('click', function (event) {

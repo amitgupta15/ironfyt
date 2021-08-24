@@ -119,7 +119,7 @@
       year: null,
       displayUser: {},
       days: [],
-      pageTitle: 'Activity',
+      pageTitle: 'Logs',
       selectedDay: {},
     },
     template: function (props) {

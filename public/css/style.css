@@ -17,14 +17,18 @@ Bitter Lime - #CAFE48
 
 :root {
   --main-color: #5adbff;
+  /* --main-color: #ff4800; */
   --secondary-color: #6874eb;
   --tertiary-color: #2dad10;
   --text-color: #1e1e24;
+  /* --text-color: white; */
   --btn-primary: #5adbff;
   --btn-delete: #f4442e;
   --big-font-size: 1rem;
   --normal-font-size: 1rem;
   --small-font-size: 1rem;
+  /* --theme: #000; */
+  --box-background: #333333;
 }
 
 html {
@@ -45,6 +49,7 @@ body {
   padding: 0;
   font-size: 1rem;
   color: var(--text-color);
+  background-color: var(--theme);
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -79,21 +84,12 @@ input[type='number'] {
   padding-right: 10px;
 }
 
-.page-title {
-  color: var(--main-color);
-  font-size: 1.2rem;
-}
-
 .profile-icon {
   color: var(--secondary-color);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
-.top-bar-menu > a {
-  text-decoration: none;
-  color: var(--text-color);
-}
 .container {
   margin: 10px auto;
   padding: 0 15px;
@@ -416,6 +412,9 @@ input[type='number'] {
 
 .margin-bottom-15px {
   margin-bottom: 15px !important;
+}
+.margin-bottom-10px {
+  margin-bottom: 10px !important;
 }
 .margin-bottom-5px {
   margin-bottom: 5px !important;
@@ -876,6 +875,7 @@ textarea:valid {
 .rounded-border-primary {
   border: 1px solid var(--main-color);
   border-radius: 5px;
+  /* background-color: #333333; */
   padding: 10px;
 }
 .text-color-primary {
@@ -894,7 +894,6 @@ textarea:valid {
 .text-align-center {
   text-align: center;
 }
-
 .group-home-btn {
   background: url(../images/home_black_24dp.svg);
   background-size: cover;
@@ -904,10 +903,8 @@ textarea:valid {
   color: transparent;
   position: relative;
 }
-
 .workout-done {
   position: relative;
-  /* margin-left: 5px; */
   padding-left: 18px;
   font-size: 0.9rem;
   color: #2dad10;
@@ -918,7 +915,6 @@ textarea:valid {
   position: absolute;
   top: 0;
   left: 0;
-  /* margin-left: 5px; */
   background: url(../images/done_circle_green_24dp.svg);
   background-size: cover;
   width: 16px;
@@ -935,6 +931,7 @@ textarea:valid {
 .padding-bottom-10px {
   padding-bottom: 10px;
 }
+/*
 .div-with-bg {
   width: 34px;
   height: 34px;
@@ -958,11 +955,13 @@ textarea:valid {
   color: black;
   border: 1px solid greenyellow;
 }
+*/
 
 .log-this-workout-btn,
 .activity-btn,
 .edit-log-for-this-workout-btn,
-.log-this-workout-btn-abs-position {
+.log-this-workout-btn-abs-position,
+.workouts-btn {
   background-color: white;
   color: var(--btn-primary);
   padding: 5px;
@@ -972,6 +971,17 @@ textarea:valid {
   padding-left: 23px;
   font-size: 0.9rem;
   text-decoration: none;
+}
+.workouts-btn::before {
+  content: '';
+  display: block;
+  background: url(../images/fitness_center_primary_24dp.svg);
+  background-size: cover;
+  width: 16px;
+  height: 16px;
+  left: 5px;
+  top: 6px;
+  position: absolute;
 }
 .log-this-workout-btn::before,
 .log-this-workout-btn-abs-position::before {
@@ -1049,4 +1059,20 @@ a.workout-history-link::before {
   width: 20px;
   height: 20px;
   vertical-align: bottom;
+}
+.home-menu-link {
+  display: block;
+  background: url(../images/home_black_24dp.svg);
+  background-size: cover;
+  width: 30px;
+  height: 30px;
+  border: none;
+  color: transparent;
+  position: relative;
+}
+
+.group-title-link {
+  display: block;
+  text-decoration: none;
+  color: var(--main-color);
 }

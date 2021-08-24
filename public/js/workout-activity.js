@@ -21,9 +21,6 @@
     let pr = props && props.pr ? props.pr : {};
     return `
     <div class="container">
-      <div class="position-relative text-color-primary margin-bottom-5px text-align-center">
-        <h4>Workout Activity</h4>
-      </div>
       <div class="rounded-border-primary margin-top-10px">
         ${$ironfyt.displayWorkoutDetail(workout)}
         <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="log-this-workout-btn">Log This WOD</a>
@@ -59,6 +56,7 @@
       workoutlogs: [],
       pr: {},
       workout: {},
+      pageTitle: 'Workout Activity',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutActivityTemplate);
@@ -140,7 +138,7 @@
               component.setState({ error });
               return;
             } else {
-              let workoutlogs = response && response.workoutlogs ? sortByDateDesc(response.workoutlogs) : [];
+              let workoutlogs = response && response.workoutlogs && response.workoutlogs.length ? sortByDateDesc(response.workoutlogs) : [];
               $ironfyt.getPersonalRecord({ workout_id, user_id: user._id }, function (error, response) {
                 if (error) {
                   component.setState({ error });

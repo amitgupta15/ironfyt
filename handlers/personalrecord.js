@@ -38,7 +38,8 @@ pr.get = function (req, res) {
         if (error) {
           console.error(error);
         } else {
-          res(200, response[0]);
+          let result = response && response.length ? response[0] : {};
+          res(200, result);
         }
       });
   } else {

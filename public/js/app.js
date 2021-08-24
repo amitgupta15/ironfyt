@@ -117,8 +117,7 @@
         ${topBarTemplate(props)}
         <div class="main">
         ${template(props)}
-        </div>
-        `;
+        </div>`;
     }
   };
 
@@ -231,9 +230,9 @@
     return `
     <div class="top-bar">
       <div class="top-bar-menu">
-        <a href="/links.html">Menu</a>
+        <a href="/" class="home-menu-link">Home</a>
       </div>
-      <div class="page-title">${pageTitle}</div>
+      <h4 class="text-color-primary">${pageTitle}</h4>
       <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
     </div>`;
   };
