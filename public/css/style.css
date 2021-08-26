@@ -26,11 +26,12 @@ Bitter Lime - #CAFE48
   --big-font-size: 1rem;
   --normal-font-size: 1rem;
   --small-font-size: 1rem;
-  --theme: #ff8c00;
+  --theme: #ff8c00; /** monochromatic variations of theme: #cc7000, #805726, #804600, #ffaf4d */
   --background: #000000;
   --box-background: #262626;
   --border-color: #333333;
   --error: #f4442e;
+  --theme-mute: #805726;
 }
 
 html {
@@ -108,8 +109,7 @@ input[type='number'] {
   justify-content: space-between;
   height: 3rem;
   align-items: center;
-  border: 1px solid #ddd;
-  background-color: var(--main-color);
+  background-color: var(--box-background);
 }
 .calendar-month-control-bar > div:first-of-type,
 .selected-day-control-bar > div:first-of-type {
@@ -135,6 +135,8 @@ input[type='number'] {
   gap: 3px;
   font-size: 1.1rem;
   padding: 3px;
+  /* margin-bottom: 5px; */
+  background-color: var(--box-background);
 }
 
 .date-cell {
@@ -145,7 +147,7 @@ input[type='number'] {
   position: relative;
 }
 .date-cell.header {
-  color: var(--main-color);
+  color: var(--theme);
 }
 .prev-month,
 .next-month {
@@ -153,10 +155,11 @@ input[type='number'] {
 }
 
 .selected-date-cell {
-  color: var(--main-color);
+  color: var(--theme);
 }
 .day-has-log {
-  border: 1px solid var(--main-color);
+  border: 1px solid var(--theme-mute);
+  border-radius: 2px;
 }
 
 .month-control,
@@ -164,12 +167,17 @@ input[type='number'] {
   font-size: 2rem;
   padding: 5px;
   border: none;
+  background-color: transparent;
+  color: var(--main-color);
 }
 
 #today-btn {
-  border-radius: 5px;
   padding: 5px;
   font-size: 1rem;
+  color: var(--link-color);
+  border: none;
+  background-color: transparent;
+  font-weight: bold;
 }
 /** End Calendar **/
 .day-detail-container {
@@ -197,11 +205,12 @@ input[type='number'] {
 
 #add-log-btn-calendar-view {
   width: 100%;
-  border: 1px solid var(--btn-primary);
   border-radius: 5px;
+  border: 1px solid var(--link-color);
+  background-color: transparent;
   height: 2.5rem;
   font-size: 1.3rem;
-  color: var(--btn-primary);
+  color: var(--link-color);
 }
 
 #select-workout-btn-wolog {
@@ -249,48 +258,6 @@ input[type='number'] {
   cursor: pointer;
   width: 26px;
   height: 26px;
-  border: none;
-  color: transparent;
-}
-/* Remove this and replace the instances with log-detail---- */
-.day-log-detail {
-  padding: 10px;
-}
-
-.day-log-detail-container-calendar-view {
-  padding-bottom: 20px;
-  padding-top: 10px;
-  border-bottom: 1px solid var(--main-color);
-}
-
-.day-log-detail-container-calendar-view:first-of-type {
-  border-top: 1px solid var(--main-color);
-}
-
-.day-log-detail-container-calendar-view-btn-bar {
-  text-align: right;
-}
-
-.day-log-detail-edit-btn {
-  background: url(../images/edit_google_24dp.svg);
-  background-size: cover;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border: none;
-  color: transparent;
-}
-/* .day-log-detail-edit-btn.small {
-  width: 24px;
-  height: 24px;
-} */
-
-.day-log-detail-delete-btn {
-  background: url(../images/delete_outline_24dp-google.svg);
-  background-size: cover;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
   border: none;
   color: transparent;
 }
