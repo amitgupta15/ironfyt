@@ -3,17 +3,16 @@
 
   let workoutItemTemplate = function (workout) {
     return `
-      <div class="rounded-corner-box margin-bottom-10px">
+      <div class="rounded-corner-box margin-bottom-10px workout-detail-container">
         ${
           isAdmin()
             ? `
-          <div class="day-log-detail-container-calendar-view-btn-bar">
-            <button class="day-log-detail-edit-btn" id="edit-workout-btn-${workout._id}"></button>
-            <button class="day-log-detail-delete-btn" id="delete-workout-btn-${workout._id}"></button>
+          <div class="item-btn-bar">
+            <button class="item-edit-btn" id="edit-workout-btn-${workout._id}"></button>
+            <button class="item-delete-btn" id="delete-workout-btn-${workout._id}"></button>
           </div>`
             : ``
         }
-        
         ${$ironfyt.displayWorkoutDetail(workout)}
         <div class="margin-top-10px">
           <a href="workout-activity.html?workout_id=${workout._id}&ref=workouts.html" class="workout-history-link">Workout Log</a>
@@ -86,17 +85,17 @@
       let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap);
 
       if (workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
-        workout.name = getHighligtedAttribute(workoutNameIndex, workoutName);
-        workout.type = getHighligtedAttribute(workoutTypeIndex, workoutType);
-        workout.reps = getHighligtedAttribute(workoutRepsIndex, workoutReps);
-        workout.description = getHighligtedAttribute(workoutDescriptionIndex, workoutDescription);
-        workout.timecap = getHighligtedAttribute(workoutTimecapIndex, workoutTimecap);
+        workout.name = workoutName.trim() ? getHighligtedAttribute(workoutNameIndex, workoutName) : '';
+        workout.type = workoutType.trim() ? getHighligtedAttribute(workoutTypeIndex, workoutType) : '';
+        workout.reps = workoutReps.trim() ? getHighligtedAttribute(workoutRepsIndex, workoutReps) : '';
+        workout.description = workoutDescription.trim() ? getHighligtedAttribute(workoutDescriptionIndex, workoutDescription) : '';
+        workout.timecap = workoutTimecap.trim() ? getHighligtedAttribute(workoutTimecapIndex, workoutTimecap) : '';
 
         count++;
         autocompleteList += workoutItemTemplate(workout);
       }
     }
-    let countString = `<div class="margin-bottom-5px muted-text">Found ${count} Workouts</div>`;
+    let countString = `<div class="margin-bottom-5px text-color-secondary">Found ${count} Workouts</div>`;
     autocomleteDiv.innerHTML = `<div>${countString}${autocompleteList}</div>`;
   };
 
@@ -125,7 +124,7 @@
     let inputField = document.querySelector('#search-workouts-input');
     let inputFieldValue = inputField.value.trim();
     let stringToHighlight = matchIndex > -1 ? attribute.substr(matchIndex, inputFieldValue.length) : '';
-    return attribute.replace(stringToHighlight, `<span class="text-color-secondary bold-text">${stringToHighlight}</span>`);
+    return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
   };
 
   // let deleteWorkout = function (targetId) {

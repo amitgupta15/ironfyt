@@ -82,8 +82,8 @@
               (log) => `
               <div class="day-log-detail-container-calendar-view">
                 <div class="day-log-detail-container-calendar-view-btn-bar">
-                  <button class="day-log-detail-edit-btn" id="edit-log-btn-${log._id}"></button>
-                  <button class="day-log-detail-delete-btn" id="delete-log-btn-${log._id}"></button>
+                  <button class="day-item-edit-btn" id="edit-log-btn-${log._id}"></button>
+                  <button class="day-item-delete-btn" id="delete-log-btn-${log._id}"></button>
                 </div>
                 <div>
                   ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}

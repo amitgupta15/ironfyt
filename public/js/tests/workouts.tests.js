@@ -34,13 +34,13 @@
     component.setState({ user: { _id: '1234', role: 'admin' } });
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template({ user: { _id: '123', role: 'admin' }, workouts: [{ _id: '1234' }] });
-    $test.assert(selector.innerHTML.includes('<button class="day-log-detail-edit-btn" id="edit-workout-btn-1234"></button>'));
-    $test.assert(selector.innerHTML.includes('<button class="day-log-detail-delete-btn" id="delete-workout-btn-1234"></button>'));
+    $test.assert(selector.innerHTML.includes('<button class="item-edit-btn" id="edit-workout-btn-1234"></button>'));
+    $test.assert(selector.innerHTML.includes('<button class="item-delete-btn" id="delete-workout-btn-1234"></button>'));
 
     component.setState({ user: { _id: '1234' } });
     selector.innerHTML = component.template({ user: { _id: '123' }, workouts: [{ _id: '1234' }] });
-    $test.assert(!selector.innerHTML.includes('<button class="day-log-detail-edit-btn"'));
-    $test.assert(!selector.innerHTML.includes('<button class="day-log-detail-delete-btn"'));
+    $test.assert(!selector.innerHTML.includes('<button class="item-edit-btn"'));
+    $test.assert(!selector.innerHTML.includes('<button class="item-delete-btn"'));
   });
 
   // $test.it('should delete a workout', function () {

@@ -18,11 +18,11 @@ Bitter Lime - #CAFE48
 :root {
   --link-color: #7b8cde;
   --main-color: #ffffff;
-  --highlight-color: #ff8c00;
   --secondary-color: #bcbcbc;
   --tertiary-color: #2eff19;
   --btn-primary: #5adbff;
-  --btn-delete: #f55600;
+  --btn-delete: #f4442e;
+  --btn-cancel: #bcbcbc;
   --big-font-size: 1rem;
   --normal-font-size: 1rem;
   --small-font-size: 1rem;
@@ -30,6 +30,7 @@ Bitter Lime - #CAFE48
   --background: #000000;
   --box-background: #262626;
   --border-color: #333333;
+  --error: #f4442e;
 }
 
 html {
@@ -69,7 +70,7 @@ input[type='number'] {
 }
 
 .error {
-  color: red;
+  color: var(--error);
   font-size: 0.8rem;
 }
 .top-bar {
@@ -181,9 +182,6 @@ input[type='number'] {
   text-align: center;
   margin-top: 10px;
 }
-.day-log-detail {
-  padding: 10px;
-}
 
 .hide-view {
   display: none !important;
@@ -215,17 +213,27 @@ input[type='number'] {
   font-weight: 600;
   color: var(--btn-primary);
 }
+.log-detail-section {
+  padding: 10px;
+}
 .log-detail-container {
   padding-bottom: 20px;
   padding-top: 10px;
   border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+.workout-detail-container {
+  padding-bottom: 20px;
+  padding-top: 10px;
+  position: relative;
 }
 
-.log-detail-container-btn-bar {
-  text-align: right;
+.item-btn-bar {
+  position: absolute;
+  right: 5px;
 }
 
-.log-detail-edit-btn {
+.item-edit-btn {
   background: url(../images/edit_google_24dp.svg);
   background-size: cover;
   cursor: pointer;
@@ -235,7 +243,7 @@ input[type='number'] {
   color: transparent;
 }
 
-.log-detail-delete-btn {
+.item-delete-btn {
   background: url(../images/delete_outline_24dp-google.svg);
   background-size: cover;
   cursor: pointer;
@@ -243,6 +251,10 @@ input[type='number'] {
   height: 26px;
   border: none;
   color: transparent;
+}
+/* Remove this and replace the instances with log-detail---- */
+.day-log-detail {
+  padding: 10px;
 }
 
 .day-log-detail-container-calendar-view {
@@ -284,7 +296,7 @@ input[type='number'] {
 }
 
 .modal-container {
-  background-color: rgba(240, 240, 240, 0.9);
+  background-color: rgba(0, 0, 0, 0.8);
   position: absolute;
   top: 0;
   left: 0;
@@ -297,13 +309,13 @@ input[type='number'] {
 }
 
 .modal-dialog {
-  border: 1px solid var(--main-color);
+  border: 1px solid var(--border-color);
   position: relative;
   max-width: 95vw;
   text-align: center;
   padding: 20px;
   border-radius: 5px;
-  background-color: white;
+  background-color: var(--box-background);
   font-size: 1.2rem;
 }
 
@@ -314,9 +326,10 @@ input[type='number'] {
 
 .modal-dialog-btn-bar button {
   border-radius: 5px;
-  height: 2.5rem;
-  width: 5.5rem;
-  font-size: 1.2rem;
+  height: 2rem;
+  width: 5rem;
+  font-size: 1rem;
+  background-color: transparent;
 }
 .modal-dialog-btn-bar button.delete {
   border: 1px solid var(--btn-delete);
@@ -324,8 +337,8 @@ input[type='number'] {
 }
 
 .modal-dialog-btn-bar button.cancel {
-  border: 1px solid var(--btn-primary);
-  color: var(--btn-primary);
+  border: 1px solid var(--btn-cancel);
+  color: var(--btn-cancel);
 }
 .select-workout-modal,
 .new-workout-form-modal {
@@ -926,12 +939,15 @@ textarea:valid {
 .text-color-tertiary {
   color: var(--tertiary-color);
 }
+
+.text-color-highlight {
+  color: var(--theme);
+}
+
+/* Remove this */
 .muted-text,
 .text-color-mute {
   color: #aaa;
-}
-.text-color-highlight {
-  color: var(--highlight-color);
 }
 
 .text-align-right {

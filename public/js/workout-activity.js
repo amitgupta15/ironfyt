@@ -26,16 +26,16 @@
         ${$ironfyt.displayWorkoutDetail(workout)}
         <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="log-this-workout-btn">Log This WOD</a>
       </div>
-      <div class="day-log-detail">
+      <div class="log-detail-section">
         ${workoutlogs.length === 0 ? 'No activity found' : ''}
         ${workoutlogs
           .map(function (log) {
             let isPr = log._id === pr._id;
             return `
           <div class="log-detail-container">
-            <div class="log-detail-container-btn-bar">
-              <button class="log-detail-edit-btn" id="edit-log-btn-${log._id}"></button>
-              <button class="log-detail-delete-btn" id="delete-log-btn-${log._id}"></button>
+            <div class="item-btn-bar">
+              <button class="item-edit-btn" id="edit-log-btn-${log._id}"></button>
+              <button class="item-delete-btn" id="delete-log-btn-${log._id}"></button>
             </div>
             <div>
               <div class="margin-bottom-5px text-color-secondary ${isPr ? `personal-record-trophy` : ''}"><h3>${new Date(log.date).toLocaleDateString()}</h3></div>
