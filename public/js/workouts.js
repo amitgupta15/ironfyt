@@ -3,7 +3,7 @@
 
   let workoutItemTemplate = function (workout) {
     return `
-      <div class="rounded-border-primary margin-bottom-10px">
+      <div class="rounded-corner-box margin-bottom-10px">
         ${
           isAdmin()
             ? `

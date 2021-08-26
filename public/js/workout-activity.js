@@ -21,7 +21,8 @@
     let pr = props && props.pr ? props.pr : {};
     return `
     <div class="container">
-      <div class="rounded-border-primary margin-top-10px">
+      <div class="rounded-corner-box margin-top-10px">
+        <h3 class="text-color-secondary margin-bottom-10px">Workout</h3>
         ${$ironfyt.displayWorkoutDetail(workout)}
         <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="log-this-workout-btn">Log This WOD</a>
       </div>
@@ -31,13 +32,13 @@
           .map(function (log) {
             let isPr = log._id === pr._id;
             return `
-          <div class="day-log-detail-container-calendar-view">
-            <div class="day-log-detail-container-calendar-view-btn-bar">
-              <button class="day-log-detail-edit-btn" id="edit-log-btn-${log._id}"></button>
-              <button class="day-log-detail-delete-btn" id="delete-log-btn-${log._id}"></button>
+          <div class="log-detail-container">
+            <div class="log-detail-container-btn-bar">
+              <button class="log-detail-edit-btn" id="edit-log-btn-${log._id}"></button>
+              <button class="log-detail-delete-btn" id="delete-log-btn-${log._id}"></button>
             </div>
             <div>
-              <div class="margin-bottom-5px text-color-secondary">${new Date(log.date).toLocaleDateString()} ${isPr ? `<span class="text-color-tertiary bold-text">PR</span>` : ''}</div>
+              <div class="margin-bottom-5px text-color-secondary ${isPr ? `personal-record-trophy` : ''}"><h3>${new Date(log.date).toLocaleDateString()}</h3></div>
               ${$ironfyt.displayWorkoutLogDetail(log)}
             </div>
           </div>`;

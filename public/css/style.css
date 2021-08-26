@@ -16,19 +16,20 @@ Bitter Lime - #CAFE48
 **/
 
 :root {
-  --main-color: #5adbff;
-  /* --main-color: #ff4800; */
-  --secondary-color: #6874eb;
-  --tertiary-color: #2dad10;
-  --text-color: #1e1e24;
-  /* --text-color: white; */
+  --link-color: #7b8cde;
+  --main-color: #ffffff;
+  --highlight-color: #ff8c00;
+  --secondary-color: #bcbcbc;
+  --tertiary-color: #2eff19;
   --btn-primary: #5adbff;
-  --btn-delete: #f4442e;
+  --btn-delete: #f55600;
   --big-font-size: 1rem;
   --normal-font-size: 1rem;
   --small-font-size: 1rem;
-  /* --theme: #000; */
-  --box-background: #333333;
+  --theme: #ff8c00;
+  --background: #000000;
+  --box-background: #262626;
+  --border-color: #333333;
 }
 
 html {
@@ -48,8 +49,11 @@ body {
   margin: 0;
   padding: 0;
   font-size: 1rem;
-  color: var(--text-color);
-  background-color: var(--theme);
+  color: var(--main-color);
+  background-color: var(--background);
+}
+h3 {
+  font-weight: normal;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -211,6 +215,36 @@ input[type='number'] {
   font-weight: 600;
   color: var(--btn-primary);
 }
+.log-detail-container {
+  padding-bottom: 20px;
+  padding-top: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.log-detail-container-btn-bar {
+  text-align: right;
+}
+
+.log-detail-edit-btn {
+  background: url(../images/edit_google_24dp.svg);
+  background-size: cover;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border: none;
+  color: transparent;
+}
+
+.log-detail-delete-btn {
+  background: url(../images/delete_outline_24dp-google.svg);
+  background-size: cover;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border: none;
+  color: transparent;
+}
+
 .day-log-detail-container-calendar-view {
   padding-bottom: 20px;
   padding-top: 10px;
@@ -331,7 +365,7 @@ input[type='number'] {
   border: 1px solid #d2d2d7;
   outline: none;
   border-radius: 5px;
-  color: var(--text-color);
+  color: var(--main-color);
   box-shadow: none;
   text-shadow: none;
 }
@@ -440,15 +474,13 @@ input[type='number'] {
 .small-text {
   font-size: 0.9rem;
 }
-.muted-text {
-  color: #aaa;
-}
+
 .bold-text {
   font-weight: 600;
 }
-.groupwod-log-text {
+/* .groupwod-log-text {
   color: #2dad10;
-}
+} */
 
 .submit-btn-bar {
   width: 100%;
@@ -529,7 +561,7 @@ input[type='number'] {
   font-size: 0.9rem;
 }
 .search-input-icon {
-  background: url(../images/baseline_search_black_24dp.png);
+  background: url(../images/search_24dp.svg);
   background-size: cover;
   cursor: pointer;
   width: 30px;
@@ -586,6 +618,8 @@ input[type='number'] {
 }
 .search-input {
   padding-left: 40px;
+  border: none !important;
+  background-color: var(--box-background);
 }
 .search-input ~ label {
   left: 40px;
@@ -616,6 +650,11 @@ input[type='number'] {
   border-radius: 5px;
   padding: 5px;
   position: relative;
+  /*
+  border-radius: 5px;
+  background-color: var(--box-background);
+  padding: 10px;
+  */
 }
 .select-workout-from-search-result-btn {
   background: url(../images/outline_check_circle_black_24dp.png);
@@ -872,12 +911,12 @@ textarea:valid {
   color: transparent;
 }
 
-.rounded-border-primary {
-  border: 1px solid var(--main-color);
+.rounded-corner-box {
   border-radius: 5px;
-  /* background-color: #333333; */
+  background-color: var(--box-background);
   padding: 10px;
 }
+
 .text-color-primary {
   color: var(--main-color);
 }
@@ -887,6 +926,13 @@ textarea:valid {
 .text-color-tertiary {
   color: var(--tertiary-color);
 }
+.muted-text,
+.text-color-mute {
+  color: #aaa;
+}
+.text-color-highlight {
+  color: var(--highlight-color);
+}
 
 .text-align-right {
   text-align: right;
@@ -895,7 +941,7 @@ textarea:valid {
   text-align: center;
 }
 .group-home-btn {
-  background: url(../images/home_black_24dp.svg);
+  background: url(../images/group_24dp.svg);
   background-size: cover;
   width: 30px;
   height: 30px;
@@ -905,20 +951,37 @@ textarea:valid {
 }
 .workout-done {
   position: relative;
-  padding-left: 18px;
-  font-size: 0.9rem;
-  color: #2dad10;
+  padding-left: 20px;
+  color: var(--tertiary-color);
 }
 .workout-done::before {
   content: ' ';
   display: inline-block;
   position: absolute;
-  top: 0;
+  top: 2px;
   left: 0;
-  background: url(../images/done_circle_green_24dp.svg);
+  background: url(../images/done_circle_24dp.svg);
   background-size: cover;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+}
+
+.personal-record-trophy {
+  position: relative;
+  padding-left: 20px;
+  color: var(--theme);
+}
+
+.personal-record-trophy::before {
+  content: ' ';
+  display: inline-block;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  background: url(../images/personal-record-trophy_24dp.svg);
+  background-size: cover;
+  width: 18px;
+  height: 18px;
 }
 
 .border-bottom-primary {
@@ -962,24 +1025,23 @@ textarea:valid {
 .edit-log-for-this-workout-btn,
 .log-this-workout-btn-abs-position,
 .workouts-btn {
-  background-color: white;
-  color: var(--btn-primary);
+  background-color: transparent;
+  color: var(--link-color);
   padding: 5px;
-  border: 1px solid var(--btn-primary);
-  border-radius: 5px;
+  border: none;
   position: relative;
   padding-left: 23px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-decoration: none;
 }
 .workouts-btn::before {
   content: '';
   display: block;
-  background: url(../images/fitness_center_primary_24dp.svg);
+  background: url(../images/workouts_24dp.svg);
   background-size: cover;
-  width: 16px;
-  height: 16px;
-  left: 5px;
+  width: 18px;
+  height: 18px;
+  left: 3px;
   top: 6px;
   position: absolute;
 }
@@ -987,23 +1049,23 @@ textarea:valid {
 .log-this-workout-btn-abs-position::before {
   content: '';
   display: block;
-  background: url(../images/add_circle_blue_24dp.svg);
+  background: url(../images/add_circle_24dp.svg);
   background-size: cover;
-  width: 16px;
-  height: 16px;
-  left: 5px;
+  width: 18px;
+  height: 18px;
+  left: 3px;
   top: 6px;
   position: absolute;
 }
 .activity-btn::before {
   content: '';
   display: block;
-  background: url(../images/calendar_outline_blue_24dp.svg);
+  background: url(../images/calendar_24dp.svg);
   background-size: cover;
-  width: 16px;
-  height: 16px;
-  left: 5px;
-  top: 6px;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 5px;
   position: absolute;
 }
 .edit-log-for-this-workout-btn::before {
@@ -1011,10 +1073,10 @@ textarea:valid {
   display: block;
   background: url(../images/edit_google_24dp.svg);
   background-size: cover;
-  width: 16px;
-  height: 16px;
-  left: 5px;
-  top: 6px;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 5px;
   position: absolute;
 }
 .log-this-workout-btn-abs-position {
@@ -1037,8 +1099,8 @@ textarea:valid {
   position: relative;
 }
 a.workout-history-link {
-  display: block;
-  color: var(--main-color);
+  display: inline-block;
+  color: var(--link-color);
   text-decoration: none;
   margin-top: 5px;
   position: relative;
@@ -1046,7 +1108,7 @@ a.workout-history-link {
 }
 a.workout-history-link::before {
   content: '';
-  background: url(../images/history_black_24dp.svg);
+  background: url(../images/history_24dp.svg);
   background-size: cover;
   width: 20px;
   height: 20px;
@@ -1062,7 +1124,7 @@ a.workout-history-link::before {
 }
 .home-menu-link {
   display: block;
-  background: url(../images/home_black_24dp.svg);
+  background: url(../images/home_24dp.svg);
   background-size: cover;
   width: 30px;
   height: 30px;

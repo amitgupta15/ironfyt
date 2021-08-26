@@ -185,7 +185,7 @@
       log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
         ? `<div class="flex">
             ${!hideTitle ? `<div><strong>Rounds: </strong></div>` : ``}
-            <div class="margin-left-5px">${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
+            <div>${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
           </div>`
         : ''
     }
@@ -193,7 +193,7 @@
       log.totalreps
         ? `<div class="flex">
             ${!hideTitle ? `<div><strong>Total Reps:</strong></div>` : ``}
-            <div class="margin-left-5px">${log.totalreps}</div>
+            <div>${log.totalreps}</div>
           </div>`
         : ``
     }
@@ -201,7 +201,7 @@
       log.movements && log.movements.length
         ? `<div>
             ${!hideTitle ? `<div><strong>Movements: </strong></div>` : ``}
-            <div class="margin-left-5px">${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
+            <div>${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
           </div>`
         : ''
     }
@@ -209,7 +209,7 @@
       log.notes
         ? `<div>
             ${!hideTitle ? `<div><strong>Notes: </strong></div>` : ``}
-            <div class="margin-left-5px">${$hl.replaceNewLineWithBR(log.notes)}</div>
+            <div>${$hl.replaceNewLineWithBR(log.notes)}</div>
           </div>`
         : ''
     }
@@ -217,7 +217,7 @@
       log.location
         ? `<div class="flex">
             ${!hideTitle ? `<div><strong>Location: </strong></div>` : ``}
-            <div class="margin-left-5px">${log.location}</div>
+            <div>${log.location}</div>
           </div>`
         : ''
     }</div>`;

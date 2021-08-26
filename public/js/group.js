@@ -18,7 +18,7 @@
     <div class="container">
       ${
         workout
-          ? `<div class="rounded-border-primary">
+          ? `<div class="rounded-corner-box">
               <div class="text-color-primary padding-bottom-10px bold-text">Workout of the Day</div>
               ${$ironfyt.displayWorkoutDetail(workout)}
             </div>`

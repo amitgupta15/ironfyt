@@ -12,7 +12,7 @@
     let groupwods = props && props.groupwods ? props.groupwods : [];
     return `
     <div id="default-page-template-dashboard">
-      <div>
+      <div class="flex">
         <button class="log-this-workout-btn" id="new-log-btn">New Log</button>
         <button class="activity-btn" id="activity-btn">Logs</button>        
         <button class="workouts-btn" id="workouts-btn">Workouts</button>        
@@ -26,29 +26,36 @@
           let prDate = pr && pr.date ? pr.date : null;
           let log = groupwod && groupwod.log ? groupwod.log : false;
           return `
-            <div class="rounded-border-primary margin-top-10px">
+            <div class="rounded-corner-box margin-top-10px">
               <div class="flex margin-bottom-5px">
-                <div class="text-color-primary flex-align-self-center flex-auto"><h3>${groupName}</h3></div>
+                <div class="text-color-primary flex-align-self-center flex-auto"><h2>${groupName}</h2></div>
                 <div class="flex-auto text-align-right">
-                  <button class="group-home-btn" id="group-home-btn-${groupid}" data-new-messages="5"></button>
+                  <button class="group-home-btn" id="group-home-btn-${groupid}"></button>
                 </div>
               </div>
               <p class="margin-bottom-5px">
-                <span class="text-color-secondary">${new Date(groupwod.date).toLocaleDateString()}</span>
+                <h3 class="text-color-secondary margin-bottom-10px">WOD ${new Date(groupwod.date).toLocaleDateString()}</h3>
               </p>
-              ${$ironfyt.displayWorkoutDetail(workout)}
+              <div>${$ironfyt.displayWorkoutDetail(workout)}</div>
               <div class="margin-top-10px">
                 ${
                   log
-                    ? `<div class="groupwod-log-text small-text">
-                        <span class="workout-done"></span>${new Date(log.date).toLocaleDateString()}
-                        ${$ironfyt.displayWorkoutLogDetail(log, 'groupwod-log-text', true)}
+                    ? `<div>
+                        <h3 class="workout-done">${new Date(log.date).toLocaleDateString()}</h3>
+                        ${$ironfyt.displayWorkoutLogDetail(log, '', true)}
                       </div>`
-                    : `<button class="log-this-workout-btn" id="log-this-wod-btn-${groupwod._id}">Log This WOD</button>`
+                    : `<button class="log-this-workout-btn" id="log-this-wod-btn-${groupwod._id}">Log WOD</button>`
                 }   
               </div>
-              <div class="margin-top-10px small-text">
-                ${JSON.stringify(pr) === '{}' ? '' : `<div class="muted-text">Your PR is ${$ironfyt.displayWorkoutLogDetail(pr, 'text-color-secondary', true)} on <span class="text-color-secondary">${prDate ? new Date(prDate).toLocaleDateString() : ''}</span></div>`}
+              <div class="margin-top-10px">
+                
+                ${
+                  JSON.stringify(pr) === '{}'
+                    ? ''
+                    : `
+                    <h3 class="personal-record-trophy">${new Date(prDate).toLocaleDateString()}</h3>
+                    <div>${$ironfyt.displayWorkoutLogDetail(pr, '', true)}</div>`
+                }
                 <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Log</a></div>
               </div>
             </div>`;
@@ -146,26 +153,32 @@
       let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap);
 
       if (notesMatchIndex > -1 || workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
-        log.notes = getHighligtedAttribute(notesMatchIndex, notes);
-        workout.name = getHighligtedAttribute(workoutNameIndex, workoutName);
-        workout.type = getHighligtedAttribute(workoutTypeIndex, workoutType);
-        workout.reps = getHighligtedAttribute(workoutRepsIndex, workoutReps);
-        workout.description = getHighligtedAttribute(workoutDescriptionIndex, workoutDescription);
-        workout.timecap = getHighligtedAttribute(workoutTimecapIndex, workoutTimecap);
+        log.notes = log.notes ? getHighligtedAttribute(notesMatchIndex, notes) : '';
+        workout.name = workoutName.trim() ? getHighligtedAttribute(workoutNameIndex, workoutName) : '';
+        workout.type = workoutType.trim() ? getHighligtedAttribute(workoutTypeIndex, workoutType) : '';
+        workout.reps = workoutReps.trim() ? getHighligtedAttribute(workoutRepsIndex, workoutReps) : '';
+        workout.description = workoutDescription.trim() ? getHighligtedAttribute(workoutDescriptionIndex, workoutDescription) : '';
+        workout.timecap = workoutTimecap.trim() ? getHighligtedAttribute(workoutTimecapIndex, workoutTimecap) : '';
 
         count++;
         autocompleteList += `
-        <div class="workout-search-result-item margin-bottom-5px">
-          <div class="margin-bottom-5px bold-text text-color-primary">Date: ${new Date(log.date).toLocaleDateString()}</div>
-          <div class="text-color-primary bold-text">Workout</div>
-          ${$ironfyt.displayWorkoutDetail(workout)}
-          <div class="text-color-primary bold-text">Log</div>
-          ${$ironfyt.displayWorkoutLogDetail(log)}
+        <div class="rounded-corner-box margin-bottom-5px">
+          <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
+          ${
+            workout.name !== ''
+              ? `
+                <div class="text-color-secondary "><h3>Workout</h3></div>
+                ${$ironfyt.displayWorkoutDetail(workout)}
+              `
+              : ``
+          }
+          <div class="text-color-secondary margin-top-10px"><h3>Log</h3></div>
+          <div>${$ironfyt.displayWorkoutLogDetail(log)}</div>
         </div>
         `;
       }
     }
-    let countString = `<div class="margin-bottom-5px muted-text">Found ${count} Logs</div>`;
+    let countString = `<div class="margin-bottom-5px text-color-secondary">Found ${count} Logs</div>`;
     autocomleteDiv.innerHTML = `<div>${countString}${autocompleteList}</div>`;
   };
 
@@ -194,7 +207,7 @@
     let inputField = document.querySelector('#search-workout-logs-dashboard-input');
     let inputFieldValue = inputField.value.trim();
     let stringToHighlight = matchIndex > -1 ? attribute.substr(matchIndex, inputFieldValue.length) : '';
-    return attribute.replace(stringToHighlight, `<span class="text-color-secondary bold-text">${stringToHighlight}</span>`);
+    return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
   };
 
   $hl.eventListener('click', 'new-log-btn', navigateEvent);

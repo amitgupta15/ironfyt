@@ -80,7 +80,7 @@
     let searchInputField = document.querySelector('#search-workout-logs-dashboard-input');
     searchInputField.value = 'log';
     $test.dispatchHTMLEvent('input', '#search-workout-logs-dashboard-input');
-    $test.assert(selector.innerHTML.includes('<div id="autocomplete-search-result"><div><div class="margin-bottom-5px muted-text">Found 1 Logs</div>'));
+    $test.assert(selector.innerHTML.includes('<div id="autocomplete-search-result"><div><div class="margin-bottom-5px text-color-secondary">Found 1 Logs</div>'));
     $test.assert(!selector.innerHTML.includes('<div id="default-page-template-dashboard">'));
 
     searchInputField.value = '';
