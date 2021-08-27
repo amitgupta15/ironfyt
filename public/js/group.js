@@ -7,8 +7,8 @@
     let workout = group && group.groupwod && group.groupwod.length ? group.groupwod[0].workout : false;
     let workoutlogs = group && group.logs ? group.logs : [];
     return `
-    <div class="position-relative text-color-primary margin-bottom-5px text-align-center">
-      <h3>${group.name}</h3>
+    <div class="position-relative text-color-primary margin-bottom-10px text-align-center">
+      <h3 class="group-name">${group.name}</h3>
     </div>
     <div class="selected-day-control-bar">
       <div><button class="day-control" id="group-prev-day-btn">&#9668;</button></div>
@@ -19,19 +19,19 @@
       ${
         workout
           ? `<div class="rounded-corner-box">
-              <div class="text-color-primary padding-bottom-10px bold-text">Workout of the Day</div>
+              <div class="text-color-secondary margin-bottom-10px"><h3>WOD</h3></div>
               ${$ironfyt.displayWorkoutDetail(workout)}
             </div>`
           : ``
       }
-      <div class="day-log-detail">
+      <div class="log-detail-section">
         ${workoutlogs.length === 0 ? 'No activity found' : ''}
         ${workoutlogs
           .map(function (log) {
             return `
-            <div class="day-log-detail-container-calendar-view">
+            <div class="log-detail-container">
               <div>
-                <div class="margin-bottom-5px text-color-secondary">${log.user.fname} ${log.user.lname} <span class="muted-text">(${log.user.username})</span> </div>
+                <div class="margin-bottom-5px bold-text">${log.user.fname} ${log.user.lname} <span class="text-color-secondary">(${log.user.username})</span> </div>
                 ${log.workout ? `${$ironfyt.displayWorkoutDetail(log.workout, false)}` : ``}
                 ${$ironfyt.displayWorkoutLogDetail(log)}
               </div>
@@ -49,6 +49,7 @@
       error: '',
       group: {},
       date: '',
+      pageTitle: 'Group',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, groupTemplate);

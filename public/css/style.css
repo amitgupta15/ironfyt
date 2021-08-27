@@ -204,6 +204,20 @@ input[type='number'] {
   height: 2.5rem;
   font-size: 1.3rem;
   color: var(--link-color);
+  position: relative;
+}
+
+#add-log-btn-calendar-view::before {
+  content: '';
+  display: inline-block;
+  background: url(../images/add_circle_24dp.svg);
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+  right: 5px;
+  /* left: 130px; */
+  top: 2px;
+  position: relative;
 }
 
 #select-workout-btn-wolog {
@@ -991,31 +1005,6 @@ textarea:valid {
 .padding-bottom-10px {
   padding-bottom: 10px;
 }
-/*
-.div-with-bg {
-  width: 34px;
-  height: 34px;
-  padding: 7px 5px 5px 5px;
-  border-radius: 50%;
-}
-
-.div-with-bg.blue {
-  background-color: #2196f3;
-  color: white;
-  border: 1px solid #2196f3;
-}
-
-.div-with-bg.yellow {
-  background-color: yellow;
-  color: black;
-  border: 1px solid yellow;
-}
-.div-with-bg.greenyellow {
-  background-color: greenyellow;
-  color: black;
-  border: 1px solid greenyellow;
-}
-*/
 
 .log-this-workout-btn,
 .activity-btn,
@@ -1130,8 +1119,17 @@ a.workout-history-link::before {
   position: relative;
 }
 
-.group-title-link {
-  display: block;
-  text-decoration: none;
-  color: var(--main-color);
+.group-name {
+  position: relative;
+  display: inline;
+}
+.group-name::before {
+  content: '';
+  display: inline-block;
+  background: url(../images/group_white-24dp.svg);
+  background-size: cover;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  left: -32px;
 }
