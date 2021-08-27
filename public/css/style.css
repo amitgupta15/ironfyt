@@ -1,13 +1,4 @@
 /** 
-Colors used 
-#ddd
-#eee
-#454545
-#brown
-#000
-#aaa
-green
-
 Sky Blue Crayola - #5adbff
 Red RYB - #F4442E
 Raisin Black - #1E1E24
@@ -20,18 +11,20 @@ Bitter Lime - #CAFE48
   --main-color: #ffffff;
   --secondary-color: #bcbcbc;
   --tertiary-color: #2eff19;
-  --btn-primary: #5adbff;
-  --btn-delete: #f4442e;
-  --btn-cancel: #bcbcbc;
   --big-font-size: 1rem;
   --normal-font-size: 1rem;
   --small-font-size: 1rem;
   --theme: #ff8c00; /** monochromatic variations of theme: #cc7000, #805726, #804600, #ffaf4d */
+  --theme-mute: #805726; /* use this for thin borders in the theme color, less distracting */
   --background: #000000;
   --box-background: #262626;
   --border-color: #333333;
+  --btn-delete: #f4442e;
+  --btn-cancel: #bcbcbc;
   --error: #f4442e;
-  --theme-mute: #805726;
+  --modality-weight: #ff4000; /* Other variations #ff3f01, #ff0d2f, #ff0026 - Weight training invokes the emotion of energy, bordering danger */
+  --modality-body-weight: #00ffc3; /* Body weight exercises are considered safe and doable, invokes emotion of safety. Other variations #0dff3e, #fff626 */
+  --modality-cardio: #ea00ff; /* Cardio is about heart, purple color resembles heart. Other variations #0db4ff, #26bcff */
 }
 
 html {
@@ -215,12 +208,12 @@ input[type='number'] {
 
 #select-workout-btn-wolog {
   width: 100%;
-  border: 1px solid var(--btn-primary);
+  border: 1px solid var(--link-color);
   border-radius: 5px;
   padding: 8px;
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--btn-primary);
+  color: var(--link-color);
 }
 .log-detail-section {
   padding: 10px;
@@ -468,7 +461,7 @@ input[type='number'] {
 }
 .submit-btn {
   width: 100%;
-  background-color: var(--btn-primary);
+  background-color: var(--link-color);
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 8px;
@@ -769,7 +762,7 @@ textarea {
   right: 2px;
   font-size: 1rem;
   z-index: 100;
-  background-color: var(--btn-primary);
+  background-color: var(--link-color);
 }
 .autocomplete-movement-list {
   position: absolute;
@@ -838,13 +831,34 @@ textarea:valid {
   font-size: 0.8rem;
 }
 .modality-m {
-  color: #234af7;
+  display: inline-block;
+  background: url(../images/noun_Running_688062-cardio.svg);
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  border: none;
+  color: transparent;
+  /* color: var(--modality-cardio); */
 }
 .modality-w {
-  color: #b50021;
+  display: inline-block;
+  background: url(../images/noun_weightlifting_1870976-weights.svg);
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  border: none;
+  color: transparent;
+  /* color: var(--modality-weight); */
 }
 .modality-g {
-  color: #5fe342;
+  display: inline-block;
+  background: url(../images/noun_olympics_1473864-gymnastics.svg);
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  border: none;
+  color: transparent;
+  /* color: var(--modality-body-weight); */
 }
 
 .modality-indicator-0 {
@@ -1069,9 +1083,9 @@ textarea:valid {
 }
 .btn-primary {
   background-color: white;
-  color: var(--btn-primary);
+  color: var(--link-color);
   padding: 5px;
-  border: 1px solid var(--btn-primary);
+  border: 1px solid var(--link-color);
   border-radius: 5px;
   position: relative;
   font-size: 0.9rem;

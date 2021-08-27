@@ -87,7 +87,7 @@
                   <button class="item-delete-btn" id="delete-log-btn-${log._id}"></button>
                 </div>
                 <div>
-                  ${log.modality && log.modality.length ? `<p><strong>Modality: </strong>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
+                  ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
                   ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false)}` : ''}
                   ${$ironfyt.displayWorkoutLogDetail(log)}
                 </div>
@@ -104,9 +104,11 @@
   };
   let workoutLogCalendarTemplate = function (props) {
     return `
+    <div class="rounded-corner-box margin-top-10px">
     ${monthControlBarTemplate(props)}
     ${calendarGridTemplate(props)}
     ${selectedDayControlBarTemplate(props)}
+    </div>
     ${displayLogOfTheDayTemplate(props)}
     ${confirmDeleteLogModalDialogTemplate()}
     `;

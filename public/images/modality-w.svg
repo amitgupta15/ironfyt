@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="41px" height="41px" viewBox="0 0 41 41" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="button-add-green" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <circle id="modality-w" fill="#B50021" cx="20.5" cy="20.5" r="20.5"></circle>
+        <circle id="modality-w" fill="#ff4000" cx="20.5" cy="20.5" r="20.5"></circle>
     </g>
 </svg>
