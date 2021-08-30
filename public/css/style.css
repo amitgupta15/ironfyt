@@ -63,6 +63,106 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+.absolute-right {
+  right: 3px !important;
+}
+
+.margin-bottom-15px {
+  margin-bottom: 15px !important;
+}
+.margin-bottom-10px {
+  margin-bottom: 10px !important;
+}
+.margin-bottom-5px {
+  margin-bottom: 5px !important;
+}
+.margin-top-5px {
+  margin-top: 5px !important;
+}
+.margin-top-10px {
+  margin-top: 10px !important;
+}
+.margin-top-20px {
+  margin-top: 20px !important;
+}
+.margin-left-5px {
+  margin-left: 5px !important;
+}
+.margin-right-0 {
+  margin-right: 0px !important;
+}
+.margin-right-10px {
+  margin-right: 10px !important;
+}
+
+.padding-bottom-5px {
+  padding-bottom: 5px;
+}
+.padding-bottom-10px {
+  padding-bottom: 10px;
+}
+
+.small-text {
+  font-size: 0.9rem;
+}
+
+.bold-text {
+  font-weight: 600;
+}
+.flex {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.flex-align-self-center {
+  align-self: center;
+}
+.flex-align-self-end {
+  align-self: flex-end;
+}
+.flex-width-100 {
+  width: 100%;
+}
+.flex-auto {
+  flex: auto;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.rounded-corner-box {
+  border-radius: 5px;
+  background-color: var(--box-background);
+  padding: 10px;
+}
+
+.text-color-primary {
+  color: var(--main-color);
+}
+.text-color-secondary {
+  color: var(--secondary-color);
+}
+.text-color-tertiary {
+  color: var(--tertiary-color);
+}
+
+.text-color-highlight {
+  color: var(--theme);
+}
+
+/* Remove this */
+.muted-text,
+.text-color-mute {
+  color: #aaa;
+}
+
+.text-align-right {
+  text-align: right;
+}
+.text-align-center {
+  text-align: center;
+}
+
 .error {
   color: var(--error);
   font-size: 0.8rem;
@@ -347,7 +447,6 @@ input[type='number'] {
   padding-right: 0;
   font-size: var(--big-font-size);
   border: none;
-  /* border: 1px solid #d2d2d7; */
   background-color: var(--border-color);
   outline: none;
   border-radius: 5px;
@@ -423,54 +522,12 @@ input[type='number'] {
   font-size: var(--big-font-size);
 }
 
-.absolute-right {
-  right: 3px !important;
-}
-
 .form-input:focus ~ label,
 .form-input:not(:placeholder-shown) ~ label {
   color: var(--theme);
   top: 5px;
   font-size: var(--normal-font-size);
 }
-
-.margin-bottom-15px {
-  margin-bottom: 15px !important;
-}
-.margin-bottom-10px {
-  margin-bottom: 10px !important;
-}
-.margin-bottom-5px {
-  margin-bottom: 5px !important;
-}
-.margin-top-5px {
-  margin-top: 5px !important;
-}
-.margin-top-10px {
-  margin-top: 10px !important;
-}
-.margin-top-20px {
-  margin-top: 20px !important;
-}
-.margin-left-5px {
-  margin-left: 5px !important;
-}
-.margin-right-0 {
-  margin-right: 0px !important;
-}
-.margin-right-10px {
-  margin-right: 10px !important;
-}
-.small-text {
-  font-size: 0.9rem;
-}
-
-.bold-text {
-  font-weight: 600;
-}
-/* .groupwod-log-text {
-  color: #2dad10;
-} */
 
 .submit-btn-bar {
   width: 100%;
@@ -539,19 +596,7 @@ input[type='number'] {
   left: 7px;
   color: transparent;
 }
-.flex {
-  display: flex;
-  flex-wrap: nowrap;
-}
-.flex-align-self-center {
-  align-self: center;
-}
-.flex-align-self-end {
-  align-self: flex-end;
-}
-.flex-width-100 {
-  width: 100%;
-}
+
 #wolog-date {
   padding-left: 8px;
   font-size: 1.2rem;
@@ -805,10 +850,6 @@ textarea {
   width: 39vw;
 }
 
-.flex-auto {
-  flex: auto;
-}
-
 input:required,
 textarea:required {
   border: 1px solid red;
@@ -896,38 +937,6 @@ textarea:valid {
   color: transparent;
 }
 
-.rounded-corner-box {
-  border-radius: 5px;
-  background-color: var(--box-background);
-  padding: 10px;
-}
-
-.text-color-primary {
-  color: var(--main-color);
-}
-.text-color-secondary {
-  color: var(--secondary-color);
-}
-.text-color-tertiary {
-  color: var(--tertiary-color);
-}
-
-.text-color-highlight {
-  color: var(--theme);
-}
-
-/* Remove this */
-.muted-text,
-.text-color-mute {
-  color: #aaa;
-}
-
-.text-align-right {
-  text-align: right;
-}
-.text-align-center {
-  text-align: center;
-}
 .group-home-btn {
   background: url(../images/group_24dp.svg);
   background-size: cover;
@@ -970,17 +979,6 @@ textarea:valid {
   background-size: cover;
   width: 18px;
   height: 18px;
-}
-
-.border-bottom-primary {
-  border-bottom: 1px solid var(--main-color);
-}
-
-.padding-bottom-5px {
-  padding-bottom: 5px;
-}
-.padding-bottom-10px {
-  padding-bottom: 10px;
 }
 
 .icon-workout::before {
@@ -1029,9 +1027,6 @@ textarea:valid {
   text-decoration: none;
 }
 
-.position-relative {
-  position: relative;
-}
 a.workout-history-link {
   display: inline-block;
   color: var(--link-color);
