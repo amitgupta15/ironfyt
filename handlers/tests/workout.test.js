@@ -29,10 +29,14 @@ it('should query a workout for a given id', () => {
     query: { _id: '111111111111111111111111' },
     tokenpayload: {},
   };
+  let _statusCode, _data;
   workout.get(req, function (statusCode, data) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.workouts[0].name, 'workout 1');
+    _statusCode = statusCode;
+    _data = data;
   });
+
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.workouts[0].name, 'workout 1');
 });
 
 it('should query all workouts if no id is provided', () => {
@@ -59,11 +63,15 @@ it('should query all workouts if no id is provided', () => {
     query: {},
     tokenpayload: {},
   };
+  let _statusCode, _data;
   workout.get(req, function (statusCode, data) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.workouts.length, 2);
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.workouts.length, 2);
 });
+
 it('should create a new workout', () => {
   let req = {
     buffer: Buffer.from(JSON.stringify({ name: 'worout 1', description: 'some description' })),
@@ -81,11 +89,15 @@ it('should create a new workout', () => {
     query: {},
     tokenpayload: {},
   };
+  let _statusCode, _data;
   workout.post(req, function (statusCode, data) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.workout.name, 'workout 1');
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.workout.name, 'workout 1');
 });
+
 it('should edit an existing workout', () => {
   let req = {
     buffer: Buffer.from(JSON.stringify({ _id: '012345678901234567890123', name: 'workout 2', description: 'some description' })),
@@ -106,11 +118,15 @@ it('should edit an existing workout', () => {
     query: {},
     tokenpayload: {},
   };
+  let _statusCode, _data;
   workout.post(req, function (statusCode, data) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.workout.description, 'run 5 miles');
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.workout.description, 'run 5 miles');
 });
+
 it('should delete a workout', () => {
   let req = {
     options: {
@@ -127,9 +143,13 @@ it('should delete a workout', () => {
     query: { _id: '012345678901234567890123' },
     tokenpayload: {},
   };
+  let _statusCode, _data;
   workout.delete(req, function (statusCode, data) {
-    assert.strictEqual(statusCode, 200);
-    assert.strictEqual(data.deletedCount, 1);
+    _statusCode = statusCode;
+    _data = data;
   });
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.deletedCount, 1);
 });
+
 console.groupEnd();

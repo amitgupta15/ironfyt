@@ -8,11 +8,12 @@
 
   $test.it('should create a group component', function () {
     $test.assert(component.selector === '[data-app=group]');
-    $test.assert(Object.keys(component.state).length === 4);
+    $test.assert(Object.keys(component.state).length === 5);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('group' in component.state);
     $test.assert('date' in component.state);
+    $test.assert('pageTitle' in component.state);
   });
 
   $test.it('should not allow unauthorized users to view this page', function () {

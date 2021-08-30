@@ -128,7 +128,6 @@ input[type='number'] {
   gap: 3px;
   font-size: 1.1rem;
   padding: 3px;
-  /* margin-bottom: 5px; */
   background-color: var(--box-background);
 }
 
@@ -215,7 +214,6 @@ input[type='number'] {
   width: 20px;
   height: 20px;
   right: 5px;
-  /* left: 130px; */
   top: 2px;
   position: relative;
 }
@@ -228,6 +226,7 @@ input[type='number'] {
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--link-color);
+  background-color: transparent;
 }
 .log-detail-section {
   padding: 10px;
@@ -289,7 +288,7 @@ input[type='number'] {
   text-align: center;
   padding: 20px;
   border-radius: 5px;
-  background-color: var(--box-background);
+  background-color: var(--background);
   font-size: 1.2rem;
 }
 
@@ -319,12 +318,11 @@ input[type='number'] {
   text-align: left;
   margin: 15px auto;
 }
-/** Form **/
 
+/** Form **/
 .form-container {
   padding: 10px;
   font-size: var(--big-font-size);
-  /* color: var(--main-color); */
 }
 
 .form-flex-group {
@@ -349,7 +347,8 @@ input[type='number'] {
   padding-right: 0;
   font-size: var(--big-font-size);
   border: none;
-  border: 1px solid #d2d2d7;
+  /* border: 1px solid #d2d2d7; */
+  background-color: var(--border-color);
   outline: none;
   border-radius: 5px;
   color: var(--main-color);
@@ -357,11 +356,15 @@ input[type='number'] {
   text-shadow: none;
 }
 
+.form-input:disabled {
+  background-color: var(--border-color);
+}
+
 .form-input:focus,
 .form-input:active {
   outline: none;
   border-radius: 5px;
-  border: 1px solid var(--main-color);
+  /* border: 1px solid var(--main-color); */
 }
 .duration-input {
   padding-left: 0;
@@ -382,7 +385,7 @@ input[type='number'] {
   position: absolute;
   top: 17px;
   left: 5px;
-  color: #d2d2d7;
+  color: var(--theme);
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all;
@@ -426,7 +429,7 @@ input[type='number'] {
 
 .form-input:focus ~ label,
 .form-input:not(:placeholder-shown) ~ label {
-  color: var(--main-color);
+  color: var(--theme);
   top: 5px;
   font-size: var(--normal-font-size);
 }
@@ -476,9 +479,9 @@ input[type='number'] {
 .submit-btn {
   width: 100%;
   background-color: var(--link-color);
-  border: 1px solid #ddd;
   border-radius: 5px;
-  padding: 8px;
+  padding: 10px;
+  margin-top: 5px;
   font-size: 1.1rem;
   color: white;
   font-weight: 600;
@@ -488,8 +491,8 @@ input[type='number'] {
 }
 .copy-btn {
   display: block;
-  background-image: url('../images/baseline_content_copy_black_24dp.png');
-  background-color: #fff;
+  background-image: url('../images/content_copy_24dp.svg');
+  background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
   height: 24px;
@@ -500,7 +503,7 @@ input[type='number'] {
 }
 
 .remove-btn {
-  background: url(../images/outline_remove_circle_outline_black_24dp.png);
+  background: url(../images/remove_circle_24dp.svg);
   background-size: cover;
   cursor: pointer;
   display: inline-block;
@@ -513,7 +516,7 @@ input[type='number'] {
 
 #close-workout-list-modal-btn,
 #close-new-workout-form-modal-btn {
-  background: url(../images/baseline_close_black_24dp.png);
+  background: url(../images/close_24dp.svg);
   background-size: cover;
   cursor: pointer;
   width: 24px;
@@ -523,29 +526,6 @@ input[type='number'] {
   top: 5px;
   right: 5px;
   color: transparent;
-}
-
-#create-new-workout-btn::before {
-  content: '';
-  background: url(../images/outline_add_circle_outline_black_24dp.png);
-  background-size: cover;
-  width: 24px;
-  height: 24px;
-  border: none;
-  position: absolute;
-  top: 7px;
-  left: 3px;
-}
-#create-new-workout-btn {
-  position: relative;
-  cursor: pointer;
-  display: block;
-  border: 1px solid var(--main-color);
-  border-radius: 3px;
-  padding: 10px 10px 10px 30px;
-  background-color: white;
-  color: var(--main-color);
-  font-size: 0.9rem;
 }
 .search-input-icon {
   background: url(../images/search_24dp.svg);
@@ -613,9 +593,9 @@ input[type='number'] {
 }
 
 .block-with-border {
-  border: 1px solid #e9e9e9;
+  background-color: var(--box-background);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
   position: relative;
   padding-top: 25px;
 }
@@ -637,14 +617,10 @@ input[type='number'] {
   border-radius: 5px;
   padding: 5px;
   position: relative;
-  /*
-  border-radius: 5px;
-  background-color: var(--box-background);
-  padding: 10px;
-  */
 }
+
 .select-workout-from-search-result-btn {
-  background: url(../images/outline_check_circle_black_24dp.png);
+  background: url(../images/add_circle_24dp.svg);
   background-size: cover;
   cursor: pointer;
   width: 24px;
@@ -694,7 +670,7 @@ details > summary {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--border-color);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -706,7 +682,7 @@ details > summary {
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--main-color);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
@@ -718,11 +694,11 @@ details > summary {
 }
 
 .switch input:checked + .slider {
-  background-color: #2196f3;
+  background-color: var(--link-color);
 }
 
 .switch input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
+  box-shadow: 0 0 1px var(--link-color);
 }
 
 .switch input:checked + .slider:before {
@@ -749,17 +725,17 @@ details > summary {
   border-radius: 50%;
 }
 select:disabled {
-  background-color: #aaa;
+  background-color: var(--border-color);
 }
 
 input:disabled,
 textarea:disabled {
-  background-color: #ccc;
+  background-color: var(--border-color);
   cursor: not-allowed;
 }
 input:disabled ~ label,
 textarea:disabled ~ label {
-  color: darkgray;
+  color: var(--secondary-color);
 }
 textarea {
   font-family: inherit;
@@ -767,8 +743,8 @@ textarea {
 .wolog-movement-add-btn {
   display: none;
   position: absolute;
-  border: 1px solid white;
-  color: white;
+  border: 1px solid var(--link-color);
+  color: var(--link-color);
   border-radius: 5px;
   padding: 10px;
   height: 48px;
@@ -776,11 +752,11 @@ textarea {
   right: 2px;
   font-size: 1rem;
   z-index: 100;
-  background-color: var(--link-color);
+  background-color: transparent;
 }
 .autocomplete-movement-list {
   position: absolute;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--border-color);
   border-bottom: none;
   border-top: none;
   z-index: 99;
@@ -792,16 +768,16 @@ textarea {
 .autocomplete-movement-list div {
   padding: 10px;
   cursor: pointer;
-  background-color: #fff;
-  border-bottom: 1px solid #d4d4d4;
+  background-color: var(--box-background);
+  border-bottom: 1px solid var(--border-color);
 }
 .autocomplete-movement-list div:hover {
   /*when hovering an item:*/
-  background-color: #e9e9e9;
+  background-color: var(--border-color);
 }
 .autocomplete-active {
   /*when navigating through the items using the arrow keys:*/
-  background-color: DodgerBlue !important;
+  background-color: var(--theme) !important;
   color: #ffffff;
 }
 .add-movement-input-group {
@@ -839,7 +815,8 @@ textarea:required {
 }
 input:valid,
 textarea:valid {
-  border: 1px solid var(--main-color);
+  /* border: 1px solid var(--main-color); */
+  border: none;
 }
 .workout-modality-text {
   font-size: 0.8rem;
@@ -1006,21 +983,7 @@ textarea:valid {
   padding-bottom: 10px;
 }
 
-.log-this-workout-btn,
-.activity-btn,
-.edit-log-for-this-workout-btn,
-.log-this-workout-btn-abs-position,
-.workouts-btn {
-  background-color: transparent;
-  color: var(--link-color);
-  padding: 5px;
-  border: none;
-  position: relative;
-  padding-left: 23px;
-  font-size: 1rem;
-  text-decoration: none;
-}
-.workouts-btn::before {
+.icon-workout::before {
   content: '';
   display: block;
   background: url(../images/workouts_24dp.svg);
@@ -1031,8 +994,7 @@ textarea:valid {
   top: 6px;
   position: absolute;
 }
-.log-this-workout-btn::before,
-.log-this-workout-btn-abs-position::before {
+.icon-add::before {
   content: '';
   display: block;
   background: url(../images/add_circle_24dp.svg);
@@ -1043,7 +1005,8 @@ textarea:valid {
   top: 6px;
   position: absolute;
 }
-.activity-btn::before {
+
+.icon-calendar::before {
   content: '';
   display: block;
   background: url(../images/calendar_24dp.svg);
@@ -1054,30 +1017,15 @@ textarea:valid {
   top: 5px;
   position: absolute;
 }
-.edit-log-for-this-workout-btn::before {
-  content: '';
-  display: block;
-  background: url(../images/edit_google_24dp.svg);
-  background-size: cover;
-  width: 18px;
-  height: 18px;
-  left: 3px;
-  top: 5px;
-  position: absolute;
-}
-.log-this-workout-btn-abs-position {
-  position: absolute !important;
-  right: 5px;
-  bottom: 0;
-}
+
 .btn-primary {
-  background-color: white;
+  background-color: transparent;
   color: var(--link-color);
   padding: 5px;
-  border: 1px solid var(--link-color);
-  border-radius: 5px;
+  border: none;
   position: relative;
-  font-size: 0.9rem;
+  padding-left: 23px;
+  font-size: 1rem;
   text-decoration: none;
 }
 

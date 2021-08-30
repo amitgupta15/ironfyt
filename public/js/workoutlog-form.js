@@ -26,6 +26,20 @@
   };
   let units = ['lbs', 'kgs', 'pood', 'calories', 'miles', 'feet', 'meters', 'minutes'];
 
+  /**
+   * Template displays the individual workout item and displays the add button to select the workout for the log
+   * @param {Object} workout
+   * @param {Integer} index - Index of the the workout in the workout list
+   * @returns
+   */
+  let workoutItemTemplate = function (workout, index) {
+    return `
+      <div class="rounded-corner-box margin-bottom-10px workout-detail-container">
+        <button type="button" id="select-workout-from-search-result-btn-${index}" class="select-workout-from-search-result-btn"></button>
+        ${$ironfyt.displayWorkoutDetail(workout)}
+      </div>`;
+  };
+
   let selectedWorkoutTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
@@ -33,7 +47,7 @@
     return `
     <div class="flex block-with-border margin-bottom-5px">
       <div class="flex-align-self-center">
-        <div class="block-with-border-label">Selected Workout</div>
+        <div class="text-color-highlight">Selected Workout</div>
         ${$ironfyt.displayWorkoutDetail(workout)}
       </div>
       <button type="button" id="unselect-workout" class="remove-btn margin-left-5px"></button> 
@@ -41,7 +55,7 @@
   };
 
   let newWorkoutButton = function () {
-    return `<button id="create-new-workout-btn">New Workout</button>`;
+    return `<button class="btn-primary icon-add" id="create-new-workout-btn">New Workout</button>`;
   };
 
   let workoutListModalTemplate = function (props) {
@@ -322,7 +336,7 @@
         setNotesSwitch(props);
         setMovementSwitch(props);
         setTotalRepsSwitch(props);
-        autocomplete(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
+        autocompleteMovement(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
       }
     },
   }));
@@ -609,7 +623,7 @@
    * @param {*} textField - Input field on which the autocomplete will attach itself to
    * @param {*} list - List of data to use for autocomplete
    */
-  let autocomplete = function (textField, list) {
+  let autocompleteMovement = function (textField, list) {
     let autocompleteDiv = document.getElementById('autocomplete-movement-list');
     // Execute the function when someone writes something in the input field
     textField.addEventListener('input', function (event) {
@@ -628,7 +642,7 @@
           // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
           // if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) { //Suspending this check for now. In some cases, this check can be misleading
           let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
-          autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<strong>${stringToHighlight}</strong>`)}</div>`;
+          autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<span class="text-color-highlight">${stringToHighlight}</span>`)}</div>`;
           // }
         }
       }
@@ -636,11 +650,20 @@
     });
   };
 
+  /**
+   * This method is used to autocomplete the Search Workout input field on the logs form.
+   * The method is called at the time of component creation in afterRender to make it ready for use
+   *
+   * Credit: Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
+   *
+   * @param {*} textField - Input field on which the autocomplete will attach itself to
+   * @param {*} list - List of data to use for autocomplete
+   */
   let autoCompleteWorkoutSearch = function () {
     let autocomleteDiv = document.getElementById('autocomplete-workout-list');
     let textField = document.getElementById('search-workout');
-    let list = component.getState().workouts;
     textField.addEventListener('input', function (event) {
+      let workouts = component.getState().workouts;
       let textFieldValue = this.value;
       if (!textFieldValue) {
         autocomleteDiv.innerHTML = newWorkoutButton();
@@ -648,34 +671,66 @@
       }
       let autocompleteList = '';
       let count = 0;
-      for (let i = 0; i < list.length; i++) {
-        let subStringIndexName = list[i].name.toLowerCase().indexOf(textFieldValue.toLowerCase());
-        let subStringIndexDescription = list[i].description.toLowerCase().indexOf(textFieldValue.toLowerCase());
-        if (subStringIndexName > -1 || subStringIndexDescription > -1) {
-          let stringNameToHighlight = subStringIndexName > -1 ? list[i].name.substr(subStringIndexName, textFieldValue.length) : '';
-          let stringDescToHighlight = subStringIndexDescription > -1 ? list[i].description.substr(subStringIndexDescription, textFieldValue.length) : '';
+      for (let i = 0; i < workouts.length; i++) {
+        let workout = workouts[i];
+
+        let workoutName = workout.name ? workout.name : '';
+        let workoutNameIndex = getSearchStringMatchIndex(workoutName, textFieldValue);
+
+        let workoutType = workout.type ? workout.type : '';
+        let workoutTypeIndex = getSearchStringMatchIndex(workoutType, textFieldValue);
+
+        let workoutReps = workout.reps ? workout.reps : '';
+        let workoutRepsIndex = getSearchStringMatchIndex(workoutReps, textFieldValue);
+
+        let workoutDescription = workout.description ? workout.description : '';
+        let workoutDescriptionIndex = getSearchStringMatchIndex(workoutDescription, textFieldValue);
+
+        let workoutTimecap = workout.timecap ? $ironfyt.formatTimecap(workout.timecap) : '';
+        let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap, textFieldValue);
+
+        if (workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
+          workout.name = workoutName.trim() ? getHighligtedAttribute(workoutNameIndex, workoutName, textFieldValue) : '';
+          workout.type = workoutType.trim() ? getHighligtedAttribute(workoutTypeIndex, workoutType, textFieldValue) : '';
+          workout.reps = workoutReps.trim() ? getHighligtedAttribute(workoutRepsIndex, workoutReps, textFieldValue) : '';
+          workout.description = workoutDescription.trim() ? getHighligtedAttribute(workoutDescriptionIndex, workoutDescription, textFieldValue) : '';
+          workout.timecap = workoutTimecap.trim() ? getHighligtedAttribute(workoutTimecapIndex, workoutTimecap, textFieldValue) : '';
+
           count++;
-          let workout = list[i];
-          let timecap = $ironfyt.formatTimecap(workout.timecap);
-          autocompleteList += `
-          <div id="workout-list-item-${i}" class="workout-search-result-item margin-bottom-5px">
-            <button type="button" id="select-workout-from-search-result-btn-${i}" class="select-workout-from-search-result-btn"></button>
-            <div>${workout.name.replace(stringNameToHighlight, `<strong>${stringNameToHighlight}</strong>`)}</div>
-            <div>
-            ${workout.modality && workout.modality.length ? `<p>Modality: ${workout.modality.map((m) => $ironfyt.formatModality(m)).join(', ')}</p>` : ``}
-            ${workout.type ? `<p>Type: ${workout.type}</p>` : ''}
-            ${timecap ? `<p>Time Cap: ${timecap}</p>` : ''}
-            ${workout.rounds ? `<p>Rounds: ${workout.rounds}</p>` : ''}
-            ${workout.reps ? `<p>Reps: ${workout.reps}</p>` : ''}
-            ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description.replace(stringDescToHighlight, `<strong>${stringDescToHighlight}</strong>`))}</p>` : ''}
-            </div>
-          </div>`;
+          autocompleteList += workoutItemTemplate(workout, i);
         }
       }
-      let countString = `<div class="margin-bottom-5px small-text">Found ${count} Workouts</div>`;
-      autocomleteDiv.innerHTML = `<div>${countString}${count === 0 ? newWorkoutButton() : ''}${autocompleteList}</div>`;
+      let countString = `<div class="margin-bottom-5px text-color-secondary">Found ${count} Workouts</div>`;
+      autocomleteDiv.innerHTML = `<div>${countString}${autocompleteList}</div>`;
     });
   };
+
+  /**
+   * Utility function normalizes the incoming string attribute and input field value, and compares to find the index of matching text. Returns the index.
+   * This function is used by handleSearchLogsEvent()
+   * @param {String} attribute
+   * @param {String} searchFieldValue
+   * @returns index of the matching text
+   */
+  let getSearchStringMatchIndex = function (attribute, searchFieldValue) {
+    return attribute.toLowerCase().indexOf(searchFieldValue.toLowerCase());
+  };
+
+  /**
+   * Utility function finds the substring to be highlighted and returns the highlighted substring
+   * This function is used by handleSearchLogsEvent()
+   * @param {int} matchIndex
+   * @param {String} attribute
+   * @param {String} searchFieldValue
+   * @returns
+   */
+  let getHighligtedAttribute = function (matchIndex, attribute, searchFieldValue) {
+    // let inputField = document.querySelector('#search-workout');
+    // let inputFieldValue = inputField.value.trim();
+    let stringToHighlight = matchIndex > -1 ? attribute.substr(matchIndex, searchFieldValue.length) : '';
+    return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
+  };
+
   let createWorkoutLogObjFromFormElements = function () {
     let elements = document.querySelector('#workout-log-form').elements;
     let state = component.getState();
@@ -773,7 +828,7 @@
       submitButton.innerHTML = 'Saving...';
 
       let params = $hl.getParams();
-      let ref = params && params.ref ? params.ref : 'workoutlogs.html';
+      let ref = params && params.ref ? params.ref : `workoutlog-calendar.html&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}`;
       let user_id = params && params.user_id ? `&user_id=${params.user_id}` : false;
       let date = ref === 'workoutlog-calendar.html' ? `&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}` : false;
       let workoutIdRef = ref === 'workout-activity.html' ? `&workout_id=${workoutlog.workout_id}` : false;

@@ -13,9 +13,9 @@
     return `
     <div id="default-page-template-dashboard">
       <div class="flex">
-        <button class="log-this-workout-btn" id="new-log-btn">New Log</button>
-        <button class="activity-btn" id="activity-btn">Logs</button>        
-        <button class="workouts-btn" id="workouts-btn">Workouts</button>        
+        <button class="btn-primary icon-add" id="new-log-btn">New Log</button>
+        <button class="btn-primary icon-calendar" id="activity-btn">Logs</button>        
+        <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>        
       </div>
       ${groupwods
         .map((groupwod) => {
@@ -44,7 +44,7 @@
                         <h3 class="workout-done">${new Date(log.date).toLocaleDateString()}</h3>
                         ${$ironfyt.displayWorkoutLogDetail(log, '', true)}
                       </div>`
-                    : `<button class="log-this-workout-btn" id="log-this-wod-btn-${groupwod._id}">Log WOD</button>`
+                    : `<button class="btn-primary icon-add" id="log-this-wod-btn-${groupwod._id}">Log WOD</button>`
                 }   
               </div>
               <div class="margin-top-10px">

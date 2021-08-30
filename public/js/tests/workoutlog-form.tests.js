@@ -75,7 +75,7 @@
     $test.assert(state.validationError === '');
     $test.assert($hl.formatDateForInputField(_workoutlog.date) === '2020-01-01');
     $test.assert(_workoutlog.notes === 'Some notes');
-    $test.assert(_url === 'workoutlogs.html?ref=workoutlog-form.html');
+    $test.assert(_url === 'workoutlog-calendar.html&year=2020&month=0&date=1?ref=workoutlog-form.html');
 
     $hl.getParams = function () {
       return { ref: 'workoutlog-calendar.html', user_id: '123456789012345678901234' };
@@ -131,12 +131,12 @@
     let searchWorkoutField = document.querySelector('#search-workout');
     searchWorkoutField.value = 'fr';
     $test.dispatchHTMLEvent('input', '#search-workout');
-    $test.assert(selector.innerHTML.includes('<div><strong>Fr</strong>an</div>'));
+    $test.assert(selector.innerHTML.includes('<summary><span class="text-color-highlight bold-text">Fr</span>an</summary>'));
 
     searchWorkoutField.value = 'dt';
     $test.dispatchHTMLEvent('input', '#search-workout');
     $test.assert(selector.innerHTML.includes('Found 1 Workouts'));
-    $test.assert(selector.innerHTML.includes('<div><strong>DT</strong></div>'));
+    $test.assert(selector.innerHTML.includes('<summary><span class="text-color-highlight bold-text">DT</span></summary>'));
 
     $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
     state = component.getState();
@@ -455,10 +455,10 @@
     let addMovementField = document.querySelector('#wolog-add-movement');
     addMovementField.value = 'b';
     $test.dispatchHTMLEvent('input', '#wolog-add-movement');
-    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0"><strong>B</strong>ack Squat</div><div id="movement-list-item-1"><strong>B</strong>ench Press</div>'));
+    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0"><span class="text-color-highlight">B</span>ack Squat</div><div id="movement-list-item-1"><span class="text-color-highlight">B</span>ench Press</div>'));
     addMovementField.value = 'sq';
     $test.dispatchHTMLEvent('input', '#wolog-add-movement');
-    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0">Back <strong>Sq</strong>uat</div><div id="movement-list-item-2"><strong>Sq</strong>uat</div>'));
+    $test.assert(selector.innerHTML.includes('<div id="movement-list-item-0">Back <span class="text-color-highlight">Sq</span>uat</div><div id="movement-list-item-2"><span class="text-color-highlight">Sq</span>uat</div>'));
 
     $test.dispatchHTMLEvent('click', '#movement-list-item-0');
     $test.assert(addMovementField.value === 'Back Squat');
