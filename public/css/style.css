@@ -537,6 +537,7 @@ input[type='number'] {
   width: 100%;
   background-color: var(--link-color);
   border-radius: 5px;
+  border: none;
   padding: 10px;
   margin-top: 5px;
   font-size: 1.1rem;

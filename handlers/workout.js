@@ -28,6 +28,7 @@ workout.get = (req, res) => {
           database
             .collection('workouts')
             .find({ user_id: { $in: userIds } })
+            .sort({ _id: -1 })
             .toArray(function (error, response) {
               if (error) {
                 res(400, { error: 'Error occurred while retrieving workouts' });
@@ -56,11 +57,11 @@ workout.get = (req, res) => {
         {
           $match: query,
         },
+        { $sort: { name: 1 } },
         {
           $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' },
         },
       ])
-      .sort({ _id: -1 })
       .toArray((error, workouts) => {
         if (!error) {
           res(200, { workouts, user });

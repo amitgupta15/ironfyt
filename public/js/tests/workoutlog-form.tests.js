@@ -701,7 +701,7 @@
     selector.innerHTML = component.template();
     let workoutNameField = document.querySelector('#workout-name');
     let workoutDescField = document.querySelector('#workout-description');
-    let workoutSaveBtn = document.querySelector('#save-new-workout-btn');
+    let workoutSaveBtn = document.querySelector('#workout-form-helper-save-new-workout-btn');
 
     $test.assert(workoutSaveBtn.disabled === true);
 
@@ -735,9 +735,9 @@
     let selector = document.querySelector('#selector');
     selector.innerHTML = component.template();
 
-    let workoutSaveBtn = document.querySelector('#save-new-workout-btn');
+    let workoutSaveBtn = document.querySelector('#workout-form-helper-save-new-workout-btn');
     workoutSaveBtn.disabled = false;
-    $test.dispatchHTMLEvent('click', '#save-new-workout-btn');
+    $test.dispatchHTMLEvent('click', '#workout-form-helper-save-new-workout-btn');
     $test.assert(workoutSaveBtn.disabled === true);
     $test.assert(workoutSaveBtn.innerHTML === 'Saving Workout...');
 
@@ -758,9 +758,9 @@
     $test.assert(document.getElementById('wolog-duration-minutes').disabled === true);
     $test.assert(document.getElementById('wolog-duration-seconds').disabled === true);
 
-    let workoutSaveBtn = document.querySelector('#save-new-workout-btn');
+    let workoutSaveBtn = document.querySelector('#workout-form-helper-save-new-workout-btn');
     workoutSaveBtn.disabled = false;
-    $test.dispatchHTMLEvent('click', '#save-new-workout-btn');
+    $test.dispatchHTMLEvent('click', '#workout-form-helper-save-new-workout-btn');
 
     $test.assert(document.getElementById('duration-switch').checked === true);
     $test.assert(document.getElementById('wolog-duration-hours').disabled === false);

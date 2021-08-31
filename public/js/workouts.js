@@ -28,6 +28,9 @@
     return `
       <div class="container">
         ${$ironfyt.searchBarTemplate('search-workouts-input', 'Search Workouts...')}
+        <div class="flex margin-bottom-10px">
+          <button class="btn-primary icon-add" id="new-wod-btn">New WOD</button>    
+        </div>
         <div id="main-div-workouts">
           ${defaultPageTemplate(props)}
         </div>
@@ -75,7 +78,7 @@
       let workoutType = workout.type ? workout.type : '';
       let workoutTypeIndex = getSearchStringMatchIndex(workoutType);
 
-      let workoutReps = workout.reps ? workout.reps : '';
+      let workoutReps = workout.reps ? (typeof workout.reps === 'number' ? workout.reps.toString() : workout.reps) : '';
       let workoutRepsIndex = getSearchStringMatchIndex(workoutReps);
 
       let workoutDescription = workout.description ? workout.description : '';
@@ -127,28 +130,35 @@
     return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
   };
 
-  // let deleteWorkout = function (targetId) {
-  //   let prefix = 'delete-workout-';
-  //   let _id = targetId.substring(prefix.length, targetId.length);
-  //   if (_id.length === 24) {
-  //     $ironfyt.deleteWorkout(_id, function (error, response) {
-  //       if (!error) {
-  //         $ironfyt.navigateToUrl('workouts.html');
-  //       }
-  //     });
-  //   } else {
-  //     component.setState({ error: { message: 'Invalid ID' } });
-  //   }
-  // };
-
+  let handleNewWodEvent = function (event) {
+    $ironfyt.navigateToUrl('workout-form.html');
+  };
   $hl.eventListener('input', 'search-workouts-input', handleSearchWorkoutsEvent);
+  $hl.eventListener('click', 'new-wod-btn', handleNewWodEvent);
 
-  // document.addEventListener('click', function (event) {
-  //   let idregex = new RegExp(/^delete-workout-([a-zA-Z]|\d){24}/gm);
-  //   if (idregex.test(event.target.id)) {
-  //     deleteWorkout(event.target.id);
-  //   }
-  // });
+  document.addEventListener('click', function (event) {
+    let idregex = new RegExp(/^edit-workout-btn-([a-zA-Z]|\d){24}/gm);
+    if (idregex.test(event.target.id)) {
+      let targetId = event.target.id;
+      let prefix = 'edit-workout-btn-';
+      let _id = targetId.substring(prefix.length, targetId.length);
+      $ironfyt.navigateToUrl(`workout-form.html?_id=${_id}`);
+    }
+
+    let deleteregex = new RegExp(/^delete-workout-btn-([a-zA-Z]|\d){24}/gm);
+    if (deleteregex.test(event.target.id)) {
+      let targetId = event.target.id;
+      let prefix = 'delete-workout-btn-';
+      let _id = targetId.substring(prefix.length, targetId.length);
+      $ironfyt.deleteWorkout(_id, function (error, response) {
+        if (!error) {
+          $ironfyt.navigateToUrl('workouts.html');
+        } else {
+          component.setState({ error });
+        }
+      });
+    }
+  });
 
   ($ironfyt.workoutsPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
