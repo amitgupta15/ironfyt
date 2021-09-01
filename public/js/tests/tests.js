@@ -59,6 +59,10 @@
     callback();
   });
 
+  let saveGroupWod = (app.saveGroupWod = function (params, callback) {
+    callback();
+  });
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -93,6 +97,7 @@
       app.updatePersonalRecord = updatePersonalRecord;
       app.getPersonalRecord = getPersonalRecord;
       app.getGroup = getGroup;
+      app.saveGroupWod = saveGroupWod;
 
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';

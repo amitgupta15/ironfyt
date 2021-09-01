@@ -9,6 +9,7 @@ group.get = (req, res) => {
   let database = options.database;
   let _id = query && query._id && query._id.length === 24 ? new ObjectId(query._id) : false;
   let date = query && query.date ? new Date(query.date) : false;
+  let admin_id = query && query.admin_id ? new ObjectId(query.admin_id) : false;
   if (_id && date) {
     database
       .collection('groups')
@@ -68,6 +69,19 @@ group.get = (req, res) => {
       .toArray(function (error, result) {
         if (error) {
           console.error(error);
+          res(400, error);
+        } else {
+          res(200, result);
+        }
+      });
+  } else if (admin_id) {
+    database
+      .collection('groups')
+      .find({ admins: admin_id })
+      .toArray(function (error, result) {
+        if (error) {
+          console.error(error);
+          res(400, error);
         } else {
           res(200, result);
         }

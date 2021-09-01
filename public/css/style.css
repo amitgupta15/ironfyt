@@ -368,6 +368,16 @@ input[type='number'] {
   color: transparent;
 }
 
+.item-set-wod-btn {
+  background: url(../images/wod_24dp.svg);
+  background-size: cover;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border: none;
+  color: transparent;
+}
+
 .modal-container {
   background-color: rgba(0, 0, 0, 0.8);
   position: absolute;
@@ -572,8 +582,7 @@ input[type='number'] {
   margin-right: 5px;
 }
 
-#close-workout-list-modal-btn,
-#close-new-workout-form-modal-btn {
+.close-modal-dialog {
   background: url(../images/close_24dp.svg);
   background-size: cover;
   cursor: pointer;
@@ -598,7 +607,7 @@ input[type='number'] {
   color: transparent;
 }
 
-#wolog-date {
+input[type='date'] {
   padding-left: 8px;
   font-size: 1.2rem;
   font-family: inherit;

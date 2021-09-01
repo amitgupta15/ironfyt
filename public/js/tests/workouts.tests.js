@@ -7,11 +7,12 @@
 
   $test.it('should create workouts component successfully', function () {
     $test.assert(component.selector === '[data-app=workouts]');
-    $test.assert(Object.keys(component.state).length === 4);
+    $test.assert(Object.keys(component.state).length === 5);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('workouts' in component.state);
     $test.assert('pageTitle' in component.state);
+    $test.assert('selectedWorkoutForWod' in component.state);
   });
 
   $test.it('should fetch all the workouts created by the user and the groups the user belongs to', function () {

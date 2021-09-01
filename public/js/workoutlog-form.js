@@ -62,7 +62,7 @@
     return `
     <div class="modal-container" id="select-workout-modal">
       <div class="modal-dialog select-workout-modal">
-        <button id="close-workout-list-modal-btn">X</button>
+        <button class="close-modal-dialog" id="close-workout-list-modal-btn">X</button>
         ${$ironfyt.searchBarTemplate('search-workout', 'Search Workout...')}
         <div id="autocomplete-workout-list" class="autocomplete-workout-list">${newWorkoutButton()}</div>
       </div>
@@ -1140,7 +1140,7 @@
     return `
     <div class="modal-container" id="new-workout-form-modal">
       <div class="modal-dialog new-workout-form-modal">
-        <button id="close-new-workout-form-modal-btn">X</button>
+        <button class="close-modal-dialog" id="close-new-workout-form-modal-btn">X</button>
         ${$ironfyt.newWorkoutFormTemplate(props)}
       </div>
     </div>

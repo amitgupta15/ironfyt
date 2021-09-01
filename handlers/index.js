@@ -39,7 +39,7 @@ handler.movement = (req, res) => {
 };
 
 handler.groupwod = (req, res) => {
-  handleRoute(req, res, groupwod, true, ['get']);
+  handleRoute(req, res, groupwod, true, ['get', 'post']);
 };
 
 handler.personalrecord = (req, res) => {

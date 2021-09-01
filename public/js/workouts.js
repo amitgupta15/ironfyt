@@ -1,6 +1,40 @@
 (function () {
   ('use strict');
 
+  let setWodModalTemplate = function (props) {
+    let groups = props && props.groups && props.groups.length ? props.groups : [];
+    let selectedWorkoutForWod = props && props.selectedWorkoutForWod ? props.selectedWorkoutForWod : {};
+    let today = $hl.formatDateForInputField(new Date());
+    return `
+    <div class="modal-container" id="set-wod-modal">
+      <div class="modal-dialog select-workout-modal">
+        <button class="close-modal-dialog" id="close-set-wod-modal-btn">X</button>
+        <div class="margin-top-10px">
+          <h4 class="text-align-center margin-bottom-10px">Set Workout Of The Day</h4>
+          <div class="text-color-secondary bold-text">Workout</div>
+          <div class="margin-bottom-10px">${$ironfyt.displayWorkoutDetail(selectedWorkoutForWod, false)}</div>
+          <div class="form-flex-group margin-bottom-5px">
+            <div class="form-input-group flex-width-100">
+              <input type="date" name="wod-date" id="wod-date" placeholder="Date" value="${today}" class="form-input"/>
+              <label for="wod-date" class="form-label date-label">Date</label>
+            </div>
+          </div>
+          <div class="form-input-group margin-top-10px">
+            <div class="text-color-highlight">Group</div>
+            <select class="form-input" name="group" id="wod-group">
+              <option></option>
+              ${groups.map((group) => `<option value="${group._id}">${group.name}</option>`)}
+            </select>
+          </div>
+          <input type="hidden" id="wod-workout-id" name="wod-workout-id" value="${selectedWorkoutForWod._id}">
+          <div class="submit-btn-bar margin-top-5px">
+            <button type="button" id="save-group-wod-btn" class="submit-btn" disabled>Save</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  };
+
   let workoutItemTemplate = function (workout) {
     return `
       <div class="rounded-corner-box margin-bottom-10px workout-detail-container">
@@ -8,6 +42,7 @@
           isAdmin()
             ? `
           <div class="item-btn-bar">
+            <button class="item-set-wod-btn" id="set-as-wod-btn-${workout._id}"></button>
             <button class="item-edit-btn" id="edit-workout-btn-${workout._id}"></button>
             <button class="item-delete-btn" id="delete-workout-btn-${workout._id}"></button>
           </div>`
@@ -34,7 +69,9 @@
         <div id="main-div-workouts">
           ${defaultPageTemplate(props)}
         </div>
-      </div>`;
+      </div>
+      ${setWodModalTemplate(props)}
+      `;
   };
 
   let component = ($ironfyt.workoutsComponent = Component('[data-app=workouts]', {
@@ -43,6 +80,7 @@
       error: '',
       workouts: [],
       pageTitle: 'Workouts',
+      selectedWorkoutForWod: {},
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutsTemplate);
@@ -130,11 +168,61 @@
     return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
   };
 
+  /**
+   * Sets the state with the workout to be used for group wod and opens the dialog box to set the wod
+   * @param {String} workoutId
+   */
+  let setWod = function (workoutId) {
+    let state = component.getState();
+    let workouts = state.workouts && state.workouts.length ? state.workouts : [];
+    let selectedWorkoutForWod = workouts.filter((workout) => workout._id === workoutId)[0];
+    component.setState({ selectedWorkoutForWod });
+    let dialog = document.getElementById('set-wod-modal');
+    dialog.classList.add('show-view');
+  };
+
+  let handleCloseSetWodModalEvent = function (event) {
+    let dialog = document.getElementById('set-wod-modal');
+    dialog.classList.remove('show-view');
+  };
+
   let handleNewWodEvent = function (event) {
     $ironfyt.navigateToUrl('workout-form.html');
   };
+
+  /**
+   * Handle the Set Workout Of The Day save event. Calls the api to update/insert new WOD for the given group and date
+   * @param {Event} event
+   */
+  let handleSaveGroupWodEvent = function (event) {
+    let wodWorkoutId = document.querySelector('#wod-workout-id').value;
+    let wodDate = $hl.getDateObjFromHTMLDateInput(document.querySelector('#wod-date').value);
+    let wodGroupId = document.querySelector('#wod-group').value;
+    let groupwod = { date: wodDate, workout_id: wodWorkoutId, group_id: wodGroupId };
+
+    $ironfyt.saveGroupWod(groupwod, function (error, response) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      handleCloseSetWodModalEvent();
+      $ironfyt.navigateToUrl(`group.html?group_id=${wodGroupId}&date=${wodDate.toISOString()}`);
+    });
+  };
+
+  let enableSaveGroupWodBtn = function (event) {
+    let saveGroupWodButton = document.querySelector('#save-group-wod-btn');
+    let wodDate = document.querySelector('#wod-date').value;
+    let wodGroup = document.querySelector('#wod-group').value;
+    saveGroupWodButton.disabled = wodDate !== '' && wodGroup !== '' ? false : true;
+  };
+
+  $hl.eventListener('input', 'wod-date', enableSaveGroupWodBtn);
+  $hl.eventListener('input', 'wod-group', enableSaveGroupWodBtn);
   $hl.eventListener('input', 'search-workouts-input', handleSearchWorkoutsEvent);
   $hl.eventListener('click', 'new-wod-btn', handleNewWodEvent);
+  $hl.eventListener('click', 'close-set-wod-modal-btn', handleCloseSetWodModalEvent);
+  $hl.eventListener('click', 'save-group-wod-btn', handleSaveGroupWodEvent);
 
   document.addEventListener('click', function (event) {
     let idregex = new RegExp(/^edit-workout-btn-([a-zA-Z]|\d){24}/gm);
@@ -158,17 +246,35 @@
         }
       });
     }
+
+    let setwodregex = new RegExp(/^set-as-wod-btn-([a-zA-Z]|\d){24}/gm);
+    if (setwodregex.test(event.target.id)) {
+      let targetId = event.target.id;
+      let prefix = 'set-as-wod-btn-';
+      let _id = targetId.substring(prefix.length, targetId.length);
+      setWod(_id);
+    }
   });
 
   ($ironfyt.workoutsPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
         let user = auth && auth.user ? auth.user : {};
+        component.setState({ user });
         //Sending group_wod = 1 will fetch all the workouts created by the user and group admins of the groups the user belongs to
         $ironfyt.getWorkouts({ group_wods: 1 }, function (error, response) {
           if (!error) {
             let workouts = response && response.workouts ? response.workouts : [];
-            component.setState({ user, workouts });
+            component.setState({ workouts });
+            if (user.role === 'admin') {
+              $ironfyt.getGroup({ admin_id: user._id }, function (error, groups) {
+                if (!error) {
+                  component.setState({ groups });
+                } else {
+                  component.setState({ error });
+                }
+              });
+            }
           } else {
             component.setState({ error });
           }

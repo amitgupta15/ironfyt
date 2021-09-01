@@ -13,12 +13,11 @@ it('should query a workout for a given id', () => {
           return {
             aggregate: () => {
               return {
+                toArray: (callback) => {
+                  callback(false, [{ name: 'workout 1' }]);
+                },
                 sort: () => {
-                  return {
-                    toArray: (callback) => {
-                      callback(false, [{ name: 'workout 1' }]);
-                    },
-                  };
+                  return {};
                 },
               };
             },
@@ -47,12 +46,11 @@ it('should query all workouts if no id is provided', () => {
           return {
             aggregate: () => {
               return {
+                toArray: (callback) => {
+                  callback(false, [{ name: 'workout 1' }, { name: 'workout 2' }]);
+                },
                 sort: function () {
-                  return {
-                    toArray: (callback) => {
-                      callback(false, [{ name: 'workout 1' }, { name: 'workout 2' }]);
-                    },
-                  };
+                  return {};
                 },
               };
             },

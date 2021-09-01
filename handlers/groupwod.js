@@ -91,4 +91,33 @@ groupwod.get = (req, res) => {
   });
 };
 
+groupwod.post = (req, res) => {
+  let { buffer, options } = req;
+
+  let database = options.database;
+  let groupwod;
+  try {
+    groupwod = JSON.parse(buffer);
+  } catch (error) {
+    res(400, { error: 'Error parsing groupwod data' });
+    return;
+  }
+  if (groupwod) {
+    let group_id = groupwod.group_id ? new ObjectId(groupwod.group_id) : null;
+    let workout_id = groupwod.workout_id ? new ObjectId(groupwod.workout_id) : null;
+    let date = groupwod.date ? new Date(groupwod.date) : null;
+    let groupWodObj = { group_id, workout_id, date };
+    if (group_id && workout_id && date) {
+      database.collection('groupwod').replaceOne({ group_id, date }, groupWodObj, { upsert: true }, function (error, response) {
+        if (error) {
+          res(400, { error: 'Error occurred while saving group wod' });
+          return;
+        }
+        res(200, response.ops[0]);
+      });
+    } else {
+      res(400, { error: 'Missing group wod data. group wod must have a workout_id, group_id and date' });
+    }
+  }
+};
 module.exports = groupwod;

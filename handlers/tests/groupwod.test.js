@@ -36,4 +36,35 @@ it('should fetch the latest wod for all the groups', () => {
     assert.strictEqual(response.length, 2);
   });
 });
+
+it('should update/insert a new group wod for a given date and group', () => {
+  let req = {
+    buffer: Buffer.from(JSON.stringify({ workout_id: '123412341234123412341234', date: Date.now(), group_id: '123412341234123412341235' })),
+    options: {
+      database: {
+        collection: () => {
+          return {
+            replaceOne: function (params, obj, options, callback) {
+              callback(false, { ops: [{ _id: '123' }] });
+            },
+          };
+        },
+      },
+    },
+    query: {},
+    tokenpayload: {
+      user: {
+        _id: 1234,
+      },
+    },
+  };
+  let _statusCode, _response;
+  groupwod.post(req, function (statusCode, response) {
+    _statusCode = statusCode;
+    _response = response;
+  });
+
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_response._id, '123');
+});
 console.groupEnd();
