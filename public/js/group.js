@@ -100,6 +100,7 @@
       component.setState({ user });
       let params = $hl.getParams();
       let date = params && params.date ? new Date(params.date) : new Date();
+      date.setHours(0, 0, 0, 0);
       let group_id = params && params.group_id ? params.group_id : false;
       let usergroups = user && user.groups ? user.groups : [];
       if (usergroups.indexOf(group_id) < 0) {

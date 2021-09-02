@@ -75,7 +75,7 @@
     $test.assert(state.validationError === '');
     $test.assert($hl.formatDateForInputField(_workoutlog.date) === '2020-01-01');
     $test.assert(_workoutlog.notes === 'Some notes');
-    $test.assert(_url === 'workoutlog-calendar.html&year=2020&month=0&date=1?ref=workoutlog-form.html');
+    $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-form.html&year=2020&month=0&date=1');
 
     $hl.getParams = function () {
       return { ref: 'workoutlog-calendar.html', user_id: '123456789012345678901234' };
@@ -831,7 +831,7 @@
 
   $test.it('should check and process new personal record once the log is created', function () {
     $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
-      callback(false, { workoutlog: { _id: '123412341234123412341234' } });
+      callback(false, { workoutlog: { _id: '123412341234123412341234', workout_id: '123412341234123412341235' } });
     };
     let _updatePersonalRecordCalled = false;
     $ironfyt.updatePersonalRecord = function (workoutlog) {

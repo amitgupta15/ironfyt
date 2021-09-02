@@ -63,9 +63,13 @@
     return `
       <div class="container">
         ${$ironfyt.searchBarTemplate('search-workouts-input', 'Search Workouts...')}
-        <div class="flex margin-bottom-10px">
-          <button class="btn-primary icon-add" id="new-wod-btn">New WOD</button>    
-        </div>
+        ${
+          isAdmin()
+            ? `<div class="flex margin-bottom-10px">
+                <button class="btn-primary icon-add" id="new-wod-btn">New WOD</button>    
+              </div>`
+            : ``
+        }
         <div id="main-div-workouts">
           ${defaultPageTemplate(props)}
         </div>

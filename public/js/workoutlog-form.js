@@ -287,13 +287,36 @@
       </div>
     `;
   };
+
+  /**
+   * Parent template for workout log form
+   * @param {Object} props
+   * @returns HTML template to be rendered
+   */
   let workoutlogFormTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let validationError = props.validationError ? props.validationError : {};
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
+    let users = props.users ? props.users : [];
+    let loggedInUser = props.user ? props.user : {};
     return `
     <form id="workout-log-form" class="form-container" autocomplete="off">
       ${dateTemplate(props)}  
+      ${
+        isAdmin() && users
+          ? `
+        <div class="form-flex-group margin-bottom-5px">
+          <div class="form-input-group flex-width-100">
+            <label for="wolog-user" class="form-label hide-view">User</label>
+            <select class="form-input" name="wolog-user" id="wolog-user">
+              <option value=""></option>
+              ${users.map((user) => `<option value="${user._id}" ${user._id === workoutlog.user_id ? 'selected' : user._id === loggedInUser._id ? 'selected' : ''}>${user.fname} ${user.lname}</option>`)}
+            </select>
+          </div>
+        </div>
+      `
+          : ``
+      }
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
       <div class="form-flex-group margin-bottom-5px">
@@ -741,6 +764,12 @@
     workoutlog.notes = elements['wolog-notes'].value.trim();
     workoutlog.user_id = workoutlog.user_id ? workoutlog.user_id : state.user._id;
 
+    //Admin can override the user id
+    if (isAdmin()) {
+      let user_id = elements['wolog-user'].value;
+      workoutlog.user_id = user_id;
+    }
+
     workoutlog.modality = [];
     for (var i = 0; i < elements['wolog-modality'].length; i++) {
       if (elements['wolog-modality'][i].checked) workoutlog.modality.push(elements['wolog-modality'][i].value);
@@ -828,24 +857,27 @@
       submitButton.innerHTML = 'Saving...';
 
       let params = $hl.getParams();
-      let ref = params && params.ref ? params.ref : `workoutlog-calendar.html&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}`;
+      // let ref = params && params.ref ? params.ref : `workoutlog-calendar.html?year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}`;
+      let ref = params && params.ref ? params.ref : 'workoutlog-calendar.html';
       let user_id = params && params.user_id ? `&user_id=${params.user_id}` : false;
       let date = ref === 'workoutlog-calendar.html' ? `&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}` : false;
       let workoutIdRef = ref === 'workout-activity.html' ? `&workout_id=${workoutlog.workout_id}` : false;
+
       $ironfyt.saveWorkoutLog(workoutlog, function (error, response) {
         if (error) {
           console.error(error);
           component.setState({ error });
         } else {
           let workoutlog = response && response.workoutlog ? response.workoutlog : null;
-          $ironfyt.updatePersonalRecord(workoutlog, function (error, response) {
-            if (error) {
-              component.setState({ error });
-              return;
-            } else {
-              $ironfyt.navigateToUrl(`${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}${workoutIdRef ? workoutIdRef : ''}`);
-            }
-          });
+          if (workoutlog && workoutlog.workout_id) {
+            $ironfyt.updatePersonalRecord(workoutlog, function (error, response) {
+              if (error) {
+                component.setState({ error });
+                return;
+              }
+            });
+          }
+          $ironfyt.navigateToUrl(`${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}${workoutIdRef ? workoutIdRef : ''}`);
         }
       });
     } else {
@@ -1015,6 +1047,11 @@
     document.getElementById('modality-w').checked = modalities.indexOf('w') > -1;
   };
 
+  let isAdmin = function () {
+    let state = component.getState();
+    return state.user.role === 'admin';
+  };
+
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
@@ -1070,7 +1107,6 @@
       }
       let user = auth && auth.user ? auth.user : {};
       state.user = user;
-
       $ironfyt.getMovements({}, function (error, response) {
         if (error) {
           component.setState({ error });
@@ -1084,7 +1120,16 @@
         let user_id = params && params.user_id ? params.user_id : false;
         let isAdmin = user.role === 'admin';
         let workout_id = params && params.workout_id ? params.workout_id : false;
-
+        if (isAdmin) {
+          $ironfyt.getUsers({}, function (error, response) {
+            if (error) {
+              component.setState({ error });
+              return;
+            }
+            let users = response && response.users ? response.users : [];
+            component.setState({ users });
+          });
+        }
         if (user_id && user_id !== user._id && !isAdmin) {
           component.setState({ error: { message: 'You cannot edit a workout log for another user!' } });
           return;
