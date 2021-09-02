@@ -7,23 +7,23 @@
       ? `<h2>You are already logged in ${user.fname ? user.fname : ''} ${user.lname ? user.lname : ''}</h2>
       <button id="logout">Logout</button>
       `
-      : `<div class="login-container">
-        <h2>Login</h2>
-        <form id="login-form">
-          <div>
-            <label for="email">Email</label>
-            <input type="text" id="email" name="email" placeholder="Email">
-          </div>
-          <div>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password">
-          </div>
-          <div>
-            <button id="submit">Login</button>
-          </div>
-          <div id="error-info"></div>
-        </form>
-      </div>
+      : `<div class="container login-container">
+          <div class="login-logo">IronFyt</div>
+          <form id="login-form">
+            <div class="form-input-group margin-bottom-10px">
+              <input type="text" class="form-input" name="email" id="email" placeholder="Email" />
+              <label for="email" class="form-label">Email</label>
+            </div>
+            <div class="form-input-group margin-bottom-10px">
+              <input type="password" class="form-input" name="password" id="password" placeholder="Password" />
+              <label for="password" class="form-label">Password</label>
+            </div>
+            <div id="error-info"></div>
+            <div class="submit-btn-bar">
+              <button type="submit" id="submit" class="submit-btn">Login</button>
+            </div>
+          </form>
+        </div>
       `;
   };
 
