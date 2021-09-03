@@ -34,6 +34,7 @@
             return `
           <div class="log-detail-container">
             <div class="item-btn-bar">
+              ${isAdmin() ? `<button class="item-copy-btn" id="copy-log-btn-${log._id}"></button>` : ``}
               <button class="item-edit-btn" id="edit-log-btn-${log._id}"></button>
               <button class="item-delete-btn" id="delete-log-btn-${log._id}"></button>
             </div>
@@ -75,6 +76,11 @@
     deleteConfirmationDialog.style.display = 'none';
   };
 
+  let isAdmin = function () {
+    let state = component.getState();
+    return state.user && state.user.role === 'admin';
+  };
+
   let handleConfirmDeleteLogEvent = function () {
     let state = component.getState();
 
@@ -95,6 +101,7 @@
   $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
 
   document.addEventListener('click', function (event) {
+    console.log(event.target);
     let targetId = event.target.id;
     let state = component.getState();
     // Handle edit button click
@@ -104,6 +111,14 @@
       let _id = event.target.id.substring(prefix.length, event.target.id.length);
       let user_id = state.user._id;
       $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&user_id=${user_id}&ref=workout-activity.html`);
+    }
+
+    let copyBtnRegex = new RegExp(/^copy-log-btn-([a-zA-Z]|\d){24}/);
+    if (copyBtnRegex.test(targetId)) {
+      let prefix = 'copy-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      let user_id = state.user._id;
+      $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&user_id=${user_id}&ref=workout-activity.html&admincopy=1`);
     }
 
     // Handle delete button click

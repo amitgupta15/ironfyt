@@ -358,6 +358,16 @@ input[type='number'] {
   color: transparent;
 }
 
+.item-copy-btn {
+  background: url(../images/content_copy_24dp.svg);
+  background-size: cover;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border: none;
+  color: transparent;
+}
+
 .item-delete-btn {
   background: url(../images/delete_outline_24dp-google.svg);
   background-size: cover;
@@ -388,6 +398,7 @@ input[type='number'] {
   display: none;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
   z-index: 200;
 }
 
@@ -974,6 +985,7 @@ textarea:valid {
 }
 
 .personal-record-trophy {
+  display: inline-block;
   position: relative;
   padding-left: 20px;
   color: var(--theme);

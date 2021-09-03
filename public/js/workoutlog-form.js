@@ -703,7 +703,7 @@
         let workoutType = workout.type ? workout.type : '';
         let workoutTypeIndex = getSearchStringMatchIndex(workoutType, textFieldValue);
 
-        let workoutReps = workout.reps ? workout.reps : '';
+        let workoutReps = workout.reps ? workout.reps.toString() : '';
         let workoutRepsIndex = getSearchStringMatchIndex(workoutReps, textFieldValue);
 
         let workoutDescription = workout.description ? workout.description : '';
@@ -768,6 +768,13 @@
     if (isAdmin()) {
       let user_id = elements['wolog-user'].value;
       workoutlog.user_id = user_id;
+    }
+
+    //If admin is creating a copy then remove the _id
+    let params = $hl.getParams();
+    let admincopy = params && params.admincopy === '1';
+    if (isAdmin() && admincopy) {
+      workoutlog._id = null;
     }
 
     workoutlog.modality = [];
