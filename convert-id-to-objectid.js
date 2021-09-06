@@ -237,32 +237,32 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     console.log(`---- Random Unit Duration: ${randomUnitDuration.length} -- handle this manually`);
   //     console.log(randomUnitDuration);
   //     console.log(`Final Array: ${finalArray.length}`);
-  // console.log(finalArray);
+  //     console.log(finalArray);
 
-  //*** CAUTION *** -- Following code block will update the database
-  // finalArray.forEach((item) => {
-  //   db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, log) {
-  //     if (error) {
-  //       console.error(error);
-  //     } else {
-  //       log.duration = {
-  //         desc: log.duration,
-  //         hours: item.hours,
-  //         minutes: item.minutes,
-  //         seconds: item.seconds,
-  //       };
-  //       db.collection('logs').replaceOne({ _id: ObjectId(log._id) }, log, function (error, result) {
+  //     //*** CAUTION *** -- Following code block will update the database
+  //     finalArray.forEach((item) => {
+  //       db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, log) {
   //         if (error) {
   //           console.error(error);
   //         } else {
-  //           console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //           log.duration = {
+  //             desc: log.duration,
+  //             hours: item.hours,
+  //             minutes: item.minutes,
+  //             seconds: item.seconds,
+  //           };
+  //           db.collection('logs').replaceOne({ _id: ObjectId(log._id) }, log, function (error, result) {
+  //             if (error) {
+  //               console.error(error);
+  //             } else {
+  //               console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //             }
+  //           });
   //         }
   //       });
-  //     }
+  //     });
+  //     // *** CAUTION *** - Above code block will update the database
   //   });
-  // });
-  // *** CAUTION *** - Above code block will update the database
-  // });
 
   // Load field
   // db.collection('logs')
@@ -297,27 +297,29 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     console.log(moreThanTwoFieldLoads);
   //     console.log(`Final Array Length: ${finalArray.length}`);
 
-  // finalArray.forEach((item) => console.log(item));
+  //     finalArray.forEach((item) => console.log(item));
 
-  // *** CAUTION: FOLLOWING CODE UPDATES THE TABLE - BE CAREFUL ***
-  // finalArray.forEach((item) => {
-  //   db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, doc) {
-  //     let roundinfo = [];
-  //     item.load.forEach((load) => {
-  //       roundinfo.push({ rounds: null, reps: null, load: load, unit: 'lbs' });
+  //     // *** CAUTION: FOLLOWING CODE UPDATES THE TABLE - BE CAREFUL ***
+  //     finalArray.forEach((item) => {
+  //       db.collection('logs').findOne({ _id: ObjectId(item._id) }, function (error, doc) {
+  //         let roundinfo = [];
+  //         item.load.forEach((load) => {
+  //           roundinfo.push({ rounds: null, reps: null, load: load, unit: 'lbs' });
+  //         });
+  //         doc.roundinfo = roundinfo;
+  //         db.collection('logs').replaceOne({ _id: doc._id }, doc, function (error, result) {
+  //           if (error) {
+  //             console.error(error);
+  //           } else {
+  //             console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
+  //           }
+  //         });
+  //       });
   //     });
-  //     doc.roundinfo = roundinfo;
-  //     db.collection('logs').replaceOne({ _id: doc._id }, doc, function (error, result) {
-  //       if (error) {
-  //         console.error(error);
-  //       } else {
-  //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
-  //       }
-  //     });
+  //     // *** CAUTION: ABOVE CODE UPDATES THE TABLE - BE CAREFUL ***
   //   });
-  // });
-  // *** CAUTION: ABOVE CODE UPDATES THE TABLE - BE CAREFUL ***
-  // });
+
+  //Rounds
   // db.collection('logs')
   //   .find({})
   //   .toArray(function (error, docs) {
@@ -329,12 +331,13 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //         console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
   //       });
   //     });
-  //     // let notNullRounds = docs.filter((doc) => doc.rounds !== null && doc.rounds !== undefined);
-  //     // console.log(`Total: ${docs.length}`);
-  //     // console.log(`-- Null Rounds: ${nullRounds.length}`);
-  //     // console.log(`-- Not Null Rounds: ${notNullRounds.length}`);
-  //     // let lengthTwoOrLess = notNullRounds.filter((doc) => doc.rounds.length <= 2);
-  //     // let twoOrMore = notNullRounds.filter((doc) => doc.rounds.length > 2);
+
+  //     let notNullRounds = docs.filter((doc) => doc.rounds !== null && doc.rounds !== undefined);
+  //     console.log(`Total: ${docs.length}`);
+  //     console.log(`-- Null Rounds: ${nullRounds.length}`);
+  //     console.log(`-- Not Null Rounds: ${notNullRounds.length}`);
+  //     let lengthTwoOrLess = notNullRounds.filter((doc) => doc.rounds.length <= 2);
+  //     let twoOrMore = notNullRounds.filter((doc) => doc.rounds.length > 2);
   //     // Do this one first
   //     // console.log(`---- <= 2: ${lengthTwoOrLess.length}`);
   //     // lengthTwoOrLess.forEach((doc) => {
@@ -350,8 +353,8 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     //     console.log(`_id: ${result.ops[0]._id}, modifiedCount: ${result.modifiedCount}`);
   //     //   });
   //     // });
-  //     // console.log(`---- > 2: ${twoOrMore.length}`);
   //     // Do this second
+  //     // console.log(`---- > 2: ${twoOrMore.length}`);
   //     // twoOrMore.forEach((doc) => {
   //     //   delete doc.load;
   //     //   doc.notes = `Rounds: ${doc.rounds}\n${doc.notes ? doc.notes : ''}`;
@@ -361,6 +364,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     //   });
   //     // });
   //   });
+
   // db.collection('logs')
   //   .find({})
   //   .toArray(function (error, docs) {
@@ -373,7 +377,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     });
   //   });
 
-  //Change data type to date for workout logs
+  // Change data type to date for workout logs
   // db.collection('logs')
   //   .find()
   //   .forEach((log) => {
