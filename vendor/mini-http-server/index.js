@@ -25,6 +25,11 @@ const server = {};
 let baseDir = '';
 
 /**
+ * Options to be passed to the routes (example: database connection, etc.)
+ */
+let options = {};
+
+/**
  *
  * HANDLE STATIC CONTENT
  *
@@ -39,6 +44,7 @@ const mimeTypes = {
   '.png': 'image/png',
   '.ico': 'image/x-icon',
   '.json': 'application/json',
+  '.svg': 'image/svg+xml',
 };
 
 /**
@@ -69,13 +75,13 @@ server.getContentType = (url) => {
  * @param {Object} response - response object expected by the http.createServer callback
  */
 server.serveStaticContent = (pathname, response) => {
+  pathname = pathname === '/' ? 'index.html' : pathname;
   // Get content type based on the file extension passed in the request url
   const contentType = server.getContentType(pathname);
   // Set the Content-Type response header
   response.setHeader('Content-Type', contentType);
 
   // Read the file and send the response
-  console.log(baseDir + '  ' + pathname);
   fs.readFile(`${baseDir}${pathname}`, (error, data) => {
     if (!error) {
       response.writeHead(200);
@@ -147,36 +153,44 @@ server.serveDynamicContent = (request, response) => {
   });
 
   request.on('end', () => {
-    buffer = Buffer.concat(buffer);
-
+    if (buffer.length) {
+      buffer = Buffer.concat(buffer);
+    } else {
+      buffer = Buffer.from(JSON.stringify({}));
+    }
     // Prepare the request data object to pass to the handler function
-    const responseData = {
+    const data = {
       method,
       pathname,
       query,
       buffer,
+      options,
+      headers: request.headers,
     };
-
     // Retrieve the handler for the path
     const handler = allowedPaths[pathname];
     /**
      * Call the handler for the path
-     * @param {Object} responseData
+     * @param {Object} data
      * @param {function} callback (statusCode, data) => {}
      *
      */
-    handler(responseData, (statusCode = 200, data = '') => {
-      if (responseData.pathname === '/') {
-        response.writeHead(statusCode, {
-          Location: data,
-        });
-        response.end();
-      } else {
-        data = typeof data === 'string' ? data : JSON.stringify(data);
-        response.setHeader('Content-Type', 'application/json');
-        response.writeHead(statusCode);
-        response.end(data);
+    handler(data, (statusCode = 200, data = '') => {
+      if (typeof data !== 'string') {
+        try {
+          data = JSON.stringify(data);
+        } catch (e) {
+          data = {};
+          console.log('Error occurred while stringifying data ' + e);
+        }
       }
+      response.setHeader('Content-Type', 'application/json');
+      response.setHeader('Access-Control-Allow-Origin', '*');
+      response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+      response.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+      response.setHeader('Access-Control-Allow-Credentials', true);
+      response.writeHead(statusCode);
+      response.end(data);
     });
   });
 };
@@ -207,6 +221,17 @@ server.setAllowedPaths = (paths) => {
   allowedPaths = paths;
 };
 
+/**
+ * Set the options such as database connection to be passed to the routes.
+ * @param {object} obj
+ */
+server.setOptions = (obj) => {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      options[key] = obj[key];
+    }
+  }
+};
 /**
  * Set the base directory for the static content
  * @param {String} path

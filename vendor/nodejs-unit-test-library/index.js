@@ -4,9 +4,14 @@ const lib = {};
 
 lib.assert = assert;
 
+lib.setUp = () => {};
+lib.tearDown = () => {};
+
 lib.it = (desc, fn) => {
   try {
+    lib.setUp();
     fn();
+    lib.tearDown();
     console.log('\x1b[32m%s\x1b[0m', `\u2714 ${desc}`);
   } catch (error) {
     console.log('\n');

@@ -1,20 +1,17 @@
 'use strict';
 
 const server = require('./vendor/mini-http-server');
-const handlers = require('./handlers');
+// const handlers = require('./handlers/index.old');
+const handler = require('./handlers');
+const user = require('./handlers/user');
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-const mongodb = process.env.ENV === 'dev' ? require('./vendor/local-db') : require('mongodb');
-if (process.env.ENV === 'dev') {
-  //If running in dev environment, then provide the test data
-  require('./local-db-collections');
-}
+const mongodb = require('mongodb');
 
-let db;
 console.log('Mongodb url:', process.env.MONGODB_URI);
 mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, database) {
   console.log('trying to connect to the database');
@@ -22,19 +19,24 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     console.log('Found error', err);
     process.exit(1);
   }
-  db = database.db(process.env.DATABASE);
-  // assign the db handle to handler
-  handlers.db = db;
+  // Making database connection available across different routes
+  server.setOptions({ database: database.db(process.env.DATABASE) });
   console.log('Connected to Database: ' + process.env.DATABASE);
-  // Dynamic paths
-  const paths = {
-    '/': handlers.default,
-    '/api/workouts': handlers.workouts,
-    '/api/logs': handlers.logs,
-    '/api/users': handlers.users,
-  };
   // Set the allowed dynamic paths
-  server.setAllowedPaths(paths);
-  server.setStaticPath(path.join(__dirname, ''));
+  server.setAllowedPaths({
+    '/healthcheck': handler.healthcheck,
+    '/api/workout': handler.workout,
+    '/api/workoutlog': handler.workoutlog,
+    '/api/user': handler.user,
+    '/api/movement': handler.movement,
+    '/api/groupwod': handler.groupwod,
+    '/api/pr': handler.personalrecord,
+    '/api/group': handler.group,
+    '/login': user.login,
+    '/register': user.register,
+    '/token': user.token,
+    '/testtoken': user.testtoken,
+  });
+  server.setStaticPath(path.join(__dirname, '/public/'));
   server.init(port);
 });

@@ -2,695 +2,291 @@
   'use strict';
 
   // Create a global variable and expose it the world.
-  var ironfyt = {};
-  self.ironfyt = ironfyt;
+  var $ironfyt = {};
+  self.$ironfyt = $ironfyt;
 
-  /**
-   * Globals
-   */
+  let fetch = $hl.fetch;
+  let serverUrl = '';
 
-  ironfyt.topBarTemplate = function (props) {
-    var page = props && props.page ? props.page : '';
-    var user = props && props.user ? props.user : {};
-    return (
-      '<ul class="top-bar">' +
-      '<li><a href="index.html">Home</a></li>' +
-      '<li>' +
-      (page === 'workout-list' ? 'Workouts' : '<a href="workout-list.html?user=' + user._id + '">Workouts</a>') +
-      '</li>' +
-      '<li>' +
-      (page === 'log-list' && props.alllogs === false ? 'My Logs' : '<a href="log-list.html?user=' + user._id + '">My Logs</a>') +
-      '</li>' +
-      '<li>' +
-      (page === 'log-list' && props.alllogs === true ? 'All Logs' : '<a href="log-list.html?user=' + user._id + '&all=true">All Logs</a>') +
-      '</li>' +
-      '<li>' +
-      (page === 'new-workout' ? 'New Workout' : '<a href="new-workout.html?user_id=' + user._id + '">New Workout</a>') +
-      '</li>' +
-      '<li style="float:right;color:blue">' +
-      user.fname +
-      '</ul>'
-    );
+  $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
+  $ironfyt.AUTH_USER = 'ironfyt-auth-user';
+
+  $ironfyt.getCredentials = function () {
+    let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
+    let user = localStorage.getItem($ironfyt.AUTH_USER);
+    user = user ? JSON.parse(user) : null;
+    return { token, user };
   };
 
-  ironfyt.bottomBarTemplate = function (props) {
-    return `<ul class="bottom-bar">
-              <li><a href="#">My Logs</a></li>
-              <li><a href="#">All Logs</a></li>
-            </ul>`;
-  };
-
-  ironfyt.signInTemplate = function () {
-    return '<a href="index.html">Please select a user</a>';
-  };
-
-  ironfyt.workoutTemplate = function (props) {
-    var workout = props && props.workout ? props.workout : false;
-    var page = props && props.page ? props.page : false;
-    var user = props && props.user ? props.user : false;
-    if (workout) {
-      return (
-        '<div class="workout-item">' +
-        '<h3>' +
-        (page === 'log' ? workout.name : '<a href="log.html?workout=' + workout._id + '&user=' + user._id + '">' + workout.name + '</a>') +
-        ' <span class="logcount">(' +
-        workout.userlogcount +
-        '/' +
-        workout.totallogcount +
-        ')</span>' +
-        '</h3>' +
-        '<p><strong>Type: </strong>' +
-        workout.type +
-        '</p>' +
-        (workout.timecap !== null ? '<p><strong>Time Cap: </strong>' + workout.timecap + '</p>' : '') +
-        '' +
-        (workout.reps !== null && workout.reps !== undefined ? '<p><strong>Reps: </strong>' + workout.reps + '</p>' : '') +
-        '' +
-        (workout.rounds !== undefined && workout.rounds !== null ? '<p><strong>Rounds: </strong>' + workout.rounds + '</p>' : '') +
-        '' +
-        (workout.description !== undefined && workout.description !== null ? '<p>' + hl.replaceNewLineWithBR(workout.description) + '</p>' : '') +
-        '</div>'
-      );
-    }
-    return '';
-  };
-
-  ironfyt.searchTemplate = function (props) {
-    var search = props && props.search ? props.search : '';
-    var id = props && props.id ? props.id : 'search';
-    return (
-      '<form id="' +
-      id +
-      '">' +
-      '    <label for="search" hidden>Search: </label>' +
-      '    <input type="text" name="search" class="search-box" placeholder="Search" value="' +
-      search +
-      '"/>' +
-      '    <button name="search_btn" id="search-btn">Search</button>&nbsp;&nbsp;<button type="reset" id="reset-btn" name="reset_workoutlist_btn">Reset</button>' +
-      '</form>'
-    );
-  };
-  /**
-   * index.html page
-   * At this point, index.html populates the user list of all the users in the system.
-   *
-   */
-  ironfyt.userListComponent = new Component('[data-app=user-list]', {
-    data: {
-      users: [],
-    },
-    template: function (props) {
-      var users = props.users;
-      if (users.length === 0) return '<em>No Users Founds</em>';
-      return (
-        '<ul class="user-list">' +
-        users
-          .map(function (user) {
-            return '<li><a href="workout-list.html?user=' + user._id + '">' + user.fname + '</a>' + (user.logs ? ' (<a href="log-list.html?user=' + user._id + '">' + user.logs.length + '</a>)' : '') + '</li>';
-          })
-          .join('') +
-        '</ul>'
-      );
-    },
-  });
-
-  var userListPage = function () {
-    hl.fetch.get('/api/users', function (users) {
-      ironfyt.userListComponent.setData({ users: users });
-    });
-  };
-
-  /**
-   * workout-list.html - Workout list page
-   */
-  ironfyt.workoutListComponent = new Component('[data-app=workout-list]', {
-    data: {
-      unfilteredList: [],
-      workouts: [],
-      user: {},
-      search: '',
-    },
-    template: function (props) {
-      var workouts = props.workouts;
-      var user = props.user;
-      var search = props.search;
-      return !user._id
-        ? ironfyt.signInTemplate()
-        : ironfyt.topBarTemplate({ user, page: 'workout-list' }) +
-            `<p> ${ironfyt.searchTemplate({ search: search, id: 'search-workout' })}</p>` +
-            (workouts.length === 0
-              ? '<em>No Workouts Found</em>'
-              : workouts
-                  .map(function (workout) {
-                    return ironfyt.workoutTemplate({
-                      page: 'workout-list',
-                      workout: workout,
-                      user: user,
-                    });
-                  })
-                  .join('')) +
-            ironfyt.bottomBarTemplate();
-    },
-  });
-
-  var workoutListPage = function () {
-    var user_id = hl.getParams().user;
-    if (user_id) {
-      hl.fetch.get('/api/users?_id=' + user_id, function (user) {
-        hl.fetch.get('/api/workouts', function (workoutsResponse) {
-          hl.fetch.get('/api/logs', function (logsResponse) {
-            var workouts = workoutsResponse;
-            var logs = logsResponse;
-            workouts.forEach(function (workout) {
-              workout.userlogcount = user.logs.filter(function (log) {
-                return parseInt(log.workout_id) === parseInt(workout._id);
-              }).length;
-              workout.totallogcount = logs.filter(function (log) {
-                return parseInt(log.workout_id) === parseInt(workout._id);
-              }).length;
-            });
-            workouts = hl.sortArray(workoutsResponse, 'totallogcount', 'desc');
-            ironfyt.workoutListComponent.setData({
-              user: user,
-              workouts: workouts,
-              unfilteredList: workouts,
-            });
-          });
-        });
-      });
+  $ironfyt.authenticateUser = function (callback) {
+    let { token, user } = $ironfyt.getCredentials();
+    if (token && user) {
+      callback(false, { user });
     } else {
-      ironfyt.workoutListComponent.render();
+      callback({ message: `You are either not logged in or not authorized to view this page.` });
     }
   };
 
-  /**
-   * Search Workouts
-   */
-
-  var handleSearchWorkout = function (event) {
-    event.preventDefault();
-    // Get the search terms from the input field
-    var searchTerm = event.target.elements['search'].value;
-    // Tokenize the search terms
-    var tokens = searchTerm.toLowerCase().split(' ');
-    // Remove empty spaces
-    tokens = tokens.filter(function (token) {
-      return token.trim() !== '';
-    });
-    if (tokens.length) {
-      // Create regular expression of all the search terms
-      var searchTermRegex = new RegExp(tokens.join('|'), 'gim');
-      var _data = ironfyt.workoutListComponent.getData();
-      // Always search with an unfiltered list.
-      _data.workouts = _data.unfilteredList;
-      var workouts = _data.workouts
-        .map(function (workout) {
-          var logString = hl.concatObjValuesAsString(workout);
-          // Remove any <br> | <br/> tags from the string. Remove any new line \n symbol from the string.
-          logString = logString.replace(/<br\/?>|\n/gim, ' ');
-          // .match() method returns an array of terms matching.
-          return { workout: workout, match: logString.match(searchTermRegex) };
-        }) // Filter out the non matching results
-        .filter(function (wo) {
-          return wo.match && wo.match.length > 0;
-        }) // Sort by most number of terms matching
-        .sort(function (a, b) {
-          return b.match.length - a.match.length;
-        })
-        .map(function (wo) {
-          return wo.workout;
-        });
-      ironfyt.workoutListComponent.setData({
-        workouts: workouts,
-        search: searchTerm,
-      });
-    }
-  };
-
-  var handleResetWorkoutSearch = function (event) {
-    event.preventDefault();
-    var _data = ironfyt.workoutListComponent.getData();
-    ironfyt.workoutListComponent.setData({
-      workouts: _data.unfilteredList,
-      search: '',
+  $ironfyt.login = function (loginInfo, callback) {
+    fetch.post(`${serverUrl}/login`, { data: loginInfo }, function (error, response) {
+      callback(error, response);
     });
   };
 
+  $ironfyt.logout = function () {
+    localStorage.removeItem($ironfyt.AUTH_TOKEN);
+    localStorage.removeItem($ironfyt.AUTH_USER);
+    $ironfyt.navigateToUrl('/');
+  };
+
+  $ironfyt.getWorkoutLogs = function (params, callback) {
+    getRequest('/api/workoutlog', params, callback);
+  };
+
+  $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
+    let headers = getAuthHeader();
+    fetch.post(`/api/workoutlog`, { headers, data: workoutlog }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
+  $ironfyt.deleteWorkoutLog = function (_id, callback) {
+    let headers = getAuthHeader();
+    fetch.delete(`/api/workoutlog?_id=${_id}`, { headers }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
+  $ironfyt.getWorkouts = function (params, callback) {
+    getRequest('/api/workout', params, callback);
+  };
+
+  $ironfyt.getUsers = function (params, callback) {
+    getRequest('/api/user', params, callback);
+  };
+
+  $ironfyt.getMovements = function (params, callback) {
+    getRequest('/api/movement', params, callback);
+  };
+
+  $ironfyt.getGroupWod = function (params, callback) {
+    getRequest('/api/groupwod', params, callback);
+  };
+
+  $ironfyt.getPersonalRecord = function (params, callback) {
+    getRequest('/api/pr', params, callback);
+  };
+
+  $ironfyt.getGroup = function (params, callback) {
+    getRequest('/api/group', params, callback);
+  };
+
+  $ironfyt.saveWorkout = function (workout, callback) {
+    let headers = getAuthHeader();
+    fetch.post(`/api/workout`, { headers, data: workout }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
+  $ironfyt.deleteWorkout = function (_id, callback) {
+    let headers = getAuthHeader();
+    fetch.delete(`/api/workout?_id=${_id}`, { headers }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
+  $ironfyt.updatePersonalRecord = function (workoutlog, callback) {
+    let headers = getAuthHeader();
+    fetch.post(`/api/pr`, { headers, data: workoutlog }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
+  $ironfyt.saveGroupWod = function (groupwod, callback) {
+    let headers = getAuthHeader();
+    fetch.post(`/api/groupwod`, { headers, data: groupwod }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
   /**
-   * log.html page
+   * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
+   * holds the main content for the page
    *
+   * @param {object} props - props to be passed to a template
+   * @param {function} template - a template method that returns an html template
    */
-  ironfyt.logComponent = new Component('[data-app=log]', {
-    data: { workout: {}, logs: [], user: {} },
-    template: function (props) {
-      var workout = props.workout;
-      var logs = props.logs;
-      var user = props.user;
-      if (!user._id) return ironfyt.signInTemplate();
-      if (!workout._id) return ironfyt.topBarTemplate({ user }) + '<br/><p><em>Not a valid workout id</em></p>';
-      return (
-        ironfyt.topBarTemplate({ user }) +
-        ironfyt.workoutTemplate({ page: 'log', workout: workout, user: user }) +
-        '<p>' +
-        '<a href="new-log.html?workout_id=' +
-        workout._id +
-        '&workout_name=' +
-        workout.name +
-        '&user_id=' +
-        user._id +
-        '" class="btn">+</a>' +
-        '<a class="show-all-logs" href="#">All Logs</a>' +
-        '</p>' +
-        '<br/>' +
-        (function () {
-          var htmlString = '';
-          logs.forEach(function (log) {
-            var durationString = log.duration ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '';
-            var loadString = log.load ? '<p><strong>Load: </strong>' + log.load + ' </p>' : '';
-            var roundsString = log.rounds ? '<p><strong>Rounds: </strong>' + log.rounds + ' </p>' : '';
-            var notesString = log.notes ? '<p><strong>Notes: </strong><br/>' + hl.replaceNewLineWithBR(log.notes) + ' </p>' : '';
-            htmlString += '<div class="log-item">' + ' <p class="date">' + new Date(log.date).toLocaleDateString() + '</p>' + durationString + loadString + roundsString + notesString + '</div>';
-          });
-          return htmlString;
-        })()
-      );
-    },
-  });
-
-  var logPage = function () {
-    var params = hl.getParams();
-    var workout_id = params && params.workout ? parseInt(params.workout) : false;
-    var user_id = params && params.user ? parseInt(params.user) : false;
-    hl.fetch.get('/api/workouts?_id=' + workout_id, function (workout) {
-      hl.fetch.get('/api/users?_id=' + user_id, function (user) {
-        hl.fetch.get('/api/logs', function (logsResponse) {
-          var logs = logsResponse
-            .filter(function (log) {
-              return parseInt(user._id) === parseInt(log.user_id) && parseInt(workout._id) === parseInt(log.workout_id);
-            })
-            .sort(function (a, b) {
-              return new Date(b.date) - new Date(a.date);
-            });
-          var allLogs = logsResponse.filter(function (log) {
-            return parseInt(workout._id) === parseInt(log.workout_id);
-          });
-          workout.userlogcount = logs.length;
-          workout.totallogcount = allLogs.length;
-          ironfyt.logComponent.setData({
-            workout: workout,
-            user: user,
-            logs: logs,
-          });
-        });
-      });
-    });
-    ironfyt.logComponent.render();
-  };
-
-  /**
-   * new-workout.html page
-   */
-  ironfyt.newWorkoutComponent = new Component('[data-app=new-workout]', {
-    template: function (props) {
-      return props && props.user
-        ? (function () {
-            return (
-              ironfyt.topBarTemplate({
-                page: 'new-workout',
-                user: props.user,
-              }) +
-              '<form id="new-workout-form">' +
-              '<div>' +
-              '<label for="workout_name" hidden>Name: </label>' +
-              '<input class="input-textfield" type="text" name="workout_name" placeholder="Workout Name" autofocus/>' +
-              '</div>' +
-              '<div>' +
-              '<label for="workout_type" hidden>Type: </label>' +
-              '<select name="workout_type" class="input-textfield">' +
-              '<option value="" disabled selected>Select Type</option>' +
-              '<option value=""></option>' +
-              '<option value="AMRAP">AMRAP</option>' +
-              '<option value="For Time">For Time</option>' +
-              '<option value="For Load">For Load</option>' +
-              '<option value="For Reps">For Reps</option>' +
-              '</select>' +
-              '</div>' +
-              '<div>' +
-              '<label for="workout_timecap" hidden>Time Cap: </label>' +
-              '<input class="input-textfield" type="text" name="workout_timecap" placeholder="Time Cap"/>' +
-              '</div>' +
-              '<div>' +
-              '<label for="workout_rounds" hidden>Rounds: </label>' +
-              '<input class="input-textfield" type="text" name="workout_rounds" placeholder="Rounds"/>' +
-              '</div>' +
-              '<div>' +
-              '<label for="workout_reps" hidden>Reps: </label>' +
-              '<input class="input-textfield" type="text" name="workout_reps" placeholder="Reps"/>' +
-              '</div>' +
-              '<div>' +
-              '<label for="workout_description" hidden>Description: </label>' +
-              '<textarea class="input-textarea"  name="workout_description" cols="50" rows="10" placeholder="Description"></textarea>' +
-              '</div>' +
-              '<div>' +
-              '<button class="btn-submit">Submit</button>' +
-              '<div><button class="btn-cancel" type="reset" onclick="history.back();">Cancel</button></div>' +
-              '</div>'
-            );
-          })()
-        : ironfyt.signInTemplate();
-    },
-  });
-
-  var newWorkoutPage = function () {
-    var user_id = hl.getParams().user_id;
-    hl.fetch.get('/api/users?_id=' + user_id, function (response) {
-      ironfyt.newWorkoutComponent.setData({ user: response });
-    });
-    ironfyt.newWorkoutComponent.render();
-  };
-
-  var handleNewWorkoutForm = function (event) {
-    event.preventDefault();
-    var params = hl.getParams();
-    var elements = document.querySelector('#new-workout-form').elements;
-    if (elements['workout_name'] === undefined || elements['workout_name'].value.trim() === '' || elements['workout_description'] === undefined || elements['workout_description'].value.trim() === '') {
-      alert('Please provide a workout name');
-      return false;
-    }
-    var data = {
-      user_id: params.user_id !== undefined ? parseInt(params.user_id) : null,
-      name: elements['workout_name'] && elements['workout_name'].value !== '' ? elements['workout_name'].value : null,
-      type: elements['workout_type'] && elements['workout_type'].value !== '' ? elements['workout_type'].value : null,
-      timecap: elements['workout_timecap'] && elements['workout_timecap'].value !== '' ? elements['workout_timecap'].value : null,
-      rounds: elements['workout_rounds'] && elements['workout_rounds'].value !== '' ? elements['workout_rounds'].value : null,
-      reps: elements['workout_reps'] && elements['workout_reps'].value !== '' ? elements['workout_reps'].value : null,
-      description: elements['workout_description'] && elements['workout_description'].value !== '' ? elements['workout_description'].value : null,
-    };
-    hl.fetch.post('/api/workouts', data, function (newWorkout) {
-      if (newWorkout) {
-        if (params.user_id) {
-          hl.fetch.get('/api/users?_id=' + params.user_id, function (user) {
-            if (!user.workouts) {
-              user.workouts = [];
-            }
-            user.workouts.push(parseInt(newWorkout._id));
-            hl.fetch.put('/api/users', user, function (response) {
-              location.assign('workout-list.html?user=' + params.user_id);
-            });
-          });
-        }
-      } else {
-        alert('Something went wrong. Check console for further details.');
-      }
-    });
-  };
-
-  /**
-   *
-   * new-log.html page
-   */
-  ironfyt.newLogComponent = new Component('[data-app=new-log]', {
-    template: function (props) {
-      return props.workout_name !== undefined ? '<p><strong>Workout: ' + props.workout_name + '</strong></p>' : '';
-    },
-  });
-
-  var newLogPage = function () {
-    var params = hl.getParams();
-    if (params.workout_name) {
-      ironfyt.newLogComponent.setData({
-        workout_name: window.decodeURIComponent(params.workout_name),
-      });
+  $ironfyt.pageTemplate = function (props, template) {
+    props = props !== undefined ? props : {};
+    if (props.error) {
+      return errorTemplate(props.error);
     } else {
-      ironfyt.newLogComponent.render();
+      return `
+        ${topBarTemplate(props)}
+        <div class="main">
+        ${template(props)}
+        </div>`;
     }
-
-    var today = new Date().toLocaleDateString();
-
-    var elements = document.querySelector('#new-log-form').elements;
-
-    var logDateField = elements['log_date'];
-    logDateField.value = hl.formatDateString(today);
-
-    var durationField = elements['log_duration'];
-    durationField.focus();
   };
 
-  var handleNewLogForm = function (event) {
-    event.preventDefault();
+  $ironfyt.navigateToUrl = function (page) {
+    window.location.href = page;
+  };
 
-    var params = hl.getParams();
-    var workout_id = params.workout_id !== undefined ? parseInt(params.workout_id) : null;
-    var user_id = params.user_id;
-    var elements = document.querySelector('#new-log-form').elements;
-    var date = elements['log_date'] && elements['log_date'].value !== '' ? new Date(elements['log_date'].value) : null;
-    var duration = elements['log_duration'] && elements['log_duration'].value !== '' ? elements['log_duration'].value : null;
-    var load = elements['log_load'] && elements['log_load'].value !== '' ? elements['log_load'].value : null;
-    var rounds = elements['log_rounds'] && elements['log_rounds'].value !== '' ? elements['log_rounds'].value : null;
-    var notes = elements['log_notes'] && elements['log_notes'].value !== '' ? elements['log_notes'].value : null;
+  // Check if the user is an admin
+  $ironfyt.isAdmin = function (user) {
+    return typeof user === 'object' && user.role && user.role === 'admin' ? true : false;
+  };
 
-    // Clean up error fields before validating
-    var logDateField = elements['log_date'];
-    if (logDateField.classList.contains('field-has-error')) {
-      logDateField.classList.remove('field-has-error');
-    }
-    var dateErrorDiv = document.getElementById('date-error-div');
-    if (dateErrorDiv !== null) dateErrorDiv.remove();
-
-    //Validate values
-    if (logDateField.value === null || !hl.isValidDate(logDateField.value)) {
-      logDateField.focus();
-
-      // Add an error css class and error message only if one doesn't already exists.
-      if (!logDateField.classList.contains('field-has-error')) {
-        logDateField.classList.add('field-has-error');
-
-        var errorDiv = document.createElement('div');
-        errorDiv.id = 'date-error-div';
-        errorDiv.classList.add('error-div');
-        errorDiv.innerHTML = 'Please enter a valid date mm/dd/yyyy';
-        logDateField.after(errorDiv);
+  // Format time cap to accommodate legacy string based timecap
+  $ironfyt.formatTimecap = function (timecap) {
+    let timecapStr = '';
+    if (typeof timecap === 'string') {
+      timecapStr = timecap;
+    } else if (typeof timecap === 'object' && timecap !== null) {
+      if (!(timecap.hours === null && timecap.minutes === null && timecap.seconds === null)) {
+        timecapStr += timecap.hours ? `${timecap.hours} hr ` : '';
+        timecapStr += timecap.minutes ? `${timecap.minutes} mins ` : '';
+        timecapStr += timecap.seconds ? `${timecap.seconds} secs` : '';
       }
-      return false;
     }
-
-    var data = {
-      user_id: user_id,
-      workout_id: workout_id,
-      date: date,
-      duration: duration,
-      load: load,
-      rounds: rounds,
-      notes: notes,
+    return timecapStr;
+  };
+  // Format modality
+  $ironfyt.formatModality = function (modality) {
+    let modalities = {
+      m: 'C',
+      g: 'B',
+      w: 'W',
     };
-    hl.fetch.post('/api/logs', data, function (newLog) {
-      if (newLog) {
-        hl.fetch.get('/api/users?_id=' + user_id, function (user) {
-          if (user.logs === undefined) {
-            user.logs = [];
-          }
-          user.logs.push({ log_id: newLog._id, workout_id: workout_id });
-          hl.fetch.put('/api/users', user, function (response) {
-            if (workout_id) {
-              location.assign('log.html?user=' + user_id + '&workout=' + workout_id);
-            } else {
-              location.assign('log-list.html?user=' + user_id);
-            }
-          });
-        });
-      } else {
-        throw new Error('Error occurred while creating a new workout log');
-      }
-    });
+    return modalities[modality];
+  };
+
+  // Workout Details Template
+  $ironfyt.displayWorkoutDetail = function (workout, open = true) {
+    let timecap = $ironfyt.formatTimecap(workout.timecap);
+    return `
+    <details ${open ? `open` : ''}>
+      <summary>${workout.name}</summary>
+      <div class="workout-detail-view">
+      ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ``}
+      ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
+      ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
+      ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
+      ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
+      ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
+      ${workout.scalingdesc ? `<br/><details><summary><strong>Scaling Options</strong></summary><p>${$hl.replaceNewLineWithBR(workout.scalingdesc)}</p></details>` : ''}
+      </div>
+    </details>
+    `;
+  };
+
+  // Re-usable log detail template
+  $ironfyt.displayWorkoutLogDetail = function (log, cssClass = '', hideTitle = false) {
+    return `
+    <div class="${cssClass}">
+    ${
+      log.duration && (parseInt(log.duration.hours) > 0 || parseInt(log.duration.minutes) > 0 || parseInt(log.duration.seconds) > 0)
+        ? `<p>${!hideTitle ? `<strong>Duration: </strong>` : ``}${log.duration.hours ? `${log.duration.hours} hr` : ''} ${log.duration.minutes ? `${log.duration.minutes} mins` : ''} ${log.duration.seconds ? `${log.duration.seconds} secs` : ''}</p>`
+        : ''
+    }
+    ${
+      log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
+        ? `<div class="flex">
+            ${!hideTitle ? `<div><strong>Rounds: </strong></div>` : ``}
+            <div>${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
+          </div>`
+        : ''
+    }
+    ${
+      log.totalreps
+        ? `<div class="flex">
+            ${!hideTitle ? `<div><strong>Total Reps:</strong></div>` : ``}
+            <div>${log.totalreps}</div>
+          </div>`
+        : ``
+    }
+    ${
+      log.movements && log.movements.length
+        ? `<div>
+            ${!hideTitle ? `<div><strong>Movements: </strong></div>` : ``}
+            <div>${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
+          </div>`
+        : ''
+    }
+    ${
+      log.notes
+        ? `<div>
+            ${!hideTitle ? `<div><strong>Notes: </strong></div>` : ``}
+            <div>${$hl.replaceNewLineWithBR(log.notes)}</div>
+          </div>`
+        : ''
+    }
+    ${
+      log.location
+        ? `<div class="flex">
+            ${!hideTitle ? `<div><strong>Location: </strong></div>` : ``}
+            <div>${log.location}</div>
+          </div>`
+        : ''
+    }</div>`;
+  };
+
+  //Topbar template
+  let topBarTemplate = function (props) {
+    let user = props && props.user ? props.user : {};
+    let pageTitle = props && props.pageTitle ? props.pageTitle : '';
+    return `
+    <div class="top-bar">
+      <div class="top-bar-menu">
+        <a href="/" class="home-menu-link">Home</a>
+      </div>
+      <h4 class="text-color-primary">${pageTitle}</h4>
+      <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+    </div>`;
   };
 
   /**
-   * log-list.html
+   * Reusable search bar template
+   * @param {*} inputId - id and name for the html input element
+   * @param {*} placeholder - placeholder text for the input element and label
+   * @returns html template to render a search bar
    */
-  ironfyt.logListComponent = new Component('[data-app=log-list]', {
-    data: {
-      user: {},
-      logs: [],
-      unfilteredList: [],
-      alllogs: false,
-      search: '',
-    },
-    template: function (props) {
-      return props && props.user
-        ? ironfyt.topBarTemplate({
-            user: props.user,
-            page: 'log-list',
-            alllogs: props.alllogs,
-          }) +
-            ironfyt.searchTemplate({
-              search: props.search,
-              id: 'search-logs',
-            }) +
-            '<p><a href="new-log.html?user_id=' +
-            props.user._id +
-            '" class="btn">+</a></p><br/><br/>' +
-            props.logs
-              .map(function (log) {
-                return (
-                  '<div class="workout-item">' +
-                  '<p><strong>User: </strong>' +
-                  (log.user !== {} && log.user !== undefined ? log.user.fname : '') +
-                  '</p>' +
-                  '<p><strong>Date: </strong>' +
-                  new Date(log.date).toLocaleDateString() +
-                  '</p>' +
-                  (log.workout !== {} && log.workout !== undefined ? '<p><strong>Workout: </strong><a href="log.html?workout=' + log.workout._id + '&user=' + props.user._id + '">' + log.workout.name + '</a></p>' : '') +
-                  '' +
-                  (log.duration !== null && log.duration !== undefined ? '<p><strong>Duration: </strong>' + log.duration + '</p>' : '') +
-                  '' +
-                  (log.load !== undefined && log.load !== null ? '<p><strong>Load: </strong>' + log.load + '</p>' : '') +
-                  '' +
-                  (log.rounds !== null && log.rounds !== undefined ? '<p><strong>Rounds: </strong>' + log.rounds + '</p>' : '') +
-                  '' +
-                  (log.notes !== null && log.notes !== undefined ? '<p>' + hl.replaceNewLineWithBR(log.notes) + '</p>' : '') +
-                  '</div>'
-                );
-              })
-              .join('') +
-            ''
-        : ironfyt.signInTemplate();
-    },
-  });
-
-  var logListPage = function () {
-    var params = hl.getParams();
-    var user_id = params && params.user ? params.user : false;
-    var alllogs = params && (params.all === 'true' || params.all === true) ? true : false;
-    hl.fetch.get('/api/logs', function (logsResponse) {
-      hl.fetch.get('/api/workouts', function (workoutsResponse) {
-        hl.fetch.get('/api/users', function (usersResponse) {
-          // Populate the user object
-          var user = usersResponse.filter(function (user) {
-            return parseInt(user._id) === parseInt(user_id);
-          })[0];
-
-          var logs = logsResponse;
-          var workouts = workoutsResponse;
-          var users = usersResponse;
-
-          // Filter based on alllogs URL Parameter
-          if (!alllogs) {
-            logs = logs.filter(function (log) {
-              return parseInt(log.user_id) === parseInt(user_id);
-            });
-          }
-
-          // Populate the workout and user fields for each log
-          logs.forEach(function (log) {
-            workouts.forEach(function (workout) {
-              if (parseInt(workout._id) === parseInt(log.workout_id)) {
-                log.workout = workout;
-              }
-            });
-            users.forEach(function (user) {
-              if (parseInt(user._id) === parseInt(log.user_id)) {
-                log.user = user;
-              }
-            });
-          });
-
-          // Sort the logs in desc order by date
-          logs = logs.sort(function (a, b) {
-            return new Date(b.date) - new Date(a.date);
-          });
-
-          ironfyt.logListComponent.setData({
-            user: user,
-            logs: logs,
-            unfilteredList: logs,
-            alllogs: alllogs,
-          });
-        });
-      });
-    });
+  $ironfyt.searchBarTemplate = function (inputId, placeholder) {
+    return `
+    <div class="form-input-group margin-top-20px margin-bottom-15px">
+      <span class="search-input-icon"></span>
+      <input type="text" class="form-input search-input" name="${inputId}" id="${inputId}" value="" placeholder="${placeholder}"/>
+      <label for="${inputId}" class="form-label">${placeholder}</label>
+    </div>`;
+  };
+  // Common error template which can be shared across components to render error messages
+  let errorTemplate = function (error) {
+    return `<p class="error-div">${error.message}</p>`;
   };
 
-  var handleSearchLogs = function (event) {
-    event.preventDefault();
-    // Get the search terms from the input field
-    var searchTerm = event.target.elements['search'].value;
-    // Tokenize the search terms
-    var tokens = searchTerm.toLowerCase().split(' ');
-    // Remove empty spaces
-    tokens = tokens.filter(function (token) {
-      return token.trim() !== '';
-    });
-    if (tokens.length) {
-      // Create regular expression of all the search terms
-      var searchTermRegex = new RegExp(tokens.join('|'), 'gim');
-      var _data = ironfyt.logListComponent.getData();
-      // Always search with an unfiltered list.
-      _data.logs = _data.unfilteredList;
-      var logs = _data.logs
-        .map(function (log) {
-          var logString = '';
-          for (var key in log) {
-            if (log.hasOwnProperty(key) && key !== 'id' && key !== 'user_id' && key !== 'workout_id' && log[key] !== null) {
-              if (key === 'workout') {
-                logString += log[key].name.toString().toLowerCase().trim() + ' ';
-              } else if (key === 'user') {
-                logString += log[key].fname.toString().toLowerCase().trim() + ' ';
-              } else if (key === 'date') {
-                logString += new Date(log[key]).toLocaleDateString() + ' ';
-              } else {
-                logString += log[key].toString().toLowerCase().trim() + ' ';
-              }
-            }
-          }
-          // Remove any <br> | <br/> tags from the string. Remove any new line \n symbol from the string.
-          logString = logString.replace(/<br\/?>|\n/gim, ' ');
-          // .match() method returns an array of terms matching.
-          return { log: log, match: logString.match(searchTermRegex) };
-        }) // Filter out the non matching results
-        .filter(function (log) {
-          return log.match && log.match.length > 0;
-        }) // Sort by most number of terms matching
-        .sort(function (a, b) {
-          return b.match.length - a.match.length;
-        })
-        .map(function (item) {
-          return item.log;
-        });
-      ironfyt.logListComponent.setData({ logs: logs, search: searchTerm });
+  let validateReponse = function (error, response, callback) {
+    //Server will send back error code 1 if the token has expired
+    if (error && error.code === 1) {
+      $ironfyt.logout();
+    } else if (error && error.code !== 1) {
+      callback(error, response);
+    } else {
+      callback(false, response);
     }
   };
 
-  var handleResetLogSearch = function (event) {
-    event.preventDefault();
-    var _data = ironfyt.logListComponent.getData();
-    ironfyt.logListComponent.setData({
-      logs: _data.unfilteredList,
-      search: '',
+  let getRequest = function (path, params, callback) {
+    let headers = getAuthHeader();
+    let queryString = $hl.createQueryString(params);
+    fetch.get(`${path}?${queryString}`, { headers }, function (error, response) {
+      validateReponse(error, response, callback);
     });
   };
 
-  /**
-   * Register event handlers
-   */
-  hl.eventListener('submit', 'search-workout', handleSearchWorkout);
-  hl.eventListener('submit', 'new-workout-form', handleNewWorkoutForm);
-  hl.eventListener('submit', 'new-log-form', handleNewLogForm);
-  hl.eventListener('submit', 'search-logs', handleSearchLogs);
-
-  hl.eventListener('reset', 'search-workout', handleResetWorkoutSearch);
-  hl.eventListener('reset', 'search-logs', handleResetLogSearch);
-
-  /**
-   * Register routes
-   */
-  ironfyt.routes = {
-    'user-list': userListPage,
-    'workout-list': workoutListPage,
-    log: logPage,
-    'new-workout': newWorkoutPage,
-    'new-log': newLogPage,
-    'log-list': logListPage,
+  let getAuthHeader = function () {
+    let { token } = $ironfyt.getCredentials();
+    return {
+      Authorization: `Bearer ${token}`,
+    };
   };
-
-  hl.router(ironfyt.routes);
 })();
