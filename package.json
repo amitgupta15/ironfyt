@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "nodemon test-runner.js",
-    "start": "nodemon"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
