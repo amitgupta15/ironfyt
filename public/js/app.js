@@ -169,10 +169,10 @@
       <summary>${workout.name}</summary>
       <div class="workout-detail-view">
       ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ``}
-      ${workout.type ? `<p><strong>Type:</strong> ${workout.type}</p>` : ''}
-      ${timecap ? `<p><strong>Time Cap:</strong> ${timecap}</p>` : ''}
-      ${workout.rounds ? `<p><strong>Rounds:</strong> ${workout.rounds}</p>` : ''}
-      ${workout.reps ? `<p><strong>Reps:</strong> ${workout.reps}</p>` : ''}
+      ${workout.type ? `<p><strong>Type: </strong> ${workout.type}</p>` : ''}
+      ${timecap ? `<p><strong>Time Cap: </strong> ${timecap}</p>` : ''}
+      ${workout.rounds ? `<p><strong>Rounds: </strong> ${workout.rounds}</p>` : ''}
+      ${workout.reps ? `<p><strong>Reps: </strong> ${workout.reps}</p>` : ''}
       ${workout.description ? `<p>${$hl.replaceNewLineWithBR(workout.description)}</p>` : ''}
       ${workout.scalingdesc ? `<br/><details><summary><strong>Scaling Options</strong></summary><p>${$hl.replaceNewLineWithBR(workout.scalingdesc)}</p></details>` : ''}
       </div>
@@ -200,7 +200,7 @@
     ${
       log.totalreps
         ? `<div class="flex">
-            ${!hideTitle ? `<div><strong>Total Reps:</strong></div>` : ``}
+            ${!hideTitle ? `<div><strong>Total Reps: </strong></div>` : ``}
             <div>${log.totalreps}</div>
           </div>`
         : ``
