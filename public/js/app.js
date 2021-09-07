@@ -190,10 +190,10 @@
         : ''
     }
     ${
-      log.roundinfo && log.roundinfo.length && log.roundinfo[0].rounds
+      log.roundinfo && log.roundinfo.length && (log.roundinfo[0].rounds || log.roundinfo[0].load)
         ? `<div class="flex">
-            ${!hideTitle ? `<div><strong>Rounds: </strong></div>` : ``}
-            <div>${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? ` X ${roundinfo.load} ${roundinfo.unit}` : ``}`).join('<br/>')}</div>
+            ${!hideTitle ? `<div><strong>Rounds/Load:&nbsp;</strong></div>` : ``}
+            <div>${log.roundinfo.map((roundinfo) => `${roundinfo.rounds ? ` ${roundinfo.rounds}` : ''}${roundinfo.load ? (roundinfo.rounds ? ` X ${roundinfo.load} ${roundinfo.unit}` : `${roundinfo.load} ${roundinfo.unit}`) : ``}`).join('<br/>')}</div>
           </div>`
         : ''
     }

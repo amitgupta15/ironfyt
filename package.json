@@ -1,7 +1,7 @@
 {
   "name": "ironfyt",
   "version": "1.0.0",
-  "description": "Workout Log Application",
+  "description": "IronFyt Fitness Tracker. Record your workout logs.",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "nodemon test-runner.js",
-    "start":"nodemon"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
