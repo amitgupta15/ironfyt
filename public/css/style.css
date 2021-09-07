@@ -891,7 +891,6 @@ textarea:valid {
   height: 20px;
   border: none;
   color: transparent;
-  /* color: var(--modality-cardio); */
 }
 .modality-w {
   display: inline-block;
@@ -901,7 +900,6 @@ textarea:valid {
   height: 20px;
   border: none;
   color: transparent;
-  /* color: var(--modality-weight); */
 }
 .modality-g {
   display: inline-block;
@@ -911,7 +909,6 @@ textarea:valid {
   height: 20px;
   border: none;
   color: transparent;
-  /* color: var(--modality-body-weight); */
 }
 
 .modality-indicator-0 {

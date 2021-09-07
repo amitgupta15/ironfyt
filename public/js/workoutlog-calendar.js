@@ -34,7 +34,17 @@
         .map(
           (day, index) =>
             `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}${
-              day.modalities && day.modalities.length ? day.modalities.map((m, i) => `<div class="modality-indicator-${i} modality-indicator-${m}">.</div>`).join('') : ''
+              day.modalities && day.modalities.length
+                ? day.modalities
+                    .map((m, i) => {
+                      let indicator = ``;
+                      if (m === 'm') indicator = `modality-indicator-0`;
+                      if (m === 'g') indicator = `modality-indicator-1`;
+                      if (m === 'w') indicator = `modality-indicator-2`;
+                      return `<div class=" ${indicator} modality-indicator-${m}">.</div>`;
+                    })
+                    .join('')
+                : ''
             }</div>`
         )
         .join('')}
