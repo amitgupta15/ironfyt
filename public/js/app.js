@@ -162,12 +162,12 @@
   };
 
   // Workout Details Template
-  $ironfyt.displayWorkoutDetail = function (workout, open = true) {
+  $ironfyt.displayWorkoutDetail = function (workout, open = true, showBorder = false) {
     let timecap = $ironfyt.formatTimecap(workout.timecap);
     return `
     <details ${open ? `open` : ''}>
       <summary>${workout.name}</summary>
-      <div class="workout-detail-view">
+      <div class="workout-detail-view ${showBorder ? `day-has-log margin-top-5px` : ''}">
       ${workout.modality && workout.modality.length ? `<p><strong>Modality: </strong>${workout.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ``}
       ${workout.type ? `<p><strong>Type: </strong> ${workout.type}</p>` : ''}
       ${timecap ? `<p><strong>Time Cap: </strong> ${timecap}</p>` : ''}

@@ -53,6 +53,9 @@ workoutlog.get = (req, res) => {
       {
         $lookup: { from: 'workouts', localField: 'workout_id', foreignField: '_id', as: 'workout' },
       },
+      {
+        $sort: { date: -1 },
+      },
     ])
     .toArray((error, workoutlogs) => {
       if (!error) {

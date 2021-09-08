@@ -174,6 +174,13 @@
           }
           <div class="text-color-secondary margin-top-10px"><h3>Log</h3></div>
           <div>${$ironfyt.displayWorkoutLogDetail(log)}</div>
+          ${
+            workout.name !== ''
+              ? `<div class="margin-top-10px">
+                  <a href="workout-activity.html?workout_id=${workout._id}&ref=index.html" class="workout-history-link">Workout Log</a>
+                </div>`
+              : ''
+          }
         </div>
         `;
       }

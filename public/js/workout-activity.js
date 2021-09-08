@@ -101,7 +101,6 @@
   $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
 
   document.addEventListener('click', function (event) {
-    console.log(event.target);
     let targetId = event.target.id;
     let state = component.getState();
     // Handle edit button click

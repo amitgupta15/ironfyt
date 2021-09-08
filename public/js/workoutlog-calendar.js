@@ -98,8 +98,16 @@
                 </div>
                 <div>
                   ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
-                  ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false)}` : ''}
+                  ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false, true)}` : ''}
                   ${$ironfyt.displayWorkoutLogDetail(log)}
+                  ${
+                    log.workout && log.workout.length
+                      ? `<div class="margin-top-10px">
+                          <a href="workout-activity.html?workout_id=${log.workout[0]._id}&ref=workoutlog-calendar.html" class="workout-history-link">Workout Log</a>
+                        </div>`
+                      : ``
+                  }
+                  
                 </div>
               </div>
               `
@@ -114,6 +122,7 @@
   };
   let workoutLogCalendarTemplate = function (props) {
     return `
+    <div class="text-align-right margin-right-10px"><a class="btn-primary icon-list" href="workoutlog-list.html">List View</a></div>
     <div class="rounded-corner-box margin-top-10px">
     ${monthControlBarTemplate(props)}
     ${calendarGridTemplate(props)}

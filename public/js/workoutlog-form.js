@@ -78,17 +78,17 @@
             <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
             <span class="slider small round"></span>
           </label>
-          <div>Cardio</div>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-cardio"><span class="modality-m"></span>Cardio</div>
           <label class="switch small">
             <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
             <span class="slider small round"></span>
           </label>
-          <div>Body Weight</div>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-body-weight"><span class="modality-g"></span>Body Weight</div>
           <label class="switch small">
             <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
             <span class="slider small round"></span>
           </label>
-          <div>Weights</div>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-weights"><span class="modality-w flex-align-self-center"></span>Weights</div>
         </div>
       </div>`;
   };
@@ -319,6 +319,7 @@
       }
       ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
+      ${modalityTemplate(workoutlog)}
       <div class="form-flex-group margin-bottom-5px">
         ${durationTemplate(workoutlog)}
         ${totalRepsTemplate(workoutlog)}
@@ -326,7 +327,6 @@
       ${roundsTemplate(workoutlog)}
       ${movementsTemplate(workoutlog)}
       ${notesTemplate(workoutlog)}
-      ${modalityTemplate(workoutlog)}
       ${locationTemplate(workoutlog)}
       ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}</div>` : ''}
       <div class="submit-btn-bar margin-top-5px">
