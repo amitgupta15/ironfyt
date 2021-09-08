@@ -143,7 +143,7 @@
       let workoutType = workout.type ? workout.type : '';
       let workoutTypeIndex = getSearchStringMatchIndex(workoutType);
 
-      let workoutReps = workout.reps ? workout.reps : '';
+      let workoutReps = workout.reps ? workout.reps.toString() : '';
       let workoutRepsIndex = getSearchStringMatchIndex(workoutReps);
 
       let workoutDescription = workout.description ? workout.description : '';
