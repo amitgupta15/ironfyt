@@ -10,6 +10,7 @@
         (log) => `
       <div class="rounded-corner-box margin-bottom-5px">
         <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
+        ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
         ${
           log.workout_id
             ? `
