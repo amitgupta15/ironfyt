@@ -69,25 +69,5 @@
     $test.assert(state.workoutlogs.length === 2);
   });
 
-  $test.it('should toggle the view when workout log search is initiated and ended', function () {
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template();
-    component.setState({ workoutlogs: [{ notes: 'log your workout' }, { notes: '' }] });
-
-    $test.assert(selector.innerHTML.includes('<div id="default-page-template-dashboard">'));
-    $test.assert(!selector.innerHTML.includes('<div id="autocomplete-search-result"></div>'));
-
-    let searchInputField = document.querySelector('#search-workout-logs-dashboard-input');
-    searchInputField.value = 'log';
-    $test.dispatchHTMLEvent('input', '#search-workout-logs-dashboard-input');
-    $test.assert(selector.innerHTML.includes('<div id="autocomplete-search-result"><div><div class="margin-bottom-5px text-color-secondary">Found 1 Logs</div>'));
-    $test.assert(!selector.innerHTML.includes('<div id="default-page-template-dashboard">'));
-
-    searchInputField.value = '';
-    $test.dispatchHTMLEvent('input', '#search-workout-logs-dashboard-input');
-
-    $test.assert(!selector.innerHTML.includes('<div id="autocomplete-search-result"></div>'));
-    $test.assert(selector.innerHTML.includes('<div id="default-page-template-dashboard">'));
-  });
   console.groupEnd();
 })();

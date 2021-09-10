@@ -265,14 +265,12 @@
 
   let showDeleteConfirmationDialog = function (_id) {
     component.setState({ deleteLogId: _id });
-    let deleteConfirmationDialog = document.querySelector('#delete-log-confirmation-dialog');
-    deleteConfirmationDialog.style.display = 'flex';
+    $ironfyt.showDeleteConfirmationDialog();
   };
 
   let handleCancelDeleteLogEvent = function () {
     component.setState({ deleteLogId: null });
-    let deleteConfirmationDialog = document.querySelector('#delete-log-confirmation-dialog');
-    deleteConfirmationDialog.style.display = 'none';
+    $ironfyt.hideDeleteConfirmationDialog();
   };
 
   let handleConfirmDeleteLogEvent = function () {
@@ -281,11 +279,11 @@
     let selectedDate = state.selectedDay.date;
 
     if (state.deleteLogId) {
-      $ironfyt.deleteWorkoutLog(state.deleteLogId, function (error, result) {
-        if (!error) {
-          $ironfyt.navigateToUrl(`workoutlog-calendar.html?ref=workoutlog-calendar.html&user_id=${user_id}&month=${new Date(selectedDate).getMonth()}&year=${new Date(selectedDate).getFullYear()}&date=${new Date(selectedDate).getDate()}`);
-        } else {
+      let _navigateToUrl = `workoutlog-calendar.html?ref=workoutlog-calendar.html&user_id=${user_id}&month=${new Date(selectedDate).getMonth()}&year=${new Date(selectedDate).getFullYear()}&date=${new Date(selectedDate).getDate()}`;
+      $ironfyt.handleConfimDeleteLog(state.deleteLogId, _navigateToUrl, function (error) {
+        if (error) {
           component.setState({ error });
+          return;
         }
       });
     } else {

@@ -6,42 +6,24 @@
     return `
     <div class="margin-bottom-5px text-color-secondary">${workoutlogs.length} Logs</div>
     ${workoutlogs
-      .map(
-        (log) => `
-      <div class="rounded-corner-box margin-bottom-5px">
-        <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
-        ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
-        ${
-          log.workout_id
-            ? `
-              <div class="text-color-secondary "><h3>Workout</h3></div>
-              ${$ironfyt.displayWorkoutDetail(log.workout[0], false, true)}
-            `
-            : ``
-        }
-        <div class="text-color-secondary margin-top-10px"><h3>Log</h3></div>
-        <div>${$ironfyt.displayWorkoutLogDetail(log)}</div>
-        ${
-          log.workout_id
-            ? `<div class="margin-top-10px">
-                <a href="workout-activity.html?workout_id=${log.workout_id}&ref=workoutlog-list.html" class="workout-history-link">Workout Log</a>
-              </div>`
-            : ''
-        }
-      </div>`
-      )
+      .map((log) => {
+        let workout = log.workout[0] ? log.workout[0] : {};
+        return $ironfyt.displayLogListItemTemplate(log, workout, 'workoutlog-list.html', '', false, false, true);
+      })
       .join(' ')}
     `;
   };
+
   let workoutLogListTemplate = function (props) {
     return `
     <div class="container">
       <div class="text-align-right"><a class="btn-primary icon-calendar" href="workoutlog-calendar.html">Calendar View</a></div>
-      <!--${$ironfyt.searchBarTemplate('search-workout-logs-list-input', 'Search Logs...')}-->
+      ${$ironfyt.searchBarTemplate('search-workout-logs-list-input', 'Search Logs...')}
       <div id="main-div-workout-list">
         ${defaultPageTemplateLogList(props)}      
       </div>
     </div>
+    ${$ironfyt.deleteLogConfirmationModalTemplate()}
     `;
   };
 
@@ -56,6 +38,61 @@
       return $ironfyt.pageTemplate(props, workoutLogListTemplate);
     },
   }));
+
+  let handleSearchLogsEvent = function (event) {
+    let inputField = event.target;
+    let mainDiv = document.querySelector('#main-div-workout-list');
+    let state = component.getState();
+    let workoutlogs = state.workoutlogs ? state.workoutlogs : [];
+
+    //Call the $ironfyt.searchWorkoutLogs() function from helpers/search-logs.js file
+    $ironfyt.searchWorkoutLogs(mainDiv, workoutlogs, inputField, defaultPageTemplateLogList, state, 'workoutlog-list.html');
+  };
+
+  let showDeleteConfirmationDialog = function (_id) {
+    component.setState({ deleteLogId: _id });
+    $ironfyt.showDeleteConfirmationDialog();
+  };
+  let handleCancelDeleteLogEvent = function () {
+    component.setState({ deleteLogId: null });
+    $ironfyt.hideDeleteConfirmationDialog();
+  };
+
+  let handleConfirmDeleteLogEvent = function (event) {
+    let state = component.getState();
+    let _navigateToUrl = `workoutlog-list.html?ref=workoutlog-list.html`;
+    if (state.deleteLogId) {
+      $ironfyt.handleConfimDeleteLog(state.deleteLogId, _navigateToUrl, function (error) {
+        if (error) component.setState({ error });
+      });
+    } else {
+      component.setState({ error: { message: 'No log found to delete' } });
+    }
+  };
+  $hl.eventListener('input', 'search-workout-logs-list-input', handleSearchLogsEvent);
+  $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
+  $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
+
+  document.addEventListener('click', function (event) {
+    let targetId = event.target.id;
+    let state = component.getState();
+
+    // Handle edit button click
+    let editBtnRegex = new RegExp(/^edit-log-btn-([a-zA-Z]|\d){24}/);
+    if (editBtnRegex.test(targetId)) {
+      let prefix = 'edit-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&ref=workoutlog-list.html`);
+    }
+
+    // Handle delete button click
+    let deleteBtnRegex = new RegExp(/^delete-log-btn-([a-zA-Z]|\d){24}/);
+    if (deleteBtnRegex.test(targetId)) {
+      let prefix = 'delete-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      showDeleteConfirmationDialog(_id);
+    }
+  });
 
   ($ironfyt.workoutLogListPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {

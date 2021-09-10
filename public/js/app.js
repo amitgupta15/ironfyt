@@ -264,6 +264,40 @@
     return `<p class="error-div">${error.message}</p>`;
   };
 
+  /**
+   * Displays the log item which includes, workout name, modality, log details
+   * @param {Object} log
+   * @param {Object} workout
+   */
+  $ironfyt.displayLogListItemTemplate = function (log, workout, ref, logCssClass = '', logHideTitle = false, showWorkoutDesc = true, showWorkoutBorder = false) {
+    return `
+    <div class="rounded-corner-box margin-bottom-10px workout-detail-container">
+      <div class="item-btn-bar">
+        <button class="item-edit-btn" id="edit-log-btn-${log._id}"></button>
+        <button class="item-delete-btn" id="delete-log-btn-${log._id}"></button>
+      </div>
+      <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
+      ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
+      ${
+        workout.name !== ''
+          ? `
+            <div class="text-color-secondary "><h3>Workout</h3></div>
+            ${$ironfyt.displayWorkoutDetail(workout, showWorkoutDesc, showWorkoutBorder)}
+          `
+          : ``
+      }
+      <div class="text-color-secondary margin-top-10px"><h3>Log</h3></div>
+      <div>${$ironfyt.displayWorkoutLogDetail(log, logCssClass, logHideTitle)}</div>
+      ${
+        workout.name !== ''
+          ? `<div class="margin-top-10px">
+              <a href="workout-activity.html?workout_id=${workout._id}&ref=${ref}" class="workout-history-link">Workout Log</a>
+            </div>`
+          : ''
+      }
+    </div>`;
+  };
+
   let validateReponse = function (error, response, callback) {
     //Server will send back error code 1 if the token has expired
     if (error && error.code === 1) {

@@ -61,7 +61,9 @@
             </div>`;
         })
         .join('')}
-    </div>`;
+    </div>
+    ${$ironfyt.deleteLogConfirmationModalTemplate()}
+    `;
   };
 
   /**
@@ -121,102 +123,37 @@
     let mainDiv = document.querySelector('#main-div-dashboard');
     let state = component.getState();
     let workoutlogs = state.workoutlogs ? state.workoutlogs : [];
-    let inputFieldValue = inputField.value;
-    //If the search input field is empty then show the default view
-    if (!inputFieldValue) {
-      mainDiv.innerHTML = defaultPageTemplate(state);
-      return;
+
+    //Call the $ironfyt.searchWorkoutLogs() function from helpers/search-logs.js file
+    $ironfyt.searchWorkoutLogs(mainDiv, workoutlogs, inputField, defaultPageTemplate, state, 'index.html');
+  };
+
+  let showDeleteConfirmationDialog = function (_id) {
+    component.setState({ deleteLogId: _id });
+    $ironfyt.showDeleteConfirmationDialog();
+  };
+  let handleCancelDeleteLogEvent = function () {
+    component.setState({ deleteLogId: null });
+    $ironfyt.hideDeleteConfirmationDialog();
+  };
+
+  let handleConfirmDeleteLogEvent = function (event) {
+    let state = component.getState();
+    let _navigateToUrl = `index.html?ref=index.html`;
+    if (state.deleteLogId) {
+      $ironfyt.handleConfimDeleteLog(state.deleteLogId, _navigateToUrl, function (error) {
+        if (error) component.setState({ error });
+      });
+    } else {
+      component.setState({ error: { message: 'No log found to delete' } });
     }
-    mainDiv.innerHTML = `<div id="autocomplete-search-result"></div>`;
-    let autocomleteDiv = document.querySelector('#autocomplete-search-result');
-    let autocompleteList = '';
-    let count = 0;
-    for (let i = 0; i < workoutlogs.length; i++) {
-      let log = workoutlogs[i];
-      let workout = log && log.workout && log.workout.length ? log.workout[0] : {};
-      let notes = log.notes ? log.notes : '';
-      let notesMatchIndex = getSearchStringMatchIndex(notes);
-
-      let workoutName = workout.name ? workout.name : '';
-      let workoutNameIndex = getSearchStringMatchIndex(workoutName);
-
-      let workoutType = workout.type ? workout.type : '';
-      let workoutTypeIndex = getSearchStringMatchIndex(workoutType);
-
-      let workoutReps = workout.reps ? workout.reps.toString() : '';
-      let workoutRepsIndex = getSearchStringMatchIndex(workoutReps);
-
-      let workoutDescription = workout.description ? workout.description : '';
-      let workoutDescriptionIndex = getSearchStringMatchIndex(workoutDescription);
-
-      let workoutTimecap = workout.timecap ? $ironfyt.formatTimecap(workout.timecap) : '';
-      let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap);
-
-      if (notesMatchIndex > -1 || workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
-        log.notes = log.notes ? getHighligtedAttribute(notesMatchIndex, notes) : '';
-        workout.name = workoutName.trim() ? getHighligtedAttribute(workoutNameIndex, workoutName) : '';
-        workout.type = workoutType.trim() ? getHighligtedAttribute(workoutTypeIndex, workoutType) : '';
-        workout.reps = workoutReps.trim() ? getHighligtedAttribute(workoutRepsIndex, workoutReps) : '';
-        workout.description = workoutDescription.trim() ? getHighligtedAttribute(workoutDescriptionIndex, workoutDescription) : '';
-        workout.timecap = workoutTimecap.trim() ? getHighligtedAttribute(workoutTimecapIndex, workoutTimecap) : '';
-
-        count++;
-        autocompleteList += `
-        <div class="rounded-corner-box margin-bottom-5px">
-          <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
-          ${
-            workout.name !== ''
-              ? `
-                <div class="text-color-secondary "><h3>Workout</h3></div>
-                ${$ironfyt.displayWorkoutDetail(workout)}
-              `
-              : ``
-          }
-          <div class="text-color-secondary margin-top-10px"><h3>Log</h3></div>
-          <div>${$ironfyt.displayWorkoutLogDetail(log)}</div>
-          ${
-            workout.name !== ''
-              ? `<div class="margin-top-10px">
-                  <a href="workout-activity.html?workout_id=${workout._id}&ref=index.html" class="workout-history-link">Workout Log</a>
-                </div>`
-              : ''
-          }
-        </div>
-        `;
-      }
-    }
-    let countString = `<div class="margin-bottom-5px text-color-secondary">Found ${count} Logs</div>`;
-    autocomleteDiv.innerHTML = `<div>${countString}${autocompleteList}</div>`;
   };
 
-  /**
-   * Utility function normalizes the incoming string attribute and input field value, and compares to find the index of matching text. Returns the index.
-   * This function is used by handleSearchLogsEvent()
-   * @param {String} attribute
-   * @param {String} inputFieldValue
-   * @returns index of the matching text
-   */
-  let getSearchStringMatchIndex = function (attribute) {
-    //Get the search input field value
-    let inputFieldValue = document.querySelector('#search-workout-logs-dashboard-input').value.trim();
-    //return the index of the search string in attribute parameter passed to the function
-    return attribute.toLowerCase().indexOf(inputFieldValue.toLowerCase());
-  };
+  document.addEventListener('click', function (event) {});
 
-  /**
-   * Utility function finds the substring to be highlighted and returns the highlighted substring
-   * This function is used by handleSearchLogsEvent()
-   * @param {int} matchIndex
-   * @param {String} attribute
-   * @returns
-   */
-  let getHighligtedAttribute = function (matchIndex, attribute) {
-    let inputField = document.querySelector('#search-workout-logs-dashboard-input');
-    let inputFieldValue = inputField.value.trim();
-    let stringToHighlight = matchIndex > -1 ? attribute.substr(matchIndex, inputFieldValue.length) : '';
-    return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
-  };
-
+  $hl.eventListener('input', 'search-workout-logs-list-input', handleSearchLogsEvent);
+  $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
+  $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
   $hl.eventListener('click', 'new-log-btn', navigateEvent);
   $hl.eventListener('click', 'activity-btn', navigateEvent);
   $hl.eventListener('click', 'workouts-btn', navigateEvent);
@@ -224,6 +161,8 @@
 
   document.addEventListener('click', function (event) {
     let groupIdRegex = new RegExp(/^group-home-btn-([a-zA-Z]|\d){24}/gm);
+    let targetId = event.target.id;
+
     if (groupIdRegex.test(event.target.id)) {
       let prefix = 'group-home-btn-';
       let groupId = event.target.id.substr(prefix.length);
@@ -239,6 +178,22 @@
         return groupwod._id === groupwodId;
       })[0];
       $ironfyt.navigateToUrl(`workoutlog-form.html?workout_id=${groupwod.workout._id}&date=${groupwod.date}&ref=index.html`);
+    }
+
+    // Handle edit button click
+    let editBtnRegex = new RegExp(/^edit-log-btn-([a-zA-Z]|\d){24}/);
+    if (editBtnRegex.test(targetId)) {
+      let prefix = 'edit-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&ref=index.html`);
+    }
+
+    // Handle delete button click
+    let deleteBtnRegex = new RegExp(/^delete-log-btn-([a-zA-Z]|\d){24}/);
+    if (deleteBtnRegex.test(targetId)) {
+      let prefix = 'delete-log-btn-';
+      let _id = event.target.id.substring(prefix.length, event.target.id.length);
+      showDeleteConfirmationDialog(_id);
     }
   });
 
