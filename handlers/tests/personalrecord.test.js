@@ -75,10 +75,10 @@ it('should update a PR', () => {
 
 it('should test for "For Time" PR', () => {
   let currPR = { duration: { hours: 1, minutes: 10, seconds: 30 } };
-  let newLog = { duration: { hours: 1, minutes: 11, seconds: 30 } };
+  let newLog = { duration: { hours: 1, minutes: 11, seconds: 55 } };
   assert.strictEqual(pr.isNewForTimePR(currPR, newLog), false);
 
-  newLog = { duration: { hours: 1, minutes: 0, seconds: 30 } };
+  newLog = { duration: { hours: 1, minutes: 2, seconds: 55 } };
   assert.strictEqual(pr.isNewForTimePR(currPR, newLog), true);
 });
 it('should test for "For Reps", "AMRAP", "Tabata" PR', () => {

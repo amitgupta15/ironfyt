@@ -45,6 +45,7 @@
           { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
           { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th', modality: ['m', 'g'] },
           { _id: 3, date: '2020-12-30T08:00:00.000Z', notes: 'another log for 30th', modality: ['g', 'w'] },
+          { _id: 4, date: '2021-01-06T05:00:00.000Z', notes: 'some log' },
         ],
       });
     };
@@ -66,6 +67,10 @@
     $test.assert(state.days[3].modalities.length === 3);
     $test.assert(state.days[3].logs[0]._id === 2);
     $test.assert(state.days[7].logs[0]._id === 1);
+
+    //Since the date gets normalized to local timezone in the database, a date set in chicago will be show up a day earlier in los angeles
+    $test.assert(state.days[9].logs.length === 1);
+    $test.assert(state.days[9].logs[0]._id === 4);
   });
 
   $test.it("should only let admin to view another user's calendar", function () {

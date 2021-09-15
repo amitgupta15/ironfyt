@@ -6,6 +6,11 @@
   let shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   let veryShortDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
+  /**
+   * Template shows the month control bar and lets the user change month
+   * @param {Object} props
+   * @returns
+   */
   let monthControlBarTemplate = function (props) {
     let displayUser = props && props.displayUser ? props.displayUser : {};
     let month = props && typeof props.month === 'number' ? props.month : '';
@@ -24,6 +29,11 @@
     `;
   };
 
+  /**
+   * Template creates the calendar grid
+   * @param {Object} props
+   * @returns
+   */
   let calendarGridTemplate = function (props) {
     let days = props && props.days ? props.days : [];
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
@@ -31,27 +41,31 @@
     <div class="calendar-grid">
       ${veryShortDays.map((vShortDay) => `<div class="date-cell header">${vShortDay}</div>`).join('')}
       ${days
-        .map(
-          (day, index) =>
-            `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}${
-              day.modalities && day.modalities.length
-                ? day.modalities
-                    .map((m, i) => {
-                      let indicator = ``;
-                      if (m === 'm') indicator = `modality-indicator-0`;
-                      if (m === 'g') indicator = `modality-indicator-1`;
-                      if (m === 'w') indicator = `modality-indicator-2`;
-                      return `<div class=" ${indicator} modality-indicator-${m}">.</div>`;
-                    })
-                    .join('')
-                : ''
-            }</div>`
-        )
+        .map((day, index) => {
+          return `<div class="date-cell ${day.class} ${new Date(day.date) - new Date(selectedDay.date) === 0 ? `selected-date-cell` : ``} ${'logs' in day ? `day-has-log` : ``}" id="date-cell-${index}">${new Date(day.date).getDate()}${
+            day.modalities && day.modalities.length
+              ? day.modalities
+                  .map((m, i) => {
+                    let indicator = ``;
+                    if (m === 'm') indicator = `modality-indicator-0`;
+                    if (m === 'g') indicator = `modality-indicator-1`;
+                    if (m === 'w') indicator = `modality-indicator-2`;
+                    return `<div class=" ${indicator} modality-indicator-${m}">.</div>`;
+                  })
+                  .join('')
+              : ''
+          }</div>`;
+        })
         .join('')}
     </div>
     `;
   };
 
+  /**
+   * Template shows the selected date in a long string format at the bottom of the calendar grid. It also shows controls to change the selected date
+   * @param {Object} props
+   * @returns
+   */
   let selectedDayControlBarTemplate = function (props) {
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     return `
@@ -65,6 +79,9 @@
     `;
   };
 
+  /**
+   * Modal Dialog template for delete confirmation of log
+   */
   let confirmDeleteLogModalDialogTemplate = function () {
     return `
     <div class="modal-container" id="delete-log-confirmation-dialog">
@@ -79,6 +96,11 @@
     `;
   };
 
+  /**
+   * Template to display logs for a selected day on the calendar grid
+   * @param {Object} props
+   * @returns
+   */
   let displayLogOfTheDayTemplate = function (props) {
     let selectedDay = props && props.selectedDay ? props.selectedDay : {};
     return `
@@ -120,6 +142,12 @@
     </div>
     `;
   };
+
+  /**
+   * Parent template called from the Component.
+   * @param {Object} props
+   * @returns
+   */
   let workoutLogCalendarTemplate = function (props) {
     return `
     <div class="text-align-right margin-right-10px"><a class="btn-primary icon-list" href="workoutlog-list.html">List View</a></div>
@@ -133,6 +161,9 @@
     `;
   };
 
+  /**
+   * State based unique component for the page
+   */
   let component = ($ironfyt.workoutLogCalendarComponent = Component('[data-app=workoutlog-calendar]', {
     state: {
       error: '',
@@ -149,18 +180,30 @@
     },
   }));
 
+  /**
+   * Prepares the days array with exactly 42 entries for a 7 x 6 calendar grid.
+   * @param {int} year
+   * @param {int} month
+   * @returns
+   */
   let getDaysForGrid = function (year, month) {
-    let days = []; //This array will have exactly 42 entries
+    //days array holds exactly 42 entries for a 7 x 6 calendar grid
+    let days = [];
+    //Find the total number of days in the previous month by setting the date parameter to 0 in new Date() function call
     let daysInPrevMonth = new Date(year, month, 0).getDate();
+    //Find out on which day of the week does the first day of the current month fall
     let firstDayInCalendarMonth = new Date(year, month).getDay();
+    //Find out total number of days in the calendar month
     let daysInCalendarMonth = new Date(year, month + 1, 0).getDate();
+    //Fill the top entries in the days array with appropriate dates from the previous month
     for (var i = 0; i < firstDayInCalendarMonth; i++) {
       days.push({ date: new Date(year, month - 1, daysInPrevMonth - firstDayInCalendarMonth + i + 1), class: 'prev-month' });
     }
-
+    //Fill the array with the dates of the current month
     for (var i = 0; i < daysInCalendarMonth; i++) {
       days.push({ date: new Date(year, month, i + 1), class: 'curr-month' });
     }
+    //If there is still space in the array then fill the rest of the entries with dates from the next month
     if (days.length < 42) {
       let count = 42 - days.length;
       for (var i = 1; i <= count; i++) {
@@ -181,6 +224,12 @@
     });
   };
 
+  /**
+   * Add workout logs to the days array
+   * @param {Array} workoutLogs
+   * @param {Array} days
+   * @returns
+   */
   let addLogsToDays = function (workoutLogs, days) {
     if (workoutLogs.length) {
       workoutLogs = sortLogsByDateAsc(workoutLogs);
@@ -190,6 +239,9 @@
     while (i < days.length && j < workoutLogs.length) {
       let dayDate = new Date(days[i].date);
       let logDate = new Date(workoutLogs[j].date);
+      //Normalizing the time to the current timezone, otherwise the dates won't match
+      dayDate.setHours(0, 0, 0, 0);
+      logDate.setHours(0, 0, 0, 0);
       if (dayDate < logDate) ++i;
       else if (dayDate > logDate) ++j;
       else {
@@ -209,6 +261,7 @@
   };
 
   /**
+   * Selects a day on page load. If the page loads with the current month, then current date is selected. For any other month, 1st of the month is selected
    * @param {*} days
    * @param {*} month
    * @param {*} year
@@ -307,7 +360,9 @@
           let date = params && params.date ? parseInt(params.date) : month === today.getMonth() && year === today.getFullYear() ? today.getDate() : 1;
           let days = getDaysForGrid(year, month);
           let startdate = days[0].date.toISOString();
+          // console.log(startdate);
           let enddate = days[41].date.toISOString();
+          // console.log(enddate);
           $ironfyt.getWorkoutLogs({ startdate, enddate, user_id }, function (error, response) {
             if (!error) {
               let logs = response && response.workoutlogs ? response.workoutlogs : [];
