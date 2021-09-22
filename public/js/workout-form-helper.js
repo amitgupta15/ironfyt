@@ -18,7 +18,7 @@
     return `
     <input type="hidden" name="workout-id" id="workout-id" value="${workout._id ? workout._id : ''}">
     <div class="form-input-group margin-top-20px">
-      <input type="text" class="form-input" name="workout-name" id="workout-name" placeholder="Workout Name" value="${workout.name ? workout.name : ''}" required>
+      <input type="text" class="form-input" name="workout-name" maxlength="30" id="workout-name" placeholder="Workout Name" value="${workout.name ? workout.name : ''}" required autofocus>
       <label for="workout-name" class="form-label">Workout Name</label>
     </div>
     <div class="form-flex-group margin-top-5px">

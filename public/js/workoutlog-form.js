@@ -864,19 +864,23 @@
       submitButton.innerHTML = 'Saving...';
 
       let params = $hl.getParams();
-      // let ref = params && params.ref ? params.ref : `workoutlog-calendar.html?year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}`;
       let ref = params && params.ref ? params.ref : 'workoutlog-calendar.html';
       let user_id = params && params.user_id ? `&user_id=${params.user_id}` : false;
       let date = ref === 'workoutlog-calendar.html' ? `&year=${new Date(workoutlog.date).getFullYear()}&month=${new Date(workoutlog.date).getMonth()}&date=${new Date(workoutlog.date).getDate()}` : false;
       let workoutIdRef = ref === 'workout-activity.html' ? `&workout_id=${workoutlog.workout_id}` : false;
-
+      let url = `${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}${workoutIdRef ? workoutIdRef : ''}`; // default url
+      if (ref === 'group.html') {
+        let group_id = params && params.group_id ? params.group_id : '';
+        url = `${ref}?group_id=${group_id}`; // form the url for group page
+      }
       $ironfyt.saveWorkoutLog(workoutlog, function (error, response) {
         if (error) {
           console.error(error);
           component.setState({ error });
         } else {
           let workoutlog = response && response.workoutlog ? response.workoutlog : null;
-          if (workoutlog && workoutlog.workout_id) {
+          let state = component.getState();
+          if (workoutlog && workoutlog.workout_id && workoutlog.user_id === state.user._id) {
             $ironfyt.updatePersonalRecord(workoutlog, function (error, response) {
               if (error) {
                 component.setState({ error });
@@ -884,7 +888,7 @@
               }
             });
           }
-          $ironfyt.navigateToUrl(`${ref}?ref=workoutlog-form.html${user_id ? user_id : ''}${date ? date : ''}${workoutIdRef ? workoutIdRef : ''}`);
+          $ironfyt.navigateToUrl(url);
         }
       });
     } else {
