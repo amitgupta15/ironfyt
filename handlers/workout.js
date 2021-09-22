@@ -18,17 +18,27 @@ workout.get = (req, res) => {
       .find({ _id: { $in: groups } })
       .sort({ _id: -1 })
       .project({ admins: 1, _id: 0 })
-      .toArray(function (error, response) {
+      .toArray(function (error, groupQueryReponse) {
         if (error) {
           res(400, { error: 'Error occurred while getting group information' });
         } else {
           // Store the user's id and group admin ids in userIds array and then query workouts collection where user_id is in this array
           let userIds = [new ObjectId(user._id)];
-          response.forEach((res) => (userIds = [...userIds, ...res.admins]));
+          groupQueryReponse.forEach((res) => (userIds = [...userIds, ...res.admins]));
           database
             .collection('workouts')
-            .find({ user_id: { $in: userIds } })
-            .sort({ _id: -1 })
+            .aggregate([
+              { $match: { user_id: { $in: userIds } } },
+              {
+                $lookup: {
+                  from: 'logs',
+                  let: { workout_id: '$_id' },
+                  pipeline: [{ $match: { $expr: { $and: [{ $eq: ['$workout_id', '$$workout_id'] }, { $eq: ['$user_id', new ObjectId(user._id)] }] } } }, { $sort: { date: -1 } }],
+                  as: 'logs',
+                },
+              },
+              { $sort: { _id: -1 } },
+            ])
             .toArray(function (error, response) {
               if (error) {
                 res(400, { error: 'Error occurred while retrieving workouts' });

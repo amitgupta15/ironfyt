@@ -831,7 +831,7 @@
 
   $test.it('should check and process new personal record once the log is created', function () {
     $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
-      callback(false, { workoutlog: { _id: '123412341234123412341234', workout_id: '123412341234123412341235' } });
+      callback(false, { workoutlog: { _id: '123412341234123412341234', workout_id: '123412341234123412341235', user_id: '555555555555555555555555' } });
     };
     let _updatePersonalRecordCalled = false;
     $ironfyt.updatePersonalRecord = function (workoutlog) {

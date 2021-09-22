@@ -49,14 +49,18 @@
             : ``
         }
         ${$ironfyt.displayWorkoutDetail(workout)}
-        <div class="margin-top-10px">
+        <div class="margin-top-10px flex flex-width-100">
           <a href="workout-activity.html?workout_id=${workout._id}&ref=workouts.html" class="workout-history-link">Workout Log</a>
+          ${workout.logs && workout.logs.length ? `<div class="margin-top-5px flex-auto text-align-right text-color-tertiary">${new Date(workout.logs[0].date).toLocaleDateString()}</div>` : ``}
         </div>    
       </div>`;
   };
   let defaultPageTemplate = function (props) {
     let workouts = props && props.workouts ? props.workouts : [];
-    return workouts.map((workout) => workoutItemTemplate(workout)).join('');
+    if (workouts.length) {
+      return workouts.map((workout) => workoutItemTemplate(workout)).join('');
+    }
+    return `<div class="container"><h3>Little patience goes a long way...</h3></div>`;
   };
 
   let workoutsTemplate = function (props) {
@@ -270,6 +274,7 @@
           if (!error) {
             let workouts = response && response.workouts ? response.workouts : [];
             component.setState({ workouts });
+            //Admin can set workout of the day, for that we need to retrieve groups to show in the drop down
             if (user.role === 'admin') {
               $ironfyt.getGroup({ admin_id: user._id }, function (error, groups) {
                 if (!error) {
