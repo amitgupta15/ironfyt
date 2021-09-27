@@ -629,7 +629,7 @@
     let movements = state.movements ? state.movements : [];
     if (addMovementField.value.trim()) {
       let index = selectedMovementIndexField.value ? parseInt(selectedMovementIndexField.value) : -1;
-      let selectedMovement = movements[index] && movements[index].movement.trim().toLowerCase() === addMovementField.value.trim().toLowerCase() ? movements[index] : { movement: addMovementField.value.trim() };
+      let selectedMovement = movements[index] && movements[index].movement.trim().toLowerCase() === addMovementField.value.trim().toLowerCase() ? movements[index] : { movement: $hl.sanitize(addMovementField.value.trim()) };
       let workoutlog = createWorkoutLogObjFromFormElements();
       workoutlog.movements.push(selectedMovement);
       component.setState({ workoutlog });
@@ -761,7 +761,7 @@
 
     let date = $hl.getDateObjFromHTMLDateInput(elements['wolog-date'].value);
     workoutlog.date = date instanceof Date && !isNaN(date) ? date : '';
-    workoutlog.notes = elements['wolog-notes'].value.trim();
+    workoutlog.notes = $hl.sanitize(elements['wolog-notes'].value.trim());
     workoutlog.user_id = workoutlog.user_id ? workoutlog.user_id : state.user._id;
 
     //Admin can override the user id
@@ -782,7 +782,7 @@
       if (elements['wolog-modality'][i].checked) workoutlog.modality.push(elements['wolog-modality'][i].value);
     }
 
-    workoutlog.location = elements['wolog-location'].value.trim();
+    workoutlog.location = $hl.sanitize(elements['wolog-location'].value.trim());
     workoutlog.workout_id = elements['wolog-workout-id'].value.trim();
 
     workoutlog.duration = {

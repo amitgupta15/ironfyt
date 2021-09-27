@@ -57,10 +57,15 @@
   };
   let defaultPageTemplate = function (props) {
     let workouts = props && props.workouts ? props.workouts : [];
+    let showSpinner = props && props.showSpinner;
+    if (showSpinner) {
+      return `<div class="container"><h3>Little patience goes a long way...</h3></div>`;
+    }
     if (workouts.length) {
       return workouts.map((workout) => workoutItemTemplate(workout)).join('');
+    } else {
+      return `<div class="container"><h3>No Workouts Found</h3></div>`;
     }
-    return `<div class="container"><h3>Little patience goes a long way...</h3></div>`;
   };
 
   let workoutsTemplate = function (props) {
@@ -89,6 +94,7 @@
       workouts: [],
       pageTitle: 'Workouts',
       selectedWorkoutForWod: {},
+      showSpinner: false,
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutsTemplate);
@@ -268,12 +274,12 @@
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
         let user = auth && auth.user ? auth.user : {};
-        component.setState({ user });
-        //Sending group_wod = 1 will fetch all the workouts created by the user and group admins of the groups the user belongs to
+        component.setState({ user, showSpinner: true });
+        //Sending group_wods = 1 will fetch all the workouts created by the user and group admins of the groups the user belongs to
         $ironfyt.getWorkouts({ group_wods: 1 }, function (error, response) {
           if (!error) {
             let workouts = response && response.workouts ? response.workouts : [];
-            component.setState({ workouts });
+            component.setState({ workouts, showSpinner: false });
             //Admin can set workout of the day, for that we need to retrieve groups to show in the drop down
             if (user.role === 'admin') {
               $ironfyt.getGroup({ admin_id: user._id }, function (error, groups) {
@@ -285,7 +291,7 @@
               });
             }
           } else {
-            component.setState({ error });
+            component.setState({ error, showSpinner: false });
           }
         });
       } else {

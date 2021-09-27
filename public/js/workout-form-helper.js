@@ -218,8 +218,8 @@
     let workoutId = document.getElementById('workout-id');
 
     let workout = {};
-    workout.name = workoutNameField.value ? workoutNameField.value : null;
-    workout.description = workoutDescField.value ? workoutDescField.value : null;
+    workout.name = workoutNameField.value ? $hl.sanitize(workoutNameField.value) : null;
+    workout.description = workoutDescField.value ? $hl.sanitize(workoutDescField.value) : null;
     workout.type = workoutTypeField.value ? workoutTypeField.value : null;
     workout.timecap = {};
     workout.timecap.hours = workoutTimeCapHoursField.value !== '' ? parseInt(workoutTimeCapHoursField.value) : null;
@@ -227,7 +227,7 @@
     workout.timecap.seconds = workoutTimeCapSecondsField.value !== '' ? parseInt(workoutTimeCapSecondsField.value) : null;
     workout.rounds = workoutRoundsField.value !== '' ? parseInt(workoutRoundsField.value) : null;
     workout.reps = workoutTotalRepsField.value !== '' ? parseInt(workoutTotalRepsField.value) : null;
-    workout.scalingdesc = workoutScalingField.value !== '' ? workoutScalingField.value : null;
+    workout.scalingdesc = workoutScalingField.value !== '' ? $hl.sanitize(workoutScalingField.value) : null;
     workout.user_id = user._id;
     workout._id = workoutId.value !== '' ? workoutId.value : null;
 

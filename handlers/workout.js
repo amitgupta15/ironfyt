@@ -11,8 +11,8 @@ workout.get = (req, res) => {
   if (group_wods) {
     query = {};
     let database = options.database;
-    let groups = user.groups.map((group) => new ObjectId(group));
-    //Get the group admins
+    let groups = user.groups && user.groups instanceof Array ? user.groups.map((group) => new ObjectId(group)) : [];
+    // Get the group admins
     database
       .collection('groups')
       .find({ _id: { $in: groups } })

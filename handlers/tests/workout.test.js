@@ -119,6 +119,55 @@ it('should query workouts created by the user and the admin if group_wods flag i
   assert.strictEqual(_data.workouts.length, 2);
 });
 
+it('should gracefully handle the sitation where user does not belong to any group and group_wods flag is set', function () {
+  let req = {
+    tokenpayload: { user: { _id: '111111111111111111111111' } }, // No groups specified
+    query: { group_wods: '1' },
+    options: {
+      database: {
+        collection: (name) => {
+          if (name === 'groups') {
+            return {
+              find: () => {
+                return {
+                  sort: function () {
+                    return {
+                      project: function () {
+                        return {
+                          toArray: function (callback) {
+                            callback(false, [{ admins: ['111111111111111111111112', '111111111111111111111113'] }]);
+                          },
+                        };
+                      },
+                    };
+                  },
+                };
+              },
+            };
+          } else if (name === 'workouts') {
+            return {
+              aggregate: () => {
+                return {
+                  toArray: (callback) => {
+                    callback(false, [{ _id: '1' }, { _id: '2' }]);
+                  },
+                };
+              },
+            };
+          }
+        },
+      },
+    },
+  };
+  let _statusCode, _data;
+  workout.get(req, function (statusCode, data) {
+    _statusCode = statusCode;
+    _data = data;
+  });
+  assert.strictEqual(_statusCode, 200);
+  assert.strictEqual(_data.workouts.length, 2);
+});
+
 it('should create a new workout', () => {
   let req = {
     buffer: Buffer.from(JSON.stringify({ name: 'worout 1', description: 'some description' })),
