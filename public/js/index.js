@@ -1,6 +1,13 @@
 (function () {
   ('use strict');
 
+  let buttonBar = function () {
+    return `
+      <button class="btn-primary icon-add" id="new-log-btn">New Log</button>
+      <button class="btn-primary icon-calendar" id="activity-btn">Logs</button>        
+      <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>        
+    `;
+  };
   /**
    * This is the default page template for the landing page. This template is replaced with search result template when a user
    * starts searching for logs.
@@ -10,22 +17,23 @@
    */
   let defaultPageTemplate = function (props) {
     let groupwods = props && props.groupwods ? props.groupwods : [];
+    let user = props && props.user ? props.user : {};
     return `
     <div id="default-page-template-dashboard">
-      <div class="flex">
-        <button class="btn-primary icon-add" id="new-log-btn">New Log</button>
-        <button class="btn-primary icon-calendar" id="activity-btn">Logs</button>        
-        <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>        
-      </div>
-      ${groupwods
-        .map((groupwod) => {
-          let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
-          let groupName = groupwod && groupwod.group && groupwod.group.name ? groupwod.group.name : '';
-          let groupid = groupwod && groupwod.group && groupwod.group._id ? groupwod.group._id : '';
-          let pr = groupwod && groupwod.pr && groupwod.pr.log ? groupwod.pr.log : {};
-          let prDate = pr && pr.date ? pr.date : null;
-          let log = groupwod && groupwod.log ? groupwod.log : false;
-          return `
+      
+      ${
+        groupwods.length > 0
+          ? `
+          <div class="flex">${buttonBar()}</div>
+          ${groupwods
+            .map((groupwod) => {
+              let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
+              let groupName = groupwod && groupwod.group && groupwod.group.name ? groupwod.group.name : '';
+              let groupid = groupwod && groupwod.group && groupwod.group._id ? groupwod.group._id : '';
+              let pr = groupwod && groupwod.pr && groupwod.pr.log ? groupwod.pr.log : {};
+              let prDate = pr && pr.date ? pr.date : null;
+              let log = groupwod && groupwod.log ? groupwod.log : false;
+              return `
             <div class="rounded-corner-box margin-top-10px">
               <div class="flex margin-bottom-5px">
                 <div class="text-color-primary flex-align-self-center flex-auto"><h2>${groupName}</h2></div>
@@ -59,8 +67,15 @@
                 <div class="margin-top-10px"><a href="workout-activity.html?workout_id=${groupwod.workout._id}&ref=index.html" class="workout-history-link">Workout Log</a></div>
               </div>
             </div>`;
-        })
-        .join('')}
+            })
+            .join('')}
+          `
+          : `
+          <div class="splash-logo-container">
+            <img src="images/logo/IronFytLogo.svg" class="splash-logo">
+            <div>${buttonBar()}</div>
+          </div>`
+      }
     </div>
     ${$ironfyt.deleteLogConfirmationModalTemplate()}
     `;

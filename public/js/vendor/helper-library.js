@@ -304,6 +304,23 @@
       }
       return queryString;
     },
+
+    /**
+     * Removes malicious code to prevent XSS attack.
+     * This is a basic method that strips out malicious looking string fragments to render them ineffective. This method will mostly be used to
+     * sanitize textarea, input, etc. fields.
+     * @param {String} str
+     * @returns sanitized string
+     */
+    sanitize: function (str) {
+      let forbidden = ['<img', 'onerror', 'onload', 'alert', '<input', 'onclick', 'onsubmit', '<textarea', '</textarea>', '<svg>', '</svg>', '<script>', '</script>', 'href', 'xlink:', 'data:', 'document.', '//>', '/>', '>'];
+      str = str ? str : '';
+      for (i = 0; i < forbidden.length; i++) {
+        let re = new RegExp(forbidden[i], 'i');
+        str = str.replace(re, '');
+      }
+      return str;
+    },
   };
 
   /** Methods used by downloadData */

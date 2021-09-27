@@ -1129,3 +1129,11 @@ a.workout-history-link::before {
   margin-bottom: 10px;
   color: var(--theme);
 }
+.splash-logo {
+  width: 50vw;
+}
+.splash-logo-container {
+  margin-top: 50px;
+  text-align: center;
+  line-height: 1.4rem;
+}

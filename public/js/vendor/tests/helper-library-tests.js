@@ -138,5 +138,12 @@
     };
     test.assert(hl.createQueryString(queryObj) === '_id=123456&user_id=789012&');
   });
+
+  test.it('hl.sanitize() should return a sanitized string', function () {
+    test.assert(hl.sanitize('<IMG src="x" onerror=alert(1)//>') === ' src="x" =(1)');
+    test.assert(hl.sanitize('<input type="text" name="hello">') === ' type="text" name="hello"');
+    test.assert(hl.sanitize('<svg><g/onload=alert(2)//<p>') === '<g/=(2)//<p');
+    test.assert(hl.sanitize('<math><mi//xlink:href="data:x,<script>alert(4)</script>">') === '<math<mi//="x,(4)">');
+  });
   console.groupEnd();
 })();
