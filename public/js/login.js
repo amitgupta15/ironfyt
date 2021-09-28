@@ -33,6 +33,7 @@
   });
 
   ($ironfyt.loginPage = function () {
+    $ironfyt.redirectToSecurePage();
     let { token, user } = $ironfyt.getCredentials();
     $ironfyt.loginComponent.setState({ token, user });
   })();
