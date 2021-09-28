@@ -48,3 +48,10 @@ Release Date: 09/27/2021
 ### Issues Fixed
 
 - Display movement info properly. If only weight is specified, then do not show 'X' in front of the weight
+
+## 2.4.0
+
+### New Features
+
+- Updated Favicon
+- App icons and mainfest file. Once the icon is added to the home page, the app will work more or less like a native app.
