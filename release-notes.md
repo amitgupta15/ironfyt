@@ -51,7 +51,17 @@ Release Date: 09/27/2021
 
 ## 2.4.0
 
+Release Date: 09/28/2021
+
 ### New Features
 
 - Updated Favicon
 - App icons and mainfest file. Once the icon is added to the home page, the app will work more or less like a native app.
+
+## 2.4.1
+
+Release Date: 09/28/2021
+
+### Issues Fixed
+
+- Redirect to a https if http is used

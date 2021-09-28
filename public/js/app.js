@@ -11,6 +11,14 @@
   $ironfyt.AUTH_TOKEN = 'ironfyt-auth-token';
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
+  $ironfyt.redirectToSecurePage = function () {
+    if (!(window.location.hostname === 'localhost')) {
+      if (window.location.protocol === 'http:') {
+        window.location.href = window.location.href.replace('http:', 'https:');
+      }
+    }
+  };
+
   $ironfyt.getCredentials = function () {
     let token = localStorage.getItem($ironfyt.AUTH_TOKEN);
     let user = localStorage.getItem($ironfyt.AUTH_USER);
@@ -19,6 +27,7 @@
   };
 
   $ironfyt.authenticateUser = function (callback) {
+    $ironfyt.redirectToSecurePage();
     let { token, user } = $ironfyt.getCredentials();
     if (token && user) {
       callback(false, { user });
