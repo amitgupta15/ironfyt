@@ -1,0 +1,26 @@
+{
+  "name": "IronFyt Workout Log",
+  "short_name": "IronFyt",
+  "description": "A Web App that lets you log your workouts quickly and easily. The app's calendar view gives you a quick overview of your workouts.",
+  "icons": [
+    {
+      "src": "images/icons/apple-app-icon@1x.png",
+      "sizes": "60x60",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icons/apple-app-icon@2x.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "images/icons/apple-app-icon@3x.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "theme_color": "#FF8C00",
+  "background_color": "#000000"
+}
