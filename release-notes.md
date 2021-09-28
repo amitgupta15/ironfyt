@@ -36,3 +36,15 @@ Release Date: 09/27/2021
 - Added SSL support on Heroku
 - Addressed potential XSS attack issue on Workout log form and workout form
 - Cleaned up the UX for a non-group user
+
+## 2.3.2
+
+- Updated release notes
+
+## 2.3.3
+
+Release Date: 09/27/2021
+
+### Issues Fixed
+
+- Display movement info properly. If only weight is specified, then do not show 'X' in front of the weight

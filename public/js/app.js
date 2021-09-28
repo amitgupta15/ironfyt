@@ -209,7 +209,7 @@
       log.movements && log.movements.length
         ? `<div>
             ${!hideTitle ? `<div><strong>Movements: </strong></div>` : ``}
-            <div>${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? ` ${movement.reps}` : ''}${movement.load ? ` X ${movement.load}` : ``}${movement.unit ? ` ${movement.unit}` : ``}`).join('<br/>')}</div>
+            <div>${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? `${movement.reps}` : ''}${movement.load ? (movement.reps ? ` X ${movement.load}` : `${movement.load}`) : ``} ${movement.unit ? movement.unit : ``}`).join('<br/>')}</div>
           </div>`
         : ''
     }

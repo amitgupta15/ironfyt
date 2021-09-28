@@ -32,12 +32,28 @@
     let _params;
     $ironfyt.getWorkoutLogs = function (params, callback) {
       _params = params;
-      callback(false, { workoutlogs: [{ _id: 1 }, { _id: 2 }] });
+      callback(false, {
+        workoutlogs: [
+          {
+            _id: 1,
+            movements: [
+              { movement: 'Deadlift', load: '155', unit: 'lbs' },
+              { movement: 'Clean', reps: 10, load: '155', unit: 'lbs' },
+            ],
+          },
+          { _id: 2 },
+        ],
+      });
     };
     page();
     $test.assert(_params.user_id === '123456789123456789123456');
     let state = component.getState();
     $test.assert(state.workoutlogs.length === 2);
+
+    let selector = document.getElementById('selector');
+    selector.innerHTML = component.template(state);
+    $test.assert(selector.innerHTML.includes('Deadlift: 155 lbs'));
+    $test.assert(selector.innerHTML.includes('Clean: 10 X 155 lbs'));
   });
   console.groupEnd();
 })();

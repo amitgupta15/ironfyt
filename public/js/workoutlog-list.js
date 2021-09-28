@@ -7,7 +7,7 @@
     <div class="margin-bottom-5px text-color-secondary">${workoutlogs.length} Logs</div>
     ${workoutlogs
       .map((log) => {
-        let workout = log.workout[0] ? log.workout[0] : {};
+        let workout = log && log.workout && log.workout[0] ? log.workout[0] : {};
         return $ironfyt.displayLogListItemTemplate(log, workout, 'workoutlog-list.html', '', false, false, true);
       })
       .join(' ')}
