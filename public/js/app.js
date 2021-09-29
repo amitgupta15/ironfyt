@@ -12,7 +12,7 @@
   $ironfyt.AUTH_USER = 'ironfyt-auth-user';
 
   $ironfyt.redirectToSecurePage = function () {
-    if (!(window.location.hostname === 'localhost')) {
+    if (!(window.location.hostname === 'localhost' || new RegExp(/(192|127)(.\d{1,3}){3}/gm).exec(window.location.hostname))) {
       if (window.location.protocol === 'http:') {
         window.location.href = window.location.href.replace('http:', 'https:');
       }
