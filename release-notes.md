@@ -74,7 +74,8 @@ Release Date: 09/28/2021
 
 - Redirect to a https if http is used on login page
 
-##2.4.3
+## 2.4.4
+
 Release Date: 09/30/2021
 
 ### Issues Fixed
