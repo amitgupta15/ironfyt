@@ -111,6 +111,7 @@
       error: '',
       groupwods: [],
       workoutlogs: [],
+      pageTitle: 'logo',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, landingPageTemplate);

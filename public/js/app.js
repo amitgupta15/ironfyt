@@ -249,7 +249,7 @@
       <div class="top-bar-menu">
         <a href="/" class="home-menu-link">Home</a>
       </div>
-      <h4 class="text-color-primary">${pageTitle}</h4>
+      ${pageTitle === 'logo' ? `<img src="images/logo/IronFytLogo.svg" class="top-bar-logo">` : `<h3 class="text-color-primary margin-top-5px">${pageTitle}</h3>`}
       <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
     </div>`;
   };

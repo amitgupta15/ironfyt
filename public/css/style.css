@@ -1137,3 +1137,8 @@ a.workout-history-link::before {
   text-align: center;
   line-height: 1.4rem;
 }
+
+.top-bar-logo {
+  height: 50%;
+  margin-top: 10px;
+}
