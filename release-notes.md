@@ -73,3 +73,10 @@ Release Date: 09/28/2021
 ### Issues Fixed
 
 - Redirect to a https if http is used on login page
+
+##2.4.3
+Release Date: 09/30/2021
+
+### Issues Fixed
+
+- Added logo on landing page Top bar
