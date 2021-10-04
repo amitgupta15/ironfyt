@@ -288,7 +288,7 @@
       <div class="margin-bottom-5px text-color-secondary"><h3>Date: ${new Date(log.date).toLocaleDateString()}</h3></div>
       ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
       ${
-        workout.name !== ''
+        workout.name !== '' && workout.name !== undefined
           ? `
             <div class="text-color-secondary "><h3>Workout</h3></div>
             ${$ironfyt.displayWorkoutDetail(workout, showWorkoutDesc, showWorkoutBorder)}
@@ -305,6 +305,14 @@
           : ''
       }
     </div>`;
+  };
+  $ironfyt.displaySpinner = function (msg = 'A little patience goes a long way...') {
+    return `<div class="container margin-top-20px text-align-center">
+              <h3>${msg}</h3>
+              <div class="spinner-container">
+                <div class="spinner"></div>
+              </div>
+            </div>`;
   };
 
   let validateReponse = function (error, response, callback) {

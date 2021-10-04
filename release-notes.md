@@ -1,14 +1,76 @@
 # IronFyt Release Notes
 
-## 1.0
+## 2.5.0
 
-## 2.0
+Release Date: 10/04/2021
 
-- New look and feel
-- Token based authentication
-- Ability to edit a log
-- Calendar view
-- Groups
+### New Features
+
+- Updated Group Page
+- Added Logo on the home page
+- Showing animated spinner when the data is loading on group, workout list and workout log list pages
+- Showing workout detail by default on calendar view
+- Added Logout button on the landing page
+
+### Issues Fixed
+
+- Workout log list was showing "undefined" whenever a workout is not selected. Fixed the issue to not show workout if one is not selected.
+
+## 2.4.4
+
+Release Date: 09/30/2021
+
+### Issues Fixed
+
+- Added logo on landing page Top bar
+
+## 2.4.2
+
+Release Date: 09/28/2021
+
+### Issues Fixed
+
+- Redirect to a https if http is used on login page
+
+## 2.4.1
+
+Release Date: 09/28/2021
+
+### Issues Fixed
+
+- Redirect to a https if http is used
+
+## 2.4.0
+
+Release Date: 09/28/2021
+
+### New Features
+
+- Updated Favicon
+- App icons and mainfest file. Once the icon is added to the home page, the app will work more or less like a native app.
+
+## 2.3.3
+
+Release Date: 09/27/2021
+
+### Issues Fixed
+
+- Display movement info properly. If only weight is specified, then do not show 'X' in front of the weight
+
+## 2.3.2
+
+- Updated release notes
+
+## 2.3.1
+
+Release Date: 09/27/2021
+
+### Issues Fixed
+
+- Added favicon
+- Added SSL support on Heroku
+- Addressed potential XSS attack issue on Workout log form and workout form
+- Cleaned up the UX for a non-group user
 
 ## 2.3
 
@@ -26,58 +88,12 @@ Release Date: 09/21/2021
 - Admin can clone the log from Group page
 - Workout log history link added on the Group page
 
-## 2.3.1
+## 2.0
 
-Release Date: 09/27/2021
+- New look and feel
+- Token based authentication
+- Ability to edit a log
+- Calendar view
+- Groups
 
-### Issues Fixed
-
-- Added favicon
-- Added SSL support on Heroku
-- Addressed potential XSS attack issue on Workout log form and workout form
-- Cleaned up the UX for a non-group user
-
-## 2.3.2
-
-- Updated release notes
-
-## 2.3.3
-
-Release Date: 09/27/2021
-
-### Issues Fixed
-
-- Display movement info properly. If only weight is specified, then do not show 'X' in front of the weight
-
-## 2.4.0
-
-Release Date: 09/28/2021
-
-### New Features
-
-- Updated Favicon
-- App icons and mainfest file. Once the icon is added to the home page, the app will work more or less like a native app.
-
-## 2.4.1
-
-Release Date: 09/28/2021
-
-### Issues Fixed
-
-- Redirect to a https if http is used
-
-## 2.4.2
-
-Release Date: 09/28/2021
-
-### Issues Fixed
-
-- Redirect to a https if http is used on login page
-
-## 2.4.4
-
-Release Date: 09/30/2021
-
-### Issues Fixed
-
-- Added logo on landing page Top bar
+## 1.0

@@ -7,11 +7,12 @@
 
   $test.it('should create the landing page component', function () {
     $test.assert(component.selector === '[data-app=landing]');
-    $test.assert(Object.keys(component.state).length === 4);
+    $test.assert(Object.keys(component.state).length === 5);
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('groupwods' in component.state);
     $test.assert('workoutlogs' in component.state);
+    $test.assert('pageTitle' in component.state);
   });
 
   $test.it('should redirect to the login page if no token found or expired token', function () {

@@ -5,7 +5,8 @@
     return `
       <button class="btn-primary icon-add" id="new-log-btn">New Log</button>
       <button class="btn-primary icon-calendar" id="activity-btn">Logs</button>        
-      <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>        
+      <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>
+      <button class="btn-primary icon-logout" id="logout-btn">Logout</button>        
     `;
   };
   /**
@@ -72,7 +73,6 @@
           `
           : `
           <div class="splash-logo-container">
-            <img src="images/logo/IronFytLogo.svg" class="splash-logo">
             <div>${buttonBar()}</div>
           </div>`
       }
@@ -165,7 +165,9 @@
     }
   };
 
-  document.addEventListener('click', function (event) {});
+  let handleLogoutEvent = function (event) {
+    $ironfyt.logout();
+  };
 
   $hl.eventListener('input', 'search-workout-logs-list-input', handleSearchLogsEvent);
   $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
@@ -174,6 +176,7 @@
   $hl.eventListener('click', 'activity-btn', navigateEvent);
   $hl.eventListener('click', 'workouts-btn', navigateEvent);
   $hl.eventListener('input', 'search-workout-logs-dashboard-input', handleSearchLogsEvent);
+  $hl.eventListener('click', 'logout-btn', handleLogoutEvent);
 
   document.addEventListener('click', function (event) {
     let groupIdRegex = new RegExp(/^group-home-btn-([a-zA-Z]|\d){24}/gm);

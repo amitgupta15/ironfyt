@@ -120,7 +120,7 @@
                 </div>
                 <div>
                   ${log.modality && log.modality.length ? `<p>${log.modality.map((m) => `<span class="modality-${m}">${$ironfyt.formatModality(m)}</span>`).join(' ')}</p>` : ''}
-                  ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], false, true)}` : ''}
+                  ${log.workout && log.workout.length ? `${$ironfyt.displayWorkoutDetail(log.workout[0], true, true)}` : ''}
                   ${$ironfyt.displayWorkoutLogDetail(log)}
                   ${
                     log.workout && log.workout.length

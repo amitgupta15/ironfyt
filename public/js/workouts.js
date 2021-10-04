@@ -59,7 +59,7 @@
     let workouts = props && props.workouts ? props.workouts : [];
     let showSpinner = props && props.showSpinner;
     if (showSpinner) {
-      return `<div class="container"><h3>Little patience goes a long way...</h3></div>`;
+      return $ironfyt.displaySpinner();
     }
     if (workouts.length) {
       return workouts.map((workout) => workoutItemTemplate(workout)).join('');

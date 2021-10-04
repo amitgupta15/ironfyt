@@ -3,11 +3,15 @@
 
   let defaultPageTemplateLogList = function (props) {
     let workoutlogs = props && props.workoutlogs ? props.workoutlogs : [];
+    let showSpinner = props && props.showSpinner;
+    if (showSpinner) {
+      return $ironfyt.displaySpinner('Keep moving...');
+    }
     return `
     <div class="margin-bottom-5px text-color-secondary">${workoutlogs.length} Logs</div>
     ${workoutlogs
       .map((log) => {
-        let workout = log && log.workout && log.workout[0] ? log.workout[0] : {};
+        let workout = log && log.workout && log.workout.length > 0 ? log.workout[0] : {};
         return $ironfyt.displayLogListItemTemplate(log, workout, 'workoutlog-list.html', '', false, false, true);
       })
       .join(' ')}
@@ -33,6 +37,7 @@
       user: {},
       workoutlogs: [],
       pageTitle: 'Logs',
+      showSpinner: false,
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutLogListTemplate);
@@ -101,14 +106,14 @@
         return;
       }
       let user = auth && auth.user ? auth.user : {};
-      component.setState({ user });
+      component.setState({ user, showSpinner: true });
       $ironfyt.getWorkoutLogs({ user_id: user._id }, function (error, response) {
         if (error) {
-          component.setState({ error });
+          component.setState({ error, showSpinner: false });
           return;
         }
         let workoutlogs = response && response.workoutlogs ? response.workoutlogs : [];
-        component.setState({ workoutlogs: workoutlogs });
+        component.setState({ workoutlogs: workoutlogs, showSpinner: false });
       });
     });
   })();

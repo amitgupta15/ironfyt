@@ -105,6 +105,9 @@ group.get = (req, res) => {
                 {
                   $addFields: { user: { $arrayElemAt: ['$user', 0] }, workout: { $arrayElemAt: ['$workout', 0] } },
                 },
+                {
+                  $sort: { date: -1 },
+                },
               ],
               as: 'logs',
             },
