@@ -1,5 +1,14 @@
 # IronFyt Release Notes
 
+## 2.5.1
+
+Release Date: 10/06/2021
+
+### Issues Fixed
+
+- Fixed the clone button on the group page.
+- Fixed the workout log link on the group page.
+
 ## 2.5.0
 
 Release Date: 10/04/2021
