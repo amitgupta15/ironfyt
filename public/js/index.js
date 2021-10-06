@@ -222,6 +222,16 @@
     });
   };
 
+  let sortByGroupNameAsc = function (groupwods) {
+    return groupwods.sort(function (a, b) {
+      let nameA = a.group.name.toLowerCase();
+      let nameB = b.group.name.toLowerCase();
+      if (nameA < nameB) return -1;
+      if (nameA > nameB) return 1;
+      return 0;
+    });
+  };
+
   ($ironfyt.landingPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (error) {
@@ -234,7 +244,7 @@
             component.setState({ error });
             return;
           }
-          let groupwods = response ? sortByDateDesc(response) : [];
+          let groupwods = response ? sortByGroupNameAsc(response) : [];
           component.setState({ groupwods });
         });
         $ironfyt.getWorkoutLogs({ user_id: user._id }, function (error, response) {

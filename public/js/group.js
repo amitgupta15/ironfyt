@@ -14,7 +14,7 @@
               <div class="text-color-secondary margin-bottom-10px"><h3>WOD</h3></div>
               ${$ironfyt.displayWorkoutDetail(wod.workout)}
               <div class="margin-top-10px">
-                <a href="workout-activity.html?workout_id=${wod._id}&ref=group.html" class="workout-history-link">Workout Log</a>
+                <a href="workout-activity.html?workout_id=${wod.workout._id}&ref=group.html" class="workout-history-link">Workout Log</a>
               </div>
             </div>`
         );
@@ -97,7 +97,18 @@
       return $ironfyt.pageTemplate(props, groupTemplate);
     },
   }));
+  document.addEventListener('click', function (event) {
+    let targetId = event.target.id;
+    let state = component.getState();
 
+    let copyBtnRegex = new RegExp(/^copy-log-btn-([a-zA-Z]|\d){24}/);
+    if (copyBtnRegex.test(targetId)) {
+      let prefix = 'copy-log-btn-';
+      let _id = targetId.substring(prefix.length, targetId.length);
+      let user_id = state.user._id;
+      $ironfyt.navigateToUrl(`workoutlog-form.html?_id=${_id}&user_id=${user_id}&ref=group.html&group_id=${state.group._id}&admincopy=1`);
+    }
+  });
   ($ironfyt.groupPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (error) {
