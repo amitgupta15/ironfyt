@@ -9,6 +9,11 @@
 
   let app = $ironfyt;
 
+  /**
+   * Create stubs for all the methods being used in the system. Whenever a new method is added to the $ironfyt object, it should be stubbed here.
+   * Stubbing the method is necessary to avoid actual API call or call to the actual method that may navigate away from the page or login/logout a user, which may
+   * have unwanted side effects
+   */
   let localStroageSetItem = (localStorage.setItem = function () {});
   let navigateToUrl = (app.navigateToUrl = function () {});
   let logout = (app.logout = function () {});
@@ -63,6 +68,10 @@
     callback();
   });
 
+  let getMovementPr = (app.getMovementPr = function (params, callback) {
+    callback();
+  });
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -74,6 +83,9 @@
     }
   };
 
+  /**
+   * Override the tearDown function in the $test object. Assign stubbed methods to the global $ironfyt object to avoid side effects.
+   */
   global.$test = Uitest({
     tearDown: function () {
       $hl.getParams = getParams;
@@ -98,7 +110,9 @@
       app.getPersonalRecord = getPersonalRecord;
       app.getGroup = getGroup;
       app.saveGroupWod = saveGroupWod;
+      app.getMovementPr = getMovementPr;
 
+      // Reset the selector on every $test call
       let selector = document.querySelector('#selector');
       selector.innerHTML = '';
     },

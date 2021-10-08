@@ -10,6 +10,7 @@ movementpr.get = (req, res) => {
     options.database
       .collection('movementpr')
       .aggregate([{ $match: { user_id: user_id } }])
+      .sort({ movement: 1 })
       .toArray((error, response) => {
         if (error) {
           res(400, 'Error while retrieving movement pr ' + error);
