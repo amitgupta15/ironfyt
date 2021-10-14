@@ -116,8 +116,12 @@ it('should get all movement personal records', () => {
           return {
             aggregate: () => {
               return {
-                toArray: (callback) => {
-                  callback(false, 'response');
+                sort: () => {
+                  return {
+                    toArray: (callback) => {
+                      callback(false, 'response');
+                    },
+                  };
                 },
               };
             },

@@ -224,8 +224,8 @@
 
   let sortByGroupNameAsc = function (groupwods) {
     return groupwods.sort(function (a, b) {
-      let nameA = a.group.name.toLowerCase();
-      let nameB = b.group.name.toLowerCase();
+      let nameA = a.group && a.group.name ? a.group.name.toLowerCase() : '';
+      let nameB = b.group && b.group.name ? b.group.name.toLowerCase() : '';
       if (nameA < nameB) return -1;
       if (nameA > nameB) return 1;
       return 0;

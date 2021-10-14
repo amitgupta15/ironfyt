@@ -24,5 +24,18 @@
     let state = component.getState();
     $test.assert(state.error === 'You are not authorized to view this page');
   });
+
+  $test.it('should fetch movements to be shown in the form', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '123' } });
+    };
+    $ironfyt.getMovements = function (params, callback) {
+      callback(false, { movements: ['1', '2'] });
+    };
+    page();
+    let state = component.getState();
+    $test.assert(state.movements.length === 2);
+    $test.assert(state.showSpinner === false);
+  });
   console.groupEnd();
 })();

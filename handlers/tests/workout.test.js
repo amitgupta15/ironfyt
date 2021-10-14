@@ -248,4 +248,33 @@ it('should delete a workout', () => {
   assert.strictEqual(_data.deletedCount, 1);
 });
 
+it('should parse a new workout description', () => {
+  let movements = [
+    {
+      name: 'DB Thrusters',
+      terms: [
+        ['db', 'dumbbell', 'dumbell', 'dumbel'],
+        ['thrusters', 'thruster'],
+      ],
+    },
+    // { name: 'Toes-to-bars', terms: ['toes to bars', 'toe to bar', 'toes to bar', 'toe to bars'] },
+    // { name: 'Double-Unders', terms: ['double unders', 'double under', 'du', 'dus'] },
+  ];
+  let amrap1 = `Complete as many rounds as possible of<br/>
+  4 thrusters
+  6 toes-to-bars
+  24 double-unders
+
+  Female: 35-lb. dumbbell, Male: 50-lb. dumbbells.
+
+  Post rounds completed.<br/>`;
+  let original = amrap1;
+  let oneOrMoreWhiteSpace = new RegExp(/\s+|-+/gm);
+  console.log(amrap1);
+  console.log();
+  amrap1 = amrap1.toLowerCase().replace(oneOrMoreWhiteSpace, ' ');
+  let match = amrap1.match(new RegExp(/(?<movement>(dumbbell|db|dumbell)(s*) (thruster)(s*))/));
+  console.log(match);
+  let rep = amrap1.sub;
+});
 console.groupEnd();

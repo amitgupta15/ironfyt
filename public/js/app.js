@@ -1,5 +1,5 @@
 (function () {
-  'use strict';
+  ('use strict');
 
   // Create a global variable and expose it the world.
   var $ironfyt = {};
@@ -180,6 +180,9 @@
     };
     return modalities[modality];
   };
+
+  //'calories', 'miles', 'feet', 'meters', 'minutes'
+  $ironfyt.units = ['lbs', 'kgs', 'pood'];
 
   // Workout Details Template
   $ironfyt.displayWorkoutDetail = function (workout, open = true, showBorder = false) {
