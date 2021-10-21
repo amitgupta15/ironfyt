@@ -18,8 +18,22 @@ let testData = [
     //2
     input: `3-minute handstand hold\n100 squats\n50-meter handstand walk\n100 squats\n30 handstand push-ups`,
     output:
-      '3 Handstand Hold [<a href="https://youtube.com/23">Demo</a>]\n100 Squat [<a href="https://youtube.com/10">Demo</a>]\n50 Handstand Walk [<a href="https://youtube.com/25">Demo</a>]\n100 Squat [<a href="https://youtube.com/10">Demo</a>]\n30 Handstand Push-Up [<a href="https://youtube.com/25">Demo</a>]',
+      '3-minute Handstand Hold [<a href="https://youtube.com/23">Demo</a>]\n100 Squat [<a href="https://youtube.com/10">Demo</a>]\n50-meter Handstand Walk [<a href="https://youtube.com/25">Demo</a>]\n100 Squat [<a href="https://youtube.com/10">Demo</a>]\n30 Handstand Push-Up [<a href="https://youtube.com/27">Demo</a>]',
     totalMovements: 5,
+    loadInfoLength: 0,
+  },
+  {
+    //3
+    input: `9 Deadlifts\n6 Burpees\n3 Power Cleans\n\n♀ 95 lb. ♂ 135 lb.\n\nPost completed rounds`,
+    output: '9 Deadlifts [<a href="https://youtube.com/29">Demo</a>]\n' + '6 Burpees [<a href="https://youtube.com/31">Demo</a>]\n' + '3 Power Cleans [<a href="https://youtube.com/30">Demo</a>]\n' + '\n' + '♀ 95 lb. ♂ 135 lb.\n' + '\n' + 'Post completed rounds',
+    totalMovements: 3,
+    loadInfoLength: 2,
+  },
+  {
+    //4
+    input: `500-m row\n12 bodyweight deadlifts\n21 box jumps\n\n20-in. box\n\nPost time`,
+    output: '500-m Row [<a href="https://youtube.com/32">Demo</a>]\n' + '12 Bodyweight Deadlifts [<a href="https://youtube.com/33">Demo</a>]\n' + '21 Box Jump [<a href="https://youtube.com/16">Demo</a>]\n' + '\n' + '20-in. box\n' + '\n' + 'Post time',
+    totalMovements: 3,
     loadInfoLength: 0,
   },
 ];

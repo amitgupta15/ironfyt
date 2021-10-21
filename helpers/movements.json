@@ -24,6 +24,11 @@
   { "_id": 24, "name": "Handstand Hold", "regexTerms": ["(handstand)(s*)", "(hold)(s*)"], "demolink": "https://youtube.com/23", "modality": "g", "units": ["second", "minute", "hour"] },
   { "_id": 25, "name": "Handstand Walk", "regexTerms": ["(handstand)(s*)", "(walk)(s*)"], "demolink": "https://youtube.com/25", "modality": "g", "units": ["ft", "meter", "yards"] },
   { "_id": 26, "name": "Handstand Walk", "regexTerms": ["(hand)(s*)", "(stand)(s*)", "(walk)(s*)"], "demolink": "https://youtube.com/25", "modality": "g", "units": ["ft", "meter", "yards"] },
-  { "_id": 25, "name": "Handstand Push-Up", "regexTerms": ["(handstand)(s*)", "(push)(s*)", "(up)(s*)"], "demolink": "https://youtube.com/25", "modality": "g", "units": ["ft", "meter", "yards"] },
-  { "_id": 26, "name": "Handstand Push-Up", "regexTerms": ["(hand)(s*)", "(stand)(s*)", "(push)(s*)", "(up)(s*)"], "demolink": "https://youtube.com/25", "modality": "g", "units": ["ft", "meter", "yards"] }
+  { "_id": 27, "name": "Handstand Push-Up", "regexTerms": ["(handstand)(s*)", "(push)(s*)", "(up)(s*)"], "demolink": "https://youtube.com/27", "modality": "g", "units": ["ft", "meter", "yards"] },
+  { "_id": 28, "name": "Handstand Push-Up", "regexTerms": ["(hand)(s*)", "(stand)(s*)", "(push)(s*)", "(up)(s*)"], "demolink": "https://youtube.com/27", "modality": "g", "units": ["ft", "meter", "yards"] },
+  { "_id": 29, "name": "Deadlifts", "regexTerms": ["(deadlift)(s*)"], "demolink": "https://youtube.com/29", "modality": "w", "units": ["lb", "kg"] },
+  { "_id": 30, "name": "Power Cleans", "regexTerms": ["(power)(s*)", "(clean)(s*)"], "demolink": "https://youtube.com/30", "modality": "w", "units": ["lb", "kg"] },
+  { "_id": 31, "name": "Burpees", "regexTerms": ["(burpee)(s*)"], "demolink": "https://youtube.com/31", "modality": "g", "units": [] },
+  { "_id": 32, "name": "Row", "regexTerms": ["(row|rowing)(s*)"], "demolink": "https://youtube.com/32", "modality": "g", "units": [] },
+  { "_id": 33, "name": "Bodyweight Deadlifts", "regexTerms": ["(bodyweight)(s*)", "(deadlift)(s*)"], "demolink": "https://youtube.com/33", "modality": "w", "units": ["lb", "kg"] }
 ]

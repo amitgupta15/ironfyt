@@ -14,58 +14,38 @@ let parseWorkout = (descArray) => {
 
   descArray.forEach((line, index) => {
     //For each line, look for a pattern like: 100 pull-ups, Max push-ups where rep count is followed by movement name
-    let isRepFollowedByMovement = new RegExp(/^(\d+|max)\s+[a-zA-Z]+/gim);
-    if (isRepFollowedByMovement.test(line)) {
+    let isRepFollowedByMovement = new RegExp(/^(\d+|max)\s+[a-zA-Z]+/i);
+    //For each line, look for a pattern like: 3-minute handstand hold
+    let isRepFollowedByUnitFollowedByMovement = new RegExp(/^\d+-[a-zA-Z]+/i);
+
+    if (isRepFollowedByMovement.test(line) || isRepFollowedByUnitFollowedByMovement.test(line)) {
       //Remove extra white space and hyphen from the line
-      line = line.replace(new RegExp(/\s+|-/gm), ' ');
-      let lineArray = line.split(' ');
+      let sanitizedLine = line.replace(new RegExp(/\s+|-/g), ' ');
+      let lineArray = sanitizedLine.split(' ');
       //Rep will always be in the position 0
       let reps = lineArray[0];
       //Remove the reps from the array
       lineArray.splice(0, 1);
-      //Filter the movements array to get all the movements where the term count matches the lineArray length
-      //This will take care of the issue of "clean" vs. "squat clean"
-      let filteredMovements = movements.filter((movement) => movement.regexTerms.length === lineArray.length);
-      if (filteredMovements.length) {
-        filteredMovements.forEach((movement) => {
-          //Create a regular expression like new RegExp(/(dumbbell|db|dumbell)(s*) (thruster)(s*)/);
-          let regex = new RegExp(movement.regexTerms.join(' '), 'ig');
-          //Create the movement string
-          let movementString = lineArray.join(' ');
-          let match = movementString.match(regex);
-          if (match) {
-            let movementToReplace = `${reps} ${movement.name} [<a href="${movement.demolink}">Demo</a>]`;
-            //Replace the new string with the existing string at the index
-            descArrayOriginalCopy.splice(index, 1, movementToReplace);
-            factoredMovements.push({ reps, terms: lineArray, movement });
-          }
-        });
+
+      let unit = null;
+      //If the line is of type 3-minute handstand hold, then extract the unit
+      if (isRepFollowedByUnitFollowedByMovement.test(line)) {
+        unit = lineArray[0];
+        //Remove the unit from the array
+        lineArray.splice(0, 1);
       }
-    }
-    let isRepFollowedByUnitFollowedByMovement = new RegExp(/^\d+-[a-zA-Z]+/gi);
-    if (isRepFollowedByUnitFollowedByMovement.test(line)) {
-      //Remove extra white space and hyphen from the line
-      line = line.replace(new RegExp(/\s+|-/gm), ' ');
-      let lineArray = line.split(' ');
-      //Rep will always be in the position 0
-      let reps = lineArray[0];
-      //Remove the reps from the array
-      lineArray.splice(0, 1);
-      let unit = lineArray[0];
-      //Remove the unit from the array
-      lineArray.splice(0, 1);
       //Filter the movements array to get all the movements where the term count matches the lineArray length
       //This will take care of the issue of "clean" vs. "squat clean"
       let filteredMovements = movements.filter((movement) => movement.regexTerms.length === lineArray.length);
       if (filteredMovements.length) {
         filteredMovements.forEach((movement) => {
           //Create a regular expression like new RegExp(/(dumbbell|db|dumbell)(s*) (thruster)(s*)/);
-          let regex = new RegExp(movement.regexTerms.join(' '), 'ig');
+          let regex = new RegExp(movement.regexTerms.join(' '), 'i');
           //Create the movement string
           let movementString = lineArray.join(' ');
           let match = movementString.match(regex);
           if (match) {
-            let movementToReplace = `${reps} ${movement.name} [<a href="${movement.demolink}">Demo</a>]`;
+            let movementToReplace = `${reps}${unit ? `-${unit}` : ``} ${movement.name} [<a href="${movement.demolink}">Demo</a>]`;
             //Replace the new string with the existing string at the index
             descArrayOriginalCopy.splice(index, 1, movementToReplace);
             factoredMovements.push({ reps, terms: lineArray, movement, unit });
