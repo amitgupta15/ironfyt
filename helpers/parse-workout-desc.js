@@ -73,6 +73,24 @@ let parseRepsInfo = (line) => {
       return { reps, load, unit, movement };
     }
   }
+  //Check for string like "Shoulder Press 5-5-5-5-5 reps"
+  let movementAndRepsCheckRegex = new RegExp(/^[a-zA-Z]+(\s[a-zA-Z]+)*\s(\d+-)+\d+/i);
+  if (movementAndRepsCheckRegex.test(line)) {
+    let tokens = line.split(' ');
+    //Regex to find the reps like "5-5-5-5-5"
+    let repsRegex = new RegExp(/(\d+-)+\d+/i);
+
+    let token;
+    //pop() remove the last item from the array and assign it to token. Check if the token is like "5-5-5-5-5". If not keep popping
+    while (!repsRegex.test(token)) {
+      token = tokens.pop();
+    }
+    //Once the reps pattern is found, create the reps array
+    let reps = token.split('-').map((rep) => parseInt(rep));
+    //Get the movement from the tokens array
+    let movement = tokens.join(' ');
+    return { reps, load: null, unit: [], movement };
+  }
   return null;
 };
 

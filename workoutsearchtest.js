@@ -229,8 +229,8 @@ $test.it('should parse reps & movements in the incoming string', () => {
 
   input.forEach((line, index) => {
     let parsed = parseRepsInfo(line);
-    // console.log(`${index}: ${line}  ||  `, parsed);
     if (parsed === null) {
+      // console.log(`${index}: ${line}  ||  `, parsed);
       assert.strictEqual(output[index], null);
     } else {
       assert.strictEqual(output[index].reps, parsed.reps, `Reps don't match at ${index}`);
@@ -366,5 +366,30 @@ $test.it('should parse workout desc', () => {
     assert.strictEqual(workout.parsedMovements.length, data[index].totalMovements, `totalMovements don't match at ${index}`);
   });
   // console.log(parseWorkout(data[1].input));
+});
+
+$test.it('should parse workout Thrusters 5-5-5-5', () => {
+  let input = ['Thruster 1-1-1-1-1-1-1-1-1-1-1-1 reps', '50-30-20 reps for time of:', 'Deadlift 3-2-2-2-1-1-1-1-1 reps', '50-40-30-20-10 reps of:', 'Hang power clean and push jerk 3-3-3-3-3-3-3 reps', 'Shoulder press 5-5-5-5-5', 'Shoulder press 5-5-5-5-5 reps'];
+  let output = [
+    { reps: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], load: null, unit: [], movement: 'Thruster' },
+    null,
+    { reps: [3, 3, 3, 3, 1, 1, 1, 1, 1], load: null, unit: [], movement: 'Deadlift' },
+    null,
+    { reps: [3, 3, 3, 3, 3, 3, 3], load: null, unit: [], movement: 'Hang power clean and push jerk' },
+    { reps: [5, 5, 5, 5, 5], load: null, unit: [], movement: 'Shoulder press' },
+    { reps: [5, 5, 5, 5, 5], load: null, unit: [], movement: 'Shoulder press' },
+  ];
+
+  for (let i = 0; i < 6; i++) {
+    let parsed = parseRepsInfo(input[i]);
+    if (parsed === null) {
+      assert.strictEqual(output[i], null, `Parsed is not null at ${i}`);
+    } else {
+      assert.strictEqual(parsed.movement, output[i].movement, `movement doesn't match at index ${i}`);
+      assert.strictEqual(parsed.reps.length, output[i].reps.length, `reps doesn't match at index ${i}`);
+      assert.strictEqual(parsed.unit.length, output[i].unit.length, `unit doesn't match at index ${i}`);
+      assert.strictEqual(parsed.load, output[i].load, `load doesn't match at index ${i}`);
+    }
+  }
 });
 console.groupEnd();
