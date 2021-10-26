@@ -151,7 +151,7 @@ $test.it('should parse reps & movements in the incoming string', () => {
     '50 knees-to-elbows',
     '25 wall-ball "2-fer-1s"',
     '50 sit-ups',
-    '5 rope climbs, 15 ft.',
+    '5 rope climbs 15 ft.',
     '♀ 20-in. box, 14-lb. ball',
     '♂ 24-in. box, 20-lb. ball',
     '4 Dumbbell    Thrusters',
@@ -210,7 +210,7 @@ $test.it('should parse reps & movements in the incoming string', () => {
     { reps: 50, load: null, unit: null, movement: 'knees-to-elbows' },
     { reps: 25, load: null, unit: null, movement: 'wall-ball "2-fer-1s"' },
     { reps: 50, load: null, unit: null, movement: 'sit-ups' },
-    { reps: 5, load: null, unit: null, movement: 'rope climbs, 15 ft.' },
+    { reps: 5, load: null, unit: null, movement: 'rope climbs 15 ft.' },
     null,
     null,
     { reps: 4, load: null, unit: null, movement: 'Dumbbell    Thrusters' },
@@ -246,17 +246,17 @@ $test.it('should parse reps & movements in the incoming string', () => {
 
 $test.it('should parse movements', () => {
   let input = [
-    ' pull-ups ',
-    'push-ups',
-    'handstand hold',
-    'pull-ups',
-    'sprint',
-    'Run',
-    'row',
-    'ring L-sit',
-    'dumbbell farmers carry',
-    'Row',
-    'row',
+    ' pull-ups ', //0
+    'push-ups', //1
+    'handstand hold', //2
+    'pull-ups', //3
+    'sprint', //4
+    'Run', //5
+    'row', //6
+    'ring L-sit', //7
+    'dumbbell farmers carry', //8
+    'Row', //9
+    'row', //10
     'pull-ups',
     'rows',
     'row',
@@ -329,7 +329,7 @@ $test.it('should parse movements', () => {
     { _id: 20, name: 'Knees-to-Elbow', regexTerms: ['(knee)(s*)', '(to)(s*)', '(elbow)(s*)'], demolink: 'https://youtube.com/20', modality: 'g', units: [] },
     { _id: 21, name: 'Wall-Ball "2-fer-1s"', regexTerms: ['(wall)(s*)', '(ball)(s*)', '("2|2|two)(s*)', '(fer)(s*)', '(one|1|1")(s*)'], demolink: 'https://youtube.com/21', modality: 'g', units: ['lb', 'kg'] },
     { _id: 9, name: 'Sit-up', regexTerms: ['(sit|sat)(s*)', '(up)(s*)'], demolink: 'https://youtube.com/9', modality: 'g', units: [] },
-    null,
+    { _id: 22, name: 'Rope Climb 15 ft', regexTerms: ['(rope)(s*)', '(climb|climb)(s*)', '(15)', '(ft|ft.)(s*)'], demolink: 'https://youtube.com/22', modality: 'g', units: ['ft', 'meter', 'yards'] },
     { _id: 2, name: 'Dumbbell Thruster', regexTerms: ['(db|dumbbell|dumbell|dumbel)(s*)', '(thruster)(s*)'], demolink: 'https://youtube.com/2', modality: 'w', units: ['lb', 'kg'] },
     { _id: 3, name: 'Toes-to-bar', regexTerms: ['(toe)(s*)', '(to)(s*)', '(bar)(s*)'], demolink: 'https://youtube.com/3', modality: 'g', units: [] },
     { _id: 4, name: 'Double-Unders', regexTerms: ['(double)(s*)', '(under)(s*)'], demolink: 'https://youtube.com/4', modality: 'g', units: [] },
@@ -357,11 +357,14 @@ $test.it('should parse movements', () => {
       assert.strictEqual(parsed.units.length, output[index].units.length, `units length don't match at ${index}`);
     }
   });
+  // console.log(input[34], parseMovementString(input[34]));
 });
 
 $test.it('should parse workout desc', () => {
-  let input = data[2].input;
-  let workout = parseWorkout(input);
-  console.log(workout);
+  data.forEach((item, index) => {
+    let workout = parseWorkout(item.input);
+    assert.strictEqual(workout.parsedMovements.length, data[index].totalMovements, `totalMovements don't match at ${index}`);
+  });
+  // console.log(parseWorkout(data[1].input));
 });
 console.groupEnd();

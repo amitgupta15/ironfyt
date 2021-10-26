@@ -174,9 +174,12 @@ let parseWorkout = (workoutString) => {
   splitInput.forEach((line, index) => {
     let parsed = parseRepsInfo(line);
     if (parsed !== null) {
-      parsed.movementObj = parseMovementString(parsed.movement);
-      parsedMovements.push(parsed);
-      splitInput[index] = `${parsed.reps}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj ? `${parsed.movementObj.name} [<a href="${parsed.movementObj.demolink}">Demo</a>]` : parsed.movement} `;
+      let movementObj = parseMovementString(parsed.movement);
+      if (movementObj !== null) {
+        parsed.movementObj = movementObj;
+        parsedMovements.push(parsed);
+        splitInput[index] = `${parsed.reps ? parsed.reps : parsed.load ? parsed.load : ''}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj.name} [<a href="${parsed.movementObj.demolink}">Demo</a>]`;
+      }
     }
     let loadInfo = parseLoadInfo(line);
     if (loadInfo) {

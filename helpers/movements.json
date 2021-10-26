@@ -19,7 +19,7 @@
   { "_id": 19, "name": "Ring Dip", "regexTerms": ["(ring)(s*)", "(dip)(s*)"], "demolink": "https://youtube.com/19", "modality": "g", "units": [] },
   { "_id": 20, "name": "Knees-to-Elbow", "regexTerms": ["(knee)(s*)", "(to)(s*)", "(elbow)(s*)"], "demolink": "https://youtube.com/20", "modality": "g", "units": [] },
   { "_id": 21, "name": "Wall-Ball \"2-fer-1s\"", "regexTerms": ["(wall)(s*)", "(ball)(s*)", "(\"2|2|two)(s*)", "(fer)(s*)", "(one|1|1\")(s*)"], "demolink": "https://youtube.com/21", "modality": "g", "units": ["lb", "kg"] },
-  { "_id": 22, "name": "Rope Climb 15 ft", "regexTerms": ["(rope)(s*)", "(climb|climb)(s*)(s*,)", "(15)", "(ft|ft.)(s*)"], "demolink": "https://youtube.com/22", "modality": "g", "units": ["ft", "meter", "yards"] },
+  { "_id": 22, "name": "Rope Climb 15 ft", "regexTerms": ["(rope)(s*)", "(climb|climb)(s*)", "(15)", "(ft|ft.)(s*)"], "demolink": "https://youtube.com/22", "modality": "g", "units": ["ft", "meter", "yards"] },
   { "_id": 23, "name": "Handstand Hold", "regexTerms": ["(hand)(s*)", "(stand)(s*)", "(hold)(s*)"], "demolink": "https://youtube.com/23", "modality": "g", "units": ["second", "minute", "hour"] },
   { "_id": 24, "name": "Handstand Hold", "regexTerms": ["(handstand)(s*)", "(hold)(s*)"], "demolink": "https://youtube.com/23", "modality": "g", "units": ["second", "minute", "hour"] },
   { "_id": 25, "name": "Handstand Walk", "regexTerms": ["(handstand)(s*)", "(walk)(s*)"], "demolink": "https://youtube.com/25", "modality": "g", "units": ["ft", "meter", "yards"] },
