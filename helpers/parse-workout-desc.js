@@ -1,63 +1,108 @@
 'use strict';
 let movements = require('./movements.json'); // regexTerms stores the term possibilities for each word of the movement
+
 /**
- * Parses an array of lines to extract reps and movements info. Enhances the original workout description by replacing proper movement name with demo video link, etc.
- * @param {Array} descArray is an array of strings. Strings need to be cleaned up by the caller to make sure there are no leading white spaces
- * @returns { Object } object containing an Array of factored reps and movements, and enhanced workout desc {factoredMovements, workoutDesc}
+ *
+ * @param {String} line - Workout line to be parsed such as "100 pull-ups"
+ * @returns parsed object containing reps, load, unit, movement and rounds info
  */
-let parseWorkout = (descArray) => {
-  //Make a copy of the array before removing spaces between words and hyphens
-  //Copy is used to put back the description string with annotations
-  let descArrayOriginalCopy = descArray;
-
-  let factoredMovements = [];
-
-  descArray.forEach((line, index) => {
-    //For each line, look for a pattern like: 100 pull-ups, Max push-ups where rep count is followed by movement name
-    let isRepFollowedByMovement = new RegExp(/^(\d+|max)\s+[a-zA-Z]+/i);
-    //For each line, look for a pattern like: 3-minute handstand hold
-    let isRepFollowedByUnitFollowedByMovement = new RegExp(/^\d+-[a-zA-Z]+/i);
-
-    if (isRepFollowedByMovement.test(line) || isRepFollowedByUnitFollowedByMovement.test(line)) {
-      //Remove extra white space and hyphen from the line
-      let sanitizedLine = line.replace(new RegExp(/\s+|-/g), ' ');
-      let lineArray = sanitizedLine.split(' ');
-      //Rep will always be in the position 0
-      let reps = lineArray[0];
-      //Remove the reps from the array
-      lineArray.splice(0, 1);
-
+let parseRepsInfo = (line) => {
+  //Remove leading and trailing white space from the line
+  line = line.trim();
+  //Regex to check if the line has reps and movement information
+  let repsAndMovementCheckRegex = new RegExp(/^((\d+,*)+|row|run|max)(\s|-[a-zA-Z]+)/i);
+  if (repsAndMovementCheckRegex.test(line)) {
+    //Replace prepositions such as of and for with single white space
+    let lineWithoutPrepositions = line.replace(new RegExp(/\sof\s|\sfor\s/i), ' ');
+    //Split the line into tokens
+    let tokens = lineWithoutPrepositions.split(' ');
+    //Convert a number like 1,000 to 1000
+    tokens[0] = tokens[0].replace(',', '');
+    //Check if token[0] is of type 300-m, 1,000-ft, 30-seconds, etc.
+    let hyphenatedFirstTokenRegex = new RegExp(/^(\d+,*)+-[a-zA-Z]+/i);
+    if (hyphenatedFirstTokenRegex.test(tokens[0])) {
+      //token[0] has the load and rep info like 300 m or 30 seconds
+      let loadInfo = tokens[0].split('-');
+      //index 1 will always have the unit in this case
+      let unit = loadInfo[1];
+      let reps = null;
+      let load = null;
+      //If unit is a time component then store loadInfo[0] as load otherwise, store loadInfo[0] as reps
+      if (new RegExp(/(second|sec|min|minute|hr|hour)(\b|s\b)/i).test(loadInfo[1])) {
+        load = parseInt(loadInfo[0]);
+      } else {
+        reps = parseInt(loadInfo[0]);
+      }
+      //Remove the reps info at tokens[0] so that only movement information is left in the tokens array
+      tokens.splice(0, 1);
+      //Get the movement string
+      let movement = tokens.join(' ');
+      return { reps, load, unit, movement };
+      //Check if the line starts with run or row
+    } else if (['run', 'row'].indexOf(tokens[0].toLowerCase()) > -1) {
+      //Movement will always be at index 0
+      let movement = tokens[0];
+      //load will be at index 1 - Run 500 meters
+      let load = parseInt(tokens[1]);
+      //Unit will be at index 2 - Row 300 cal
+      let unit = tokens[2];
+      return { reps: null, load, unit, movement };
+      //Check if the second token is "rounds" as in 3 rounds
+    } else if (tokens[1].trim().toLowerCase() === 'rounds') {
+      return { rounds: parseInt(tokens[0]) };
+      //Check if the tokens[1] is duration or distance as in 20 seconds of pull-ups
+    } else if (new RegExp(/^(second|sec|cal|calorie|min|minute|hr|hour|f(oo|ee)t|ft|yard)(\b|s\b)/i).test(tokens[1])) {
+      let load = null;
+      let reps = null;
+      let unit = tokens[1];
+      //If unit is a time component then store loadInfo[0] as load otherwise, store loadInfo[0] as reps
+      if (new RegExp(/(second|sec|min|minute|hr|hour)(\b|s\b)/i).test(unit)) {
+        load = parseInt(tokens[0]);
+      } else {
+        reps = parseInt(tokens[0]);
+      }
+      let movement = tokens[2];
+      return { reps, load, unit, movement };
+      //Catch all - tokens[0] is reps and tokens[1] is movement
+    } else {
+      let reps = tokens[0].toLowerCase() === 'max' ? 'Max' : parseInt(tokens[0]);
+      let load = null;
       let unit = null;
-      //If the line is of type 3-minute handstand hold, then extract the unit
-      if (isRepFollowedByUnitFollowedByMovement.test(line)) {
-        unit = lineArray[0];
-        //Remove the unit from the array
-        lineArray.splice(0, 1);
-      }
-      //Filter the movements array to get all the movements where the term count matches the lineArray length
-      //This will take care of the issue of "clean" vs. "squat clean"
-      let filteredMovements = movements.filter((movement) => movement.regexTerms.length === lineArray.length);
-      if (filteredMovements.length) {
-        filteredMovements.forEach((movement) => {
-          //Create a regular expression like new RegExp(/(dumbbell|db|dumbell)(s*) (thruster)(s*)/);
-          let regex = new RegExp(movement.regexTerms.join(' '), 'i');
-          //Create the movement string
-          let movementString = lineArray.join(' ');
-          let match = movementString.match(regex);
-          if (match) {
-            let movementToReplace = `${reps}${unit ? `-${unit}` : ``} ${movement.name} [<a href="${movement.demolink}">Demo</a>]`;
-            //Replace the new string with the existing string at the index
-            descArrayOriginalCopy.splice(index, 1, movementToReplace);
-            factoredMovements.push({ reps, terms: lineArray, movement, unit });
-          }
-        });
-      }
+      tokens.splice(0, 1);
+      let movement = tokens.join(' ');
+      return { reps, load, unit, movement };
     }
-  });
-  let workoutDesc = descArrayOriginalCopy.join('\n');
-  return { factoredMovements, workoutDesc };
+  }
+  return null;
 };
 
+/**
+ * Matches a string against movement database
+ * @param {String} movementString movement string such as "dumbbell push-ups"
+ * @returns movement object from the database
+ */
+let parseMovementString = (movementString) => {
+  //Remove leading and trailing white spaces
+  let trimmedMovementString = movementString.trim();
+  //Remove any comma
+  let movementStringNoComma = trimmedMovementString.replace(new RegExp(/,|[.]/g), '');
+  //Remove extra white space and hyphens between the words
+  let sanitizedString = movementStringNoComma.replace(new RegExp(/\s+|-/g), ' ');
+  //Create tokens from the string
+  let tokens = sanitizedString.split(' ');
+  //Get a subset of movements whose regex terms array is the same size as tokens array
+  let filteredMovements = movements.filter((movement) => movement.regexTerms.length === tokens.length);
+  let parsedMovement = null;
+  if (filteredMovements.length) {
+    filteredMovements.forEach((movement) => {
+      //Create a regular expression like new RegExp(/(dumbbell|db|dumbell)(s*) (thruster)(s*)/);
+      let regex = new RegExp(movement.regexTerms.join(' '), 'i');
+      let match = sanitizedString.toLowerCase().match(regex);
+      if (match) parsedMovement = movement;
+    });
+  }
+  return parsedMovement;
+};
 /**
  * Parses a given string to extract the load information
  * @param {String} desc - description string to be parsed for load information
@@ -113,27 +158,31 @@ let parseLoadInfo = (desc) => {
 };
 
 /**
- * Default method. Parses the workout desc and returns the result
- * @param {String} desc
- * @returns
+ * Main method. workoutString is parsed for reps, load, etc.
+ * Call this method from the code to parse a workout input of the type
+ * 100 push-ups
+ * 200 sit-ups
+ * Male: 50-lb DB
+ * Female: 30-lb DB
+ * @param {String} workoutString
+ * @returns object containing parsedMovements, updated workoutDesc and parsed loadinfo
  */
-let parseWorkoutDesc = (desc) => {
-  //Split the lines at new line and store them in an array
-  let descArray = desc.split('\n');
-  //Remove extra white spaces at the beginning and at the end of the line
-  descArray = descArray.map((line) => (line = line.trim()));
-
-  //returns an object that contains factored reps/movements and updated workout desc
-  let { factoredMovements, workoutDesc } = parseWorkout(descArray);
-
-  let loadInfoArray = [];
-  descArray.forEach((desc) => {
-    let loadInfo = parseLoadInfo(desc);
-    if (loadInfo.length) {
-      loadInfoArray = loadInfoArray.concat(loadInfo);
+let parseWorkout = (workoutString) => {
+  let splitInput = workoutString.split('\n');
+  let parsedMovements = [];
+  let parsedLoadInfo = [];
+  splitInput.forEach((line, index) => {
+    let parsed = parseRepsInfo(line);
+    if (parsed !== null) {
+      parsed.movementObj = parseMovementString(parsed.movement);
+      parsedMovements.push(parsed);
+      splitInput[index] = `${parsed.reps}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj ? `${parsed.movementObj.name} [<a href="${parsed.movementObj.demolink}">Demo</a>]` : parsed.movement} `;
+    }
+    let loadInfo = parseLoadInfo(line);
+    if (loadInfo) {
+      parsedLoadInfo = parsedLoadInfo.concat(loadInfo);
     }
   });
-  return { factoredMovements, workoutDesc, loadInfoArray };
+  return { parsedMovements, workoutDesc: splitInput.join('\n'), parsedLoadInfo };
 };
-
-module.exports = { parseWorkoutDesc, parseLoadInfo };
+module.exports = { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout };

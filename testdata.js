@@ -39,3 +39,13 @@ let testData = [
 ];
 
 module.exports = testData;
+/*
+Thruster 1-1-1-1-1-1-1-1-1-1-1-1 reps
+50-30-20 reps for time of:
+Deadlift 3-2-2-2-1-1-1-1-1 reps
+50-40-30-20-10 reps of:
+
+Hang power clean and push jerk 3-3-3-3-3-3-3
+Shoulder press 5-5-5-5-5
+Shoulder press 5-5-5-5-5 reps
+*/
