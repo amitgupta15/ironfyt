@@ -1,10 +1,11 @@
 'use strict';
-const $test = require('./vendor/nodejs-unit-test-library');
+const $test = require('../../vendor/nodejs-unit-test-library');
 const { assert, it } = $test;
-console.group('\x1b[33m%s\x1b[0m', 'Workout Desc parse tests');
+console.group('\x1b[33m%s\x1b[0m', 'helpers/parse-workout-desc.js Tests');
 
-let data = require('./testdata');
-let { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout } = require('./helpers/parse-workout-desc');
+let data = require('../../testdata');
+let { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout } = require('../parse-workout-desc');
+let movements = require('./movements.json');
 
 $test.it('should parse the load info - ex: ♀ 20-in. box', () => {
   let input = [
@@ -345,7 +346,7 @@ $test.it('should parse movements', () => {
   ];
 
   input.forEach((movementString, index) => {
-    let parsed = parseMovementString(movementString);
+    let parsed = parseMovementString(movementString, movements);
     if (parsed === null) {
       assert.strictEqual(output[index], null, `Parsed is not null at ${index}`);
     } else {
@@ -361,7 +362,7 @@ $test.it('should parse movements', () => {
 
 $test.it('should parse workout desc', () => {
   data.forEach((item, index) => {
-    let workout = parseWorkout(item.input);
+    let workout = parseWorkout(item.input, movements);
     assert.strictEqual(workout.parsedMovements.length, data[index].totalMovements, `totalMovements don't match at ${index}`);
   });
   // console.log(parseWorkout(data[1].input));

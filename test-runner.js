@@ -5,3 +5,4 @@ require('./handlers/tests/groupwod.test');
 require('./handlers/tests/personalrecord.test');
 require('./handlers/tests/group.test');
 require('./handlers/tests/movementpr.test');
+require('./helpers/tests/parse-workout-desc.test');

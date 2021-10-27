@@ -1,5 +1,4 @@
 'use strict';
-let movements = require('./movements.json'); // regexTerms stores the term possibilities for each word of the movement
 
 /**
  *
@@ -97,9 +96,10 @@ let parseRepsInfo = (line) => {
 /**
  * Matches a string against movement database
  * @param {String} movementString movement string such as "dumbbell push-ups"
+ * @param {Array} movements movements to check against
  * @returns movement object from the database
  */
-let parseMovementString = (movementString) => {
+let parseMovementString = (movementString, movements = []) => {
   //Remove leading and trailing white spaces
   let trimmedMovementString = movementString.trim();
   //Remove any comma
@@ -183,16 +183,17 @@ let parseLoadInfo = (desc) => {
  * Male: 50-lb DB
  * Female: 30-lb DB
  * @param {String} workoutString
+ * @param {Array} movements - movements db to check against
  * @returns object containing parsedMovements, updated workoutDesc and parsed loadinfo
  */
-let parseWorkout = (workoutString) => {
+let parseWorkout = (workoutString, movements = []) => {
   let splitInput = workoutString.split('\n');
   let parsedMovements = [];
   let parsedLoadInfo = [];
   splitInput.forEach((line, index) => {
     let parsed = parseRepsInfo(line);
     if (parsed !== null) {
-      let movementObj = parseMovementString(parsed.movement);
+      let movementObj = parseMovementString(parsed.movement, movements);
       if (movementObj !== null) {
         parsed.movementObj = movementObj;
         parsedMovements.push(parsed);
