@@ -1,13 +1,14 @@
 'use strict';
 const $test = require('../../vendor/nodejs-unit-test-library');
 const { assert, it } = $test;
+
 console.group('\x1b[33m%s\x1b[0m', 'helpers/parse-workout-desc.js Tests');
 
-let data = require('../../testdata');
+let data = require('./testdata');
 let { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout } = require('../parse-workout-desc');
 let movements = require('./movements.json');
 
-$test.it('should parse the load info - ex: ♀ 20-in. box', () => {
+it('should parse the load info - ex: ♀ 20-in. box', () => {
   let input = [
     `♀ 20-in. box, 14-lb. ball, 45 lb barbell, 115 lb barbell`, //0
     `♀ 95 lbs. ♂ 135 lb.`, //1
@@ -108,7 +109,7 @@ $test.it('should parse the load info - ex: ♀ 20-in. box', () => {
   }
 });
 
-$test.it('should parse reps & movements in the incoming string', () => {
+it('should parse reps & movements in the incoming string', () => {
   let input = [
     '100 pull-ups',
     '25 push-ups',
@@ -174,7 +175,7 @@ $test.it('should parse reps & movements in the incoming string', () => {
     { reps: null, load: 30, unit: 'second', movement: 'handstand hold' },
     { reps: null, load: 20, unit: 'seconds', movement: 'pull-ups' },
     { reps: 30, load: null, unit: 'yard', movement: 'sprint' },
-    { reps: null, load: 400, unit: 'meters', movement: 'Run' },
+    { reps: 400, load: null, unit: 'meters', movement: 'Run' },
     { reps: 500, load: null, unit: 'm', movement: 'row' },
     { reps: null, load: 30, unit: 'second', movement: 'ring L-sit' },
     { reps: 200, load: null, unit: 'm', movement: 'dumbbell farmers carry' },
@@ -245,7 +246,7 @@ $test.it('should parse reps & movements in the incoming string', () => {
   // console.log(`3: ${input[3]}  ||  `, parsed);
 });
 
-$test.it('should parse movements', () => {
+it('should parse movements', () => {
   let input = [
     ' pull-ups ', //0
     'push-ups', //1
@@ -360,7 +361,7 @@ $test.it('should parse movements', () => {
   // console.log(input[34], parseMovementString(input[34]));
 });
 
-$test.it('should parse workout desc', () => {
+it('should parse workout desc', () => {
   data.forEach((item, index) => {
     let workout = parseWorkout(item.input, movements);
     assert.strictEqual(workout.parsedMovements.length, data[index].totalMovements, `totalMovements don't match at ${index}`);
@@ -368,7 +369,7 @@ $test.it('should parse workout desc', () => {
   // console.log(parseWorkout(data[1].input));
 });
 
-$test.it('should parse workout Thrusters 5-5-5-5', () => {
+it('should parse workout Thrusters 5-5-5-5', () => {
   let input = ['Thruster 1-1-1-1-1-1-1-1-1-1-1-1 reps', '50-30-20 reps for time of:', 'Deadlift 3-2-2-2-1-1-1-1-1 reps', '50-40-30-20-10 reps of:', 'Hang power clean and push jerk 3-3-3-3-3-3-3 reps', 'Shoulder press 5-5-5-5-5', 'Shoulder press 5-5-5-5-5 reps'];
   let output = [
     { reps: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], load: null, unit: [], movement: 'Thruster' },

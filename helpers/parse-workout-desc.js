@@ -41,11 +41,20 @@ let parseRepsInfo = (line) => {
     } else if (['run', 'row'].indexOf(tokens[0].toLowerCase()) > -1) {
       //Movement will always be at index 0
       let movement = tokens[0];
-      //load will be at index 1 - Run 500 meters
-      let load = parseInt(tokens[1]);
+
       //Unit will be at index 2 - Row 300 cal
       let unit = tokens[2];
-      return { reps: null, load, unit, movement };
+      let load = null;
+      let reps = null;
+      //If unit is a time component then store tokens[1] as load otherwise, store tokens[1] as reps
+      if (new RegExp(/(second|sec|min|minute|hr|hour)(\b|s\b)/i).test(unit)) {
+        load = parseInt(tokens[1]);
+      } else {
+        //Convert a number like 1,000 to 1000
+        tokens[1] = tokens[1].replace(',', '');
+        reps = isNaN(parseInt(tokens[1])) ? tokens[1] : parseInt(tokens[1]);
+      }
+      return { reps, load, unit, movement };
       //Check if the second token is "rounds" as in 3 rounds
     } else if (tokens[1].trim().toLowerCase() === 'rounds') {
       return { rounds: parseInt(tokens[0]) };
@@ -101,7 +110,7 @@ let parseRepsInfo = (line) => {
  */
 let parseMovementString = (movementString, movements = []) => {
   //Remove leading and trailing white spaces
-  let trimmedMovementString = movementString.trim();
+  let trimmedMovementString = movementString ? movementString.trim() : '';
   //Remove any comma
   let movementStringNoComma = trimmedMovementString.replace(new RegExp(/,|[.]/g), '');
   //Remove extra white space and hyphens between the words
@@ -197,7 +206,11 @@ let parseWorkout = (workoutString, movements = []) => {
       if (movementObj !== null) {
         parsed.movementObj = movementObj;
         parsedMovements.push(parsed);
-        splitInput[index] = `${parsed.reps ? parsed.reps : parsed.load ? parsed.load : ''}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj.name} [<a href="${parsed.movementObj.demolink}">Demo</a>]`;
+        if (parsed.reps && parsed.reps instanceof Array) {
+          splitInput[index] = `${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>] ${parsed.reps.join('-')} reps`;
+        } else {
+          splitInput[index] = `${parsed.reps ? parsed.reps : parsed.load ? parsed.load : ''}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>]`;
+        }
       }
     }
     let loadInfo = parseLoadInfo(line);

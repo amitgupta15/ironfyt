@@ -459,4 +459,28 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //     console.log(result.ops[0]);
   //   });
   // });
+
+  let { parseWorkout } = require('./helpers/parse-workout-desc');
+  db.collection('workouts')
+    .find({})
+    .toArray((error, workouts) => {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      db.collection('movements')
+        .find({})
+        .toArray((error, movements) => {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          let workout = workouts[240];
+          parsedWorkout = parseWorkout(workout.description, movements);
+          workout.formatteddescription = parsedWorkout.workoutDesc;
+          workout.loadinfo = parsedWorkout.parsedLoadInfo;
+          workout.movements = parsedWorkout.parsedMovements;
+          console.log(workout);
+        });
+    });
 });
