@@ -475,12 +475,13 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
             console.log(error);
             return;
           }
-          let workout = workouts[240];
+          let workout = workouts[210];
           parsedWorkout = parseWorkout(workout.description, movements);
           workout.formatteddescription = parsedWorkout.workoutDesc;
           workout.loadinfo = parsedWorkout.parsedLoadInfo;
           workout.movements = parsedWorkout.parsedMovements;
           console.log(workout);
+          console.log(workout.movements);
         });
     });
 });

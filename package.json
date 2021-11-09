@@ -29,12 +29,12 @@
   "homepage": "https://github.com/amitgupta15/ironfyt#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.5.8"
+    "mongodb": "^3.7.3"
   },
   "devDependencies": {
-    "browser-sync": "^2.26.14",
-    "nodemon": "^2.0.7"
+    "browser-sync": "^2.27.7",
+    "nodemon": "^2.0.14"
   }
 }

@@ -36,6 +36,12 @@ let testData = [
     totalMovements: 3,
     loadInfoLength: 0,
   },
+  {
+    input: '21-15-9\nThrusters\nPull-ups',
+    output: '21 15 9 Thruster [<a href="https://youtube.com/1">Demo</a>] Pull-Up [<a href="https://youtube.com/5">Demo</a>]',
+    totalMovements: 2,
+    loadInfoLength: 0,
+  },
 ];
 
 module.exports = testData;

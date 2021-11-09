@@ -10,7 +10,7 @@
   { "movement": "Squat", "regexTerms": ["(squat)(s*)"], "demolink": "https://youtube.com/10", "modality": "g", "units": [] },
   { "movement": "Air Squat", "regexTerms": ["(air)(s*)", "(squat)(s*)"], "demolink": "https://youtube.com/11", "modality": "g", "units": [] },
   { "movement": "Back Squat", "regexTerms": ["(back)(s*)", "(squat)(s*)"], "demolink": "https://youtube.com/12", "modality": "w", "units": ["lb", "kg"] },
-  { "movement": "Double-Unders", "regexTerms": ["(du)(s*)"], "demolink": "https://youtube.com/4", "modality": "g", "units": [] },
+  { "movement": "Double-Unders", "regexTerms": ["(du)(s*)$"], "demolink": "https://youtube.com/4", "modality": "g", "units": [] },
   { "movement": "Walking Lunge Steps", "regexTerms": ["(walking|walk)(s*)", "(lung|lunge)(s*)", "(step)(s*)"], "demolink": "https://youtube.com/14", "modality": "g", "units": [] },
   { "movement": "Chest to Bar Pull-Up", "regexTerms": ["(chest)(s*)", "(to)(s*)", "(bar)(s*)", "(pull)(s*)", "(up)(s*)"], "demolink": "https://youtube.com/15", "modality": "g", "units": [] },
   { "movement": "Box Jump", "regexTerms": ["(box)(s*)", "(jump)(s*)"], "demolink": "https://youtube.com/16", "modality": "g", "units": [] },
@@ -32,5 +32,6 @@
   { "movement": "Bodyweight Deadlifts", "regexTerms": ["(bodyweight)(s*)", "(deadlift)(s*)"], "demolink": "https://youtube.com/33", "modality": "w", "units": ["lb", "kg"] },
   { "movement": "Power Cleans", "regexTerms": ["(power)(s*)", "(clean)(s*)"], "demolink": "https://youtube.com/30", "modality": "w", "units": ["lb", "kg"] },
   { "movement": "Clean", "regexTerms": ["(clean)(s*)"], "demolink": "https://www.youtube.com/watch?v=EKRiW9Yt3Ps", "modality": "w", "units": ["lb", "kg"] },
-  { "movement": "Squat Clean", "regexTerms": ["(squat)(s*)", "(clean)(s*)"], "demolink": "https://www.youtube.com/watch?v=Ty14ogq_Vok", "modality": "w", "units": ["lb", "kg"] }
+  { "movement": "Squat Clean", "regexTerms": ["(squat)(s*)", "(clean)(s*)"], "demolink": "https://www.youtube.com/watch?v=Ty14ogq_Vok", "modality": "w", "units": ["lb", "kg"] },
+  { "movement": "Bench Press", "regexTerms": ["(bench)(s*)", "(press)(s*)"], "demolink": "https://www.youtube.com/watch?v=Ty14ogq_Vok", "modality": "w", "units": ["lb", "kg"] }
 ]

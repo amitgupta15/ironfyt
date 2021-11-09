@@ -185,6 +185,63 @@ let parseLoadInfo = (desc) => {
 };
 
 /**
+ * Generic method to parse movements from a multi-line description. This method is used when the more targeted method(s) fail to parse any movements
+ * @param {String} description
+ * @param {Array} movements
+ * @return parsed Movements
+ */
+let parseMovementInWorkoutDescription = (description, movements = []) => {
+  let reps = null;
+
+  //Regex to find the reps such as 21-15-9
+  let repsRegex = new RegExp(/^(\d+-)+\d+/gim);
+
+  let repsMatch = description.match(repsRegex);
+  //If match found then calculate the total reps 21-15-9 = 45
+  if (repsMatch) {
+    let repsArray = repsMatch[0].split('-');
+    reps = repsArray.reduce((acc, curr) => acc + parseInt(curr), 0);
+  }
+
+  //Sort the movements by regexTerms length in desc order. This way we will try to match the maximum words first and min words last.
+  let sortedMovements = movements.sort((a, b) => {
+    let inputA = a.regexTerms.length;
+    let inputB = b.regexTerms.length;
+
+    if (inputA < inputB) return 1;
+    if (inputA > inputB) return -1;
+    if (inputA === inputB) return 0;
+  });
+  let parsedMovements = [];
+
+  //Remove extra white space and hyphens between the words
+  let sanitizedDescription = description.replace(new RegExp(/[^\S\r\n]+|-/g), ' ');
+  let matches = [];
+  for (let i = 0; i < sortedMovements.length; i++) {
+    let regex = new RegExp(sortedMovements[i].regexTerms.join(' '), 'gim');
+    let match = sanitizedDescription.match(regex);
+    if (match) {
+      parsedMovements.push({ reps, load: null, unit: [], movement: sortedMovements[i] });
+      //Add the match array, movement to replace the match with and the index to matches array. This information will be used shortly to format the description
+      //This method is helpful because you may have multiple matches for the same movement. match: ['rope climb','rope climb']. All match occurrances will
+      //need to be replaced with the movement.
+      matches.push({ match, movement: sortedMovements[i], index: i });
+      //Replace matched words with a placeholder __placeholder-0__ where 0 is the current index of sortedMovements. This replacement will avoid matching a substring
+      //of the words further down the sortedMovement array.
+      //Ex. Once "Squat Clean" it matched, it is replaced with __placeholder-{i}__ so that it does not match again with "Clean"
+      match.forEach((item) => (sanitizedDescription = sanitizedDescription.replace(new RegExp(item, 'gim'), `__placeholder-${i}__`)));
+    }
+  }
+  //Now replace the __placeholder-${i}__ with formatted parsed movement
+  for (let i = 0; i < matches.length; i++) {
+    let index = matches[i].index;
+    let movement = matches[i].movement;
+    sanitizedDescription = sanitizedDescription.replace(new RegExp(`__placeholder-${index}__`, 'gim'), `${movement.movement} [<a href="${movement.demolink}">Demo</a>]`);
+  }
+  return { parsedMovements, workoutDesc: sanitizedDescription };
+};
+
+/**
  * Main method. workoutString is parsed for reps, load, etc.
  * Call this method from the code to parse a workout input of the type
  * 100 push-ups
@@ -199,25 +256,41 @@ let parseWorkout = (workoutString, movements = []) => {
   let splitInput = workoutString.split('\n');
   let parsedMovements = [];
   let parsedLoadInfo = [];
-  splitInput.forEach((line, index) => {
-    let parsed = parseRepsInfo(line);
-    if (parsed !== null) {
-      let movementObj = parseMovementString(parsed.movement, movements);
-      if (movementObj !== null) {
-        parsed.movementObj = movementObj;
-        parsedMovements.push(parsed);
-        if (parsed.reps && parsed.reps instanceof Array) {
-          splitInput[index] = `${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>] ${parsed.reps.join('-')} reps`;
-        } else {
-          splitInput[index] = `${parsed.reps ? parsed.reps : parsed.load ? parsed.load : ''}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>]`;
+  let workoutDesc = '';
+
+  //Regex to find the reps such as 21-15-9
+  let repsRegex = new RegExp(/^(\d+-)+\d+/gim);
+  let repsInfoInFirstLine = splitInput[0].match(repsRegex);
+  //If no reps (ex: 21-15-9) infor in the first line then proceed. Otherwise, let the catch all method take care of the description
+  if (repsInfoInFirstLine === null) {
+    splitInput.forEach((line, index) => {
+      let parsed = parseRepsInfo(line);
+      if (parsed !== null) {
+        let movementObj = parseMovementString(parsed.movement, movements);
+        if (movementObj !== null) {
+          parsed.movementObj = movementObj;
+          parsedMovements.push(parsed);
+          if (parsed.reps && parsed.reps instanceof Array) {
+            splitInput[index] = `${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>] ${parsed.reps.join('-')} reps`;
+          } else {
+            splitInput[index] = `${parsed.reps ? parsed.reps : parsed.load ? parsed.load : ''}${parsed.unit ? `-${parsed.unit}` : ``} ${parsed.movementObj.movement} [<a href="${parsed.movementObj.demolink}">Demo</a>]`;
+          }
         }
       }
-    }
-    let loadInfo = parseLoadInfo(line);
-    if (loadInfo) {
-      parsedLoadInfo = parsedLoadInfo.concat(loadInfo);
-    }
-  });
-  return { parsedMovements, workoutDesc: splitInput.join('\n'), parsedLoadInfo };
+      let loadInfo = parseLoadInfo(line);
+      if (loadInfo) {
+        parsedLoadInfo = parsedLoadInfo.concat(loadInfo);
+      }
+    });
+    workoutDesc = splitInput.join('\n');
+  }
+
+  //If the specific test does not work then try to extract movement information from the entire description.
+  if (parsedMovements.length === 0) {
+    let parsedDescription = parseMovementInWorkoutDescription(workoutString, movements);
+    parsedMovements = parsedDescription.parsedMovements ? parsedDescription.parsedMovements : [];
+    workoutDesc = parsedDescription.workoutDesc ? parsedDescription.workoutDesc : '';
+  }
+  return { parsedMovements, workoutDesc, parsedLoadInfo };
 };
-module.exports = { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout };
+module.exports = { parseRepsInfo, parseLoadInfo, parseMovementString, parseWorkout, parseMovementInWorkoutDescription };
