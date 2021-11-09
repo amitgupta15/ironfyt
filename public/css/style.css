@@ -642,8 +642,7 @@ input[type='date'] {
   padding-left: 8px;
   font-size: 1.2rem;
   font-family: inherit;
-  text-align: left;
-  -webkit-appearance: none;
+  -webkit-appearance: unset;
   -moz-appearance: textfield;
 }
 #wolog-location {
