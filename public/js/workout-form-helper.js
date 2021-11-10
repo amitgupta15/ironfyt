@@ -1,5 +1,5 @@
 (function () {
-  ('use strict');
+  'use strict';
 
   $ironfyt.newWorkout = {
     name: null,
@@ -14,7 +14,6 @@
   $ironfyt.newWorkoutFormTemplate = function (props) {
     let workout = props && props.workout ? props.workout : {};
     let timecap = workout.timecap ? workout.timecap : {};
-    let enableTimecap = timecap.hour > 0 || timecap.minutes > 0 || timecap.seconds > 0;
     return `
     <input type="hidden" name="workout-id" id="workout-id" value="${workout._id ? workout._id : ''}">
     <div class="form-input-group margin-top-20px">
@@ -37,23 +36,17 @@
       </div>
       <div class="form-flex-group block-with-border margin-left-5px flex-auto">
         <div class="block-with-border-label">Time Cap</div>
-        <div class="block-with-border-switch">
-          <label class="switch small form-group-label">
-            <input type="checkbox" id="workout-time-cap-switch" ${enableTimecap ? 'checked' : ''}/>
-            <span class="slider small round"></span>
-          </label>
-        </div>
         <div class="form-flex-group margin-top-10px">
           <div class="form-input-group show-time-separator-right-3px">
-            <input type="number" class="form-input duration-input margin-right-10px" name="workout-time-cap-hours" id="workout-time-cap-hours" min="0" max="240" placeholder="H" value="${timecap.hours ? timecap.hours : ''}" ${enableTimecap ? '' : 'disabled'} />
+            <input type="number" class="form-input duration-input margin-right-10px" name="workout-time-cap-hours" id="workout-time-cap-hours" min="0" max="240" placeholder="H" value="${timecap.hours ? timecap.hours : ''}" />
             <label for="workout-time-cap-hours" class="form-label duration-label">H</label>
           </div>
           <div class="form-input-group show-time-separator-right-3px">
-            <input type="number" class="form-input duration-input margin-right-10px" name="workout-time-cap-minutes" id="workout-time-cap-minutes" min="0" max="59" placeholder="M" value="${timecap.minutes ? timecap.minutes : ''}" ${enableTimecap ? '' : 'disabled'}  />
+            <input type="number" class="form-input duration-input margin-right-10px" name="workout-time-cap-minutes" id="workout-time-cap-minutes" min="0" max="59" placeholder="M" value="${timecap.minutes ? timecap.minutes : ''}"  />
             <label for="workout-time-cap-minutes" class="form-label duration-label">M</label>
           </div>
           <div class="form-input-group">
-            <input type="number" class="form-input duration-input margin-right-0" name="workout-time-cap-seconds" id="workout-time-cap-seconds" min="0" max="59" placeholder="S" value="${timecap.seconds ? timecap.seconds : ''}" ${enableTimecap ? '' : 'disabled'}  />
+            <input type="number" class="form-input duration-input margin-right-0" name="workout-time-cap-seconds" id="workout-time-cap-seconds" min="0" max="59" placeholder="S" value="${timecap.seconds ? timecap.seconds : ''}"  />
             <label for="workout-time-cap-seconds" class="form-label duration-label">S</label>
           </div>
         </div>
@@ -62,30 +55,18 @@
     <div class="form-flex-group margin-top-5px">
       <div class="form-flex-group block-with-border flex-auto">
         <div class="block-with-border-label">Total Rounds</div>
-        <div class="block-with-border-switch">
-          <label class="switch small form-group-label">
-            <input type="checkbox" id="workout-rounds-switch" ${workout.rounds ? 'checked' : ''}/>
-            <span class="slider small round"></span>
-          </label>
-        </div>
         <div class="form-flex-group margin-top-10px">
           <div class="form-input-group">
-            <input type="number" class="form-input" name="workout-rounds" id="workout-rounds" placeholder="Rounds" value="${workout.rounds ? workout.rounds : ''}" ${workout.rounds ? '' : 'disabled'}>    
+            <input type="number" class="form-input" name="workout-rounds" id="workout-rounds" placeholder="Rounds" value="${workout.rounds ? workout.rounds : ''}" >    
             <label for="workout-rounds" class="form-label rounds-label">Rounds</label>
           </div>      
         </div>
       </div>
       <div class="form-flex-group block-with-border margin-left-5px flex-auto">
         <div class="block-with-border-label">Total Reps</div>
-        <div class="block-with-border-switch">
-          <label class="switch small form-group-label">
-            <input type="checkbox" id="workout-total-reps-switch" ${workout.reps ? 'checked' : ''}/>
-            <span class="slider small round"></span>
-          </label>
-        </div>
         <div class="form-flex-group margin-top-10px">
           <div class="form-input-group">
-            <input type="number" class="form-input" name="workout-total-reps" id="workout-total-reps" placeholder="Reps" value="${workout.reps ? workout.reps : ''}" ${workout.reps ? '' : 'disabled'}>    
+            <input type="number" class="form-input" name="workout-total-reps" id="workout-total-reps" placeholder="Reps" value="${workout.reps ? workout.reps : ''}">    
             <label for="workout-total-reps" class="form-label rounds-label">Reps</label>
           </div>      
         </div>
@@ -98,14 +79,10 @@
       </div> 
     </div>
     <div class="form-flex-group margin-bottom-5px">
-      <div class="form-input-group">
-        <textarea class="form-input" name="workout-scaling" id="workout-scaling" placeholder="Scaling Options" ${workout.scalingdesc ? '' : 'disabled'}>${workout.scalingdesc ? workout.scalingdesc : ''}</textarea>
+      <div class="form-input-group flex-auto">
+        <textarea class="form-input" name="workout-scaling" id="workout-scaling" placeholder="Scaling Options">${workout.scalingdesc ? workout.scalingdesc : ''}</textarea>
         <label for="workout-scaling" class="form-label">Scaling Options</label>
       </div>
-      <label class="switch small form-group-label margin-left-5px">
-        <input type="checkbox" id="workout-scaling-switch" ${workout.scalingdesc ? 'checked' : ''}/>
-        <span class="slider small round"></span>
-      </label>
     </div>
     <div class="form-flex-group margin-bottom-5px block-with-border">
       <div class="block-with-border-label">Modality</div>
@@ -131,60 +108,6 @@
       <button type="button" id="workout-form-helper-save-new-workout-btn" class="submit-btn" ${workout.name && workout.description ? '' : 'disabled'}>Save Workout</button>
     </div>
     `;
-  };
-
-  let toggleWorkoutTimeCapFields = function () {
-    let timecapSwitch = document.querySelector('#workout-time-cap-switch');
-    let hourInput = document.querySelector('#workout-time-cap-hours');
-    let minuteInput = document.querySelector('#workout-time-cap-minutes');
-    let secondInput = document.querySelector('#workout-time-cap-seconds');
-    if (timecapSwitch.checked) {
-      enableField(hourInput);
-      enableField(minuteInput);
-      enableField(secondInput);
-    } else {
-      disableField(hourInput);
-      disableField(minuteInput);
-      disableField(secondInput);
-    }
-  };
-
-  /**
-   * Helper function to disable a field and set the value to empty string
-   * @param {*} name - field name
-   */
-  function disableField(name) {
-    name['disabled'] = true;
-    name['value'] = '';
-  }
-
-  /**
-   * Helper function to enable a field
-   * @param {*} name - field name
-   */
-  function enableField(name) {
-    name['disabled'] = false;
-  }
-
-  let toggleWorkoutRoundsFields = function () {
-    let workoutRoundsSwitch = document.querySelector('#workout-rounds-switch');
-    let workoutRoundsField = document.querySelector('#workout-rounds');
-
-    workoutRoundsSwitch.checked ? enableField(workoutRoundsField) : disableField(workoutRoundsField);
-  };
-
-  let toggleWorkoutTotalRepsFields = function () {
-    let workoutTotalRepsSwitch = document.querySelector('#workout-total-reps-switch');
-    let workoutTotalRepsField = document.querySelector('#workout-total-reps');
-
-    workoutTotalRepsSwitch.checked ? enableField(workoutTotalRepsField) : disableField(workoutTotalRepsField);
-  };
-
-  let toggleWorkoutScalingFields = function () {
-    let workoutScalingSwitch = document.querySelector('#workout-scaling-switch');
-    let workoutScalingField = document.querySelector('#workout-scaling');
-
-    workoutScalingSwitch.checked ? enableField(workoutScalingField) : disableField(workoutScalingField);
   };
 
   let enableSaveWorkoutBtn = function (event) {
@@ -248,9 +171,5 @@
 
   $hl.eventListener('input', 'workout-name', enableSaveWorkoutBtn);
   $hl.eventListener('input', 'workout-description', enableSaveWorkoutBtn);
-  $hl.eventListener('click', 'workout-time-cap-switch', toggleWorkoutTimeCapFields);
-  $hl.eventListener('click', 'workout-rounds-switch', toggleWorkoutRoundsFields);
-  $hl.eventListener('click', 'workout-total-reps-switch', toggleWorkoutTotalRepsFields);
-  $hl.eventListener('click', 'workout-scaling-switch', toggleWorkoutScalingFields);
   $hl.eventListener('click', 'workout-form-helper-save-new-workout-btn', handleSaveWorkoutEvent);
 })();

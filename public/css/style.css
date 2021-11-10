@@ -655,12 +655,9 @@ input[type='date'] {
   height: 90px;
   padding-top: 25px;
 }
+
+#workout-description,
 #workout-scaling {
-  width: 70vw;
-  height: 70px;
-  padding-top: 25px;
-}
-#workout-description {
   height: 120px;
   padding-top: 25px;
 }
