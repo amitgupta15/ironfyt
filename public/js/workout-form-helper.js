@@ -16,27 +16,25 @@
     let timecap = workout.timecap ? workout.timecap : {};
     return `
     <input type="hidden" name="workout-id" id="workout-id" value="${workout._id ? workout._id : ''}">
-    <div class="form-input-group margin-top-20px">
-      <input type="text" class="form-input" name="workout-name" maxlength="30" id="workout-name" placeholder="Workout Name" value="${workout.name ? workout.name : ''}" required autofocus>
-      <label for="workout-name" class="form-label">Workout Name</label>
+    <div class="margin-top-20px">
+      <label for="workout-name" class="form-label-classic">Workout Name</label>
+      <input type="text" class="form-input-classic" name="workout-name" maxlength="30" id="workout-name" placeholder="Fran" value="${workout.name ? workout.name : ''}" required autofocus>
     </div>
-    <div class="form-flex-group margin-top-5px">
-      <div class="form-flex-group block-with-border flex-auto">
-        <div class="block-with-border-label">Type</div>
-        <div class="form-input-group margin-top-10px">
-          <select class="form-input" name="workout-type" id="workout-type">
-            <option></option>
-            <option ${workout.type && workout.type.toLowerCase() === 'for time' ? 'selected' : workout.type === null ? 'selected' : ''}>For Time</option>
-            <option ${workout.type && workout.type.toLowerCase() === 'for load' ? 'selected' : ''}>For Load</option>
-            <option ${workout.type && workout.type.toLowerCase() === 'amrap' ? 'selected' : ''}>AMRAP</option>
-            <option ${workout.type && workout.type.toLowerCase() === 'for reps' ? 'selected' : ''}>For Reps</option>
-            <option ${workout.type && workout.type.toLowerCase() === 'tabata' ? 'selected' : ''}>Tabata</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-flex-group block-with-border margin-left-5px flex-auto">
-        <div class="block-with-border-label">Time Cap</div>
-        <div class="form-flex-group margin-top-10px">
+    <div class="margin-top-5px">
+      <label for="workout-type" class="form-label-classic">Type</label>
+      <select class="form-input-classic" name="workout-type" id="workout-type">
+        <option></option>
+        <option ${workout.type && workout.type.toLowerCase() === 'for time' ? 'selected' : workout.type === null ? 'selected' : ''}>For Time</option>
+        <option ${workout.type && workout.type.toLowerCase() === 'for load' ? 'selected' : ''}>For Load</option>
+        <option ${workout.type && workout.type.toLowerCase() === 'amrap' ? 'selected' : ''}>AMRAP</option>
+        <option ${workout.type && workout.type.toLowerCase() === 'for reps' ? 'selected' : ''}>For Reps</option>
+        <option ${workout.type && workout.type.toLowerCase() === 'tabata' ? 'selected' : ''}>Tabata</option>
+      </select>
+    </div>
+    <div class="flex">
+      <div class="margin-top-5px flex-auto">
+        <div class="form-label-classic">Time Cap</div>
+        <div class="form-flex-group margin-top-5px">
           <div class="form-input-group show-time-separator-right-3px">
             <input type="number" class="form-input duration-input margin-right-10px" name="workout-time-cap-hours" id="workout-time-cap-hours" min="0" max="240" placeholder="H" value="${timecap.hours ? timecap.hours : ''}" />
             <label for="workout-time-cap-hours" class="form-label duration-label">H</label>
@@ -51,58 +49,40 @@
           </div>
         </div>
       </div>
+      <div class="margin-top-5px margin-left-20px">
+        <label for="workout-rounds" class="form-label-classic">Total Rounds</label>
+        <input type="number" class="form-input-classic" name="workout-rounds" id="workout-rounds" placeholder="Rounds" value="${workout.rounds ? workout.rounds : ''}" >    
+      </div>      
     </div>
-    <div class="form-flex-group margin-top-5px">
-      <div class="form-flex-group block-with-border flex-auto">
-        <div class="block-with-border-label">Total Rounds</div>
-        <div class="form-flex-group margin-top-10px">
-          <div class="form-input-group">
-            <input type="number" class="form-input" name="workout-rounds" id="workout-rounds" placeholder="Rounds" value="${workout.rounds ? workout.rounds : ''}" >    
-            <label for="workout-rounds" class="form-label rounds-label">Rounds</label>
-          </div>      
-        </div>
-      </div>
-      <div class="form-flex-group block-with-border margin-left-5px flex-auto">
-        <div class="block-with-border-label">Total Reps</div>
-        <div class="form-flex-group margin-top-10px">
-          <div class="form-input-group">
-            <input type="number" class="form-input" name="workout-total-reps" id="workout-total-reps" placeholder="Reps" value="${workout.reps ? workout.reps : ''}">    
-            <label for="workout-total-reps" class="form-label rounds-label">Reps</label>
-          </div>      
-        </div>
-      </div>
-    </div>
-    <div class="form-flex-group margin-top-5px">
-      <div class="form-input-group flex-auto">
-        <textarea class="form-input" name="workout-description" id="workout-description" placeholder="Description" required>${workout.description ? workout.description : ''}</textarea>
-        <label for="workout-description" class="form-label">Description</label>
-      </div> 
-    </div>
-    <div class="form-flex-group margin-bottom-5px">
-      <div class="form-input-group flex-auto">
-        <textarea class="form-input" name="workout-scaling" id="workout-scaling" placeholder="Scaling Options">${workout.scalingdesc ? workout.scalingdesc : ''}</textarea>
-        <label for="workout-scaling" class="form-label">Scaling Options</label>
-      </div>
-    </div>
-    <div class="form-flex-group margin-bottom-5px block-with-border">
-      <div class="block-with-border-label">Modality</div>
+    <div class="margin-top-5px">
+      <div class="form-label-classic">Modality</div>
       <div class="form-flex-group margin-top-5px">
         <label class="switch small">
           <input type="checkbox" id="workout-modality-m" name="workout-modality" value="m" ${workout.modality && workout.modality.indexOf('m') > -1 ? 'checked' : ''}/>
           <span class="slider small round"></span>
         </label>
-        <div class="workout-modality-text">Cardio</div>
+        <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-cardio"><span class="modality-m"></span>Cardio</div>
         <label class="switch small">
           <input type="checkbox" id="workout-modality-g" name="workout-modality" value="g" ${workout.modality && workout.modality.indexOf('g') > -1 ? 'checked' : ''}/>
           <span class="slider small round"></span>
         </label>
-        <div class="workout-modality-text">Body Weight</div>
+        <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-body-weight"><span class="modality-g"></span>Body Weight</div>
         <label class="switch small">
           <input type="checkbox" id="workout-modality-w" name="workout-modality" value="w" ${workout.modality && workout.modality.indexOf('w') > -1 ? 'checked' : ''}/>
           <span class="slider small round"></span>
         </label>
-        <div class="workout-modality-text">Weights</div>
+        <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-weights"><span class="modality-w flex-align-self-center"></span>Weights</div>
       </div>
+    </div>
+    <div class="margin-top-5px">
+      <label for="workout-description" class="form-label-classic">Description</label>
+      <textarea class="form-input-classic" name="workout-description" id="workout-description" placeholder="Workout Description..." required>${workout.description ? workout.description : ''}</textarea>
+      <div class="form-input-group flex-auto">
+      </div> 
+    </div>
+    <div class="margin-top-5px">
+      <label for="workout-scaling" class="form-label-classic">Scaling Options</label>
+      <textarea class="form-input-classic" name="workout-scaling" id="workout-scaling" placeholder="Scaling Options">${workout.scalingdesc ? workout.scalingdesc : ''}</textarea>
     </div>
     <div class="submit-btn-bar margin-top-5px">
       <button type="button" id="workout-form-helper-save-new-workout-btn" class="submit-btn" ${workout.name && workout.description ? '' : 'disabled'}>Save Workout</button>
@@ -135,7 +115,6 @@
     let workoutTimeCapMinutesField = document.getElementById('workout-time-cap-minutes');
     let workoutTimeCapSecondsField = document.getElementById('workout-time-cap-seconds');
     let workoutRoundsField = document.getElementById('workout-rounds');
-    let workoutTotalRepsField = document.getElementById('workout-total-reps');
     let workoutScalingField = document.getElementById('workout-scaling');
     let workoutModality = document.getElementsByName('workout-modality');
     let workoutId = document.getElementById('workout-id');
@@ -149,7 +128,6 @@
     workout.timecap.minutes = workoutTimeCapMinutesField.value !== '' ? parseInt(workoutTimeCapMinutesField.value) : null;
     workout.timecap.seconds = workoutTimeCapSecondsField.value !== '' ? parseInt(workoutTimeCapSecondsField.value) : null;
     workout.rounds = workoutRoundsField.value !== '' ? parseInt(workoutRoundsField.value) : null;
-    workout.reps = workoutTotalRepsField.value !== '' ? parseInt(workoutTotalRepsField.value) : null;
     workout.scalingdesc = workoutScalingField.value !== '' ? $hl.sanitize(workoutScalingField.value) : null;
     workout.user_id = user._id;
     workout._id = workoutId.value !== '' ? workoutId.value : null;
