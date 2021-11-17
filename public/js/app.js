@@ -128,6 +128,13 @@
     });
   };
 
+  $ironfyt.parseWorkoutDescription = function (workout, callback) {
+    let headers = getAuthHeader();
+    fetch.post(`/api/parseworkout`, { headers, data: workout }, function (error, response) {
+      validateReponse(error, response, callback);
+    });
+  };
+
   /**
    * This methods builds the HTML for a page. It encapsulates the common page elements such as header, footer and takes a pageTemplate parameter that
    * holds the main content for the page

@@ -72,6 +72,10 @@
     callback();
   });
 
+  let parseWorkoutDescription = (app.parseWorkoutDescription = function (params, callback) {
+    callback();
+  });
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -111,6 +115,7 @@
       app.getGroup = getGroup;
       app.saveGroupWod = saveGroupWod;
       app.getMovementPr = getMovementPr;
+      app.parseWorkoutDescription = parseWorkoutDescription;
 
       // Reset the selector on every $test call
       let selector = document.querySelector('#selector');

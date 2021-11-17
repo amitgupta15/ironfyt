@@ -81,7 +81,6 @@ workout.get = (req, res) => {
       });
   }
 };
-
 workout.post = (req, res) => {
   let { tokenpayload, buffer } = req;
   let user = tokenpayload.user;
