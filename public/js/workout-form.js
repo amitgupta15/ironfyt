@@ -1,6 +1,11 @@
 (function () {
   'use strict';
-  let movements = [{ movement: 'Hang Power Clean', reps: [10, 8, 6, 4, 2] }];
+  let movements = [
+    { movement: 'Hang Power Clean', reps: [10, 8, 6, 4, 2] },
+    { movement: 'Shoulder Press', reps: [10, 8, 6, 4, 2] },
+    { movement: 'Deadlift', reps: [10, 8, 6, 4, 2] },
+    { movement: 'Double-Unders', reps: 20 },
+  ];
 
   let workoutFormTemplate = function (props) {
     if (props.showReviewMovementsDialog) {
@@ -15,200 +20,43 @@
     }
   };
 
+  let repsRowTemplate = (attr, index, repsIndex) => {
+    let { reps } = attr;
+    return `
+    <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
+      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+        ${repsIndex === 0 ? `<label for="wolog-movement-reps-${index}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
+        <input type="number" class="form-input-classic" name="wolog-movement-reps-${index}-${repsIndex}" id="wolog-movement-reps-${index}-${repsIndex}" value="${reps}" placeholder="Reps">    
+      </div>      
+      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+        ${repsIndex === 0 ? `<label for="wolog-movement-load-${index}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
+        <input type="number" class="form-input-classic" name="wolog-movement-load-${index}-${repsIndex}" id="wolog-movement-load-${index}-${repsIndex}" value="135" placeholder="Load">
+      </div>
+      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+        ${repsIndex === 0 ? `<label for="wolog-movement-unit-${index}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
+        <select class="form-input-classic" name="wolog-movement-unit-${index}-${repsIndex}" id="wolog-movement-unit-${index}-${repsIndex}">
+          <option value=""></option>
+          <option value="lb" selected>lb</option>
+          <option value="kg">kg</option>
+        </select>
+      </div>
+      <div class="margin-top-30px">
+        <button type="button" class="copy-btn" id="copy-movement-${index}-${repsIndex}"></button>
+        <button type="button" class="remove-btn" id="delete-movement-${index}-${repsIndex}"></button>
+      </div>
+    </div>`;
+  };
   let reviewMovementsDialogTemplate = function (props) {
     return `
       <div class="container">
-      ${movements.map((movement) => {
-        console.log(movement.reps);
-        return `
+      ${movements
+        .map((movement, index) => {
+          return `
             <!--===== Movement Name =====-->
-            <div id="wolog-movement-data-$index" data-id="">${movement.movement}</div>`;
-      })}
-        
-        <!--===== First row with labels =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="margin-top-10px flex-basis-80px">
-            <label for="wolog-movement-reps-$index" class="form-label-classic">Reps</label>
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="5" placeholder="Reps">    
-          </div>      
-          <div class="margin-top-10px flex-basis-80px">  
-            <label for="wolog-movement-load-$index" class="form-label-classic">Load</label>
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="margin-top-10px flex-basis-80px">
-            <label for="wolog-movement-unit-$index" class="form-label-classic">Unit</label>
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div class="margin-top-30px">
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="5" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="3" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="3" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="3" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="1" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="1" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="1" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-        <!--===== No labels after first row =====-->
-        <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
-          <div class="flex-basis-80px">
-            <input type="number" class="form-input-classic" name="wolog-movement-reps-$index" id="wolog-movement-reps-$index" value="1" placeholder="Reps">    
-          </div>      
-          <div class="flex-basis-80px">  
-            <input type="number" class="form-input-classic" name="wolog-movement-load-$index" id="wolog-movement-load-$index" value="135" placeholder="Load">
-          </div>
-          <div class="flex-basis-80px">
-            <select class="form-input-classic" name="wolog-movement-unit-$index" id="wolog-movement-unit-$index">
-              <option value=""></option>
-              <option value="lb" selected>lb</option>
-              <option value="kg">kg</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" class="copy-btn" id="copy-movement-$index"></button>
-            <button type="button" class="remove-btn" id="delete-movement-$index"></button>
-          </div>
-        </div>
-      </div>`;
+            <div id="wolog-movement-data-${index}" class="${index > 0 ? 'margin-top-10px' : ''}" data-id="">${movement.movement}</div>
+            ${Array.isArray(movement.reps) ? movement.reps.map((reps, repsIndex) => repsRowTemplate({ reps }, index, repsIndex)).join('') : repsRowTemplate({ reps: movement.reps }, index, 0)}`;
+        })
+        .join('')}`;
   };
 
   let component = ($ironfyt.workoutFormComponent = Component('[data-app=workout-form]', {
