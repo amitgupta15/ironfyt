@@ -265,10 +265,11 @@
   let topBarTemplate = function (props) {
     let user = props && props.user ? props.user : {};
     let pageTitle = props && props.pageTitle ? props.pageTitle : '';
+    let leftButtonTitle = props && props.leftButtonTitle ? props.leftButtonTitle : '';
     return `
     <div class="top-bar">
       <div class="top-bar-menu">
-        <a href="/" class="home-menu-link">Home</a>
+        ${leftButtonTitle.toLowerCase() === 'back' ? `<a href="javascript: history.go(-1)" class="topbar-back-btn">Back</a>` : '<a href="/" class="home-menu-link">Home</a>'}
       </div>
       ${pageTitle === 'logo' ? `<img src="images/logo/IronFytLogo.svg" class="top-bar-logo">` : `<h3 class="text-color-primary margin-top-5px">${pageTitle}</h3>`}
       <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>

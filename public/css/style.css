@@ -203,10 +203,13 @@ input[type='number'] {
 
 .top-bar > div:first-of-type {
   padding-left: 10px;
+  width: 20%;
 }
 
 .top-bar > div:last-of-type {
   padding-right: 10px;
+  width: 20%;
+  text-align: right;
 }
 
 .profile-icon {
@@ -491,7 +494,8 @@ input[type='number'] {
   position: relative;
 }
 
-.form-input {
+.form-input,
+.form-input-timecap {
   height: 52px;
   width: 100%;
   box-sizing: border-box;
@@ -508,19 +512,22 @@ input[type='number'] {
   text-shadow: none;
 }
 
-.form-input:disabled {
+.form-input:disabled,
+.form-input-timecap:disabled {
   background-color: var(--border-color);
 }
 
 .form-input:focus,
-.form-input:active {
+.form-input:active,
+.form-input-timecap:focus,
+.form-input-timecap:active {
   outline: none;
   border-radius: 5px;
   /* border: 1px solid var(--main-color); */
 }
 .duration-input {
   padding-left: 0;
-  width: 52px;
+  width: 52px !important;
   text-align: center;
   margin-right: 15px;
 }
@@ -530,7 +537,8 @@ input[type='number'] {
   width: 70px;
 }
 
-.form-input::placeholder {
+.form-input::placeholder,
+.form-input-timecap::placeholder {
   visibility: hidden;
 }
 
@@ -539,6 +547,16 @@ input[type='number'] {
   top: 17px;
   left: 5px;
   color: var(--theme);
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+  font-size: var(--big-font-size);
+}
+.form-label-timecap {
+  position: absolute;
+  top: 17px;
+  left: 5px;
+  color: var(--secondary-color);
   transition: 0.2s ease all;
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all;
@@ -579,6 +597,13 @@ input[type='number'] {
 .form-input:focus ~ label,
 .form-input:not(:placeholder-shown) ~ label {
   color: var(--theme);
+  top: 5px;
+  font-size: var(--normal-font-size);
+}
+
+.form-input-timecap:focus ~ label,
+.form-input-timecap:not(:placeholder-shown) ~ label {
+  color: var(--secondary-color);
   top: 5px;
   font-size: var(--normal-font-size);
 }
@@ -669,7 +694,11 @@ input[type='date'] {
   padding-top: 25px;
 }
 
-#workout-description,
+#workout-description {
+  height: 300px;
+  padding-top: 5px;
+}
+
 #workout-scaling {
   height: 120px;
   padding-top: 5px;
@@ -1239,4 +1268,27 @@ a.workout-history-link::before {
   color: var(--theme);
   font-size: var(--big-font-size);
   margin-bottom: 5px;
+}
+
+.video-link {
+  display: inline-block;
+  background: url(../images/smart_display_black_24dp.svg);
+  background-size: cover;
+  width: 24px;
+  height: 24px;
+  border: none;
+  color: transparent;
+  position: relative;
+}
+
+.topbar-back-btn {
+  text-decoration: none;
+  display: inline-block;
+  color: var(--link-color);
+  font-size: 1.1rem;
+}
+
+.topbar-back-btn::before {
+  content: '\003C';
+  padding-right: 5px;
 }
