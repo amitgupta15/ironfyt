@@ -1,17 +1,17 @@
 (function () {
   'use strict';
 
-  let movements = [
-    { movement: 'Thrusters', reps: [45, 35, 25, 15, 5] },
-    { movement: 'Pull-ups', reps: 45 },
-  ];
+  // let movements = [
+  //   { movement: 'Thrusters', reps: [45, 35, 25, 15, 5] },
+  //   { movement: 'Pull-ups', reps: 45 },
+  // ];
   let repsRowTemplate = (attr, index, repsIndex) => {
     let { reps } = attr;
     return `
     <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
         ${repsIndex === 0 ? `<label for="wolog-movement-reps-${index}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
-        <input type="number" class="form-input-classic" name="wolog-movement-reps-${index}-${repsIndex}" id="wolog-movement-reps-${index}-${repsIndex}" value="${reps}" placeholder="Reps">    
+        <input type="number" class="form-input-classic" name="wolog-movement-reps-${index}-${repsIndex}" id="wolog-movement-reps-${index}-${repsIndex}" value="${reps ? reps : ''}" placeholder="Reps">    
       </div>      
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
         ${repsIndex === 0 ? `<label for="wolog-movement-load-${index}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
@@ -35,19 +35,16 @@
   let workoutFormReviewTemplate = function (props) {
     let workout = props && props.workout ? props.workout : {};
     let timecap = workout.timecap ? workout.timecap : {};
-    console.log(workout.type);
+    let movements = workout.movements ? workout.movements : [];
     return `
     <div class="container">
       <div class="text-align-center bold-text">Review & Add Details</div>
       <div class="text-align-center text-color-secondary">Step 2 of 2</div>
       <div class="text-color-highlight margin-top-20px">Name</div>
-      <div>Fran</div>
+      <div>${workout.name ? workout.name : ''}</div>
       <div class="text-color-highlight margin-top-10px">Description</div>
       <div>
-      21-15-9<br/><br/>
-      Thrusters <a href=""><img class="movie-icon" src="images/smart_display_black_24dp.svg"></a><br/>
-      Pull-ups <a href=""><img class="movie-icon" src="images/smart_display_black_24dp.svg"></a><br/><br/>
-      Male: 95 lb. Female: 65 lb.
+      ${workout.description ? $hl.replaceNewLineWithBR(workout.description) : ''}
       </div>
       <form id="workout-form-review">
         <div class="margin-top-10px">
@@ -110,7 +107,7 @@
             return `
             <div class="rounded-corner-box margin-top-5px">
               <div class="form-flex-group">
-                <div id="wolog-movement-data-${index}" data-id="">${movement.movement}</div>
+                <div id="wolog-movement-data-${index}" data-id="">${movement.movement.movement}</div>
                 <button type="button" class="remove-btn margin-left-5px" id="delete-movement-${index}"></button>
               </div>
               ${Array.isArray(movement.reps) ? movement.reps.map((reps, repsIndex) => repsRowTemplate({ reps }, index, repsIndex)).join('') : repsRowTemplate({ reps: movement.reps }, index, 0)}
@@ -144,7 +141,26 @@
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
         let user = auth.user;
+        let workout = localStorage.getItem('newworkout');
+        if (workout === null) {
+          //If no workout is found in the localstorage, then send the user back to the workout form page
+          $ironfyt.navigateToUrl(`workout-form.html`);
+        } else {
+          workout = JSON.parse(workout);
+        }
         component.setState({ user });
+        $ironfyt.getMovements({}, function (error, response) {
+          if (error) {
+            component.setState({ error });
+          } else {
+            let movements = response && response.movements ? response.movements : [];
+            let parsedWorkout = $ironfyt.parseWorkout(workout.description, movements);
+            console.log(parsedWorkout);
+            workout.description = parsedWorkout.workoutDesc;
+            workout.movements = parsedWorkout.parsedMovements;
+            component.setState({ movements, workout });
+          }
+        });
       } else {
         component.setState({ error });
       }

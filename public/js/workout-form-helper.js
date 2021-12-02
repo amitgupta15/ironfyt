@@ -137,15 +137,9 @@
       if (workoutModality[i].checked) workout.modality.push(workoutModality[i].value);
     }
 
-    $ironfyt.parseWorkoutDescription(workout, function (error, response) {
-      let { parsedMovements, workoutDesc, parsedLoadInfo } = response;
-      workout.description = workoutDesc;
-      callback(error, { workout, parsedMovements });
+    $ironfyt.saveWorkout(workout, function (error, response) {
+      callback(error, response);
     });
-
-    // $ironfyt.saveWorkout(workout, function (error, response) {
-    //   callback(error, response);
-    // });
   };
 
   let handleSaveWorkoutEvent = function (event) {

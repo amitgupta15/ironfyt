@@ -694,8 +694,8 @@ input[type='date'] {
   padding-top: 25px;
 }
 
-#workout-description {
-  height: 300px;
+.workout-description {
+  height: 300px !important;
   padding-top: 5px;
 }
 
@@ -930,10 +930,6 @@ textarea {
   width: 39vw;
 }
 
-input:required,
-textarea:required {
-  border: 1px solid red;
-}
 input:valid,
 textarea:valid {
   /* border: 1px solid var(--main-color); */
