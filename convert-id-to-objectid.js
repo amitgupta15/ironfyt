@@ -460,6 +460,8 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //   });
   // });
 
+  // Test the parse workout code
+  /*
   let { parseWorkout } = require('./helpers/parse-workout-desc');
   db.collection('workouts')
     .find({})
@@ -484,4 +486,6 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
           console.log(workout.movements);
         });
     });
+    */
+  // db.collection('users').updateMany({}, [{ $set: { gender: 'm' } }]);
 });

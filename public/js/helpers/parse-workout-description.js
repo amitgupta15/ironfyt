@@ -222,7 +222,7 @@
       let regex = new RegExp(sortedMovements[i].regexTerms.join(' '), 'gim');
       let match = sanitizedDescription.match(regex);
       if (match) {
-        parsedMovements.push({ reps, load: null, unit: [], movement: sortedMovements[i] });
+        parsedMovements.push({ reps, load: null, unit: [], movementObj: sortedMovements[i] });
         //Add the match array, movement to replace the match with and the index to matches array. This information will be used shortly to format the description
         //This method is helpful because you may have multiple matches for the same movement. match: ['rope climb','rope climb']. All match occurrances will
         //need to be replaced with the movement.

@@ -15,6 +15,7 @@
    * have unwanted side effects
    */
   let localStroageSetItem = (localStorage.setItem = function () {});
+  let localStorageGetItem = (localStorage.getItem = function () {});
   let navigateToUrl = (app.navigateToUrl = function () {});
   let logout = (app.logout = function () {});
   let login = (app.login = function (loginInfo, callback) {
@@ -76,6 +77,8 @@
     callback();
   });
 
+  let parseWorkout = (app.parseWorkout = function (a, b) {});
+
   let teardownComponents = function () {
     for (var key in app) {
       if (app.hasOwnProperty(key) && app[key] instanceof Component) {
@@ -96,6 +99,7 @@
 
       teardownComponents();
       localStorage.setItem = localStroageSetItem;
+      localStorage.getItem = localStorageGetItem;
       app.navigateToUrl = navigateToUrl;
       app.login = login;
       app.logout = logout;
@@ -116,6 +120,7 @@
       app.saveGroupWod = saveGroupWod;
       app.getMovementPr = getMovementPr;
       app.parseWorkoutDescription = parseWorkoutDescription;
+      app.parseWorkout = parseWorkout;
 
       // Reset the selector on every $test call
       let selector = document.querySelector('#selector');

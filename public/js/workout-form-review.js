@@ -1,33 +1,32 @@
 (function () {
   'use strict';
 
-  // let movements = [
-  //   { movement: 'Thrusters', reps: [45, 35, 25, 15, 5] },
-  //   { movement: 'Pull-ups', reps: 45 },
-  // ];
-  let repsRowTemplate = (attr, index, repsIndex) => {
-    let { reps } = attr;
+  let repsRowTemplate = (attr, movementIndex, repsIndex) => {
+    let { reps, movementObj } = attr;
+    let units = movementObj && movementObj.units ? movementObj.units : [];
+    let repsNum = reps && reps.reps ? reps.reps : '';
+    let repsLoad = reps && reps.load ? reps.load : '';
+    let repsUnit = reps && reps.unit ? reps.unit : '';
     return `
     <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
-        ${repsIndex === 0 ? `<label for="wolog-movement-reps-${index}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
-        <input type="number" class="form-input-classic" name="wolog-movement-reps-${index}-${repsIndex}" id="wolog-movement-reps-${index}-${repsIndex}" value="${reps ? reps : ''}" placeholder="Reps">    
+        ${repsIndex === 0 ? `<label for="workout-movement-reps-${movementIndex}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
+        <input type="number" class="form-input-classic" name="workout-movement-reps-${movementIndex}-${repsIndex}" id="workout-movement-reps-${movementIndex}-${repsIndex}" value="${repsNum}" placeholder="">    
       </div>      
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
-        ${repsIndex === 0 ? `<label for="wolog-movement-load-${index}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
-        <input type="number" class="form-input-classic" name="wolog-movement-load-${index}-${repsIndex}" id="wolog-movement-load-${index}-${repsIndex}" value="135" placeholder="Load">
+        ${repsIndex === 0 ? `<label for="workout-movement-load-${movementIndex}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
+        <input type="number" class="form-input-classic" name="workout-movement-load-${movementIndex}-${repsIndex}" id="workout-movement-load-${movementIndex}-${repsIndex}" value="${repsLoad}" placeholder="">
       </div>
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
-        ${repsIndex === 0 ? `<label for="wolog-movement-unit-${index}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
-        <select class="form-input-classic" name="wolog-movement-unit-${index}-${repsIndex}" id="wolog-movement-unit-${index}-${repsIndex}">
+        ${repsIndex === 0 ? `<label for="workout-movement-unit-${movementIndex}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
+        <select class="form-input-classic" name="workout-movement-unit-${movementIndex}-${repsIndex}" data-movement-index="${movementIndex}" id="workout-movement-unit-${movementIndex}-${repsIndex}">
           <option value=""></option>
-          <option value="lb" selected>lb</option>
-          <option value="kg">kg</option>
+          ${units.map((unit) => `<option value="${unit}" ${unit === repsUnit ? 'selected' : ''}>${unit}</option>`)}
         </select>
       </div>
-      <div class="margin-top-30px">
-        <button type="button" class="copy-btn" id="copy-movement-${index}-${repsIndex}"></button>
-        <button type="button" class="remove-btn" id="delete-movement-${index}-${repsIndex}"></button>
+      <div class="${repsIndex === 0 ? 'margin-top-30px' : ''}">
+        <button type="button" class="copy-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="copy-movement-reps-${movementIndex}-${repsIndex}"></button>
+        <button type="button" class="remove-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="delete-movement-reps-${movementIndex}-${repsIndex}"></button>
       </div>
     </div>`;
   };
@@ -99,18 +98,19 @@
           </div>
         </div>
         <div class="margin-top-10px">
-          <label for="wolog-add-movement" class="form-label-classic">Movements</label>
-          <input class="form-input-classic" name="wolog-add-movement" id="wolog-add-movement" placeholder="Find movement to add..."/>
+          <label for="workout-add-movement" class="form-label-classic">Movements</label>
+          <input class="form-input-classic" name="workout-add-movement" id="workout-add-movement" placeholder="Find movement to add..."/>
         </div>
         ${movements
-          .map((movement, index) => {
+          .map((movement, movementIndex) => {
+            let reps = movement.reps ? movement.reps : [];
             return `
             <div class="rounded-corner-box margin-top-5px">
               <div class="form-flex-group">
-                <div id="wolog-movement-data-${index}" data-id="">${movement.movement.movement}</div>
-                <button type="button" class="remove-btn margin-left-5px" id="delete-movement-${index}"></button>
+                <div id="workout-movement-data-${movementIndex}">${movement && movement.movementObj ? movement.movementObj.movement : ''}</div>
+                <button type="button" class="remove-btn margin-left-5px"  data-workout-movement-index="${movementIndex}" id="delete-workout-movement-${movementIndex}"></button>
               </div>
-              ${Array.isArray(movement.reps) ? movement.reps.map((reps, repsIndex) => repsRowTemplate({ reps }, index, repsIndex)).join('') : repsRowTemplate({ reps: movement.reps }, index, 0)}
+              ${reps.map((reps, repsIndex) => repsRowTemplate({ reps, movementObj: movement.movementObj }, movementIndex, repsIndex)).join('')}
             </div>
             `;
           })
@@ -127,26 +127,125 @@
     state: {
       user: {},
       error: '',
-      validationError: {},
       workout: $ironfyt.newWorkout,
       pageTitle: 'New Workout',
       leftButtonTitle: 'Back',
+      movements: [],
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutFormReviewTemplate);
     },
+    afterRender: function (props) {
+      setDefaultModality(props);
+    },
   }));
+
+  /**
+   * Creates a workout obj from form fields
+   *
+   */
+  let createWorkoutObjFromFields = function () {
+    let typeInputField = document.getElementById('workout-type');
+    let hourInputField = document.getElementById('workout-time-cap-hours');
+    let minuteInputField = document.getElementById('workout-time-cap-minutes');
+    let secondInputField = document.getElementById('workout-time-cap-seconds');
+    let modalityRadios = document.getElementsByName('workout-modality');
+
+    let state = component.getState();
+    let workout = state && state.workout ? state.workout : {};
+    workout.type = typeInputField ? typeInputField.value : '';
+    workout.duration = {
+      hours: hourInputField ? parseInt(hourInputField.value) : 0,
+      minutes: minuteInputField ? parseInt(minuteInputField.value) : 0,
+      seconds: secondInputField ? parseInt(secondInputField.value) : 0,
+    };
+
+    workout.modality = [];
+    if (modalityRadios) {
+      for (var i = 0; i < modalityRadios.length; i++) {
+        if (modalityRadios[i].checked) workout.modality.push(modalityRadios[i].value);
+      }
+    }
+
+    let movements = workout.movements ? workout.movements : [];
+    movements.forEach((movement, movementIndex) => {
+      movement.reps.forEach((rep, repsIndex) => {
+        rep.reps = document.getElementById(`workout-movement-reps-${movementIndex}-${repsIndex}`).value;
+        rep.load = document.getElementById(`workout-movement-load-${movementIndex}-${repsIndex}`).value;
+        rep.unit = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`).value;
+      });
+    });
+    workout.movements = movements;
+    return workout;
+  };
+  /**
+   * Creates a new row of movement reps
+   * @param {Event} event
+   */
+  let copyMovementReps = function (event) {
+    let workout = createWorkoutObjFromFields();
+    let movementIndex = parseInt(event.target.dataset.movementIndex);
+    let repsIndex = parseInt(event.target.dataset.repsIndex);
+    let movement = workout.movements ? workout.movements[movementIndex] : {};
+    let rep = movement.reps[repsIndex];
+    //createWorkoutObjFromFields() method will already update the movement.reps array with the latest values from the fields.
+    //Get the rep object for the specified index and copy it to the index right after the current rep object
+    movement.reps.splice(repsIndex + 1, 0, rep);
+    component.setState({ workout });
+  };
+
+  /**
+   * Deletes the specified reps row from the movement.
+   * @param {Event} event
+   */
+  let deleteMovementReps = function (event) {
+    let workout = createWorkoutObjFromFields();
+    let movementIndex = parseInt(event.target.dataset.movementIndex);
+    let repsIndex = parseInt(event.target.dataset.repsIndex);
+    let movement = workout.movements ? workout.movements[movementIndex] : {};
+    movement.reps.splice(repsIndex, 1);
+    component.setState({ workout });
+  };
+
+  /**
+   * Deletes the specified movement from the workout form
+   * @param {Event} event
+   */
+  let deleteMovement = function (event) {
+    let workout = createWorkoutObjFromFields();
+    let movementIndex = parseInt(event.target.dataset.workoutMovementIndex);
+    let movements = workout.movements ? workout.movements : [];
+    movements.splice(movementIndex, 1);
+    component.setState({ workout });
+  };
+  /**
+   * Check the modality of the parsed movements and set the default modality of the workout
+   * @param {Object} props
+   */
+  let setDefaultModality = function (props) {
+    let workout = props && props.workout ? props.workout : {};
+    let movements = workout.movements ? workout.movements : [];
+    let modalities = new Set();
+    movements.forEach((movement) => {
+      modalities.add(movement.movementObj.modality);
+    });
+    if (modalities.size) {
+      modalities.forEach((modality) => {
+        document.getElementById(`workout-modality-${modality}`).checked = true;
+      });
+    }
+  };
 
   ($ironfyt.workoutFormReviewPage = function () {
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
-        let user = auth.user;
+        let user = auth && auth.user ? auth.user : {};
         let workout = localStorage.getItem('newworkout');
         if (workout === null) {
           //If no workout is found in the localstorage, then send the user back to the workout form page
           $ironfyt.navigateToUrl(`workout-form.html`);
         } else {
-          workout = JSON.parse(workout);
+          workout = workout ? JSON.parse(workout) : {};
         }
         component.setState({ user });
         $ironfyt.getMovements({}, function (error, response) {
@@ -155,9 +254,20 @@
           } else {
             let movements = response && response.movements ? response.movements : [];
             let parsedWorkout = $ironfyt.parseWorkout(workout.description, movements);
-            console.log(parsedWorkout);
-            workout.description = parsedWorkout.workoutDesc;
-            workout.movements = parsedWorkout.parsedMovements;
+            let parsedMovements = parsedWorkout && parsedWorkout.parsedMovements ? parsedWorkout.parsedMovements : [];
+            //Sanitize the reps information before adding it to the workout. Movement and reps info should be in the format
+            // {movementObj: {}, reps:[{reps:1,load:1,unit:lb}]}
+            parsedMovements = parsedMovements.map((movement) => {
+              let reps = [];
+              if (Array.isArray(movement.reps)) {
+                movement.reps.forEach((rep) => reps.push({ reps: rep, load: null, unit: null }));
+              } else {
+                reps = [{ reps: movement.reps, load: null, unit: null }];
+              }
+              return { movementObj: movement.movementObj, reps };
+            });
+            workout.description = parsedWorkout && parsedWorkout.workoutDesc ? parsedWorkout.workoutDesc : '';
+            workout.movements = parsedMovements;
             component.setState({ movements, workout });
           }
         });
@@ -166,4 +276,36 @@
       }
     });
   })();
+
+  document.addEventListener('change', function (event) {
+    //Check if the unit of the first rep for a given movement is changed. If it is changed, then change the rest of the units for the movement to the
+    //same unit
+    let wologMovementUnitRegex = new RegExp(/^wolog-movement-unit-\d+-0/g);
+    if (wologMovementUnitRegex.test(event.target.id)) {
+      let unit = event.target.value;
+      let movementIndex = event.target.dataset.movementIndex;
+      let unitSelectors = document.querySelectorAll(`[id^="wolog-movement-unit-${movementIndex}"]`);
+      unitSelectors.forEach((selector) => (selector.value = unit));
+    }
+  });
+
+  document.addEventListener('click', function (event) {
+    //Copy reps row of a movement
+    let copyMovementRepsRegex = new RegExp(/^copy-movement-reps-\d+-\d+/g);
+    if (copyMovementRepsRegex.test(event.target.id)) {
+      copyMovementReps(event);
+    }
+
+    //Delete reps row of a movement
+    let deleteMovementRepsRegex = new RegExp(/^delete-movement-reps-\d+-\d+/g);
+    if (deleteMovementRepsRegex.test(event.target.id)) {
+      deleteMovementReps(event);
+    }
+
+    //Delete a movement
+    let deleteMovementRegex = new RegExp(/^delete-workout-movement-\d+/g);
+    if (deleteMovementRegex.test(event.target.id)) {
+      deleteMovement(event);
+    }
+  });
 })();

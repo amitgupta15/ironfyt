@@ -63,7 +63,7 @@
         if (workout === null) {
           workout = newPlaceholderWorkout;
         } else {
-          workout = JSON.parse(workout);
+          workout = workout && typeof workout === 'string' ? JSON.parse(workout) : {};
         }
         component.setState({ user, workout });
       } else {
