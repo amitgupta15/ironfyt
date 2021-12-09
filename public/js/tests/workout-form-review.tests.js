@@ -21,7 +21,7 @@
       description: '21 15 9\nThrusters\nPull-ups',
       movements: [
         {
-          movementObj: { movement: 'Thruster' },
+          movementObj: { movement: 'Thruster', units: ['lb', 'kg'] },
           reps: [
             { reps: 45, load: null, unit: null },
             { reps: 50, load: null, unit: null },

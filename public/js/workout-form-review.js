@@ -12,18 +12,24 @@
       <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
         ${repsIndex === 0 ? `<label for="workout-movement-reps-${movementIndex}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
         <input type="number" class="form-input-classic" name="workout-movement-reps-${movementIndex}-${repsIndex}" id="workout-movement-reps-${movementIndex}-${repsIndex}" value="${repsNum}" placeholder="">    
-      </div>      
-      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
-        ${repsIndex === 0 ? `<label for="workout-movement-load-${movementIndex}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
-        <input type="number" class="form-input-classic" name="workout-movement-load-${movementIndex}-${repsIndex}" id="workout-movement-load-${movementIndex}-${repsIndex}" value="${repsLoad}" placeholder="">
       </div>
-      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
-        ${repsIndex === 0 ? `<label for="workout-movement-unit-${movementIndex}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
-        <select class="form-input-classic" name="workout-movement-unit-${movementIndex}-${repsIndex}" data-movement-index="${movementIndex}" id="workout-movement-unit-${movementIndex}-${repsIndex}">
-          <option value=""></option>
-          ${units.map((unit) => `<option value="${unit}" ${unit === repsUnit ? 'selected' : ''}>${unit}</option>`)}
-        </select>
-      </div>
+      ${
+        units.length
+          ? `
+          <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+            ${repsIndex === 0 ? `<label for="workout-movement-load-${movementIndex}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
+            <input type="number" class="form-input-classic" name="workout-movement-load-${movementIndex}-${repsIndex}" id="workout-movement-load-${movementIndex}-${repsIndex}" value="${repsLoad}" placeholder="">
+          </div>
+          <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+            ${repsIndex === 0 ? `<label for="workout-movement-unit-${movementIndex}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
+            <select class="form-input-classic" name="workout-movement-unit-${movementIndex}-${repsIndex}" data-movement-index="${movementIndex}" id="workout-movement-unit-${movementIndex}-${repsIndex}">
+              <option value=""></option>
+              ${units.map((unit) => `<option value="${unit}" ${unit === repsUnit ? 'selected' : ''}>${unit}</option>`)}
+            </select>
+          </div>
+      `
+          : ``
+      }  
       <div class="${repsIndex === 0 ? 'margin-top-30px' : ''}">
         <button type="button" class="copy-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="copy-movement-reps-${movementIndex}-${repsIndex}"></button>
         <button type="button" class="remove-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="delete-movement-reps-${movementIndex}-${repsIndex}"></button>
@@ -118,7 +124,7 @@
           })
           .join('')}
         <div class="submit-btn-bar margin-top-5px">
-          <button type="button" id="new-workout-save-btn" class="submit-btn">Create Workout</button>
+          <button type="button" id="new-workout-save-btn" class="submit-btn">${workout._id ? 'Update Workout' : 'Create Workout'}</button>
         </div>
       </form>
     </div>
@@ -212,12 +218,12 @@
     let movements = workout.movements ? workout.movements : [];
     movements.forEach((movement, movementIndex) => {
       movement.reps.forEach((rep, repsIndex) => {
-        let reps = document.getElementById(`workout-movement-reps-${movementIndex}-${repsIndex}`).value;
-        let load = document.getElementById(`workout-movement-load-${movementIndex}-${repsIndex}`).value;
-        let unit = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`).value;
-        rep.reps = reps !== '' ? reps : null;
-        rep.load = load !== '' ? load : null;
-        rep.unit = unit !== '' ? unit : null;
+        let repsField = document.getElementById(`workout-movement-reps-${movementIndex}-${repsIndex}`);
+        let loadField = document.getElementById(`workout-movement-load-${movementIndex}-${repsIndex}`);
+        let unitField = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`);
+        rep.reps = repsField && repsField.value !== '' ? parseInt(repsField.value) : null;
+        rep.load = loadField && loadField.value !== '' ? parseInt(loadField.value) : null;
+        rep.unit = unitField && unitField.value !== '' ? parseInt(unitField.value) : null;
       });
     });
     workout.movements = movements;
@@ -324,7 +330,8 @@
         } else {
           workout = workout ? JSON.parse(workout) : {};
         }
-        component.setState({ user });
+        let pageTitle = workout._id ? 'Edit Workout' : 'New Workout';
+        component.setState({ user, pageTitle });
         $ironfyt.getMovements({}, function (error, response) {
           if (error) {
             component.setState({ error });

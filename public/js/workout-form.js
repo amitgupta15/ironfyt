@@ -7,6 +7,10 @@
   };
   let workoutFormTemplate = function (props) {
     let workout = props && props.workout ? props.workout : newPlaceholderWorkout;
+    //Added to handle legacy code, which did not have origdescription field. Needed especially while editing.
+    if (workout.origdescription === undefined) {
+      workout.origdescription = workout.description;
+    }
     return `
     <div class="container">
       <div class="text-align-center bold-text">Name & Description</div>
