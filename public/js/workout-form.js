@@ -18,10 +18,10 @@
         </div>
         <div class="margin-top-10px">
           <label for="workout-description-1" class="form-label-classic">Description</label>
-          <textarea class="form-input-classic workout-description" name="workout-description-1" id="workout-description-1" placeholder="" required>${workout.description ? workout.description : ''}</textarea>
+          <textarea class="form-input-classic workout-description" name="workout-description-1" id="workout-description-1" placeholder="" required>${workout.origdescription ? workout.origdescription : ''}</textarea>
         </div>
         <div class="submit-btn-bar margin-top-5px">
-          <button type="button" id="new-workout-next-step-btn" class="submit-btn" ${workout.name != null && workout.description != null ? '' : 'disabled'}>Next</button>
+          <button type="button" id="new-workout-next-step-btn" class="submit-btn" ${workout.name != null && workout.origdescription != null ? '' : 'disabled'}>Next</button>
         </div>
       </form>
     </div>
@@ -51,7 +51,12 @@
   let handleNextStepButton = function () {
     let name = document.getElementById('workout-name-1').value;
     let description = document.getElementById('workout-description-1').value;
-    localStorage.setItem('newworkout', JSON.stringify({ name, description }));
+    let state = component.getState();
+    let workout = state.workout;
+    workout.name = name;
+    workout.description = description;
+    workout.origdescription = description;
+    localStorage.setItem('newworkout', JSON.stringify(workout));
     $ironfyt.navigateToUrl(`workout-form-review.html`);
   };
 
@@ -59,13 +64,31 @@
     $ironfyt.authenticateUser(function (error, auth) {
       if (!error) {
         let user = auth && auth.user ? auth.user : null;
-        let workout = localStorage.getItem('newworkout');
-        if (workout === null) {
-          workout = newPlaceholderWorkout;
+        component.setState({ user });
+        let params = $hl.getParams();
+        let _id = params && params._id ? params._id : false;
+        if (_id) {
+          if (_id.length === 24) {
+            $ironfyt.getWorkouts({ _id }, function (error, response) {
+              if (!error) {
+                let workout = response && response.workouts ? response.workouts[0] : {};
+                component.setState({ workout, pageTitle: 'Edit Workout' });
+              } else {
+                component.setState({ error });
+              }
+            });
+          } else {
+            component.setState({ error: { message: 'Invalid Workout ID' } });
+          }
         } else {
-          workout = workout && typeof workout === 'string' ? JSON.parse(workout) : {};
+          let workout = localStorage.getItem('newworkout');
+          if (workout === null) {
+            workout = newPlaceholderWorkout;
+          } else {
+            workout = workout && typeof workout === 'string' ? JSON.parse(workout) : {};
+          }
+          component.setState({ workout });
         }
-        component.setState({ user, workout });
       } else {
         component.setState({ error });
       }

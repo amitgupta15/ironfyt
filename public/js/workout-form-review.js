@@ -1,5 +1,5 @@
 (function () {
-  'use strict';
+  ('use strict');
 
   let repsRowTemplate = (attr, movementIndex, repsIndex) => {
     let { reps, movementObj } = attr;
@@ -97,9 +97,11 @@
             <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-weights"><span class="modality-w flex-align-self-center"></span>Weights</div>
           </div>
         </div>
-        <div class="margin-top-10px">
+        <div class="margin-top-10px position-relative">
           <label for="workout-add-movement" class="form-label-classic">Movements</label>
           <input class="form-input-classic" name="workout-add-movement" id="workout-add-movement" placeholder="Find movement to add..."/>
+          <input type="hidden" id="selected-movement-index" value="">
+          <div id="autocomplete-new-workout-movement-list" class="autocomplete-movement-list"></div>
         </div>
         ${movements
           .map((movement, movementIndex) => {
@@ -116,7 +118,7 @@
           })
           .join('')}
         <div class="submit-btn-bar margin-top-5px">
-          <button type="button" id="new-workout-next-step-btn" class="submit-btn">Create Workout</button>
+          <button type="button" id="new-workout-save-btn" class="submit-btn">Create Workout</button>
         </div>
       </form>
     </div>
@@ -137,8 +139,45 @@
     },
     afterRender: function (props) {
       setDefaultModality(props);
+      autocompleteMovement(document.getElementById('workout-add-movement'), props.movements ? props.movements : []);
     },
   }));
+
+  /**
+   * This method is used to autocomplete the "movements" input field on the logs form.
+   * The method is called at the time of component creation in afterRender to make it ready for use
+   *
+   * Credit: Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
+   *
+   * @param {*} textField - Input field on which the autocomplete will attach itself to
+   * @param {*} list - List of data to use for autocomplete
+   */
+  let autocompleteMovement = function (textField, list) {
+    let autocompleteDiv = document.getElementById('autocomplete-new-workout-movement-list');
+    // Execute the function when someone writes something in the input field
+    textField.addEventListener('input', function (event) {
+      //Capture the input value
+      let textFieldValue = this.value;
+      //Close any open lists of autocompleted values
+      if (!textFieldValue) {
+        //If no textfield value then clean the list
+        autocompleteDiv.innerHTML = '';
+        return false;
+      }
+      let autocompleteList = '';
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].movement.toLowerCase().includes(textFieldValue.toLowerCase())) {
+          let subStringIndex = list[i].movement.toLowerCase().indexOf(textFieldValue.toLowerCase());
+          // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
+          // if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) { //Suspending this check for now. In some cases, this check can be misleading
+          let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
+          autocompleteList += `<div id="new-workout-movement-auto-list-item-${i}" data-new-workout-movement-auto-list-index="${i}">${list[i].movement.replace(stringToHighlight, `<span class="text-color-highlight">${stringToHighlight}</span>`)}</div>`;
+          // }
+        }
+      }
+      autocompleteDiv.innerHTML = autocompleteList;
+    });
+  };
 
   /**
    * Creates a workout obj from form fields
@@ -150,14 +189,17 @@
     let minuteInputField = document.getElementById('workout-time-cap-minutes');
     let secondInputField = document.getElementById('workout-time-cap-seconds');
     let modalityRadios = document.getElementsByName('workout-modality');
+    let roundsInputField = document.getElementById('workout-rounds');
 
     let state = component.getState();
+    let user = state && state.user ? state.user : {};
     let workout = state && state.workout ? state.workout : {};
-    workout.type = typeInputField ? typeInputField.value : '';
-    workout.duration = {
-      hours: hourInputField ? parseInt(hourInputField.value) : 0,
-      minutes: minuteInputField ? parseInt(minuteInputField.value) : 0,
-      seconds: secondInputField ? parseInt(secondInputField.value) : 0,
+    workout.type = typeInputField && typeInputField.value !== '' ? typeInputField.value : null;
+    workout.rounds = roundsInputField && roundsInputField.value !== '' ? roundsInputField.value : null;
+    workout.timecap = {
+      hours: hourInputField && hourInputField.value !== '' ? parseInt(hourInputField.value) : null,
+      minutes: minuteInputField && minuteInputField.value !== '' ? parseInt(minuteInputField.value) : null,
+      seconds: secondInputField && secondInputField.value !== '' ? parseInt(secondInputField.value) : null,
     };
 
     workout.modality = [];
@@ -170,12 +212,16 @@
     let movements = workout.movements ? workout.movements : [];
     movements.forEach((movement, movementIndex) => {
       movement.reps.forEach((rep, repsIndex) => {
-        rep.reps = document.getElementById(`workout-movement-reps-${movementIndex}-${repsIndex}`).value;
-        rep.load = document.getElementById(`workout-movement-load-${movementIndex}-${repsIndex}`).value;
-        rep.unit = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`).value;
+        let reps = document.getElementById(`workout-movement-reps-${movementIndex}-${repsIndex}`).value;
+        let load = document.getElementById(`workout-movement-load-${movementIndex}-${repsIndex}`).value;
+        let unit = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`).value;
+        rep.reps = reps !== '' ? reps : null;
+        rep.load = load !== '' ? load : null;
+        rep.unit = unit !== '' ? unit : null;
       });
     });
     workout.movements = movements;
+    workout.user_id = user._id;
     return workout;
   };
   /**
@@ -218,6 +264,24 @@
     movements.splice(movementIndex, 1);
     component.setState({ workout });
   };
+
+  /**
+   * Adds the selected movement to the list of movements and hides the auto complete list
+   * @param {Event} event
+   */
+  let addMovementFromAutoList = function (event) {
+    let workout = createWorkoutObjFromFields();
+    let movementIndex = parseInt(event.target.dataset.newWorkoutMovementAutoListIndex);
+    let state = component.getState();
+    let movements = state.movements ? state.movements : [];
+    let movementObj = movements[movementIndex];
+    let reps = [{ reps: null, load: null, unit: null }];
+    let newMovement = { movementObj, reps };
+    // workout.movements.splice(0, 0, newMovement);
+    workout.movements.push(newMovement);
+
+    component.setState({ workout });
+  };
   /**
    * Check the modality of the parsed movements and set the default modality of the workout
    * @param {Object} props
@@ -227,13 +291,26 @@
     let movements = workout.movements ? workout.movements : [];
     let modalities = new Set();
     movements.forEach((movement) => {
-      modalities.add(movement.movementObj.modality);
+      if (movement.movementObj.modality) {
+        modalities.add(movement.movementObj.modality);
+      }
     });
     if (modalities.size) {
       modalities.forEach((modality) => {
         document.getElementById(`workout-modality-${modality}`).checked = true;
       });
     }
+  };
+  let handleSaveNewWorkoutEvent = function () {
+    let workout = createWorkoutObjFromFields();
+    $ironfyt.saveWorkout(workout, function (error) {
+      if (error) {
+        component.setState({ error });
+      } else {
+        localStorage.removeItem('newworkout');
+        $ironfyt.navigateToUrl('workouts.html');
+      }
+    });
   };
 
   ($ironfyt.workoutFormReviewPage = function () {
@@ -266,8 +343,10 @@
               }
               return { movementObj: movement.movementObj, reps };
             });
+            workout.origdescription = workout.description;
             workout.description = parsedWorkout && parsedWorkout.workoutDesc ? parsedWorkout.workoutDesc : '';
-            workout.movements = parsedMovements;
+            workout.movements = workout.movements ? workout.movements : [];
+            workout.movements = workout.movements.concat(parsedMovements);
             component.setState({ movements, workout });
           }
         });
@@ -277,14 +356,16 @@
     });
   })();
 
+  $hl.eventListener('click', 'new-workout-save-btn', handleSaveNewWorkoutEvent);
+
   document.addEventListener('change', function (event) {
     //Check if the unit of the first rep for a given movement is changed. If it is changed, then change the rest of the units for the movement to the
     //same unit
-    let wologMovementUnitRegex = new RegExp(/^wolog-movement-unit-\d+-0/g);
+    let wologMovementUnitRegex = new RegExp(/^workout-movement-unit-\d+-0/g);
     if (wologMovementUnitRegex.test(event.target.id)) {
       let unit = event.target.value;
       let movementIndex = event.target.dataset.movementIndex;
-      let unitSelectors = document.querySelectorAll(`[id^="wolog-movement-unit-${movementIndex}"]`);
+      let unitSelectors = document.querySelectorAll(`[id^="workout-movement-unit-${movementIndex}"]`);
       unitSelectors.forEach((selector) => (selector.value = unit));
     }
   });
@@ -306,6 +387,12 @@
     let deleteMovementRegex = new RegExp(/^delete-workout-movement-\d+/g);
     if (deleteMovementRegex.test(event.target.id)) {
       deleteMovement(event);
+    }
+
+    //Select a movement from the auto complete movement list
+    let movementAutoListItemRegex = new RegExp(/^new-workout-movement-auto-list-item-\d+/g);
+    if (movementAutoListItemRegex.test(event.target.id)) {
+      addMovementFromAutoList(event);
     }
   });
 })();
