@@ -20,6 +20,8 @@ movement.get = (req, res) => {
         }
       }
     }
+    // } else {
+    //   query = { primary: true };
   }
   movementsCollection(req)
     .aggregate([

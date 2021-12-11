@@ -17,14 +17,11 @@
       minutes: null,
       seconds: null,
     },
-    totalreps: null,
     roundinfo: [newRoundInfo],
     modality: [],
-    location: null,
     notes: null,
     movements: [],
   };
-  let units = ['lbs', 'kgs', 'pood', 'calories', 'miles', 'feet', 'meters', 'minutes'];
 
   /**
    * Template displays the individual workout item and displays the add button to select the workout for the log
@@ -71,8 +68,8 @@
 
   let modalityTemplate = function (workoutlog) {
     return `
-      <div class="form-flex-group margin-bottom-5px block-with-border">
-        <div class="block-with-border-label">Modality</div>
+      <div class="margin-bottom-5px">
+        <div class="form-label-classic">Modality</div>
         <div class="form-flex-group margin-top-5px">
           <label class="switch small">
             <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
@@ -93,197 +90,86 @@
       </div>`;
   };
 
-  let durationTemplate = function (workoutlog) {
+  let repsRowTemplate = (attr, movementIndex, repsIndex) => {
+    let { reps, movementObj } = attr;
+    let units = movementObj && movementObj.units ? movementObj.units : [];
+    let repsNum = reps && reps.reps ? reps.reps : '';
+    let repsLoad = reps && reps.load ? reps.load : '';
+    let repsUnit = reps && reps.unit ? reps.unit : '';
     return `
-    <div class="form-flex-group block-with-border duration-block">
-      <div class="block-with-border-label">Duration</div>
-      <div class="block-with-border-switch">
-        <label class="switch small form-group-label">
-          <input type="checkbox" id="duration-switch"/>
-          <span class="slider small round"></span>
-        </label>
+    <div class="form-flex-group flex-column-gap-5px margin-bottom-5px">
+      <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+        ${repsIndex === 0 ? `<label for="wolog-movement-reps-${movementIndex}-${repsIndex}" class="form-label-classic">Reps</label>` : ``}
+        <input type="number" class="form-input-classic" name="wolog-movement-reps-${movementIndex}-${repsIndex}" id="wolog-movement-reps-${movementIndex}-${repsIndex}" value="${repsNum}" placeholder="">    
       </div>
-      <div class="form-flex-group margin-top-10px">
-        <div class="form-input-group show-time-separator">
-          <input type="number" class="form-input duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" disabled />
-          <label for="wolog-duration-hours" class="form-label duration-label">H</label>
-        </div>
-        <div class="form-input-group show-time-separator">
-          <input type="number" class="form-input duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" disabled />
-          <label for="wolog-duration-minutes" class="form-label duration-label">M</label>
-        </div>
-        <div class="form-input-group">
-          <input type="number" class="form-input duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" disabled />
-          <label for="wolog-duration-seconds" class="form-label duration-label">S</label>
-        </div>
+      ${
+        units.length
+          ? `
+          <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+            ${repsIndex === 0 ? `<label for="wolog-movement-load-${movementIndex}-${repsIndex}" class="form-label-classic">Load</label>` : ``}  
+            <input type="number" class="form-input-classic" name="wolog-movement-load-${movementIndex}-${repsIndex}" id="wolog-movement-load-${movementIndex}-${repsIndex}" value="${repsLoad}" placeholder="">
+          </div>
+          <div class="${repsIndex === 0 ? `margin-top-10px` : ``} flex-basis-80px">
+            ${repsIndex === 0 ? `<label for="wolog-movement-unit-${movementIndex}-${repsIndex}" class="form-label-classic">Unit</label>` : ``}  
+            <select class="form-input-classic" name="wolog-movement-unit-${movementIndex}-${repsIndex}" data-movement-index="${movementIndex}" id="wolog-movement-unit-${movementIndex}-${repsIndex}">
+              <option value=""></option>
+              ${units.map((unit) => `<option value="${unit}" ${unit === repsUnit ? 'selected' : ''}>${unit}</option>`)}
+            </select>
+          </div>
+      `
+          : ``
+      }  
+      <div class="${repsIndex === 0 ? 'margin-top-30px' : ''}">
+        <button type="button" class="copy-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="copy-wolog-movement-reps-${movementIndex}-${repsIndex}"></button>
+        <button type="button" class="remove-btn" data-movement-index="${movementIndex}" data-reps-index="${repsIndex}" id="delete-wolog-movement-reps-${movementIndex}-${repsIndex}"></button>
       </div>
-    </div>
-    `;
-  };
-
-  let roundsTemplate = function (workoutlog) {
-    return `
-    <div class="form-flex-group margin-bottom-5px block-with-border">
-        <div class="block-with-border-label">Rounds & Load/Distance/Cal</div>
-        <div class="block-with-border-switch">
-          <label class="switch small form-group-label">
-            <input type="checkbox" id="rounds-switch"/>
-            <span class="slider small round"></span>
-          </label>
-        </div>
-        <div class="margin-top-10px">
-         ${
-           workoutlog.roundinfo
-             ? workoutlog.roundinfo
-                 .map(function (item, index) {
-                   return `
-                  <div class="form-flex-group margin-bottom-5px">
-                    <div class="form-input-group">
-                      <input type="number" class="form-input rounds-input" name="wolog-rounds-${index}" id="wolog-rounds-${index}" value="${item.rounds ? item.rounds : ''}" placeholder="Rounds" disabled>    
-                      <label for="wolog-rounds-${index}" class="form-label rounds-label">Rounds</label>
-                    </div>      
-                    <div class="form-input-group">  
-                      <input type="number" class="form-input rounds-input" name="wolog-load-${index}" id="wolog-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load" disabled>
-                      <label for="wolog-load-${index}" class="form-label rounds-label">Load</label>
-                    </div>
-                    <div class="form-input-group">
-                      <label for="wolog-unit-${index}" class="form-label hide-view">Unit</label>
-                      <select class="form-input" name="wolog-unit-${index}" id="wolog-unit-${index}" disabled>
-                        <option value=""></option>
-                        ${units.map((unit) => `<option value="${unit}" ${item.unit && item.unit.toLowerCase() === unit.toLowerCase() ? 'selected' : ''}>${unit}</option>`)}
-                      </select>
-                    </div>
-                    <button type="button" class="copy-btn" id="copy-round-info-${index}"></button>
-                    ${index > 0 ? `<button type="button" class="remove-btn" id="delete-round-info-${index}"></button>` : ``}
-                    <div>
-                    </div>
-                  </div>
-                  `;
-                 })
-                 .join('')
-             : ''
-         }
-        </div>
-      </div>
-    `;
+    </div>`;
   };
 
   let movementsTemplate = function (workoutlog) {
     let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
     return `
-    <div class="form-flex-group margin-bottom-5px block-with-border">
-      <div class="block-with-border-label">Movement x Reps x Load/Distance/...</div>
-      <div class="block-with-border-switch">
-        <label class="switch small form-group-label">
-          <input type="checkbox" id="movement-switch"/>
-          <span class="slider small round"></span>
-        </label>
-      </div>
-      <div class="margin-top-5px">
-        <div class="form-input-group margin-bottom-5px">
-          <div class="add-movement-input-group">
-            <input class="form-input" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." disabled />
-            <label for="wolog-add-movement" class="form-label" id="wolog-add-movement-input-label">Add a movement...</label>
-            <button type="button" id="wolog-movement-add-btn" class="wolog-movement-add-btn">Add</button>
-          </div>
-          <input type="hidden" id="selected-movement-index" value="">
-          <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
-        </div>
-        ${movements
-          .map(function (item, index) {
-            return `
-            <div class="form-flex-group margin-bottom-5px">
-              <div class="wolog-movement-name" id="wolog-movement-data-${index}" data-id=${item._id ? item._id : ''}>${item.movement}</div>
-              <div class="form-input-group">
-                <input type="number" class="form-input wolog-movement-attr" name="wolog-movement-reps-${index}" id="wolog-movement-reps-${index}" value="${item.reps ? item.reps : ''}" placeholder="Reps">    
-                <label for="wolog-movement-reps-${index}" class="form-label rounds-label">Reps</label>
-              </div>      
-              <div class="form-input-group">  
-                <input type="number" class="form-input wolog-movement-attr" name="wolog-movement-load-${index}" id="wolog-movement-load-${index}" value="${item.load ? item.load : ''}" placeholder="Load">
-                <label for="wolog-movement-load-${index}" class="form-label rounds-label">Load</label>
+    <div class="margin-bottom-5px position-relative">
+      <label for="wolog-add-movement" class="form-label-classic" id="wolog-add-movement-input-label">Movements</label>
+      <input class="form-input-classic" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." />
+      <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
+    </div>
+    ${movements
+      .map((movement, movementIndex) => {
+        let reps = movement.reps ? movement.reps : [];
+        return `
+            <div class="rounded-corner-box margin-top-5px">
+              <div class="form-flex-group">
+                <div id="wolog-movement-data-${movementIndex}">${movement && movement.movementObj ? movement.movementObj.movement : ''}</div>
+                <button type="button" class="remove-btn margin-left-5px"  data-wolog-movement-index="${movementIndex}" id="delete-wolog-movement-${movementIndex}"></button>
               </div>
-              <div class="form-input-group">
-                <label for="wolog-movement-unit-${index}" class="form-label hide-view">Unit</label>
-                <select class="form-input" name="wolog-movement-unit-${index}" id="wolog-movement-unit-${index}">
-                  <option value=""></option>
-                  ${units.map((unit) => `<option value="${unit}" ${item.unit && item.unit.toLowerCase() === unit.toLowerCase() ? 'selected' : ''}>${unit}</option>`)}
-                </select>
-              </div>
-              <button type="button" class="copy-btn" id="copy-movement-${index}"></button>
-              <button type="button" class="remove-btn" id="delete-movement-${index}"></button>
-              <div>
-              </div>
+              ${reps.map((reps, repsIndex) => repsRowTemplate({ reps, movementObj: movement.movementObj }, movementIndex, repsIndex)).join('')}
             </div>
             `;
-          })
-          .join('')}
-      </div>      
-    </div>
+      })
+      .join('')}
     `;
   };
 
   let notesTemplate = function (workoutlog) {
     return `
-    <div class="form-flex-group margin-bottom-5px">
-      <div class="form-input-group">
-        <textarea class="form-input" name="wolog-notes" id="wolog-notes" placeholder="Notes" disabled>
-          ${workoutlog.notes ? workoutlog.notes : ''}
-        </textarea>
-        <label for="wolog-notes" class="form-label">
-          Notes
-        </label>
-      </div>
-      <label class="switch small form-group-label margin-left-5px">
-        <input type="checkbox" id="notes-switch" />
-        <span class="slider small round"></span>
-      </label>
+    <div class="margin-bottom-5px">
+      <label for="wolog-notes" class="form-label-classic">Notes</label>
+      <textarea class="form-input-classic wolog-notes" name="wolog-notes" id="wolog-notes" placeholder="">
+        ${workoutlog.notes ? workoutlog.notes : ''}
+      </textarea>      
     </div>`;
   };
 
-  let locationTemplate = function (workoutlog) {
-    return `
-    <div class="form-flex-group margin-bottom-5px">
-      <div class="form-input-group">
-        <input type="text" class="form-input" name="wolog-location" id="wolog-location" value="${workoutlog.location ? workoutlog.location : ''}" placeholder="Location" disabled />
-        <label for="wolog-location" class="form-label">Location</label>
-      </div>
-      <label class="switch small form-group-label margin-left-5px">
-        <input type="checkbox" id="location-switch"/>
-        <span class="slider small round"></span>
-      </label>
-    </div>
-    `;
-  };
-  let totalRepsTemplate = function (workoutlog) {
-    return `
-    <div class="form-flex-group block-with-border total-reps-block">
-      <div class="block-with-border-label">Total Reps</div>
-      <div class="block-with-border-switch">
-        <label class="switch small form-group-label">
-          <input type="checkbox" id="total-reps-switch"/>
-          <span class="slider small round"></span>
-        </label>
-      </div>
-      <div class="form-flex-group margin-top-10px">
-        <div class="form-input-group">
-          <input type="number" class="form-input rounds-input" name="wolog-total-reps" id="wolog-total-reps" value="${workoutlog.totalreps ? workoutlog.totalreps : ''}" placeholder="Reps" disabled>    
-          <label for="wolog-total-reps" class="form-label rounds-label">Reps</label>
-        </div>      
-      </div>
-    </div>
-    `;
-  };
   let dateTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
     let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
     return `
-      <div class="form-flex-group margin-bottom-5px">
-        <div class="form-input-group flex-width-100">
-          <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="Date" class="form-input"/>
-          <label for="wolog-date" class="form-label date-label">Date</label>
-        </div>
-        ${validationError.date ? `<div id="error-wolog-date">${validationError.date}</div>` : ``}
+      <div class="margin-bottom-5px">
+        <label for="wolog-date" class="form-label-classic">Date</label>
+        <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="" class="form-input-classic"/>
+        ${validationError.date ? `<div id="error-wolog-date" class="error">${validationError.date}</div>` : ``}
       </div>
     `;
   };
@@ -305,29 +191,42 @@
       ${
         isAdmin() && users
           ? `
-        <div class="form-flex-group margin-bottom-5px">
-          <div class="form-input-group flex-width-100">
-            <label for="wolog-user" class="form-label hide-view">User</label>
-            <select class="form-input" name="wolog-user" id="wolog-user">
-              <option value=""></option>
-              ${users.map((user) => `<option value="${user._id}" ${user._id === workoutlog.user_id ? 'selected' : user._id === loggedInUser._id ? 'selected' : ''}>${user.fname} ${user.lname}</option>`)}
-            </select>
-          </div>
+        <div class="margin-bottom-5px">
+          <label for="wolog-user" class="form-label-classic">User</label>
+          <select class="form-input-classic" name="wolog-user" id="wolog-user">
+            <option value=""></option>
+            ${users.map((user) => `<option value="${user._id}" ${user._id === workoutlog.user_id ? 'selected' : user._id === loggedInUser._id ? 'selected' : ''}>${user.fname} ${user.lname}</option>`)}
+          </select>  
         </div>
       `
           : ``
       }
-      ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}
+      <!-- REMOVE THIS? --- ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}-->
+      ${workout ? selectedWorkoutTemplate(props) : ``}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
       ${modalityTemplate(workoutlog)}
-      <div class="form-flex-group margin-bottom-5px">
-        ${durationTemplate(workoutlog)}
-        ${totalRepsTemplate(workoutlog)}
+      <div class="flex margin-bottom-5px">
+        <div class="flex-auto">
+          <div class="form-label-classic">Duration</div>
+          <div class="form-flex-group margin-top-5px">
+            <div class="form-input-group show-time-separator">
+              <input type="number" class="form-input-classic duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" />
+            </div>
+            <div class="form-input-group show-time-separator">
+              <input type="number" class="form-input-classic duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" />
+            </div>
+            <div class="form-input-group">
+              <input type="number" class="form-input-classic duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" />
+            </div>
+          </div>
+        </div>
+        <div class="margin-left-20px">
+          <label for="wolog-rounds" class="form-label-classic">Rounds</label>
+          <input type="number" class="form-input-classic" name="wolog-rounds" id="wolog-rounds" value="${workoutlog.rounds ? workoutlog.rounds : ''}" placeholder="">    
+        </div>
       </div>
-      ${roundsTemplate(workoutlog)}
       ${movementsTemplate(workoutlog)}
       ${notesTemplate(workoutlog)}
-      ${locationTemplate(workoutlog)}
       ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}</div>` : ''}
       <div class="submit-btn-bar margin-top-5px">
         <button type="submit" id="submit-wolog" class="submit-btn">Save</button>
@@ -353,289 +252,10 @@
     },
     afterRender: function (props) {
       if (props.error === '') {
-        setDurationSwitch(props);
-        setRoundsSwitch(props);
-        setLocationSwitch(props);
-        setNotesSwitch(props);
-        setMovementSwitch(props);
-        setTotalRepsSwitch(props);
         autocompleteMovement(document.getElementById('wolog-add-movement'), props.movements ? props.movements : []);
       }
     },
   }));
-
-  /**
-   * After render, check if duration switch needs to be turned on.
-   * I decided against directly storing the duration switch state because it is a derived state. I did not want to have to render the whole form and save the partial state
-   * every time a user turns on or off the duration switch.
-   * In the curren approach I check if duration information is present in the state and accordingly I set the duration switch on or off.
-   * Duration switch also calls toggleDurationFields() to enable/disable the fields.
-   * @param {*} props
-   */
-  let setDurationSwitch = function (props) {
-    let durationSwitch = document.getElementById('duration-switch');
-    let duration = props.workoutlog && props.workoutlog.duration ? props.workoutlog.duration : {};
-    if (JSON.stringify(duration) !== '{}') {
-      let hours = duration.hours !== null && parseInt(duration.hours) !== 0;
-      let minutes = duration.minutes !== null && parseInt(duration.minutes) !== 0;
-      let seconds = duration.seconds !== null && parseInt(duration.seconds) !== 0;
-      if (hours || minutes || seconds) {
-        durationSwitch.checked = true;
-      }
-    } else {
-      durationSwitch.checked = false;
-    }
-    toggleDurationFields();
-  };
-
-  /**
-   * After render, check if rounds switch needs to be turned on.
-   * Rounds switch also calls toggleRoundsFields() to enable/disable the fields.
-   * @param {*} props
-   */
-  let setRoundsSwitch = function (props) {
-    let roundsSwitch = document.getElementById('rounds-switch');
-    let roundinfo = props.workoutlog && props.workoutlog.roundinfo ? props.workoutlog.roundinfo : [];
-    let switchOnCount = 0;
-    if (roundinfo.length > 0) {
-      for (let i = 0; i < roundinfo.length; i++) {
-        let rounds = roundinfo[i].rounds !== null && parseInt(roundinfo[i].rounds) !== 0 && !isNaN(roundinfo[i].rounds);
-        let load = roundinfo[i].load !== null && parseInt(roundinfo[i].load) !== 0 && !isNaN(roundinfo[i].load);
-        if (rounds || load) {
-          switchOnCount++;
-        }
-      }
-      roundsSwitch.checked = switchOnCount > 0;
-    } else {
-      roundsSwitch.checked = false;
-    }
-    toggleRoundsFields();
-  };
-  /**
-   * After render, check if location switch needs to be turned on.
-   * Location switch also calls toggleLocationField() to enable/disable the field
-   * @param {*} props
-   */
-  let setLocationSwitch = function (props) {
-    let locationSwitch = document.getElementById('location-switch');
-    let location = props.workoutlog && props.workoutlog.location ? props.workoutlog.location : '';
-    if (location) {
-      locationSwitch.checked = true;
-    } else {
-      locationSwitch.checked = false;
-    }
-    toggleLocationField();
-  };
-
-  /**
-   * After render, check if notes switch needs to be turned on.
-   * notes switch also calls toggleNotesTextarea() to enable/disable the field
-   * @param {*} props
-   */
-  let setNotesSwitch = function (props) {
-    let notesSwitch = document.getElementById('notes-switch');
-    let notes = props.workoutlog && props.workoutlog.notes ? props.workoutlog.notes : '';
-    if (notes) {
-      notesSwitch.checked = true;
-    } else {
-      notesSwitch.checked = false;
-    }
-    toggleNotesTextarea();
-  };
-
-  /**
-   * After render, check if movements switch needs to be turned on.
-   * movements switch also calls toggleMovementFields() to enable/disable the field
-   * @param {*} props
-   */
-  let setMovementSwitch = function (props) {
-    let movementSwitch = document.getElementById('movement-switch');
-    let movements = props.workoutlog && props.workoutlog.movements ? props.workoutlog.movements : [];
-    if (movements.length) {
-      movementSwitch.checked = true;
-    } else {
-      movementSwitch.checked = false;
-    }
-    toggleMovementFields();
-  };
-
-  /**
-   * After render, check if totalReps switch needs to be turned on.
-   * totalReps switch also calls toggleTotalRepsField() to enable/disable the field
-   * @param {*} props
-   */
-  let setTotalRepsSwitch = function (props) {
-    let totalRepsSwitch = document.getElementById('total-reps-switch');
-    let totalReps = props.workoutlog && props.workoutlog.totalreps ? props.workoutlog.totalreps : '';
-    if (totalReps) {
-      totalRepsSwitch.checked = true;
-    } else {
-      totalRepsSwitch.checked = false;
-    }
-    toggleTotalRepsField();
-  };
-
-  /**
-   * Enables/disabled the hours, minutes, seconds fields based on the state of duration switch.
-   * Wipes out the values from the fields when the fields are disabled.
-   * Re-populates the duration values if present in the state
-   */
-  let toggleDurationFields = function () {
-    let durationSwitch = document.querySelector('#duration-switch');
-    let hourInput = document.querySelector('#wolog-duration-hours');
-    let minuteInput = document.querySelector('#wolog-duration-minutes');
-    let secondInput = document.querySelector('#wolog-duration-seconds');
-    if (durationSwitch.checked) {
-      enableField(hourInput);
-      enableField(minuteInput);
-      enableField(secondInput);
-      let state = component.getState();
-      let duration = state.workoutlog && state.workoutlog.duration ? state.workoutlog.duration : {};
-      hourInput.value = parseInt(duration.hours) !== 0 ? duration.hours : '';
-      minuteInput.value = parseInt(duration.minutes) !== 0 ? duration.minutes : '';
-      secondInput.value = parseInt(duration.seconds) !== 0 ? duration.seconds : '';
-    } else {
-      disableField(hourInput);
-      disableField(minuteInput);
-      disableField(secondInput);
-    }
-  };
-
-  /**
-   * Enable/disable rounds, load, unit fields based on the state of rounds switch.
-   * Wipe out the values from the fields when the fields are disabled.
-   * Re-populate the values on enable if the values are present in the state
-   */
-  let toggleRoundsFields = function () {
-    let roundsSwitch = document.querySelector('#rounds-switch');
-    let state = component.getState();
-    let roundinfo = state.workoutlog && state.workoutlog.roundinfo ? state.workoutlog.roundinfo : [];
-    for (let i = 0; i < roundinfo.length; i++) {
-      let roundsInputField = document.querySelector(`#wolog-rounds-${i}`);
-      let loadInputField = document.querySelector(`#wolog-load-${i}`);
-      let unitSelect = document.querySelector(`#wolog-unit-${i}`);
-      if (roundsSwitch.checked) {
-        enableField(roundsInputField);
-        enableField(loadInputField);
-        enableField(unitSelect);
-        roundsInputField.value = roundinfo[i].rounds !== null ? roundinfo[i].rounds : '';
-        loadInputField.value = roundinfo[i].load !== null ? roundinfo[i].load : '';
-        unitSelect.value = roundinfo[i].unit !== null ? roundinfo[i].unit : '';
-      } else {
-        disableField(roundsInputField);
-        disableField(loadInputField);
-        disableField(unitSelect);
-      }
-    }
-  };
-
-  /**
-   * Enable/disable location field based on the state of location switch.
-   * Wipe out the value from the field when the field is disabled.
-   * Re-populate the value on enable if the value is present in the state
-   */
-  let toggleLocationField = function () {
-    let locationSwitch = document.getElementById('location-switch');
-    let locationField = document.getElementById('wolog-location');
-    let state = component.getState();
-    let location = state.workoutlog && state.workoutlog.location ? state.workoutlog.location : '';
-    if (locationSwitch.checked) {
-      enableField(locationField);
-      locationField.value = location;
-    } else {
-      disableField(locationField);
-    }
-  };
-
-  /**
-   * Enable/disable location field based on the state of location switch.
-   * Wipe out the value from the field when the field is disabled.
-   * Re-populate the value on enable if the value is present in the state
-   */
-  let toggleNotesTextarea = function () {
-    let notesSwitch = document.getElementById('notes-switch');
-    let notesField = document.getElementById('wolog-notes');
-    let state = component.getState();
-    let notes = state.workoutlog && state.workoutlog.notes ? state.workoutlog.notes : '';
-    if (notesSwitch.checked) {
-      enableField(notesField);
-      notesField.value = notes;
-    } else {
-      disableField(notesField);
-    }
-  };
-
-  /**
-   * Enable/disable movement, reps, load, unit fields based on the state of movement switch.
-   * Wipe out the values from the fields when the fields are disabled.
-   * Re-populate the values on enable if the values are present in the state
-   */
-  let toggleMovementFields = function () {
-    let movementSwitch = document.querySelector('#movement-switch');
-    let movementAddButton = document.querySelector('#wolog-movement-add-btn');
-    let addMovementTextField = document.getElementById('wolog-add-movement');
-    if (movementSwitch.checked) {
-      enableField(addMovementTextField);
-      movementAddButton.style.display = 'block';
-    } else {
-      disableField(addMovementTextField);
-      movementAddButton.style.display = 'none';
-    }
-  };
-
-  /**
-   * Enable/disable totalreps field based on the state of totalreps switch.
-   * Wipe out the value from the field when the field is disabled.
-   * Re-populate the value on enable if the value is present in the state
-   */
-  let toggleTotalRepsField = function () {
-    let totalRepsSwitch = document.getElementById('total-reps-switch');
-    let totalRepsFeild = document.getElementById('wolog-total-reps');
-    let state = component.getState();
-    let totalReps = state.workoutlog && state.workoutlog.totalreps ? state.workoutlog.totalreps : '';
-    if (totalRepsSwitch.checked) {
-      enableField(totalRepsFeild);
-      totalRepsFeild.value = totalReps;
-    } else {
-      disableField(totalRepsFeild);
-    }
-  };
-  /**
-   * Helper function to disable a field and set the value to empty string
-   * @param {*} name - field name
-   */
-  function disableField(name) {
-    name['disabled'] = true;
-    name['value'] = '';
-  }
-
-  /**
-   * Helper function to enable a field
-   * @param {*} name - field name
-   */
-  function enableField(name) {
-    name['disabled'] = false;
-  }
-
-  /**
-   * Adds a movement to the list of movements and shows the relevent fields to enter movement data
-   * @param {*} event
-   */
-  let addMovement = function (event) {
-    event.preventDefault();
-    let addMovementField = document.getElementById('wolog-add-movement');
-    let selectedMovementIndexField = document.getElementById('selected-movement-index');
-    let state = component.getState();
-    let movements = state.movements ? state.movements : [];
-    if (addMovementField.value.trim()) {
-      let index = selectedMovementIndexField.value ? parseInt(selectedMovementIndexField.value) : -1;
-      let selectedMovement = movements[index] && movements[index].movement.trim().toLowerCase() === addMovementField.value.trim().toLowerCase() ? movements[index] : { movement: $hl.sanitize(addMovementField.value.trim()) };
-      let workoutlog = createWorkoutLogObjFromFormElements();
-      workoutlog.movements.push(selectedMovement);
-      component.setState({ workoutlog });
-      addMovementField.value = '';
-    }
-  };
 
   /**
    * This method is used to autocomplete the "movements" input field on the logs form.
@@ -665,7 +285,7 @@
           // Check if the first letter of the list items matches the input value or if 2 or more letters match anywhere in the list item
           // if ((textFieldValue.length < 2 && subStringIndex === 0) || textFieldValue.length >= 2) { //Suspending this check for now. In some cases, this check can be misleading
           let stringToHighlight = list[i].movement.substr(subStringIndex, textFieldValue.length);
-          autocompleteList += `<div id="movement-list-item-${i}">${list[i].movement.replace(stringToHighlight, `<span class="text-color-highlight">${stringToHighlight}</span>`)}</div>`;
+          autocompleteList += `<div id="movement-list-item-${i}" data-movement-list-item-index="${i}">${list[i].movement.replace(stringToHighlight, `<span class="text-color-highlight">${stringToHighlight}</span>`)}</div>`;
           // }
         }
       }
@@ -782,7 +402,6 @@
       if (elements['wolog-modality'][i].checked) workoutlog.modality.push(elements['wolog-modality'][i].value);
     }
 
-    workoutlog.location = $hl.sanitize(elements['wolog-location'].value.trim());
     workoutlog.workout_id = elements['wolog-workout-id'].value.trim();
 
     workoutlog.duration = {
@@ -791,33 +410,20 @@
       seconds: elements['wolog-duration-seconds'].value ? parseInt(elements['wolog-duration-seconds'].value) : 0,
     };
 
-    let roundinfo = [];
-    let workoutLogRoundInfoLength = workoutlog && workoutlog.roundinfo ? workoutlog.roundinfo.length : 0;
-    for (var i = 0; i < workoutLogRoundInfoLength; i++) {
-      let rounds = parseInt(elements[`wolog-rounds-${i}`].value);
-      let load = parseInt(elements[`wolog-load-${i}`].value);
-      let unit = elements[`wolog-unit-${i}`].value;
-      roundinfo.push({ rounds, load, unit });
-    }
-    workoutlog.roundinfo = roundinfo;
+    workoutlog.rounds = elements[`wolog-rounds`].value ? parseInt(elements[`wolog-rounds`].value) : null;
 
-    let movements = [];
-    let movementlength = workoutlog && workoutlog.movements ? workoutlog.movements.length : 0;
-    for (var i = 0; i < movementlength; i++) {
-      let movementDiv = document.querySelector(`#wolog-movement-data-${i}`);
-      let movementObj = {};
-      if (movementDiv && movementDiv.dataset.id) {
-        movementObj._id = movementDiv.dataset.id;
-      }
-      movementObj.movement = movementDiv ? movementDiv.innerHTML.trim() : '';
-      movementObj.reps = elements[`wolog-movement-reps-${i}`] && elements[`wolog-movement-reps-${i}`].value ? parseInt(elements[`wolog-movement-reps-${i}`].value) : null;
-      movementObj.load = elements[`wolog-movement-load-${i}`] && elements[`wolog-movement-load-${i}`].value ? parseInt(elements[`wolog-movement-load-${i}`].value) : null;
-      movementObj.unit = elements[`wolog-movement-unit-${i}`] && elements[`wolog-movement-unit-${i}`].value ? elements[`wolog-movement-unit-${i}`].value : null;
-      movements.push(movementObj);
-    }
+    let movements = workoutlog.movements ? workoutlog.movements : [];
+    movements.forEach((movement, movementIndex) => {
+      movement.reps.forEach((rep, repsIndex) => {
+        let repsField = document.getElementById(`wolog-movement-reps-${movementIndex}-${repsIndex}`);
+        let loadField = document.getElementById(`wolog-movement-load-${movementIndex}-${repsIndex}`);
+        let unitField = document.getElementById(`wolog-movement-unit-${movementIndex}-${repsIndex}`);
+        rep.reps = repsField && repsField.value !== '' ? parseInt(repsField.value) : null;
+        rep.load = loadField && loadField.value !== '' ? parseInt(loadField.value) : null;
+        rep.unit = unitField && unitField.value !== '' ? parseInt(unitField.value) : null;
+      });
+    });
     workoutlog.movements = movements;
-
-    workoutlog.totalreps = elements[`wolog-total-reps`].value ? parseInt(elements[`wolog-total-reps`].value) : null;
     return workoutlog;
   };
 
@@ -840,12 +446,10 @@
       (elements['wolog-duration-hours'].value === '' || parseInt(elements['wolog-duration-hours'].value) === 0) &&
       (elements['wolog-duration-minutes'].value === '' || parseInt(elements['wolog-duration-minutes'].value) === 0) &&
       (elements['wolog-duration-seconds'].value === '' || parseInt(elements['wolog-duration-seconds'].value) === 0) &&
-      (elements['wolog-load-0'].value === '' || parseInt(elements['wolog-load-0'].value) === 0) &&
-      (elements['wolog-rounds-0'].value === '' || parseInt(elements['wolog-rounds-0'].value) === 0) &&
+      (elements['wolog-rounds'].value === '' || parseInt(elements['wolog-rounds'].value) === 0) &&
       elements['wolog-notes'].value.trim() === '' &&
       empty_movement_load &&
-      empty_movement_reps &&
-      (elements['wolog-total-reps'].value === '' || parseInt(elements['wolog-total-reps'].value) === 0)
+      empty_movement_reps
     ) {
       validationError.catchAll = 'Please enter a value in one of the fields or add notes.';
     }
@@ -936,7 +540,6 @@
     let dialog = document.getElementById('select-workout-modal');
     dialog.classList.remove('show-view');
     component.setState({ workoutlog });
-    enableFieldsForSelectedWorkout(workouts[index]);
   };
 
   let handleUnselectWorkoutEvent = function (event) {
@@ -945,73 +548,63 @@
     component.setState({ workoutlog });
   };
 
-  let deleteRoundInfo = function (targetId) {
-    let prefix = 'delete-round-info-';
-    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+  /**
+   * Deletes the specified reps row from the movement.
+   * @param {Event} event
+   */
+  let deleteMovementReps = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
-    let roundinfo = workoutlog.roundinfo;
-    roundinfo.splice(index, 1);
+    let movementIndex = parseInt(event.target.dataset.movementIndex);
+    let repsIndex = parseInt(event.target.dataset.repsIndex);
+    let movement = workoutlog.movements ? workoutlog.movements[movementIndex] : {};
+    movement.reps.splice(repsIndex, 1);
     component.setState({ workoutlog });
   };
 
-  let copyRoundInfo = function (targetId) {
-    let prefix = 'copy-round-info-';
-    let index = parseInt(targetId.substring(prefix.length, targetId.length));
-    let roundsInputField = document.getElementById(`wolog-rounds-${index}`);
-    let loadInputField = document.getElementById(`wolog-load-${index}`);
-    let unitSelect = document.getElementById(`wolog-unit-${index}`);
-    let newRound = newRoundInfo;
-    newRound.rounds = roundsInputField.value ? parseInt(roundsInputField.value) : null;
-    newRound.load = loadInputField.value ? parseInt(loadInputField.value) : null;
-    newRound.unit = unitSelect.value ? unitSelect.value : '';
-
+  /**
+   * Creates a new row of movement reps
+   * @param {Event} event
+   */
+  let copyMovementReps = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
-    workoutlog.roundinfo.push(newRound);
+    let movementIndex = parseInt(event.target.dataset.movementIndex);
+    let repsIndex = parseInt(event.target.dataset.repsIndex);
+    let movement = workoutlog.movements ? workoutlog.movements[movementIndex] : {};
+    let rep = movement.reps[repsIndex];
+    //createWorkoutObjFromFields() method will already update the movement.reps array with the latest values from the fields.
+    //Get the rep object for the specified index and copy it to the index right after the current rep object
+    movement.reps.splice(repsIndex + 1, 0, rep);
     component.setState({ workoutlog });
   };
 
-  let deleteMovement = function (targetId) {
-    let prefix = 'delete-movement-';
-    let index = parseInt(targetId.substring(prefix.length, targetId.length));
+  /**
+   * Deletes the specified movement from the workout form
+   * @param {Event} event
+   */
+  let deleteMovement = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
-    let movements = workoutlog.movements;
-    movements.splice(index, 1);
+    let movementIndex = parseInt(event.target.dataset.wologMovementIndex);
+    let movements = workoutlog.movements ? workoutlog.movements : [];
+    movements.splice(movementIndex, 1);
     component.setState({ workoutlog });
   };
 
-  let copyMovement = function (targetId) {
-    let prefix = 'copy-movement-';
-    let index = parseInt(targetId.substring(prefix.length, targetId.length));
-    let movementDiv = document.getElementById(`wolog-movement-data-${index}`);
-    let repsInputField = document.getElementById(`wolog-movement-reps-${index}`);
-    let loadInputField = document.getElementById(`wolog-movement-load-${index}`);
-    let unitSelect = document.getElementById(`wolog-movement-unit-${index}`);
-
-    let movement = {};
-    if (movementDiv.dataset.id) {
-      movement._id = movementDiv.dataset.id;
-    }
-    movement.movement = movementDiv.innerHTML.trim();
-    movement.reps = repsInputField.value ? parseInt(repsInputField.value) : null;
-    movement.load = loadInputField.value ? parseInt(loadInputField.value) : null;
-    movement.unit = unitSelect.value ? unitSelect.value : '';
-
+  /**
+   * Adds the selected movement to the list of movements and hides the auto complete list
+   * @param {Event} event
+   */
+  let addMovementFromAutoList = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
-    workoutlog.movements.push(movement);
-    component.setState({ workoutlog });
-  };
-
-  let populateMovementTextField = function (matchedMovementId) {
-    let prefix = 'movement-list-item-';
-    let index = matchedMovementId.substr(prefix.length);
-    let wologAddMovementField = document.getElementById('wolog-add-movement');
-    let selectedMovementIndexField = document.getElementById('selected-movement-index');
+    let movementIndex = parseInt(event.target.dataset.movementListItemIndex);
     let state = component.getState();
     let movements = state.movements ? state.movements : [];
-    wologAddMovementField.value = movements[parseInt(index)].movement;
-    selectedMovementIndexField.value = index;
-    let autocompleteDiv = document.getElementById('autocomplete-movement-list');
-    autocompleteDiv.innerHTML = '';
+    let movementObj = movements[movementIndex];
+    let reps = [{ reps: null, load: null, unit: null }];
+    let newMovement = { movementObj, reps };
+    // workoutlog.movements.splice(0, 0, newMovement);
+    workoutlog.movements.push(newMovement);
+
+    component.setState({ workoutlog });
   };
 
   let handleCreateNewWorkoutEvent = function (event) {
@@ -1020,42 +613,6 @@
 
     selectWorkoutModal.classList.remove('show-view');
     newWorkoutFormModal.classList.add('show-view');
-  };
-
-  let enableFieldsForSelectedWorkout = function (workout) {
-    let type = workout.type ? workout.type.toLowerCase() : null;
-    let totalRepsSwitch = document.getElementById('total-reps-switch');
-    let durationSwitch = document.getElementById('duration-switch');
-    let movementSwitch = document.getElementById('movement-switch');
-    let roundsSwitch = document.getElementById('rounds-switch');
-    switch (type) {
-      case 'for time':
-        durationSwitch.checked = true;
-        toggleDurationFields();
-        break;
-      case 'for load':
-        movementSwitch.checked = true;
-        toggleMovementFields();
-        break;
-      case 'for reps':
-        totalRepsSwitch.checked = true;
-        toggleTotalRepsField();
-        break;
-      case 'amrap':
-        roundsSwitch.checked = true;
-        toggleRoundsFields();
-        break;
-      case 'tabata':
-        totalRepsSwitch.checked = true;
-        toggleTotalRepsField();
-        break;
-      default:
-        break;
-    }
-    let modalities = workout.modality ? workout.modality : [];
-    document.getElementById('modality-m').checked = modalities.indexOf('m') > -1;
-    document.getElementById('modality-g').checked = modalities.indexOf('g') > -1;
-    document.getElementById('modality-w').checked = modalities.indexOf('w') > -1;
   };
 
   let isAdmin = function () {
@@ -1067,45 +624,35 @@
   $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
   $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
-  $hl.eventListener('click', 'duration-switch', toggleDurationFields);
-  $hl.eventListener('click', 'rounds-switch', toggleRoundsFields);
-  $hl.eventListener('click', 'location-switch', toggleLocationField);
-  $hl.eventListener('click', 'notes-switch', toggleNotesTextarea);
-  $hl.eventListener('click', 'movement-switch', toggleMovementFields);
-  $hl.eventListener('click', 'wolog-movement-add-btn', addMovement);
-  $hl.eventListener('click', 'total-reps-switch', toggleTotalRepsField);
   $hl.eventListener('click', 'create-new-workout-btn', handleCreateNewWorkoutEvent);
 
   document.addEventListener('click', function (event) {
-    let deleteRoundInfoRegex = new RegExp(/^delete-round-info-\d+/gm);
-    if (deleteRoundInfoRegex.test(event.target.id)) {
-      deleteRoundInfo(event.target.id);
+    //Copy reps row of a movement
+    let copyMovementRepsRegex = new RegExp(/^copy-wolog-movement-reps-\d+-\d+/g);
+    if (copyMovementRepsRegex.test(event.target.id)) {
+      copyMovementReps(event);
     }
 
-    let copyRoundInfoRegex = new RegExp(/^copy-round-info-\d+/gm);
-    if (copyRoundInfoRegex.test(event.target.id)) {
-      copyRoundInfo(event.target.id);
+    //Delete reps row of a movement
+    let deleteMovementRepsRegex = new RegExp(/^delete-wolog-movement-reps-\d+-\d+/g);
+    if (deleteMovementRepsRegex.test(event.target.id)) {
+      deleteMovementReps(event);
     }
-
-    let movementListRegex = new RegExp(/^movement-list-item-\d+/);
-    matchedMovementId = $hl.matchClosestSelector(event.target, movementListRegex);
-    if (matchedMovementId) {
-      populateMovementTextField(matchedMovementId);
-    }
-
-    let copyMovementRegex = new RegExp(/^copy-movement-\d+/gm);
-    if (copyMovementRegex.test(event.target.id)) {
-      copyMovement(event.target.id);
-    }
-
-    let deleteMovementRegex = new RegExp(/^delete-movement-\d+/gm);
+    //Delete a movement
+    let deleteMovementRegex = new RegExp(/^delete-wolog-movement-\d+/g);
     if (deleteMovementRegex.test(event.target.id)) {
-      deleteMovement(event.target.id);
+      deleteMovement(event);
     }
 
     let selectWorkoutItemRegex = new RegExp(/^select-workout-from-search-result-btn-\d+/gm);
     if (selectWorkoutItemRegex.test(event.target.id)) {
       selectWorkout(event.target.id);
+    }
+
+    //Select a movement from the auto complete movement list
+    let movementAutoListItemRegex = new RegExp(/^movement-list-item-\d+/g);
+    if (movementAutoListItemRegex.test(event.target.id)) {
+      addMovementFromAutoList(event);
     }
   });
 
@@ -1182,8 +729,6 @@
             let workoutlog = component.getState().workoutlog;
             workoutlog.workout = response.workouts;
             component.setState({ workoutlog });
-
-            enableFieldsForSelectedWorkout(response.workouts[0]);
           });
         }
       });
@@ -1223,8 +768,6 @@
       let workoutlog = state.workoutlog && typeof state.workoutlog === 'object' ? state.workoutlog : {};
       workoutlog.workout = [response.workout];
       component.setState({ workoutlog });
-
-      enableFieldsForSelectedWorkout(response.workout);
     });
   };
 

@@ -36,23 +36,22 @@
     $test.assert(state.user._id === '012345678901234567890123');
   });
 
-  /** Review this - Workout form has changed. How will edit get handled? */
-  // $test.it('should fetch a workout to edit if params are provided', function () {
-  //   $ironfyt.authenticateUser = function (callback) {
-  //     callback(false, { user: { _id: '012345678901234567890123' } });
-  //   };
-  //   let _filter;
-  //   $ironfyt.getWorkouts = function (filter, callback) {
-  //     _filter = filter;
-  //     callback(false, { workouts: [{ _id: '112345678901234567890123' }] });
-  //   };
-  //   $hl.getParams = function () {
-  //     return { _id: '112345678901234567890123' };
-  //   };
+  $test.it('should fetch a workout to edit if params are provided', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false, { user: { _id: '012345678901234567890123' } });
+    };
+    let _filter;
+    $ironfyt.getWorkouts = function (filter, callback) {
+      _filter = filter;
+      callback(false, { workouts: [{ _id: '112345678901234567890123' }] });
+    };
+    $hl.getParams = function () {
+      return { _id: '112345678901234567890123' };
+    };
 
-  //   page();
-  //   $test.assert(_filter._id === '112345678901234567890123');
-  // });
+    page();
+    $test.assert(_filter._id === '112345678901234567890123');
+  });
 
   $test.it('should enable save button when name and description are added to the workout', function () {
     let selector = document.querySelector('#selector');

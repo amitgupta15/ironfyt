@@ -687,14 +687,15 @@ input[type='date'] {
   width: 80vw;
   margin-left: 6px;
 }
+#wolog-notes {
+  margin-left: 6px;
+  width: 80vw;
+  height: 90px;
+  padding-top: 25px;
+}
 
 .workout-description {
   height: 300px !important;
-  padding-top: 5px;
-}
-
-.wolog-notes {
-  height: 80px !important;
   padding-top: 5px;
 }
 
