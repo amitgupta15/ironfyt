@@ -429,67 +429,6 @@
     $test.assert(state.workoutlog.movements.length === 1);
   });
 
-  $test.it('should close the new workout form when close button is clicked', function () {
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template();
-
-    $test.dispatchHTMLEvent('click', '#create-new-workout-btn');
-    //show-view class is added to new-workout-form-modal dialog
-    $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="new-workout-form-modal">'));
-
-    $test.dispatchHTMLEvent('click', '#close-new-workout-form-modal-btn');
-    $test.assert(selector.innerHTML.includes('<div class="modal-container" id="new-workout-form-modal">'));
-  });
-
-  $test.it('should enable/disable save new workout button based on values of workout name and desc fields', function () {
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template();
-    let workoutNameField = document.querySelector('#workout-name');
-    let workoutDescField = document.querySelector('#workout-description');
-    let workoutSaveBtn = document.querySelector('#workout-form-helper-save-new-workout-btn');
-
-    $test.assert(workoutSaveBtn.disabled === true);
-
-    workoutNameField.value = 'workout 1';
-    workoutDescField.value = '';
-    $test.dispatchHTMLEvent('input', '#workout-name');
-
-    $test.assert(workoutSaveBtn.disabled === true);
-
-    workoutNameField.value = '';
-    workoutDescField.value = 'Some description';
-    $test.dispatchHTMLEvent('input', '#workout-description');
-
-    $test.assert(workoutSaveBtn.disabled === true);
-
-    workoutNameField.value = 'workout 1';
-    workoutDescField.value = 'Some Description';
-    $test.dispatchHTMLEvent('input', '#workout-name');
-
-    $test.assert(workoutSaveBtn.disabled === false);
-    workoutSaveBtn.disabled = true;
-    $test.dispatchHTMLEvent('input', '#workout-description');
-    $test.assert(workoutSaveBtn.disabled === false);
-  });
-
-  $test.it('should validate and save new workout', function () {
-    $ironfyt.saveWorkout = function (workout, callback) {
-      callback(false, { workout: { name: 'new workout' } });
-    };
-
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template();
-
-    let workoutSaveBtn = document.querySelector('#workout-form-helper-save-new-workout-btn');
-    workoutSaveBtn.disabled = false;
-    $test.dispatchHTMLEvent('click', '#workout-form-helper-save-new-workout-btn');
-    $test.assert(workoutSaveBtn.disabled === true);
-    $test.assert(workoutSaveBtn.innerHTML === 'Saving Workout...');
-
-    let state = component.getState();
-    $test.assert(state.workoutlog.workout[0].name === 'new workout');
-  });
-
   $test.it('should check and process new personal record once the log is created', function () {
     $ironfyt.saveWorkoutLog = function (workoutlog, callback) {
       callback(false, { workoutlog: { _id: '123412341234123412341234', workout_id: '123412341234123412341235', user_id: '555555555555555555555555' } });

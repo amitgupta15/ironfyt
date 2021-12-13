@@ -1,12 +1,6 @@
 (function () {
   ('use strict');
 
-  // Default roundinfo object
-  let newRoundInfo = {
-    rounds: null,
-    load: null,
-    unit: null,
-  };
   // Default workout log
   let newWorkoutLog = {
     date: new Date(),
@@ -17,77 +11,10 @@
       minutes: null,
       seconds: null,
     },
-    roundinfo: [newRoundInfo],
+    rounds: null,
     modality: [],
     notes: null,
     movements: [],
-  };
-
-  /**
-   * Template displays the individual workout item and displays the add button to select the workout for the log
-   * @param {Object} workout
-   * @param {Integer} index - Index of the the workout in the workout list
-   * @returns
-   */
-  let workoutItemTemplate = function (workout, index) {
-    return `
-      <div class="rounded-corner-box margin-bottom-10px workout-detail-container">
-        <button type="button" id="select-workout-from-search-result-btn-${index}" class="select-workout-from-search-result-btn"></button>
-        ${$ironfyt.displayWorkoutDetail(workout)}
-      </div>`;
-  };
-
-  let selectedWorkoutTemplate = function (props) {
-    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
-    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
-
-    return `
-    <div class="flex block-with-border margin-bottom-5px">
-      <div class="flex-align-self-center">
-        <div class="text-color-highlight">Selected Workout</div>
-        ${$ironfyt.displayWorkoutDetail(workout)}
-      </div>
-      <button type="button" id="unselect-workout" class="remove-btn margin-left-5px"></button> 
-    </div>`;
-  };
-
-  let newWorkoutButton = function () {
-    return `<button class="btn-primary icon-add" id="create-new-workout-btn">New Workout</button>`;
-  };
-
-  let workoutListModalTemplate = function (props) {
-    return `
-    <div class="modal-container" id="select-workout-modal">
-      <div class="modal-dialog select-workout-modal">
-        <button class="close-modal-dialog" id="close-workout-list-modal-btn">X</button>
-        ${$ironfyt.searchBarTemplate('search-workout', 'Search Workout...')}
-        <div id="autocomplete-workout-list" class="autocomplete-workout-list">${newWorkoutButton()}</div>
-      </div>
-    </div>`;
-  };
-
-  let modalityTemplate = function (workoutlog) {
-    return `
-      <div class="margin-bottom-5px">
-        <div class="form-label-classic">Modality</div>
-        <div class="form-flex-group margin-top-5px">
-          <label class="switch small">
-            <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
-            <span class="slider small round"></span>
-          </label>
-          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-cardio"><span class="modality-m"></span>Cardio</div>
-          <label class="switch small">
-            <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
-            <span class="slider small round"></span>
-          </label>
-          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-body-weight"><span class="modality-g"></span>Body Weight</div>
-          <label class="switch small">
-            <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
-            <span class="slider small round"></span>
-          </label>
-          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-weights"><span class="modality-w flex-align-self-center"></span>Weights</div>
-        </div>
-      </div>`;
   };
 
   let repsRowTemplate = (attr, movementIndex, repsIndex) => {
@@ -126,52 +53,19 @@
     </div>`;
   };
 
-  let movementsTemplate = function (workoutlog) {
-    let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
-    return `
-    <div class="margin-bottom-5px position-relative">
-      <label for="wolog-add-movement" class="form-label-classic" id="wolog-add-movement-input-label">Movements</label>
-      <input class="form-input-classic" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." />
-      <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
-    </div>
-    ${movements
-      .map((movement, movementIndex) => {
-        let reps = movement.reps ? movement.reps : [];
-        return `
-            <div class="rounded-corner-box margin-top-5px">
-              <div class="form-flex-group">
-                <div id="wolog-movement-data-${movementIndex}">${movement && movement.movementObj ? movement.movementObj.movement : ''}</div>
-                <button type="button" class="remove-btn margin-left-5px"  data-wolog-movement-index="${movementIndex}" id="delete-wolog-movement-${movementIndex}"></button>
-              </div>
-              ${reps.map((reps, repsIndex) => repsRowTemplate({ reps, movementObj: movement.movementObj }, movementIndex, repsIndex)).join('')}
-            </div>
-            `;
-      })
-      .join('')}
-    `;
-  };
-
-  let notesTemplate = function (workoutlog) {
+  let selectedWorkoutTemplate = function (props) {
+    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
+    let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     return `
     <div class="margin-bottom-5px">
-      <label for="wolog-notes" class="form-label-classic">Notes</label>
-      <textarea class="form-input-classic wolog-notes" name="wolog-notes" id="wolog-notes" placeholder="">
-        ${workoutlog.notes ? workoutlog.notes : ''}
-      </textarea>      
-    </div>`;
-  };
-
-  let dateTemplate = function (props) {
-    let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
-    let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
-    let validationError = props.validationError ? props.validationError : {};
-    return `
-      <div class="margin-bottom-5px">
-        <label for="wolog-date" class="form-label-classic">Date</label>
-        <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="" class="form-input-classic"/>
-        ${validationError.date ? `<div id="error-wolog-date" class="error">${validationError.date}</div>` : ``}
+      <div class="text-color-highlight margin-bottom-5px">Selected Workout</div>
+      <div class="flex rounded-corner-box">
+        <div class="flex-align-self-center margin-top-5px">
+          ${$ironfyt.displayWorkoutDetail(workout)}
+        </div>
+        <button type="button" id="unselect-workout" class="remove-btn margin-left-5px"></button> 
       </div>
-    `;
+    </div>`;
   };
 
   /**
@@ -181,13 +75,20 @@
    */
   let workoutlogFormTemplate = function (props) {
     let workoutlog = props.workoutlog ? props.workoutlog : newWorkoutLog;
+    let wologdate = workoutlog && workoutlog.date ? $hl.formatDateForInputField(workoutlog.date) : '';
     let validationError = props.validationError ? props.validationError : {};
     let workout = workoutlog.workout && workoutlog.workout instanceof Array ? workoutlog.workout[0] : false;
     let users = props.users ? props.users : [];
     let loggedInUser = props.user ? props.user : {};
+    let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
+    console.log(workoutlog.notes);
     return `
     <form id="workout-log-form" class="form-container" autocomplete="off">
-      ${dateTemplate(props)}  
+      <div class="margin-bottom-5px">
+        <label for="wolog-date" class="form-label-classic">Date</label>
+        <input type="date" name="wolog-date" id="wolog-date" value="${wologdate}" placeholder="" class="form-input-classic"/>
+        ${validationError.date ? `<div id="error-wolog-date" class="error">${validationError.date}</div>` : ``}
+      </div>
       ${
         isAdmin() && users
           ? `
@@ -201,10 +102,28 @@
       `
           : ``
       }
-      <!-- REMOVE THIS? --- ${workout ? selectedWorkoutTemplate(props) : `<div class="margin-bottom-5px"><button type="button" id="select-workout-btn-wolog">Select or Create a Workout</button></div>`}-->
       ${workout ? selectedWorkoutTemplate(props) : ``}
       <input type="hidden" id="wolog-workout-id" value="${workout ? workout._id : ''}">
-      ${modalityTemplate(workoutlog)}
+      <div class="margin-bottom-5px">
+        <div class="form-label-classic">Modality</div>
+        <div class="form-flex-group margin-top-5px">
+          <label class="switch small">
+            <input type="checkbox" id="modality-m" name="wolog-modality" value="m" ${workoutlog.modality && workoutlog.modality.indexOf('m') > -1 ? 'checked' : ''}/>
+            <span class="slider small round"></span>
+          </label>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-cardio"><span class="modality-m"></span>Cardio</div>
+          <label class="switch small">
+            <input type="checkbox" id="modality-g" name="wolog-modality" value="g" ${workoutlog.modality && workoutlog.modality.indexOf('g') > -1 ? 'checked' : ''} />
+            <span class="slider small round"></span>
+          </label>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-body-weight"><span class="modality-g"></span>Body Weight</div>
+          <label class="switch small">
+            <input type="checkbox" id="modality-w" name="wolog-modality" value="w" ${workoutlog.modality && workoutlog.modality.indexOf('w') > -1 ? 'checked' : ''} />
+            <span class="slider small round"></span>
+          </label>
+          <div class="flex flex-direction-column flex-align-items-center text-align-center text-color-weights"><span class="modality-w flex-align-self-center"></span>Weights</div>
+        </div>
+      </div>
       <div class="flex margin-bottom-5px">
         <div class="flex-auto">
           <div class="form-label-classic">Duration</div>
@@ -225,15 +144,34 @@
           <input type="number" class="form-input-classic" name="wolog-rounds" id="wolog-rounds" value="${workoutlog.rounds ? workoutlog.rounds : ''}" placeholder="">    
         </div>
       </div>
-      ${movementsTemplate(workoutlog)}
-      ${notesTemplate(workoutlog)}
+      <div class="margin-bottom-5px position-relative">
+        <label for="wolog-add-movement" class="form-label-classic" id="wolog-add-movement-input-label">Movements</label>
+        <input class="form-input-classic" name="wolog-add-movement" id="wolog-add-movement" placeholder="Add a movement..." />
+        <div id="autocomplete-movement-list" class="autocomplete-movement-list"></div>
+      </div>
+      ${movements
+        .map((movement, movementIndex) => {
+          let reps = movement.reps ? movement.reps : [];
+          return `
+              <div class="rounded-corner-box margin-top-5px">
+                <div class="form-flex-group">
+                  <div id="wolog-movement-data-${movementIndex}">${movement && movement.movementObj ? movement.movementObj.movement : ''}</div>
+                  <button type="button" class="remove-btn margin-left-5px"  data-wolog-movement-index="${movementIndex}" id="delete-wolog-movement-${movementIndex}"></button>
+                </div>
+                ${reps.map((reps, repsIndex) => repsRowTemplate({ reps, movementObj: movement.movementObj }, movementIndex, repsIndex)).join('')}
+              </div>
+              `;
+        })
+        .join('')}
+      <div class="margin-bottom-5px">
+        <label for="wolog-notes" class="form-label-classic">Notes</label>
+        <textarea class="form-input-classic wolog-notes" name="wolog-notes" id="wolog-notes" placeholder="">${workoutlog.notes ? workoutlog.notes : ''}</textarea>      
+      </div>
       ${validationError.catchAll ? `<div id="error-catch-all" class="error">${validationError.catchAll}</div>` : ''}
       <div class="submit-btn-bar margin-top-5px">
         <button type="submit" id="submit-wolog" class="submit-btn">Save</button>
       </div>
     </form>
-    ${workoutListModalTemplate(props)}
-    ${newWorkoutFormModalTemplate(props)}
     `;
   };
 
@@ -291,87 +229,6 @@
       }
       autocompleteDiv.innerHTML = autocompleteList;
     });
-  };
-
-  /**
-   * This method is used to autocomplete the Search Workout input field on the logs form.
-   * The method is called at the time of component creation in afterRender to make it ready for use
-   *
-   * Credit: Got the inspiration for the code from https://www.w3schools.com/howto/howto_js_autocomplete.asp
-   *
-   * @param {*} textField - Input field on which the autocomplete will attach itself to
-   * @param {*} list - List of data to use for autocomplete
-   */
-  let autoCompleteWorkoutSearch = function () {
-    let autocomleteDiv = document.getElementById('autocomplete-workout-list');
-    let textField = document.getElementById('search-workout');
-    textField.addEventListener('input', function (event) {
-      let workouts = component.getState().workouts;
-      let textFieldValue = this.value;
-      if (!textFieldValue) {
-        autocomleteDiv.innerHTML = newWorkoutButton();
-        return false;
-      }
-      let autocompleteList = '';
-      let count = 0;
-      for (let i = 0; i < workouts.length; i++) {
-        let workout = workouts[i];
-
-        let workoutName = workout.name ? workout.name : '';
-        let workoutNameIndex = getSearchStringMatchIndex(workoutName, textFieldValue);
-
-        let workoutType = workout.type ? workout.type : '';
-        let workoutTypeIndex = getSearchStringMatchIndex(workoutType, textFieldValue);
-
-        let workoutReps = workout.reps ? workout.reps.toString() : '';
-        let workoutRepsIndex = getSearchStringMatchIndex(workoutReps, textFieldValue);
-
-        let workoutDescription = workout.description ? workout.description : '';
-        let workoutDescriptionIndex = getSearchStringMatchIndex(workoutDescription, textFieldValue);
-
-        let workoutTimecap = workout.timecap ? $ironfyt.formatTimecap(workout.timecap) : '';
-        let workoutTimecapIndex = getSearchStringMatchIndex(workoutTimecap, textFieldValue);
-
-        if (workoutNameIndex > -1 || workoutTypeIndex > -1 || workoutRepsIndex > -1 || workoutDescriptionIndex > -1 || workoutTimecapIndex > -1) {
-          workout.name = workoutName.trim() ? getHighligtedAttribute(workoutNameIndex, workoutName, textFieldValue) : '';
-          workout.type = workoutType.trim() ? getHighligtedAttribute(workoutTypeIndex, workoutType, textFieldValue) : '';
-          workout.reps = workoutReps.trim() ? getHighligtedAttribute(workoutRepsIndex, workoutReps, textFieldValue) : '';
-          workout.description = workoutDescription.trim() ? getHighligtedAttribute(workoutDescriptionIndex, workoutDescription, textFieldValue) : '';
-          workout.timecap = workoutTimecap.trim() ? getHighligtedAttribute(workoutTimecapIndex, workoutTimecap, textFieldValue) : '';
-
-          count++;
-          autocompleteList += workoutItemTemplate(workout, i);
-        }
-      }
-      let countString = `<div class="margin-bottom-5px text-color-secondary">Found ${count} Workouts</div>`;
-      autocomleteDiv.innerHTML = `<div>${countString}${autocompleteList}</div>`;
-    });
-  };
-
-  /**
-   * Utility function normalizes the incoming string attribute and input field value, and compares to find the index of matching text. Returns the index.
-   * This function is used by handleSearchLogsEvent()
-   * @param {String} attribute
-   * @param {String} searchFieldValue
-   * @returns index of the matching text
-   */
-  let getSearchStringMatchIndex = function (attribute, searchFieldValue) {
-    return attribute.toLowerCase().indexOf(searchFieldValue.toLowerCase());
-  };
-
-  /**
-   * Utility function finds the substring to be highlighted and returns the highlighted substring
-   * This function is used by handleSearchLogsEvent()
-   * @param {int} matchIndex
-   * @param {String} attribute
-   * @param {String} searchFieldValue
-   * @returns
-   */
-  let getHighligtedAttribute = function (matchIndex, attribute, searchFieldValue) {
-    // let inputField = document.querySelector('#search-workout');
-    // let inputFieldValue = inputField.value.trim();
-    let stringToHighlight = matchIndex > -1 ? attribute.substr(matchIndex, searchFieldValue.length) : '';
-    return attribute.replace(stringToHighlight, `<span class="text-color-highlight bold-text">${stringToHighlight}</span>`);
   };
 
   let createWorkoutLogObjFromFormElements = function () {
@@ -500,48 +357,6 @@
     }
   };
 
-  let handleSelectWorkoutEvent = function (event) {
-    let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
-    selectWorkoutBtn.disabled = true;
-    // Get the current state of the form to save the intermediate state
-    let workoutlog = createWorkoutLogObjFromFormElements();
-    $ironfyt.getWorkouts({}, function (error, response) {
-      if (!error) {
-        let workouts = response && response.workouts ? response.workouts : [];
-        component.setState({ workoutlog, workouts });
-        let dialog = document.getElementById('select-workout-modal');
-        dialog.classList.add('show-view');
-        autoCompleteWorkoutSearch();
-      } else {
-        component.setState({ error, workoutlog });
-      }
-    });
-  };
-
-  let handleCloseWorkoutListModalEvent = function (event) {
-    let dialog = document.getElementById('select-workout-modal');
-    dialog.classList.remove('show-view');
-
-    let selectWorkoutBtn = document.getElementById('select-workout-btn-wolog');
-    selectWorkoutBtn.disabled = false;
-  };
-
-  let selectWorkout = function (targetId) {
-    let prefix = 'select-workout-from-search-result-btn-';
-    let index = parseInt(targetId.substring(prefix.length, targetId.length));
-    let workoutlog = createWorkoutLogObjFromFormElements();
-    let state = component.getState();
-    let workouts = state.workouts ? state.workouts : [];
-    //Store selected workout in an array. This is to maintain consistency with the query result which brings back the selected workout as an array.
-    //This is the side effect of MongoDB aggregate query
-    workoutlog.workout = [workouts[index]];
-    let autoCompleteWorkoutListDiv = document.getElementById('autocomplete-workout-list');
-    autoCompleteWorkoutListDiv.innerHTML = '';
-    let dialog = document.getElementById('select-workout-modal');
-    dialog.classList.remove('show-view');
-    component.setState({ workoutlog });
-  };
-
   let handleUnselectWorkoutEvent = function (event) {
     let workoutlog = createWorkoutLogObjFromFormElements();
     workoutlog.workout = [];
@@ -607,24 +422,13 @@
     component.setState({ workoutlog });
   };
 
-  let handleCreateNewWorkoutEvent = function (event) {
-    let selectWorkoutModal = document.getElementById('select-workout-modal');
-    let newWorkoutFormModal = document.getElementById('new-workout-form-modal');
-
-    selectWorkoutModal.classList.remove('show-view');
-    newWorkoutFormModal.classList.add('show-view');
-  };
-
   let isAdmin = function () {
     let state = component.getState();
     return state.user.role === 'admin';
   };
 
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
-  $hl.eventListener('click', 'select-workout-btn-wolog', handleSelectWorkoutEvent);
-  $hl.eventListener('click', 'close-workout-list-modal-btn', handleCloseWorkoutListModalEvent);
   $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
-  $hl.eventListener('click', 'create-new-workout-btn', handleCreateNewWorkoutEvent);
 
   document.addEventListener('click', function (event) {
     //Copy reps row of a movement
@@ -642,11 +446,6 @@
     let deleteMovementRegex = new RegExp(/^delete-wolog-movement-\d+/g);
     if (deleteMovementRegex.test(event.target.id)) {
       deleteMovement(event);
-    }
-
-    let selectWorkoutItemRegex = new RegExp(/^select-workout-from-search-result-btn-\d+/gm);
-    if (selectWorkoutItemRegex.test(event.target.id)) {
-      selectWorkout(event.target.id);
     }
 
     //Select a movement from the auto complete movement list
@@ -734,44 +533,4 @@
       });
     });
   })();
-
-  /* New Workout Dialog */
-
-  let newWorkoutFormModalTemplate = function (props) {
-    return `
-    <div class="modal-container" id="new-workout-form-modal">
-      <div class="modal-dialog new-workout-form-modal">
-        <button class="close-modal-dialog" id="close-new-workout-form-modal-btn">X</button>
-        ${$ironfyt.newWorkoutFormTemplate(props)}
-      </div>
-    </div>
-    `;
-  };
-
-  let handleCloseNewWorkoutFormModalEvent = function (event) {
-    let newWorkoutFormModal = document.getElementById('new-workout-form-modal');
-    newWorkoutFormModal.classList.remove('show-view');
-  };
-
-  /**
-   * Delegated function from workout-form-helper when the save workout button is clicked. Implement
-   * this function to call $ironfyt.validateAndSaveWorkout() function
-   */
-  $ironfyt.handleSaveWorkoutEvent = function (event) {
-    let state = component.getState();
-    let user = state.user;
-    $ironfyt.validateAndSaveWorkout(user, event, function (error, response) {
-      if (error) {
-        component.setState({ error });
-        return;
-      }
-      let workoutlog = state.workoutlog && typeof state.workoutlog === 'object' ? state.workoutlog : {};
-      workoutlog.workout = [response.workout];
-      component.setState({ workoutlog });
-    });
-  };
-
-  $hl.eventListener('click', 'close-new-workout-form-modal-btn', handleCloseNewWorkoutFormModalEvent);
-
-  /* End New Workout Dialog */
 })();
