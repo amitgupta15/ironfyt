@@ -525,9 +525,10 @@
             }
             let workoutlog = component.getState().workoutlog;
             workoutlog.workout = response.workouts;
-            //If it is a new workoutlog then show the movements from the workout
+            //If it is a new workoutlog then show the movements and modality from the workout
             if (!workoutlog._id) {
               workoutlog.movements = workoutlog.workout[0].movements && workoutlog.workout[0].movements.length > 0 ? workoutlog.workout[0].movements : [];
+              workoutlog.modality = workoutlog.workout[0].modality;
             }
             component.setState({ workoutlog });
           });

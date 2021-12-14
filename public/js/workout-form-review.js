@@ -223,7 +223,7 @@
         let unitField = document.getElementById(`workout-movement-unit-${movementIndex}-${repsIndex}`);
         rep.reps = repsField && repsField.value !== '' ? parseInt(repsField.value) : null;
         rep.load = loadField && loadField.value !== '' ? parseInt(loadField.value) : null;
-        rep.unit = unitField && unitField.value !== '' ? parseInt(unitField.value) : null;
+        rep.unit = unitField && unitField.value !== '' ? unitField.value : null;
       });
     });
     workout.movements = movements;
