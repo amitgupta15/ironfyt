@@ -25,12 +25,10 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   // Set the allowed dynamic paths
   server.setAllowedPaths({
     '/healthcheck': handler.healthcheck,
-    '/api/parseworkout': handler.parseworkout,
     '/api/workout': handler.workout,
     '/api/workoutlog': handler.workoutlog,
     '/api/user': handler.user,
     '/api/movement': handler.movement,
-    '/api/movementpr': handler.movementpr,
     '/api/groupwod': handler.groupwod,
     '/api/pr': handler.personalrecord,
     '/api/group': handler.group,

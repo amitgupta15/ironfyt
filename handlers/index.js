@@ -15,8 +15,6 @@ const movement = require('./movement');
 const groupwod = require('./groupwod');
 const personalrecord = require('./personalrecord');
 const group = require('./group');
-const movementpr = require('./movementpr');
-const parseworkout = require('./parseworkout');
 
 const handler = {};
 
@@ -50,14 +48,6 @@ handler.personalrecord = (req, res) => {
 
 handler.group = (req, res) => {
   handleRoute(req, res, group, true, ['get']);
-};
-
-handler.movementpr = (req, res) => {
-  handleRoute(req, res, movementpr, true, ['get', 'post']);
-};
-
-handler.parseworkout = (req, res) => {
-  handleRoute(req, res, parseworkout, true, ['post']);
 };
 
 /**

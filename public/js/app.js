@@ -227,6 +227,7 @@
           </div>`
         : ''
     }
+    ${log.rounds ? `<p>${!hideTitle ? `<strong>Rounds: </strong>` : ``}${log.rounds}</p>` : ''}
     ${
       log.totalreps
         ? `<div class="flex">

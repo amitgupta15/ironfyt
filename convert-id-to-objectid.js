@@ -460,6 +460,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
   //   });
   // });
 
+  // Version 3.0 Tests and data massaging
   // Test the parse workout code
   /*
   let { parseWorkout } = require('./helpers/parse-workout-desc');
