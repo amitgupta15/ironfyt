@@ -10,11 +10,11 @@
       : `<div class="container login-container">
           <div class="login-logo">IronFyt</div>
           <form id="login-form">
-            <div class="form-input-group margin-bottom-10px">
+            <div class="position-relative margin-bottom-10px">
               <input type="text" class="form-input" name="email" id="email" placeholder="Email" />
               <label for="email" class="form-label">Email</label>
             </div>
-            <div class="form-input-group margin-bottom-10px">
+            <div class="position-relative margin-bottom-10px">
               <input type="password" class="form-input" name="password" id="password" placeholder="Password" />
               <label for="password" class="form-label">Password</label>
             </div>

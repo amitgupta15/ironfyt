@@ -67,13 +67,13 @@
           <div class="flex-auto">
             <div class="form-label-classic">Time Cap</div>
             <div class="form-flex-group margin-top-5px">
-              <div class="form-input-group show-time-separator-right-3px">
+              <div class="position-relative show-time-separator-right-3px">
                 <input type="number" class="form-input-classic duration-input margin-right-10px" name="workout-time-cap-hours" id="workout-time-cap-hours" min="0" max="240" placeholder="H" value="${timecap.hours ? timecap.hours : ''}" />
               </div>
-              <div class="form-input-group show-time-separator-right-3px">
+              <div class="position-relative show-time-separator-right-3px">
                 <input type="number" class="form-input-classic duration-input margin-right-10px" name="workout-time-cap-minutes" id="workout-time-cap-minutes" min="0" max="59" placeholder="M" value="${timecap.minutes ? timecap.minutes : ''}"  />
               </div>
-              <div class="form-input-group">
+              <div class="position-relative">
                 <input type="number" class="form-input-classic duration-input margin-right-0" name="workout-time-cap-seconds" id="workout-time-cap-seconds" min="0" max="59" placeholder="S" value="${timecap.seconds ? timecap.seconds : ''}"  />
               </div>
             </div>

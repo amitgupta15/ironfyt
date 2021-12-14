@@ -239,7 +239,24 @@
       log.movements && log.movements.length
         ? `<div>
             ${!hideTitle ? `<div><strong>Movements: </strong></div>` : ``}
-            <div>${log.movements.map((movement) => `${movement.movement}: ${movement.reps ? `${movement.reps}` : ''}${movement.load ? (movement.reps ? ` X ${movement.load}` : `${movement.load}`) : ``} ${movement.unit ? movement.unit : ``}`).join('<br/>')}</div>
+            <div>
+              ${log.movements
+                .map((movement) => {
+                  let repsArray = movement.reps && Array.isArray(movement.reps) ? movement.reps : [];
+                  //Remove the legacy portion of the code to show movement once all the movement data is cleaned up
+                  return `
+                    <div>${movement && movement.movementObj ? movement.movementObj.movement : `${movement.movement}: ${movement.reps ? `${movement.reps}` : ''}${movement.load ? (movement.reps ? ` X ${movement.load}` : `${movement.load}`) : ``} ${movement.unit ? movement.unit : ``}`}</div>
+                    <div class="margin-bottom-10px">
+                    ${repsArray
+                      .map((rep) => {
+                        return `<div>${rep.reps} ${rep.load !== null ? ` X ${rep.load} ${rep.unit ? rep.unit : ''}` : ''}</div>`;
+                      })
+                      .join('')}
+                    </div>
+                  `;
+                })
+                .join('')}
+            </div>
           </div>`
         : ''
     }
@@ -284,7 +301,7 @@
    */
   $ironfyt.searchBarTemplate = function (inputId, placeholder) {
     return `
-    <div class="form-input-group margin-top-20px margin-bottom-15px">
+    <div class="position-relative margin-top-20px margin-bottom-15px">
       <span class="search-input-icon"></span>
       <input type="text" class="form-input search-input" name="${inputId}" id="${inputId}" value="" placeholder="${placeholder}"/>
       <label for="${inputId}" class="form-label">${placeholder}</label>

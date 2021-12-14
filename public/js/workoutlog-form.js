@@ -81,7 +81,6 @@
     let users = props.users ? props.users : [];
     let loggedInUser = props.user ? props.user : {};
     let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
-    console.log(workoutlog.notes);
     return `
     <form id="workout-log-form" class="form-container" autocomplete="off">
       <div class="margin-bottom-5px">
@@ -128,13 +127,13 @@
         <div class="flex-auto">
           <div class="form-label-classic">Duration</div>
           <div class="form-flex-group margin-top-5px">
-            <div class="form-input-group show-time-separator">
+            <div class="position-relative show-time-separator">
               <input type="number" class="form-input-classic duration-input" name="wolog-duration-hours" id="wolog-duration-hours" min="0" max="240" value="${workoutlog.duration && workoutlog.duration.hours ? workoutlog.duration.hours : ''}" placeholder="H" />
             </div>
-            <div class="form-input-group show-time-separator">
+            <div class="position-relative show-time-separator">
               <input type="number" class="form-input-classic duration-input" name="wolog-duration-minutes" id="wolog-duration-minutes" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.minutes ? workoutlog.duration.minutes : ''}" placeholder="M" />
             </div>
-            <div class="form-input-group">
+            <div class="position-relative">
               <input type="number" class="form-input-classic duration-input" name="wolog-duration-seconds" id="wolog-duration-seconds" min="0" max="59" value="${workoutlog.duration && workoutlog.duration.seconds ? workoutlog.duration.seconds : ''}" placeholder="S" />
             </div>
           </div>
@@ -181,7 +180,6 @@
       validationError: {},
       workoutlog: newWorkoutLog,
       user: {},
-      workouts: [],
       pageTitle: 'Log',
       movements: [],
     },
@@ -277,7 +275,7 @@
         let unitField = document.getElementById(`wolog-movement-unit-${movementIndex}-${repsIndex}`);
         rep.reps = repsField && repsField.value !== '' ? parseInt(repsField.value) : null;
         rep.load = loadField && loadField.value !== '' ? parseInt(loadField.value) : null;
-        rep.unit = unitField && unitField.value !== '' ? parseInt(unitField.value) : null;
+        rep.unit = unitField && unitField.value !== '' ? unitField.value : null;
       });
     });
     workoutlog.movements = movements;
@@ -527,6 +525,10 @@
             }
             let workoutlog = component.getState().workoutlog;
             workoutlog.workout = response.workouts;
+            //If it is a new workoutlog then show the movements from the workout
+            if (!workoutlog._id) {
+              workoutlog.movements = workoutlog.workout[0].movements && workoutlog.workout[0].movements.length > 0 ? workoutlog.workout[0].movements : [];
+            }
             component.setState({ workoutlog });
           });
         }

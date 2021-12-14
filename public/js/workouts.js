@@ -14,12 +14,12 @@
           <div class="text-color-secondary bold-text">Workout</div>
           <div class="margin-bottom-10px">${$ironfyt.displayWorkoutDetail(selectedWorkoutForWod, false)}</div>
           <div class="form-flex-group margin-bottom-5px">
-            <div class="form-input-group flex-width-100">
+            <div class="position-relative flex-width-100">
               <input type="date" name="wod-date" id="wod-date" placeholder="Date" value="${today}" class="form-input"/>
               <label for="wod-date" class="form-label date-label">Date</label>
             </div>
           </div>
-          <div class="form-input-group margin-top-10px">
+          <div class="position-relative margin-top-10px">
             <div class="text-color-highlight">Group</div>
             <select class="form-input" name="group" id="wod-group">
               <option></option>

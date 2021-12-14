@@ -7,12 +7,11 @@
   let page = $ironfyt.workoutlogFormPage;
 
   $test.it('should create a workoutlogformComponent', function () {
-    $test.assert(Object.keys(component.state).length === 7);
+    $test.assert(Object.keys(component.state).length === 6);
     $test.assert('error' in component.state);
     $test.assert('validationError' in component.state);
     $test.assert('user' in component.state);
     $test.assert('workoutlog' in component.state);
-    $test.assert('workouts' in component.state);
     $test.assert('pageTitle' in component.state);
     $test.assert('movements' in component.state);
     $test.assert(component.selector === '[data-app=workoutlog-form]');
@@ -83,166 +82,6 @@
     $test.dispatchHTMLEvent('submit', '#workout-log-form');
     $test.assert(_url === 'workoutlog-calendar.html?ref=workoutlog-form.html&user_id=123456789012345678901234&year=2020&month=0&date=1');
   });
-
-  /*****
-   * Review these tests. Are we keeping this feature in the log form?
-   * ****/
-
-  // $test.it('should show search workout dialog when select-workout-btn-wolog is clicked', function () {
-  //   component.setState({ workoutlog: {} });
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template({});
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal"'));
-  //   $test.assert(selector.innerHTML.includes('<button type="button" id="select-workout-btn-wolog" disabled="">'));
-  //   $test.assert(document.getElementById('wolog-workout-id').value === '');
-  // });
-
-  // $test.it('should close the search workout dialog when close button is clicked', function () {
-  //   component.setState({ workoutlog: {} });
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template({});
-
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal">'));
-  //   $test.dispatchHTMLEvent('click', '#close-workout-list-modal-btn');
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
-  // });
-
-  // $test.it('should show available workouts and let the user select a workout when searching for a workout - auto-complete', function () {
-  //   $ironfyt.authenticateUser = function (callback) {
-  //     callback(false, { user: { _id: '6070f1035b7f1e4066cb9450' } });
-  //   };
-  //   $ironfyt.getWorkouts = function (params, callback) {
-  //     callback(false, {
-  //       workouts: [
-  //         { _id: 1, name: 'Chest & Back', description: 'Do 100 push-ups' },
-  //         { _id: 2, name: 'DT', description: '155lb deadlift' },
-  //         { _id: 3, name: 'Fran', description: '21-15-9 Pull-ups and Thrusters' },
-  //       ],
-  //     });
-  //   };
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template({});
-
-  //   //Dispatch the following event to trigger getWorkouts api call
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-
-  //   let state = component.getState();
-  //   $test.assert(state.workouts.length === 3);
-  //   let searchWorkoutField = document.querySelector('#search-workout');
-  //   searchWorkoutField.value = 'fr';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.assert(selector.innerHTML.includes('<summary><span class="text-color-highlight bold-text">Fr</span>an</summary>'));
-
-  //   searchWorkoutField.value = 'dt';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.assert(selector.innerHTML.includes('Found 1 Workouts'));
-  //   $test.assert(selector.innerHTML.includes('<summary><span class="text-color-highlight bold-text">DT</span></summary>'));
-
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
-  //   state = component.getState();
-  //   $test.assert(state.workoutlog.workout[0]._id === 2);
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">')); //removed the 'show-view' class from the modal
-  // });
-
-  // $test.it('should fetch workouts when "select workout" button is clicked', function () {
-  //   component.setState({ workoutlog: { roundinfo: [{ rounds: null, load: null, unit: null }] } });
-  //   $ironfyt.getWorkouts = function (filter, callback) {
-  //     callback(false, {
-  //       workouts: [
-  //         { _id: 1, name: 'Workout 1' },
-  //         { _id: 2, name: 'Workout 2' },
-  //       ],
-  //     });
-  //   };
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template({});
-  //   let state = component.getState();
-  //   $test.assert(state.workouts.length === 0);
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   state = component.getState();
-  //   $test.assert(state.workouts.length === 2);
-  // });
-
-  // $test.it('should show create new workout dialog when new workout button is clicked', function () {
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template();
-  //   //Open the select workout dialog
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="select-workout-modal">'));
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="new-workout-form-modal">'));
-
-  //   //Click on create new workout button
-  //   $test.dispatchHTMLEvent('click', '#create-new-workout-btn');
-  //   //show-view class is removed from select-workout-modal dialog
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container" id="select-workout-modal">'));
-  //   //show-view class is added to new-workout-form-modal dialog
-  //   $test.assert(selector.innerHTML.includes('<div class="modal-container show-view" id="new-workout-form-modal">'));
-  // });
-
-  // $test.it('should enable appropriate fields based on the type of workout selected', function () {
-  //   $ironfyt.getWorkouts = function (params, callback) {
-  //     callback(false, {
-  //       workouts: [
-  //         { _id: 1, type: 'For Time', name: 'Chest & Back', description: 'Do 100 push-ups', modality: ['g'] },
-  //         { _id: 2, type: 'For Reps', name: 'DT', description: '155lb deadlift', modality: ['g', 'm'] },
-  //         { _id: 3, type: 'AMRAP', name: 'Fran', description: '21-15-9 Pull-ups and Thrusters' },
-  //         { _id: 4, type: 'For Load', name: 'for load workout', description: '5-5-3-1 Deadlift' },
-  //         { _id: 5, type: 'Tabata', name: 'tabata workout', description: 'tabata something else' },
-  //       ],
-  //     });
-  //   };
-
-  //   let selector = document.querySelector('#selector');
-  //   selector.innerHTML = component.template();
-  //   $test.dispatchHTMLEvent('click', '#select-workout-btn-wolog');
-  //   let searchWorkoutField = document.getElementById('search-workout');
-
-  //   // Search and select "For Time" type workout
-  //   searchWorkoutField.value = 'ch';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-0');
-  //   $test.assert(document.getElementById('duration-switch').checked === true);
-  //   $test.assert(document.getElementById('wolog-duration-hours').disabled === false);
-  //   $test.assert(document.getElementById('wolog-duration-minutes').disabled === false);
-  //   $test.assert(document.getElementById('wolog-duration-seconds').disabled === false);
-
-  //   // Search and select "For Reps" type workout
-  //   searchWorkoutField.value = 'dt';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-1');
-  //   $test.assert(document.getElementById('total-reps-switch').checked === true);
-  //   $test.assert(document.getElementById('wolog-total-reps').disabled === false);
-  //   $test.assert(document.getElementById('modality-g').checked === true);
-  //   //reset the fields
-  //   document.getElementById('total-reps-switch').checked = false;
-  //   document.getElementById('wolog-total-reps').disabled = true;
-
-  //   // Search and select "AMRAP" type workout
-  //   searchWorkoutField.value = '21-15';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-2');
-  //   $test.assert(document.getElementById('rounds-switch').checked === true);
-  //   $test.assert(document.getElementById('wolog-rounds-0').disabled === false);
-  //   $test.assert(document.querySelector(`#wolog-load-0`).disabled === false);
-  //   $test.assert(document.querySelector(`#wolog-unit-0`).disabled === false);
-
-  //   // Search and select "For Load" type workout
-  //   searchWorkoutField.value = 'for load';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-3');
-  //   $test.assert(document.getElementById('movement-switch').checked === true);
-
-  //   // Search and select "Tabata" type workout
-  //   searchWorkoutField.value = 'tabata';
-  //   $test.dispatchHTMLEvent('input', '#search-workout');
-  //   $test.dispatchHTMLEvent('click', '#select-workout-from-search-result-btn-4');
-  //   $test.assert(document.getElementById('total-reps-switch').checked === true);
-  //   $test.assert(document.getElementById('wolog-total-reps').disabled === false);
-  // });
 
   $test.it('should accept and validate date and user_id url param', function () {
     $ironfyt.authenticateUser = function (callback) {

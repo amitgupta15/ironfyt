@@ -1,11 +1,3 @@
-/** 
-Sky Blue Crayola - #5adbff
-Red RYB - #F4442E
-Raisin Black - #1E1E24
-Neon Blue - #6874E8
-Bitter Lime - #CAFE48
-**/
-
 :root {
   --link-color: #7b8cde;
   --main-color: #ffffff;
@@ -63,9 +55,9 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
-.absolute-right {
+/* .absolute-right {
   right: 3px !important;
-}
+} */
 
 .margin-bottom-5px {
   margin-bottom: 5px !important;
@@ -113,6 +105,13 @@ input[type='number'] {
 }
 .padding-bottom-10px {
   padding-bottom: 10px;
+}
+
+.text-align-right {
+  text-align: right;
+}
+.text-align-center {
+  text-align: center;
 }
 
 .small-text {
@@ -165,7 +164,6 @@ input[type='number'] {
 .text-color-tertiary {
   color: var(--tertiary-color);
 }
-
 .text-color-highlight {
   color: var(--theme);
 }
@@ -173,20 +171,11 @@ input[type='number'] {
 .text-color-cardio {
   color: var(--modality-cardio);
 }
-
 .text-color-body-weight {
   color: var(--modality-body-weight);
 }
-
 .text-color-weights {
   color: var(--modality-weight);
-}
-
-.text-align-right {
-  text-align: right;
-}
-.text-align-center {
-  text-align: center;
 }
 
 .error {
@@ -301,6 +290,7 @@ input[type='number'] {
   font-weight: bold;
 }
 /** End Calendar **/
+
 .day-detail-container {
   max-width: 100vw;
   word-wrap: break-word;
@@ -347,16 +337,6 @@ input[type='number'] {
   position: relative;
 }
 
-#select-workout-btn-wolog {
-  width: 100%;
-  border: 1px solid var(--link-color);
-  border-radius: 5px;
-  padding: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--link-color);
-  background-color: transparent;
-}
 .log-detail-section {
   padding: 10px;
 }
@@ -463,8 +443,7 @@ input[type='number'] {
   border: 1px solid var(--btn-cancel);
   color: var(--btn-cancel);
 }
-.select-workout-modal,
-.new-workout-form-modal {
+.select-workout-modal {
   text-align: left;
   margin: 15px auto;
 }
@@ -487,15 +466,7 @@ input[type='number'] {
   flex-basis: 80px;
 }
 
-.form-group-label {
-  margin-right: 10px;
-}
-.form-input-group {
-  position: relative;
-}
-
-.form-input,
-.form-input-timecap {
+.form-input {
   height: 52px;
   width: 100%;
   box-sizing: border-box;
@@ -512,19 +483,16 @@ input[type='number'] {
   text-shadow: none;
 }
 
-.form-input:disabled,
-.form-input-timecap:disabled {
+.form-input:disabled {
   background-color: var(--border-color);
 }
 
 .form-input:focus,
-.form-input:active,
-.form-input-timecap:focus,
-.form-input-timecap:active {
+.form-input:active {
   outline: none;
   border-radius: 5px;
-  /* border: 1px solid var(--main-color); */
 }
+
 .duration-input {
   padding-left: 0;
   width: 52px !important;
@@ -532,13 +500,7 @@ input[type='number'] {
   margin-right: 15px;
 }
 
-.rounds-input {
-  margin-right: 10px;
-  width: 70px;
-}
-
-.form-input::placeholder,
-.form-input-timecap::placeholder {
+.form-input::placeholder {
   visibility: hidden;
 }
 
@@ -551,22 +513,6 @@ input[type='number'] {
   -moz-transition: 0.2s ease all;
   -webkit-transition: 0.2s ease all;
   font-size: var(--big-font-size);
-}
-.form-label-timecap {
-  position: absolute;
-  top: 17px;
-  left: 5px;
-  color: var(--secondary-color);
-  transition: 0.2s ease all;
-  -moz-transition: 0.2s ease all;
-  -webkit-transition: 0.2s ease all;
-  font-size: var(--big-font-size);
-}
-.duration-label {
-  left: 20px;
-}
-.rounds-label {
-  top: 17px;
 }
 
 .date-label {
@@ -597,13 +543,6 @@ input[type='number'] {
 .form-input:focus ~ label,
 .form-input:not(:placeholder-shown) ~ label {
   color: var(--theme);
-  top: 5px;
-  font-size: var(--normal-font-size);
-}
-
-.form-input-timecap:focus ~ label,
-.form-input-timecap:not(:placeholder-shown) ~ label {
-  color: var(--secondary-color);
   top: 5px;
   font-size: var(--normal-font-size);
 }
@@ -683,10 +622,6 @@ input[type='date'] {
   -webkit-appearance: unset;
   -moz-appearance: textfield;
 }
-#wolog-location {
-  width: 80vw;
-  margin-left: 6px;
-}
 
 .workout-description {
   height: 300px !important;
@@ -698,15 +633,6 @@ input[type='date'] {
   padding-top: 5px;
 }
 
-#workout-scaling {
-  height: 120px;
-  padding-top: 5px;
-}
-
-#wolog-notes ~ label,
-#wolog-location ~ label {
-  left: 11px;
-}
 .search-input {
   padding-left: 40px;
   border: none !important;
@@ -716,45 +642,6 @@ input[type='date'] {
   left: 40px;
 }
 
-.block-with-border {
-  background-color: var(--box-background);
-  border-radius: 5px;
-  padding: 10px;
-  position: relative;
-  padding-top: 25px;
-}
-.block-with-border-label {
-  position: absolute;
-  top: 5px;
-  left: 7px;
-  font-size: var(--big-font-size);
-  color: var(--main-color);
-}
-.block-with-border-switch {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-}
-
-.workout-search-result-item {
-  border: 1px solid #e9e9e9;
-  border-radius: 5px;
-  padding: 5px;
-  position: relative;
-}
-
-.select-workout-from-search-result-btn {
-  background: url(../images/add_circle_24dp.svg);
-  background-size: cover;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  border: none;
-  position: absolute;
-  top: 5px;
-  right: 7px;
-  color: transparent;
-}
 details > summary {
   border: none;
   outline: none;
@@ -848,36 +735,11 @@ details > summary {
 .slider.round:before {
   border-radius: 50%;
 }
-select:disabled {
-  background-color: var(--border-color);
-}
 
-input:disabled,
-textarea:disabled {
-  background-color: var(--border-color);
-  cursor: not-allowed;
-}
-input:disabled ~ label,
-textarea:disabled ~ label {
-  color: var(--secondary-color);
-}
 textarea {
   font-family: inherit;
 }
-.wolog-movement-add-btn {
-  display: none;
-  position: absolute;
-  border: 1px solid var(--link-color);
-  color: var(--link-color);
-  border-radius: 5px;
-  padding: 10px;
-  height: 48px;
-  top: 2px;
-  right: 2px;
-  font-size: 1rem;
-  z-index: 100;
-  background-color: transparent;
-}
+
 .autocomplete-movement-list {
   position: absolute;
   border: 1px solid var(--border-color);
@@ -904,39 +766,7 @@ textarea {
   background-color: var(--theme) !important;
   color: #ffffff;
 }
-.add-movement-input-group {
-  width: 80vw;
-  position: relative;
-}
 
-.wolog-movement-name {
-  font-size: 0.8rem;
-  width: 70px;
-  margin-right: 5px;
-}
-
-.wolog-movement-attr {
-  width: 50px;
-  margin-right: 5px;
-}
-
-.duration-block {
-  width: 55vw;
-  margin-right: 5px;
-}
-
-.total-reps-block {
-  width: 39vw;
-}
-
-input:valid,
-textarea:valid {
-  /* border: 1px solid var(--main-color); */
-  border: none;
-}
-.workout-modality-text {
-  font-size: 0.8rem;
-}
 .modality-m {
   display: inline-block;
   background: url(../images/noun_Running_688062-cardio.svg);
@@ -991,6 +821,7 @@ textarea:valid {
   border: none;
   color: transparent;
 }
+
 .modality-indicator-g {
   background: url(../images/modality-g.svg);
   background-size: cover;
@@ -1263,17 +1094,6 @@ a.workout-history-link::before {
   color: var(--theme);
   font-size: var(--big-font-size);
   margin-bottom: 5px;
-}
-
-.video-link {
-  display: inline-block;
-  background: url(../images/smart_display_black_24dp.svg);
-  background-size: cover;
-  width: 24px;
-  height: 24px;
-  border: none;
-  color: transparent;
-  position: relative;
 }
 
 .topbar-back-btn {
