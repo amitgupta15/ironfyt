@@ -144,6 +144,7 @@
    */
   $ironfyt.pageTemplate = function (props, template) {
     props = props !== undefined ? props : {};
+    let user = props && props.user ? props.user : {};
     if (props.error) {
       return errorTemplate(props.error);
     } else {
@@ -151,7 +152,29 @@
         ${topBarTemplate(props)}
         <div class="main">
         ${template(props)}
-        </div>`;
+        </div>
+        <!-- Following div is needed to cover the unsafe bottom area in the PWA view -->
+        <div class="nav-bar-dummy"></div>
+        <div class="nav-bar">
+          <a class="nav-bar-item" href="/">
+            <img src="images/home_24dp.svg" />
+            <div>Home</div>
+          </a>
+          <a class="nav-bar-item" href="workoutlog-calendar.html">
+            <img src="images/calendar_24dp.svg" />
+            <div>Logs</div>
+          </a>
+          <div class="nav-bar-item">
+            <img src="images/add_circle_24dp.svg" />
+            <div>New</div>
+          </div>
+          <a class="nav-bar-item" href="workouts.html">
+            <img src="images/workouts_24dp.svg" />
+            <div>Workouts</div>
+          </a>
+          <div class="nav-bar-item profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+        </div>
+        `;
     }
   };
 
@@ -287,10 +310,10 @@
     return `
     <div class="top-bar">
       <div class="top-bar-menu">
-        ${leftButtonTitle.toLowerCase() === 'back' ? `<a href="javascript: history.go(-1)" class="topbar-back-btn">Back</a>` : '<a href="/" class="home-menu-link">Home</a>'}
+        ${leftButtonTitle.toLowerCase() === 'back' ? `<a href="javascript: history.go(-1)" class="topbar-back-btn">Back</a>` : ''}
       </div>
       ${pageTitle === 'logo' ? `<img src="images/logo/IronFytLogo.svg" class="top-bar-logo">` : `<h3 class="text-color-primary margin-top-5px">${pageTitle}</h3>`}
-      <div class="profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+      <div></div>
     </div>`;
   };
 

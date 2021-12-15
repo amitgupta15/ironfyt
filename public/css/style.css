@@ -182,31 +182,15 @@ input[type='number'] {
   color: var(--error);
   font-size: 0.8rem;
 }
-.top-bar {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  height: 3rem;
-  align-items: center;
-}
-
-.top-bar > div:first-of-type {
-  padding-left: 10px;
-  width: 20%;
-}
-
-.top-bar > div:last-of-type {
-  padding-right: 10px;
-  width: 20%;
-  text-align: right;
-}
 
 .profile-icon {
   color: var(--secondary-color);
   font-size: 1.1rem;
   font-weight: 600;
 }
-
+.main {
+  padding: 4rem 0;
+}
 .container {
   margin: 10px auto;
   padding: 0 15px;
@@ -1106,4 +1090,77 @@ a.workout-history-link::before {
 .topbar-back-btn::before {
   content: '\003C';
   padding-right: 5px;
+}
+
+.top-bar {
+  position: fixed;
+  top: env(safe-area-inset-top, -1);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  height: 3rem;
+  align-items: center;
+  z-index: 10;
+  background-color: var(--background);
+}
+
+.top-bar > div:first-of-type {
+  padding-left: 10px;
+  width: 20%;
+}
+
+.top-bar > div:last-of-type {
+  padding-right: 10px;
+  width: 20%;
+  text-align: right;
+}
+
+/* This is needed for the PWA view. This covers the bottom (unsafe) part  */
+.nav-bar-dummy {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  max-height: 16vh;
+  width: 100%;
+  z-index: 10;
+  text-align: center;
+  background-color: var(--background);
+}
+
+.nav-bar {
+  position: fixed;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  bottom: env(safe-area-inset-bottom, 0);
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  max-height: 16vh;
+  width: 100%;
+  z-index: 10;
+  background-color: var(--background);
+}
+
+.nav-bar-item {
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.nav-bar-item > div {
+  color: var(--link-color);
+  font-size: 0.9rem;
 }

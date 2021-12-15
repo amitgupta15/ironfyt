@@ -1,5 +1,15 @@
 # IronFyt Release Notes
 
+## 3.0.0
+
+Release Date:
+
+### New Features
+
+- Parse workout description for movements
+- Pre-populate movements information in logs
+- Added sticky nav bar at the bottom and sticky top bar at the top
+
 ## 2.5.1
 
 Release Date: 10/06/2021
