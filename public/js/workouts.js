@@ -92,7 +92,7 @@
       user: {},
       error: '',
       workouts: [],
-      pageTitle: 'Workouts',
+      pagename: 'workouts',
       selectedWorkoutForWod: {},
       showSpinner: false,
     },

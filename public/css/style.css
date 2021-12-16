@@ -869,17 +869,17 @@ textarea {
   height: 18px;
 }
 
-.icon-workout::before {
+/* .icon-workout::before {
   content: '';
   display: block;
-  background: url(../images/workouts_24dp.svg);
+  background: url(../images/workouts-icon.svg);
   background-size: cover;
   width: 18px;
   height: 18px;
   left: 3px;
   top: 6px;
   position: absolute;
-}
+} */
 .icon-logout::before {
   content: '';
   display: block;
@@ -906,7 +906,7 @@ textarea {
 .icon-calendar::before {
   content: '';
   display: block;
-  background: url(../images/calendar_24dp.svg);
+  background: url(../images/calendar-icon.svg);
   background-size: cover;
   width: 18px;
   height: 18px;
@@ -959,16 +959,6 @@ a.workout-history-link::before {
   width: 20px;
   height: 20px;
   vertical-align: bottom;
-}
-.home-menu-link {
-  display: block;
-  background: url(../images/home_24dp.svg);
-  background-size: cover;
-  width: 30px;
-  height: 30px;
-  border: none;
-  color: transparent;
-  position: relative;
 }
 
 .group-name {
@@ -1163,4 +1153,7 @@ a.workout-history-link::before {
 .nav-bar-item > div {
   color: var(--link-color);
   font-size: 0.9rem;
+}
+.nav-bar-item > div.nav-bar-item-active {
+  color: var(--theme);
 }

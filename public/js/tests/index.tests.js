@@ -12,7 +12,7 @@
     $test.assert('error' in component.state);
     $test.assert('groupwods' in component.state);
     $test.assert('workoutlogs' in component.state);
-    $test.assert('pageTitle' in component.state);
+    $test.assert('pagename' in component.state);
   });
 
   $test.it('should redirect to the login page if no token found or expired token', function () {

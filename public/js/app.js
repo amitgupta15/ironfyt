@@ -145,6 +145,7 @@
   $ironfyt.pageTemplate = function (props, template) {
     props = props !== undefined ? props : {};
     let user = props && props.user ? props.user : {};
+    let pagename = props && props.pagename ? props.pagename : '';
     if (props.error) {
       return errorTemplate(props.error);
     } else {
@@ -157,20 +158,20 @@
         <div class="nav-bar-dummy"></div>
         <div class="nav-bar">
           <a class="nav-bar-item" href="/">
-            <img src="images/home_24dp.svg" />
-            <div>Home</div>
+            <img src="images/${pagename === 'home' ? `home-icon-active.svg` : `home-icon.svg`}" />
+            <div ${pagename === 'home' ? 'class="nav-bar-item-active"' : ''}>Home</div>
           </a>
           <a class="nav-bar-item" href="workoutlog-calendar.html">
-            <img src="images/calendar_24dp.svg" />
-            <div>Logs</div>
+            <img src="images/${pagename === 'logs' ? `calendar-icon-active.svg` : `calendar-icon.svg`}" />
+            <div ${pagename === 'logs' ? 'class="nav-bar-item-active"' : ''}>Logs</div>
           </a>
           <div class="nav-bar-item">
             <img src="images/add_circle_24dp.svg" />
             <div>New</div>
           </div>
           <a class="nav-bar-item" href="workouts.html">
-            <img src="images/workouts_24dp.svg" />
-            <div>Workouts</div>
+            <img src="images/${pagename === 'workouts' ? `workouts-icon-active.svg` : `workouts-icon.svg`}" />
+            <div ${pagename === 'workouts' ? 'class="nav-bar-item-active"' : ''}>Workouts</div>
           </a>
           <div class="nav-bar-item profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
         </div>
@@ -304,15 +305,13 @@
 
   //Topbar template
   let topBarTemplate = function (props) {
-    let user = props && props.user ? props.user : {};
-    let pageTitle = props && props.pageTitle ? props.pageTitle : '';
     let leftButtonTitle = props && props.leftButtonTitle ? props.leftButtonTitle : '';
     return `
     <div class="top-bar">
       <div class="top-bar-menu">
         ${leftButtonTitle.toLowerCase() === 'back' ? `<a href="javascript: history.go(-1)" class="topbar-back-btn">Back</a>` : ''}
       </div>
-      ${pageTitle === 'logo' ? `<img src="images/logo/IronFytLogo.svg" class="top-bar-logo">` : `<h3 class="text-color-primary margin-top-5px">${pageTitle}</h3>`}
+      <img src="images/logo/IronFytLogo.svg" class="top-bar-logo">
       <div></div>
     </div>`;
   };

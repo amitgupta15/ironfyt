@@ -15,7 +15,7 @@
     $test.assert('month' in component.state);
     $test.assert('year' in component.state);
     $test.assert('days' in component.state);
-    $test.assert('pageTitle' in component.state);
+    $test.assert('pagename' in component.state);
     $test.assert('selectedDay' in component.state);
   });
 

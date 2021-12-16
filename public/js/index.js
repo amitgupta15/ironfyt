@@ -1,14 +1,6 @@
 (function () {
-  ('use strict');
+  'use strict';
 
-  let buttonBar = function () {
-    return `
-      <button class="btn-primary icon-add" id="new-log-btn">New Log</button>
-      <button class="btn-primary icon-calendar" id="activity-btn">Logs</button>        
-      <button class="btn-primary icon-workout" id="workouts-btn">Workouts</button>
-      <button class="btn-primary icon-logout" id="logout-btn">Logout</button>        
-    `;
-  };
   /**
    * This is the default page template for the landing page. This template is replaced with search result template when a user
    * starts searching for logs.
@@ -18,14 +10,12 @@
    */
   let defaultPageTemplate = function (props) {
     let groupwods = props && props.groupwods ? props.groupwods : [];
-    let user = props && props.user ? props.user : {};
     return `
     <div id="default-page-template-dashboard">
       
       ${
         groupwods.length > 0
           ? `
-          <div class="flex">${buttonBar()}</div>
           ${groupwods
             .map((groupwod) => {
               let workout = groupwod && groupwod.workout !== undefined ? groupwod.workout : {};
@@ -73,7 +63,6 @@
           `
           : `
           <div class="splash-logo-container">
-            <div>${buttonBar()}</div>
           </div>`
       }
     </div>
@@ -111,23 +100,12 @@
       error: '',
       groupwods: [],
       workoutlogs: [],
-      pageTitle: 'logo',
+      pagename: 'home', //Used by the nav bar to show "active" nav button
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, landingPageTemplate);
     },
   }));
-
-  let navToURL = {
-    'new-log-btn': 'workoutlog-form.html',
-    'activity-btn': 'workoutlog-calendar.html',
-    'workouts-btn': 'workouts.html',
-  };
-
-  let navigateEvent = function (event) {
-    let targetId = event.target.id;
-    $ironfyt.navigateToUrl(navToURL[targetId]);
-  };
 
   /**
    * Event handler gets called on 'input' event in search-workout-logs-dashboard-input element.
@@ -165,18 +143,10 @@
     }
   };
 
-  let handleLogoutEvent = function (event) {
-    $ironfyt.logout();
-  };
-
   $hl.eventListener('input', 'search-workout-logs-list-input', handleSearchLogsEvent);
   $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
   $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
-  $hl.eventListener('click', 'new-log-btn', navigateEvent);
-  $hl.eventListener('click', 'activity-btn', navigateEvent);
-  $hl.eventListener('click', 'workouts-btn', navigateEvent);
   $hl.eventListener('input', 'search-workout-logs-dashboard-input', handleSearchLogsEvent);
-  $hl.eventListener('click', 'logout-btn', handleLogoutEvent);
 
   document.addEventListener('click', function (event) {
     let groupIdRegex = new RegExp(/^group-home-btn-([a-zA-Z]|\d){24}/gm);

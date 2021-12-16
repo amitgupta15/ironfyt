@@ -172,7 +172,7 @@
       year: null,
       displayUser: {},
       days: [],
-      pageTitle: 'Logs',
+      pagename: 'logs',
       selectedDay: {},
     },
     template: function (props) {
