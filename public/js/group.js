@@ -9,15 +9,17 @@
         return wodDate.getFullYear() === date.getFullYear() && wodDate.getMonth() === date.getMonth() && wodDate.getDate() === date.getDate();
       });
       if (wods.length) {
-        return wods.map(
-          (wod) => `<div class="rounded-corner-box">
+        return wods.map((wod) => {
+          return wod.workout
+            ? `<div class="rounded-corner-box">
               <div class="text-color-secondary margin-bottom-10px"><h3>WOD</h3></div>
               ${$ironfyt.displayWorkoutDetail(wod.workout)}
               <div class="margin-top-10px">
                 <a href="workout-activity.html?workout_id=${wod.workout._id}&ref=group.html" class="workout-history-link">Workout Log</a>
               </div>
             </div>`
-        );
+            : '';
+        });
       }
     }
     return ``;
