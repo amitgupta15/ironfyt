@@ -44,13 +44,13 @@
 
   $test.it('should fetch groupwods on initial load', function () {
     $ironfyt.authenticateUser = function (callback) {
-      callback(false);
+      callback(false, { user: { _id: '1234' } });
     };
 
     $ironfyt.getGroupWod = function (params, callback) {
       callback(false, [
-        { date: new Date(), _id: '1' },
-        { date: new Date(), _id: '2' },
+        { date: new Date(), _id: '1', group: { name: 'wod 1' } },
+        { date: new Date(), _id: '2', group: { name: 'wod 2' } },
       ]);
     };
     page();
