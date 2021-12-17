@@ -156,28 +156,56 @@
         </div>
         <!-- Following div is needed to cover the unsafe bottom area in the PWA view -->
         <div class="nav-bar-dummy"></div>
-        <div class="nav-bar">
-          <a class="nav-bar-item" href="/">
-            <img src="images/${pagename === 'home' ? `home-icon-active.svg` : `home-icon.svg`}" />
-            <div ${pagename === 'home' ? 'class="nav-bar-item-active"' : ''}>Home</div>
-          </a>
-          <a class="nav-bar-item" href="workoutlog-calendar.html">
-            <img src="images/${pagename === 'logs' ? `calendar-icon-active.svg` : `calendar-icon.svg`}" />
-            <div ${pagename === 'logs' ? 'class="nav-bar-item-active"' : ''}>Logs</div>
-          </a>
-          <div class="nav-bar-item">
-            <img src="images/add_circle_24dp.svg" />
-            <div>New</div>
+        <div class="nav-bar-container">
+          <div class="nav-bar-new-btn-bar hide-view" id="nav-bar-new-item-bar">
+            <a class="nav-bar-new-item-btn" href="workoutlog-form.html">New Log</a>
+            <a class="nav-bar-new-item-btn" href="workout-form.html">New Workout</a>
           </div>
-          <a class="nav-bar-item" href="workouts.html">
-            <img src="images/${pagename === 'workouts' ? `workouts-icon-active.svg` : `workouts-icon.svg`}" />
-            <div ${pagename === 'workouts' ? 'class="nav-bar-item-active"' : ''}>Workouts</div>
-          </a>
-          <div class="nav-bar-item profile-icon">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+          <div class="nav-bar">
+            <a class="nav-bar-item" href="/">
+              <img src="images/${pagename === 'home' ? `home-icon-active.svg` : `home-icon.svg`}" />
+              <div ${pagename === 'home' ? 'class="nav-bar-item-active"' : ''}>Home</div>
+            </a>
+            <a class="nav-bar-item" href="workoutlog-calendar.html">
+              <img src="images/${pagename === 'logs' ? `calendar-icon-active.svg` : `calendar-icon.svg`}" />
+              <div ${pagename === 'logs' ? 'class="nav-bar-item-active"' : ''}>Logs</div>
+            </a>
+            <div class="nav-bar-item" id="app-new-btn-div">
+              <img id="nav-bar-new-item-img" src="images/add_circle_24dp.svg" />
+              <div id="nav-bar-new-item-text">New</div>
+            </div>
+            <a class="nav-bar-item" href="workouts.html">
+              <img src="images/${pagename === 'workouts' ? `workouts-icon-active.svg` : `workouts-icon.svg`}" />
+              <div ${pagename === 'workouts' ? 'class="nav-bar-item-active"' : ''}>Workouts</div>
+            </a>
+            <div class="nav-bar-item profile-icon" id="app-user-profile-div">${user.fname ? user.fname.substring(0, 1).toUpperCase() : ''}${user.lname ? user.lname.substring(0, 1).toUpperCase() : ''}</div>
+          </div>
         </div>
         `;
     }
   };
+
+  $hl.eventListener('click', 'app-user-profile-div', function (event) {
+    $ironfyt.logout();
+  });
+
+  //If "new" button is clicked, then show options
+  document.addEventListener('click', function (event) {
+    if ($hl.matchClosestSelector(event.target, 'app-new-btn-div')) {
+      let newItemBar = document.getElementById('nav-bar-new-item-bar');
+      let newItemText = document.getElementById('nav-bar-new-item-text');
+      let newItemImage = document.getElementById('nav-bar-new-item-img');
+      if (newItemBar.classList.contains('hide-view')) {
+        newItemBar.classList.remove('hide-view');
+        newItemText.classList.add('nav-bar-item-active');
+        newItemImage.src = 'images/add-circle-active.svg';
+      } else {
+        newItemBar.classList.add('hide-view');
+        newItemText.classList.remove('nav-bar-item-active');
+        newItemImage.src = 'images/add_circle_24dp.svg';
+      }
+    }
+  });
 
   $ironfyt.navigateToUrl = function (page) {
     window.location.href = page;

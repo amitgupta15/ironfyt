@@ -72,13 +72,6 @@
     return `
       <div class="container">
         ${$ironfyt.searchBarTemplate('search-workouts-input', 'Search Workouts...')}
-        ${
-          isAdmin()
-            ? `<div class="flex margin-bottom-10px">
-                <button class="btn-primary icon-add" id="new-wod-btn">New WOD</button>    
-              </div>`
-            : ``
-        }
         <div id="main-div-workouts">
           ${defaultPageTemplate(props)}
         </div>
@@ -200,10 +193,6 @@
     dialog.classList.remove('show-view');
   };
 
-  let handleNewWodEvent = function (event) {
-    $ironfyt.navigateToUrl('workout-form.html');
-  };
-
   /**
    * Handle the Set Workout Of The Day save event. Calls the api to update/insert new WOD for the given group and date
    * @param {Event} event
@@ -234,7 +223,6 @@
   $hl.eventListener('input', 'wod-date', enableSaveGroupWodBtn);
   $hl.eventListener('input', 'wod-group', enableSaveGroupWodBtn);
   $hl.eventListener('input', 'search-workouts-input', handleSearchWorkoutsEvent);
-  $hl.eventListener('click', 'new-wod-btn', handleNewWodEvent);
   $hl.eventListener('click', 'close-set-wod-modal-btn', handleCloseSetWodModalEvent);
   $hl.eventListener('click', 'save-group-wod-btn', handleSaveGroupWodEvent);
 

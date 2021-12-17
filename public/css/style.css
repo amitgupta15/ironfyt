@@ -189,7 +189,7 @@ input[type='number'] {
   font-weight: 600;
 }
 .main {
-  padding: 4rem 0;
+  padding: 4rem 0 7rem;
 }
 .container {
   margin: 10px auto;
@@ -1120,21 +1120,22 @@ a.workout-history-link::before {
   text-align: center;
   background-color: var(--background);
 }
-
-.nav-bar {
+.nav-bar-container {
   position: fixed;
+  bottom: env(safe-area-inset-bottom, 0);
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+.nav-bar {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  bottom: env(safe-area-inset-bottom, 0);
-  left: 0;
-  right: 0;
   height: 3.5rem;
   max-height: 16vh;
   width: 100%;
-  z-index: 10;
   background-color: var(--background);
 }
 
@@ -1156,4 +1157,22 @@ a.workout-history-link::before {
 }
 .nav-bar-item > div.nav-bar-item-active {
   color: var(--theme);
+}
+.nav-bar-new-btn-bar {
+  padding: 10px;
+  background-color: var(--background);
+  text-align: center;
+  transition: all 0.5s ease-out;
+}
+.nav-bar-new-item-btn {
+  width: 50%;
+  border-radius: 5px;
+  border: 1px solid var(--link-color);
+  background-color: transparent;
+  font-size: 1.1rem;
+  color: var(--link-color);
+  margin-bottom: 10px;
+  display: inline-block;
+  padding: 10px 0;
+  text-decoration: none;
 }
