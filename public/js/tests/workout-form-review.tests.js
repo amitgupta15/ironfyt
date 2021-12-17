@@ -12,7 +12,7 @@
     $test.assert('workout' in component.state);
     $test.assert('leftButtonTitle' in component.state);
     $test.assert('pageTitle' in component.state);
-    $test.assert(Object.keys(component.state).length === 6);
+    $test.assert(Object.keys(component.state).length === 7);
   });
 
   $test.it('should successfully create a new rep when copy button is clicked and insert the rep right under the clicked rep', function () {
@@ -80,7 +80,7 @@
   });
 
   $test.it('should select a movement from the autocomplete list and add it to the list of movements', function () {
-    let movements = [
+    let primaryMovements = [
       { _id: '1234', movement: 'Air Squat' },
       { _id: '1234', movement: 'Squat' },
       { _id: '1234', movement: 'Back Squat' },
@@ -93,10 +93,10 @@
         { movementObj: { movement: 'Pull-ups' }, reps: [] },
       ],
     };
-    component.setState({ workout, movements });
+    component.setState({ workout, primaryMovements });
     let selector = document.getElementById('selector');
-    selector.innerHTML = component.template({ workout, movements });
-    component.afterRender({ workout, movements });
+    selector.innerHTML = component.template({ workout, primaryMovements });
+    component.afterRender({ workout, primaryMovements });
     document.getElementById('workout-add-movement').value = 'sq';
     $test.dispatchHTMLEvent('input', '#workout-add-movement');
     $test.dispatchHTMLEvent('click', '#new-workout-movement-auto-list-item-2');

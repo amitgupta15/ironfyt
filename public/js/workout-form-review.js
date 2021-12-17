@@ -139,13 +139,14 @@
       pageTitle: 'New Workout',
       leftButtonTitle: 'Back',
       movements: [],
+      primaryMovements: [],
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutFormReviewTemplate);
     },
     afterRender: function (props) {
       setDefaultModality(props);
-      autocompleteMovement(document.getElementById('workout-add-movement'), props.movements ? props.movements : []);
+      autocompleteMovement(document.getElementById('workout-add-movement'), props.primaryMovements ? props.primaryMovements : []);
     },
   }));
 
@@ -337,6 +338,7 @@
             component.setState({ error });
           } else {
             let movements = response && response.movements ? response.movements : [];
+            let primaryMovements = movements.filter((movement) => movement.primary === true);
             let parsedWorkout = $ironfyt.parseWorkout(workout.description, movements);
             let parsedMovements = parsedWorkout && parsedWorkout.parsedMovements ? parsedWorkout.parsedMovements : [];
             //Sanitize the reps information before adding it to the workout. Movement and reps info should be in the format
@@ -354,7 +356,7 @@
             workout.description = parsedWorkout && parsedWorkout.workoutDesc ? parsedWorkout.workoutDesc : '';
             workout.movements = workout.movements ? workout.movements : [];
             workout.movements = workout.movements.concat(parsedMovements);
-            component.setState({ movements, workout });
+            component.setState({ movements, primaryMovements, workout });
           }
         });
       } else {

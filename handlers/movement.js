@@ -8,20 +8,15 @@ movement.get = (req, res) => {
   let user = tokenpayload.user;
   if (Object.keys(query).length) {
     for (let key in query) {
-      if (query[key].length !== 24) {
-        res(400, { error: `Invalid ID : ${key}` });
-        return;
-      } else {
-        try {
-          query[key] = ObjectId(query[key]);
-        } catch (error) {
-          res(400, { error: 'Invalid Object ID' });
-          return;
-        }
+      //It is assumed that if the parameter length is 24 then it is an Object ID, in which case create an objectid
+      if (query[key].length === 24) {
+        query[key] = ObjectId(query[key]);
+      }
+      //Convert primary to a boolean value
+      if (key === 'primary') {
+        query.primary = query.primary === 'true';
       }
     }
-  } else {
-    query = { primary: true };
   }
   movementsCollection(req)
     .aggregate([

@@ -6,7 +6,7 @@
    * @param {String} line - Workout line to be parsed such as "100 pull-ups"
    * @returns parsed object containing reps, load, unit, movement and rounds info
    */
-  let parseRepsInfo = (line) => {
+  $ironfyt.parseRepsInfo = (line) => {
     //Remove leading and trailing white space from the line
     line = line.trim();
     //Regex to check if the line has reps and movement information
@@ -109,7 +109,7 @@
    * @param {Array} movements movements to check against
    * @returns movement object from the database
    */
-  let parseMovementString = (movementString, movements = []) => {
+  $ironfyt.parseMovementString = (movementString, movements = []) => {
     //Remove leading and trailing white spaces
     let trimmedMovementString = movementString ? movementString.trim() : '';
     //Remove any comma
@@ -136,7 +136,7 @@
    * @param {String} desc - description string to be parsed for load information
    * @returns {Array} array containing load information
    */
-  let parseLoadInfo = (desc) => {
+  $ironfyt.parseLoadInfo = (desc) => {
     //Almost always the load information string starts with gender information. Check if the string starts with gender information.
     let genderInfoRegex = new RegExp(/^(♀|♂|(m|f|w)( |:)|female|male|m(e|a)n|wom(e|a)n)/gim);
     //Initialize the loadInfoArray to store the load information
@@ -191,12 +191,11 @@
    * @param {Array} movements
    * @return parsed Movements
    */
-  let parseMovementInWorkoutDescription = (description, movements = []) => {
+  $ironfyt.parseMovementInWorkoutDescription = (description, movements = []) => {
     let reps = null;
 
     //Regex to find the reps such as 21-15-9
     let repsRegex = new RegExp(/^(\d+-)+\d+/gim);
-
     let repsMatch = description.match(repsRegex);
     //If match found then calculate the total reps 21-15-9 = 45
     if (repsMatch) {
@@ -265,9 +264,9 @@
     //If no reps (ex: 21-15-9) infor in the first line then proceed. Otherwise, let the catch all method take care of the description
     if (repsInfoInFirstLine === null) {
       splitInput.forEach((line, index) => {
-        let parsed = parseRepsInfo(line);
+        let parsed = $ironfyt.parseRepsInfo(line);
         if (parsed !== null) {
-          let movementObj = parseMovementString(parsed.movement, movements);
+          let movementObj = $ironfyt.parseMovementString(parsed.movement, movements);
           if (movementObj !== null) {
             parsed.movementObj = movementObj;
             parsedMovements.push(parsed);
@@ -278,7 +277,7 @@
             }
           }
         }
-        let loadInfo = parseLoadInfo(line);
+        let loadInfo = $ironfyt.parseLoadInfo(line);
         if (loadInfo) {
           parsedLoadInfo = parsedLoadInfo.concat(loadInfo);
         }
@@ -288,7 +287,7 @@
 
     //If the specific test does not work then try to extract movement information from the entire description.
     if (parsedMovements.length === 0) {
-      let parsedDescription = parseMovementInWorkoutDescription(workoutString, movements);
+      let parsedDescription = $ironfyt.parseMovementInWorkoutDescription(workoutString, movements);
       parsedMovements = parsedDescription.parsedMovements ? parsedDescription.parsedMovements : [];
       workoutDesc = parsedDescription.workoutDesc ? parsedDescription.workoutDesc : '';
     }

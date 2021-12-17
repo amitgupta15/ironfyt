@@ -462,7 +462,7 @@
       }
       let user = auth && auth.user ? auth.user : {};
       state.user = user;
-      $ironfyt.getMovements({}, function (error, response) {
+      $ironfyt.getMovements({ primary: true }, function (error, response) {
         if (error) {
           component.setState({ error });
           return;
