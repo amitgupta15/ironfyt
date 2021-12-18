@@ -139,7 +139,7 @@
       pageTitle: 'New Workout',
       leftButtonTitle: 'Back',
       movements: [],
-      primaryMovements: [],
+      primaryMovements: [], //Primary movements are used for autocomplete list.
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutFormReviewTemplate);
