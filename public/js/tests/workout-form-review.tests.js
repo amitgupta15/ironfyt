@@ -11,8 +11,7 @@
     $test.assert('error' in component.state);
     $test.assert('workout' in component.state);
     $test.assert('leftButtonTitle' in component.state);
-    $test.assert('pageTitle' in component.state);
-    $test.assert(Object.keys(component.state).length === 7);
+    $test.assert(Object.keys(component.state).length === 6);
   });
 
   $test.it('should successfully create a new rep when copy button is clicked and insert the rep right under the clicked rep', function () {
@@ -130,6 +129,46 @@
 
     $test.assert(document.getElementById('workout-movement-unit-0-1').value === 'lb');
     $test.assert(document.getElementById('workout-movement-unit-0-2').value === 'lb');
+  });
+
+  let movements = [
+    { _id: '1', movement: 'Thruster', regexTerms: ['(thruster)(s*)'], demolink: 'https://youtube.com/1', modality: 'w', units: ['lb', 'kg'] },
+    { _id: '2', movement: 'Dumbbell Thruster', regexTerms: ['(db|dumbbell|dumbell|dumbel)(s*)', '(thruster)(s*)'], demolink: 'https://youtube.com/2', modality: 'w', units: ['lb', 'kg'] },
+    { _id: '3', movement: 'Toes-to-bar', regexTerms: ['(toe)(s*)', '(to)(s*)', '(bar)(s*)'], demolink: 'https://youtube.com/3', modality: 'g', units: [] },
+    { _id: '4', movement: 'Double-Unders', regexTerms: ['(double)(s*)', '(under)(s*)'], demolink: 'https://youtube.com/4', modality: 'g', units: [] },
+    { _id: '5', movement: 'Pull-Up', regexTerms: ['(pull)(s*)', '(up)(s*)'], demolink: 'https://youtube.com/5', modality: 'g', units: [] },
+    { _id: '6', movement: 'Push-Up', regexTerms: ['(push)(s*)', '(up)(s*)'], demolink: 'https://youtube.com/7', modality: 'g', units: [] },
+    { _id: '7', movement: 'Jumping Jacks', regexTerms: ['(jumping|jump|jumped|juming)(s*)', '(jack|jac|jak)(s*)'], demolink: 'https://youtube.com/8', modality: 'g', units: [] },
+    { _id: '8', movement: 'Sit-up', regexTerms: ['(sit|sat)(s*)', '(up)(s*)'], demolink: 'https://youtube.com/9', modality: 'g', units: [] },
+    { _id: '9', movement: 'Squat', regexTerms: ['(squat)(s*)'], demolink: 'https://youtube.com/10', modality: 'g', units: [] },
+    { _id: '10', movement: 'Air Squat', regexTerms: ['(air)(s*)', '(squat)(s*)'], demolink: 'https://youtube.com/11', modality: 'g', units: [] },
+    { _id: '11', movement: 'Back Squat', regexTerms: ['(back)(s*)', '(squat)(s*)'], demolink: 'https://youtube.com/12', modality: 'w', units: ['lb', 'kg'] },
+  ];
+
+  $test.it('should not add the same movement twice while editing', function () {
+    $ironfyt.authenticateUser = function (callback) {
+      callback(false);
+    };
+    localStorage.getItem = function () {
+      return JSON.stringify({ name: 'some name', description: '20 thrusters', movements: [{ reps: [{ reps: 10, load: 135, unit: 'lb' }], movementObj: { _id: '1', movement: 'Thruster', regexTerms: ['(thruster)(s*)'], demolink: 'https://youtube.com/1', modality: 'w', units: ['lb', 'kg'] } }] });
+    };
+    $ironfyt.getMovements = function (params, callback) {
+      callback(false, { movements: [] });
+    };
+    $ironfyt.parseWorkout = function (workoutDescription, movements) {
+      return {
+        parsedMovements: [
+          { reps: [{ reps: 30, load: 135, unit: 'lb' }], movementObj: { _id: '1', movement: 'Thruster', regexTerms: ['(thruster)(s*)'], demolink: 'https://youtube.com/1', modality: 'w', units: ['lb', 'kg'] } },
+          { reps: [{ reps: 40, load: null, unit: null }], movementObj: { _id: '3', movement: 'Toes-to-bar', regexTerms: ['(toe)(s*)', '(to)(s*)', '(bar)(s*)'], demolink: 'https://youtube.com/3', modality: 'g', units: [] } },
+        ],
+      };
+    };
+    page();
+    let state = component.getState();
+    let workout = state.workout;
+    $test.assert(workout.movements.length === 2);
+    let thrusterMovement = workout.movements.filter((movement) => movement.movementObj._id === '1')[0];
+    $test.assert(thrusterMovement.reps[0].reps.reps === 30);
   });
   console.groupEnd();
 })();

@@ -136,7 +136,6 @@
       user: {},
       error: '',
       workout: $ironfyt.newWorkout,
-      pageTitle: 'New Workout',
       leftButtonTitle: 'Back',
       movements: [],
       primaryMovements: [], //Primary movements are used for autocomplete list.
@@ -328,11 +327,11 @@
         if (workout === null) {
           //If no workout is found in the localstorage, then send the user back to the workout form page
           $ironfyt.navigateToUrl(`workout-form.html`);
+          return;
         } else {
           workout = workout ? JSON.parse(workout) : {};
         }
-        let pageTitle = workout._id ? 'Edit Workout' : 'New Workout';
-        component.setState({ user, pageTitle });
+        component.setState({ user });
         $ironfyt.getMovements({}, function (error, response) {
           if (error) {
             component.setState({ error });
@@ -355,7 +354,7 @@
             workout.origdescription = workout.description;
             workout.description = parsedWorkout && parsedWorkout.workoutDesc ? parsedWorkout.workoutDesc : '';
             workout.movements = workout.movements ? workout.movements : [];
-            workout.movements = workout.movements.concat(parsedMovements);
+            workout.movements = parsedMovements;
             component.setState({ movements, primaryMovements, workout });
           }
         });
