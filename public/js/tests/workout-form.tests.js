@@ -12,7 +12,7 @@
     $test.assert('error' in component.state);
     $test.assert('workout' in component.state);
     $test.assert('validationError' in component.state);
-    $test.assert('pageTitle' in component.state);
+    $test.assert('pagename' in component.state);
     $test.assert(Object.keys(component.state).length === 5);
   });
 

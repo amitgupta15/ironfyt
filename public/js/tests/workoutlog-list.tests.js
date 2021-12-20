@@ -12,7 +12,7 @@
     $test.assert('user' in component.state);
     $test.assert('error' in component.state);
     $test.assert('workoutlogs' in component.state);
-    $test.assert('pageTitle' in component.state);
+    $test.assert('pagename' in component.state);
     $test.assert('showSpinner' in component.state);
   });
 

@@ -38,7 +38,7 @@
       error: '',
       validationError: {},
       workout: newPlaceholderWorkout,
-      pageTitle: 'New Workout',
+      pagename: 'workoutform',
     },
     template: function (props) {
       return $ironfyt.pageTemplate(props, workoutFormTemplate);

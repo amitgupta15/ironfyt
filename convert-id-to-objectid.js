@@ -35,4 +35,7 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true, us
     });
     */
   // db.collection('users').updateMany({}, [{ $set: { gender: 'm' } }]);
+  db.collection('logs')
+    .find({ movements: { $exists: true, $gt: { $size: 0 } } })
+    .toArray((error, response) => response.forEach((res) => console.log(`_id: ${res._id} movements: ${JSON.stringify(res.movements)}`)));
 });

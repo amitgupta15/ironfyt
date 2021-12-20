@@ -231,35 +231,6 @@
     $test.assert(state.selectedDay.index === 41); // Clicking next button won't have any effect if the index is already 41
   });
 
-  $test.it('should navigate to workoutlog form when add log button is clicked', function () {
-    $ironfyt.authenticateUser = function (callback) {
-      callback(false, { user: { _id: '123456789012345678901234', role: 'admin' } });
-    };
-
-    $ironfyt.getWorkoutLogs = function (filter, callback) {
-      callback(false, {
-        workoutlogs: [
-          { _id: 1, date: '2021-01-03T08:00:00.000Z', notes: 'log for January 3rd 2021' },
-          { _id: 2, date: '2020-12-30T08:00:00.000Z', notes: 'log for 30th' },
-        ],
-      });
-    };
-    $hl.getParams = function () {
-      return { month: '0', year: '2021' }; // January 2021
-    };
-
-    let _url;
-    $ironfyt.navigateToUrl = function (url) {
-      _url = url;
-    };
-    let selector = document.querySelector('#selector');
-    selector.innerHTML = component.template();
-    page();
-
-    $test.dispatchHTMLEvent('click', '#add-log-btn-calendar-view');
-    $test.assert(_url === 'workoutlog-form.html?date=2021-01-01T08:00:00.000Z&user_id=123456789012345678901234&ref=workoutlog-calendar.html');
-  });
-
   $test.it('should handle edit log event', function () {
     let _url;
     $ironfyt.navigateToUrl = function (url) {

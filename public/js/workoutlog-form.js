@@ -63,7 +63,6 @@
         <div class="flex-align-self-center margin-top-5px">
           ${$ironfyt.displayWorkoutDetail(workout)}
         </div>
-        <button type="button" id="unselect-workout" class="remove-btn margin-left-5px"></button> 
       </div>
     </div>`;
   };
@@ -81,7 +80,9 @@
     let users = props.users ? props.users : [];
     let loggedInUser = props.user ? props.user : {};
     let movements = workoutlog && workoutlog.movements ? workoutlog.movements : [];
+    let pageTitle = props && props.pageTitle ? props.pageTitle : '';
     return `
+    <h3 class="text-align-center">${pageTitle}</h3>
     <form id="workout-log-form" class="form-container" autocomplete="off">
       <div class="margin-bottom-5px">
         <label for="wolog-date" class="form-label-classic">Date</label>
@@ -150,7 +151,7 @@
       </div>
       ${movements
         .map((movement, movementIndex) => {
-          let reps = movement.reps ? movement.reps : [];
+          let reps = movement.reps && Array.isArray(movement.reps) ? movement.reps : [];
           return `
               <div class="rounded-corner-box margin-top-5px">
                 <div class="form-flex-group">
@@ -355,12 +356,6 @@
     }
   };
 
-  let handleUnselectWorkoutEvent = function (event) {
-    let workoutlog = createWorkoutLogObjFromFormElements();
-    workoutlog.workout = [];
-    component.setState({ workoutlog });
-  };
-
   /**
    * Deletes the specified reps row from the movement.
    * @param {Event} event
@@ -426,7 +421,6 @@
   };
 
   $hl.eventListener('submit', 'workout-log-form', handleWorkoutLogFormSubmitEvent);
-  $hl.eventListener('click', 'unselect-workout', handleUnselectWorkoutEvent);
 
   document.addEventListener('click', function (event) {
     //Copy reps row of a movement

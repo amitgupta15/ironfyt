@@ -287,7 +287,7 @@
     $test.assert(_updatePersonalRecordCalled === true);
   });
 
-  $test.it('should set the date and workout if the form is loaded from the "Log this WOD" button from the home page', function () {
+  $test.it('should set the date and workout if the form is loaded from the "Log this Workout" button from the home page', function () {
     component.setState({ workoutlog: {} });
     $hl.getParams = function () {
       return {

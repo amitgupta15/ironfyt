@@ -24,7 +24,7 @@
       <div class="rounded-corner-box margin-top-10px">
         <h3 class="text-color-secondary margin-bottom-10px">Workout</h3>
         ${$ironfyt.displayWorkoutDetail(workout)}
-        <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="btn-primary icon-add">Log This WOD</a>
+        <a href="workoutlog-form.html?workout_id=${workout._id}&ref=workout-activity.html" class="btn-primary icon-add">Log This Workout</a>
       </div>
       <div class="log-detail-section">
         ${workoutlogs.length === 0 ? 'No activity found' : ''}

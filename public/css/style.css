@@ -294,10 +294,6 @@ input[type='number'] {
   display: block !important;
 }
 
-.add-log-btn-bar-calendar-view {
-  margin: 10px;
-}
-
 #add-log-btn-calendar-view {
   width: 100%;
   border-radius: 5px;

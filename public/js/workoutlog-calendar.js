@@ -138,7 +138,6 @@
         </div>`
           : ``
       }
-      <div class="add-log-btn-bar-calendar-view"><button id="add-log-btn-calendar-view">New Log</button></div>
     </div>
     `;
   };
@@ -308,14 +307,6 @@
     component.setState({ selectedDay });
   };
 
-  let handleAddLogEvent = function (event) {
-    let state = component.getState();
-    let selectedDay = state.selectedDay;
-    let date = new Date(selectedDay.date).toISOString();
-    let user_id = state.displayUser._id;
-    $ironfyt.navigateToUrl(`workoutlog-form.html?date=${date}&user_id=${user_id}&ref=workoutlog-calendar.html`);
-  };
-
   let showDeleteConfirmationDialog = function (_id) {
     component.setState({ deleteLogId: _id });
     $ironfyt.showDeleteConfirmationDialog();
@@ -396,7 +387,6 @@
   $hl.eventListener('click', 'today-btn', handleChangeMonthEvent);
   $hl.eventListener('click', 'prev-day-btn', handleChangeDayEvent);
   $hl.eventListener('click', 'next-day-btn', handleChangeDayEvent);
-  $hl.eventListener('click', 'add-log-btn-calendar-view', handleAddLogEvent);
   $hl.eventListener('click', 'cancel-delete-log-btn', handleCancelDeleteLogEvent);
   $hl.eventListener('click', 'confirm-delete-log-btn', handleConfirmDeleteLogEvent);
 

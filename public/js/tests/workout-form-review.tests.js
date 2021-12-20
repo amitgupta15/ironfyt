@@ -11,7 +11,10 @@
     $test.assert('error' in component.state);
     $test.assert('workout' in component.state);
     $test.assert('leftButtonTitle' in component.state);
-    $test.assert(Object.keys(component.state).length === 6);
+    $test.assert('pagename' in component.state);
+    $test.assert('movements' in component.state);
+    $test.assert('primaryMovements' in component.state);
+    $test.assert(Object.keys(component.state).length === 7);
   });
 
   $test.it('should successfully create a new rep when copy button is clicked and insert the rep right under the clicked rep', function () {

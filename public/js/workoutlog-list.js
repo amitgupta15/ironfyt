@@ -36,7 +36,7 @@
       error: '',
       user: {},
       workoutlogs: [],
-      pageTitle: 'Logs',
+      pagename: 'logs',
       showSpinner: false,
     },
     template: function (props) {
