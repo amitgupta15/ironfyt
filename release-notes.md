@@ -2,13 +2,14 @@
 
 ## 3.0.0
 
-Release Date:
+Release Date: 12/20/2021
 
 ### New Features
 
 - Parse workout description for movements
 - Pre-populate movements information in logs
 - Added sticky nav bar at the bottom and sticky top bar at the top
+- Cannot create a workout log without selecting a workout
 
 ## 2.5.2
 
