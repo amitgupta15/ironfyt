@@ -1,5 +1,14 @@
 # IronFyt Release Notes
 
+## 3.1.0
+
+Release Date: 12/21/2021
+
+### Issues Fixed
+
+- Unit was not showing for running (miles, etc.)
+- Workout form was selecting wrong movements
+
 ## 3.0.0
 
 Release Date: 12/20/2021
