@@ -149,7 +149,7 @@
 
   /**
    * Utility function normalizes the incoming string attribute and input field value, and compares to find the index of matching text. Returns the index.
-   * This function is used by handleSearchLogsEvent()
+   * This function is used by handleSearchWorkoutsEvent()
    * @param {String} attribute
    * @param {String} inputFieldValue
    * @returns index of the matching text
@@ -157,13 +157,28 @@
   let getSearchStringMatchIndex = function (attribute) {
     //Get the search input field value
     let inputFieldValue = document.querySelector('#search-workouts-input').value.trim();
+    //Replace URL in description with special character so that the search would not search a substring in the url
+    /*
+    let findUrlRegex = new RegExp(/<a\shref=\"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)\"\starget=\"_blank\"><img class=\"movie-icon\" src=\"images\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.svg\"><\/a>/gim);
+    let matches = attribute.match(findUrlRegex);
+    if (matches) {
+      matches.forEach((match) => {
+        console.log(`Index: ${attribute.indexOf(match)}, Length: ${match.length}`);
+        let spaces = '';
+        for (var i = 0; i < match.length; i++) {
+          spaces = spaces + 'ß';
+        }
+        attribute = attribute.replace(match, spaces);
+      });
+    }
+    */
     //return the index of the search string in attribute parameter passed to the function
     return attribute.toLowerCase().indexOf(inputFieldValue.toLowerCase());
   };
 
   /**
    * Utility function finds the substring to be highlighted and returns the highlighted substring
-   * This function is used by handleSearchLogsEvent()
+   * This function is used by handleSearchWorkoutsEvent()
    * @param {int} matchIndex
    * @param {String} attribute
    * @returns

@@ -280,7 +280,7 @@
                     <div class="margin-bottom-10px">
                     ${repsArray
                       .map((rep) => {
-                        return `<div>${rep.reps} ${rep.load !== null ? ` X ${rep.load} ${rep.unit ? rep.unit : ''}` : ''}</div>`;
+                        return `<div>${rep.reps} ${rep.load !== null ? ` X ${rep.load}` : ''} ${rep.unit ? rep.unit : ''}</div>`;
                       })
                       .join('')}
                     </div>

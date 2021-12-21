@@ -280,11 +280,10 @@
     let workout = createWorkoutObjFromFields();
     let movementIndex = parseInt(event.target.dataset.newWorkoutMovementAutoListIndex);
     let state = component.getState();
-    let movements = state.movements ? state.movements : [];
-    let movementObj = movements[movementIndex];
+    let primaryMovements = state.primaryMovements ? state.primaryMovements : [];
+    let movementObj = primaryMovements[movementIndex];
     let reps = [{ reps: null, load: null, unit: null }];
     let newMovement = { movementObj, reps };
-    // workout.movements.splice(0, 0, newMovement);
     workout.movements.push(newMovement);
 
     component.setState({ workout });
