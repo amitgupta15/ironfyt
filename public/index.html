@@ -7,24 +7,58 @@
     <link rel="shortcut icon" href="images/icons/ironfyt-appicon-text.png" type="image/x-icon" />
     <style>
        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #000000;
-            color: white;
-            text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #000000;
+        color: white;
        }
+
+       .container {
+        margin: 10px auto;
+        padding: 0 15px;
+        max-width: 900px;
+       }
+
        .placeholder-image {
-            max-height: 600px;
+        width: 840px;
+        height: 320px;
+        padding: 10px;
+        object-fit: contain;
        }
+
        a {
         color: white;
         text-decoration: none;
        }
+
+       .link-block {
+        display: block;
+        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+       }
+
+       .badge {
+        display: block;
+        margin: 0 auto;
+        width: 160px;
+        height: 54px;
+       }
+       .badge-container {
+        text-align: center;
+        margin-bottom: 20px;
+       }
     </style>
 </head>
 <body>
-    <img class="placeholder-image" src="images/icons/ironfyt-appicon-text.png">
-    <p>
-        <a href="privacy-policy.html">Privacy Policy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mailto:support@ironfyt.com">Contact Us</a>
-    </p>
+    <div class="container">
+        <img class="placeholder-image" src="images/logo/IronFytLogo-Roboto.png"/>
+        <div class="badge-container">
+            <a href="https://apps.apple.com/us/app/ironfyt/id6446331989?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-us?size=250x83&amp;releaseDate=1706745600" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>
+        </div>
+        <p class="link-block">
+            <a href="privacy-policy.html">Privacy Policy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="mailto:support@ironfyt.com">Contact Us</a>
+        </p>
+    </div>
+    
 </body>
 </html>
