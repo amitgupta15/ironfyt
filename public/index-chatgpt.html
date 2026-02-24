@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>IronFyt — Strength for Real Life</title>
+  <meta name="description" content="IronFyt is a premium iOS fitness app built to make you undeniably strong for real life—lift, carry, balance, and move with confidence. Track your workouts, visualize progress, and stay consistent." />
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="IronFyt — Strength for Real Life" />
+  <meta property="og:description" content="Train across modalities. Track volume and progress. Build real-world strength and consistency." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://YOUR_DOMAIN_HERE.com" />
+  <meta property="og:image" content="https://YOUR_DOMAIN_HERE.com/og-ironfyt.png" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="IronFyt — Strength for Real Life" />
+  <meta name="twitter:description" content="A premium iOS fitness app for real-world capability: strength, conditioning, and consistency." />
+  <meta name="twitter:image" content="https://YOUR_DOMAIN_HERE.com/og-ironfyt.png" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#000000;
+      --bg2:#0a0a0a;
+      --text:#ffffff;
+      --muted:#b3b3b3;
+      --muted2:#8a8a8a;
+      --red:#dc2626;
+      --card: rgba(255,255,255,0.04);
+      --card2: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.08);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: radial-gradient(1200px 600px at 15% 10%, rgba(220,38,38,0.18), transparent 60%),
+                  radial-gradient(900px 500px at 85% 20%, rgba(220,38,38,0.10), transparent 55%),
+                  linear-gradient(180deg, var(--bg), var(--bg2));
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    .brand {
+      font-family: Oswald, Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      letter-spacing: 0.02em;
+    }
+    .glass {
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+    }
+    .glass-strong {
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.65);
+      backdrop-filter: blur(12px);
+    }
+    .focus-ring:focus-visible {
+      outline: 2px solid rgba(220,38,38,0.9);
+      outline-offset: 2px;
+    }
+    .btn-red {
+      background: var(--red);
+      box-shadow: 0 14px 30px rgba(220,38,38,0.22);
+    }
+    .btn-red:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .btn-red:active { transform: translateY(0px); filter: brightness(0.98); }
+    .btn-dark {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .btn-dark:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+    .btn-dark:active { transform: translateY(0px); }
+    .tag {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+    }
+    .divider {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+      height: 1px;
+    }
+    /* App Store badge SVG hover */
+    .badge:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .badge:active { transform: translateY(0px); filter: brightness(0.98); }
+
+    /* Subtle animated grain */
+    .grain:before {
+      content:"";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+      pointer-events: none;
+      mix-blend-mode: overlay;
+      opacity: 0.35;
+    }
+  </style>
+
+  <script>
+    // Tailwind config (optional small tweaks)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            iron: {
+              red: '#dc2626',
+              bg: '#000000',
+              charcoal: '#0a0a0a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="grain selection:bg-iron-red/40 selection:text-white">
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <a href="#top" class="flex items-center gap-3 focus-ring rounded-md">
+          <div class="h-9 w-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+            <i class="fa-solid fa-dumbbell text-iron-red"></i>
+          </div>
+          <div class="leading-tight">
+            <div class="brand text-xl font-bold">IronFyt</div>
+            <div class="text-xs text-white/60 -mt-0.5">Strength for real life</div>
+          </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-6 text-sm text-white/70">
+          <a href="#philosophy" class="hover:text-white focus-ring rounded">Philosophy</a>
+          <a href="#features" class="hover:text-white focus-ring rounded">Features</a>
+          <a href="#screens" class="hover:text-white focus-ring rounded">Screens</a>
+          <a href="#premium" class="hover:text-white focus-ring rounded">Premium</a>
+          <a href="#faq" class="hover:text-white focus-ring rounded">FAQ</a>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <a href="#download" class="hidden sm:inline-flex btn-dark focus-ring rounded-xl px-4 py-2 text-sm font-semibold text-white transition">
+            <i class="fa-brands fa-apple mr-2"></i> iOS
+          </a>
+          <a href="APP_STORE_URL" class="inline-flex btn-red focus-ring rounded-xl px-4 py-2 text-sm font-semibold text-white transition">
+            Download
+            <i class="fa-solid fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main id="top">
+    <section class="relative overflow-hidden">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-14 pb-10 sm:pt-20 sm:pb-16">
+        <div class="grid lg:grid-cols-12 gap-10 items-center">
+          <!-- Left -->
+          <div class="lg:col-span-6">
+            <div class="inline-flex items-center gap-2 tag rounded-full px-4 py-2 text-xs text-white/70">
+              <span class="h-2 w-2 rounded-full bg-iron-red"></span>
+              Built for strength • conditioning • consistency
+            </div>
+
+            <h1 class="mt-6 brand text-5xl sm:text-6xl font-bold leading-[1.02]">
+              Get <span class="text-iron-red">undeniably strong</span><br class="hidden sm:block" />
+              for everyday life.
+            </h1>
+
+            <p class="mt-5 text-base sm:text-lg text-white/75 max-w-xl">
+              IronFyt is a premium iOS fitness app built for real-world capability. Train across modalities, log fast,
+              visualize progress, and keep showing up—at home, at a box, or anywhere you move.
+            </p>
+
+            <div class="mt-7 flex flex-col sm:flex-row gap-3">
+              <a id="download" href="APP_STORE_URL" class="inline-flex items-center justify-center btn-red focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                <i class="fa-brands fa-apple mr-3 text-lg"></i>
+                Download on the App Store
+              </a>
+              <a href="#features" class="inline-flex items-center justify-center btn-dark focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                See features
+                <i class="fa-solid fa-chevron-down ml-3 text-white/70"></i>
+              </a>
+            </div>
+
+            <div class="mt-7 flex flex-wrap items-center gap-4 text-sm text-white/60">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-iron-red"></i>
+                Fast logging
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-iron-red"></i>
+                Movement analytics
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-iron-red"></i>
+                Consistency built-in
+              </div>
+            </div>
+          </div>
+
+          <!-- Right (Device mock) -->
+          <div class="lg:col-span-6">
+            <div class="glass-strong rounded-3xl p-5 sm:p-7">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-white/70">
+                  <span class="brand font-semibold text-white">IronFyt</span> • Dashboard
+                </div>
+                <div class="flex items-center gap-2 text-white/50">
+                  <span class="h-2 w-2 rounded-full bg-white/20"></span>
+                  <span class="h-2 w-2 rounded-full bg-white/20"></span>
+                  <span class="h-2 w-2 rounded-full bg-white/20"></span>
+                </div>
+              </div>
+
+              <div class="mt-5 grid sm:grid-cols-2 gap-4">
+                <div class="glass rounded-2xl p-4">
+                  <div class="flex items-center justify-between">
+                    <div class="text-xs text-white/60">Workout of the Day</div>
+                    <i class="fa-solid fa-fire-flame-curved text-iron-red"></i>
+                  </div>
+                  <div class="mt-2 text-white font-semibold">Strength + Conditioning</div>
+                  <div class="mt-1 text-sm text-white/65">
+                    Compound lift focus + metcon finisher.
+                  </div>
+                </div>
+
+                <div class="glass rounded-2xl p-4">
+                  <div class="flex items-center justify-between">
+                    <div class="text-xs text-white/60">Consistency Rings</div>
+                    <i class="fa-solid fa-bullseye text-iron-red"></i>
+                  </div>
+                  <div class="mt-2 text-white font-semibold">Week: 3 / 4</div>
+                  <div class="mt-1 text-sm text-white/65">Month: 14 / 20</div>
+                </div>
+
+                <div class="glass rounded-2xl p-4 sm:col-span-2">
+                  <div class="flex items-center justify-between">
+                    <div class="text-xs text-white/60">Total load moved (today)</div>
+                    <i class="fa-solid fa-weight-hanging text-iron-red"></i>
+                  </div>
+                  <div class="mt-2 flex items-end justify-between">
+                    <div class="text-3xl font-bold text-white">22,800 <span class="text-white/60 text-lg">lb</span></div>
+                    <div class="text-sm text-white/60">210 reps • 6 movements</div>
+                  </div>
+                  <div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div class="h-full w-2/3 bg-iron-red"></div>
+                  </div>
+                  <div class="mt-2 text-xs text-white/55">
+                    Progress that reflects <span class="text-white">work</span>, not just highlights.
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-5 flex flex-wrap items-center gap-2">
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Squat</span>
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Deadlift</span>
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Cleans</span>
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Carries</span>
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Runs</span>
+                <span class="tag rounded-full px-3 py-1 text-xs text-white/70">Gymnastics</span>
+              </div>
+            </div>
+
+            <div class="mt-4 text-xs text-white/50">
+              Replace this mock with real screenshots below.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Philosophy -->
+    <section id="philosophy" class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-10 items-start">
+          <div class="lg:col-span-5">
+            <h2 class="brand text-3xl sm:text-4xl font-bold">
+              Quality of life is built—<span class="text-iron-red">not promised</span>.
+            </h2>
+            <p class="mt-4 text-white/75 leading-relaxed">
+              IronFyt is designed for people who want to stay capable as they age. You can’t control everything,
+              but you can control showing up—building strong legs, a resilient core, and the ability to carry your own weight.
+            </p>
+
+            <div class="mt-6 space-y-3 text-sm text-white/70">
+              <div class="flex gap-3">
+                <i class="fa-solid fa-shield-halved text-iron-red mt-0.5"></i>
+                <p><span class="text-white font-semibold">Train for reality:</span> lift, carry, balance, reach overhead, move fast.</p>
+              </div>
+              <div class="flex gap-3">
+                <i class="fa-solid fa-sliders text-iron-red mt-0.5"></i>
+                <p><span class="text-white font-semibold">Mix modalities:</span> strength + conditioning + movement. Because that’s life.</p>
+              </div>
+              <div class="flex gap-3">
+                <i class="fa-solid fa-chart-simple text-iron-red mt-0.5"></i>
+                <p><span class="text-white font-semibold">Make progress visible:</span> consistency and volume drive motivation.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7">
+            <div class="glass-strong rounded-3xl p-6 sm:p-8">
+              <div class="flex items-start justify-between gap-6">
+                <div>
+                  <div class="text-xs text-white/60">IronFyt principle</div>
+                  <div class="mt-2 brand text-2xl font-bold">
+                    Train to live better — for as long as you live.
+                  </div>
+                </div>
+                <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+                  <i class="fa-solid fa-heart-pulse text-iron-red text-xl"></i>
+                </div>
+              </div>
+
+              <p class="mt-4 text-white/75 leading-relaxed">
+                Real fitness is the ability to do everyday tasks without fear: climb stairs, carry groceries, lift boxes,
+                play with your kids, move furniture, recover from setbacks. IronFyt helps you build that capability—measurably.
+              </p>
+
+              <div class="mt-6 grid sm:grid-cols-3 gap-4">
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-white font-semibold">Strength</div>
+                  <div class="text-sm text-white/65 mt-1">Big compound lifts and foundational movement patterns.</div>
+                </div>
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-white font-semibold">Engine</div>
+                  <div class="text-sm text-white/65 mt-1">Metabolic conditioning that improves daily stamina.</div>
+                </div>
+                <div class="glass rounded-2xl p-4">
+                  <div class="text-white font-semibold">Durability</div>
+                  <div class="text-sm text-white/65 mt-1">Balance, core, and repeatable consistency over time.</div>
+                </div>
+              </div>
+
+              <div class="mt-7 flex flex-col sm:flex-row gap-3">
+                <a href="APP_STORE_URL" class="inline-flex items-center justify-center btn-red focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                  <i class="fa-brands fa-apple mr-3 text-lg"></i>
+                  Get IronFyt
+                </a>
+                <a href="#screens" class="inline-flex items-center justify-center btn-dark focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                  View screens
+                  <i class="fa-solid fa-images ml-3 text-white/70"></i>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Features -->
+    <section id="features" class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+          <div>
+            <h2 class="brand text-3xl sm:text-4xl font-bold">Built for training. Built for consistency.</h2>
+            <p class="mt-3 text-white/75 max-w-2xl">
+              IronFyt blends daily programming with fast logging, clear analytics, and shareable summaries—without clutter.
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <div class="tag rounded-2xl px-4 py-3 text-sm text-white/70">
+              <i class="fa-solid fa-lock text-iron-red mr-2"></i> Privacy-first mindset
+            </div>
+            <div class="tag rounded-2xl px-4 py-3 text-sm text-white/70 hidden sm:block">
+              <i class="fa-solid fa-mobile-screen text-iron-red mr-2"></i> iPhone-first UX
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-fire-flame-curved text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Workout of the Day</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              Walk in with a plan. Every day blends compound lifts, bodyweight work, and conditioning—designed to build all-around capability.
+            </p>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-bolt text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Lightning-fast logging</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              Log sets quickly with smart autofill and minimal typing so your phone never becomes the workout.
+            </p>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-chart-line text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Movement analytics</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              Track load ranges, total volume moved, and performance over time for key lifts—so progress is undeniable.
+            </p>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-calendar-days text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Consistency snapshot</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              A calendar-style view highlights your training days so you can see momentum instantly—week to week, month to month.
+            </p>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-bullseye text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Workout rings</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              Weekly and monthly goals give you a simple target. Close the rings, build the habit, repeat.
+            </p>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+              <i class="fa-solid fa-share-nodes text-iron-red"></i>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold text-white">Shareable summaries</h3>
+            <p class="mt-2 text-sm text-white/70 leading-relaxed">
+              Generate clean Instagram-ready cards that reflect real work: reps, volume moved, and top sets—fast.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Screenshots -->
+    <section id="screens" class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between gap-6">
+          <div>
+            <h2 class="brand text-3xl sm:text-4xl font-bold">Screens, not promises.</h2>
+            <p class="mt-3 text-white/75 max-w-2xl">
+              Replace these placeholders with real app screenshots. Keep 4–6 max for a premium, minimalist page.
+            </p>
+          </div>
+          <div class="hidden md:flex items-center gap-2 text-sm text-white/60">
+            <i class="fa-solid fa-circle-info text-iron-red"></i>
+            Tip: Use device-framed PNGs for a high-end look.
+          </div>
+        </div>
+
+        <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Replace src with your real screenshots -->
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=IronFyt+Dashboard" alt="IronFyt Dashboard" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Dashboard • WOD + rings + calendar</figcaption>
+          </figure>
+
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=Workout+Log" alt="Workout Logging" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Fast logging • minimal typing</figcaption>
+          </figure>
+
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=Movement+Analytics" alt="Movement Analytics" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Movement analytics • volume + trends</figcaption>
+          </figure>
+
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=Monthly+Trends" alt="Monthly Trends" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Monthly consistency • totals + averages</figcaption>
+          </figure>
+
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=Share+Card" alt="Instagram Share Card" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Share cards • clean + data-rich</figcaption>
+          </figure>
+
+          <figure class="glass-strong rounded-3xl p-4">
+            <img src="https://placehold.co/900x1600/png?text=WOD+Library" alt="Workout Library" class="rounded-2xl w-full object-cover border border-white/10" />
+            <figcaption class="mt-3 text-sm text-white/70">Workout library • pick your day</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Premium -->
+    <section id="premium" class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-10 items-start">
+          <div class="lg:col-span-5">
+            <h2 class="brand text-3xl sm:text-4xl font-bold">Premium that respects your training.</h2>
+            <p class="mt-3 text-white/75 leading-relaxed">
+              IronFyt Premium unlocks deeper insight into your progress—your full history, advanced movement analytics, and PR tracking.
+              Keep the free experience clean. Upgrade when you want more intent.
+            </p>
+
+            <ul class="mt-6 space-y-3 text-sm text-white/70">
+              <li class="flex gap-3">
+                <i class="fa-solid fa-check text-iron-red mt-0.5"></i>
+                Unlimited workout history
+              </li>
+              <li class="flex gap-3">
+                <i class="fa-solid fa-check text-iron-red mt-0.5"></i>
+                Advanced movement analytics (range + total volume)
+              </li>
+              <li class="flex gap-3">
+                <i class="fa-solid fa-check text-iron-red mt-0.5"></i>
+                Automatic PR tracking (1RM, 3RM, 5RM, 10RM)
+              </li>
+              <li class="flex gap-3">
+                <i class="fa-solid fa-check text-iron-red mt-0.5"></i>
+                Unlimited share cards
+              </li>
+            </ul>
+          </div>
+
+          <div class="lg:col-span-7">
+            <div class="glass-strong rounded-3xl p-6 sm:p-8">
+              <div class="flex items-start justify-between gap-6">
+                <div>
+                  <div class="text-xs text-white/60">IronFyt Premium</div>
+                  <div class="mt-2 brand text-2xl font-bold">Train with intent.</div>
+                  <div class="mt-2 text-sm text-white/70">Simple pricing. Cancel anytime.</div>
+                </div>
+                <div class="h-12 w-12 rounded-2xl bg-iron-red/15 border border-iron-red/30 flex items-center justify-center">
+                  <i class="fa-solid fa-gem text-iron-red"></i>
+                </div>
+              </div>
+
+              <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                <div class="glass rounded-2xl p-5">
+                  <div class="text-sm text-white/70">Monthly</div>
+                  <div class="mt-2 text-3xl font-bold text-white">$4.99<span class="text-base text-white/60 font-medium">/mo</span></div>
+                  <div class="mt-2 text-sm text-white/60">Best for trying Premium.</div>
+                </div>
+                <div class="glass rounded-2xl p-5 border border-iron-red/35">
+                  <div class="text-sm text-white/70">Annual</div>
+                  <div class="mt-2 text-3xl font-bold text-white">$49<span class="text-base text-white/60 font-medium">/yr</span></div>
+                  <div class="mt-2 text-sm text-white/60">Save vs monthly.</div>
+                  <div class="mt-3 inline-flex items-center gap-2 tag rounded-full px-3 py-1 text-xs text-white/70">
+                    <span class="h-2 w-2 rounded-full bg-iron-red"></span> Recommended
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-7 flex flex-col sm:flex-row gap-3">
+                <a href="APP_STORE_URL" class="inline-flex items-center justify-center btn-red focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                  <i class="fa-brands fa-apple mr-3 text-lg"></i>
+                  Download & Upgrade
+                </a>
+                <a href="#faq" class="inline-flex items-center justify-center btn-dark focus-ring rounded-2xl px-6 py-4 font-semibold text-white transition">
+                  Premium FAQ
+                  <i class="fa-solid fa-circle-question ml-3 text-white/70"></i>
+                </a>
+              </div>
+
+              <p class="mt-5 text-xs text-white/50">
+                Pricing shown for illustration—match your App Store price tiers. Premium features are unlocked in-app.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Social Proof -->
+    <section class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between gap-6">
+          <div>
+            <h2 class="brand text-3xl sm:text-4xl font-bold">Built in a real gym culture.</h2>
+            <p class="mt-3 text-white/75 max-w-2xl">
+              Keep this section short. Swap in real quotes after launch.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-10 grid md:grid-cols-3 gap-5">
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="flex items-center gap-3 text-white/80">
+              <i class="fa-solid fa-quote-left text-iron-red"></i>
+              <span class="text-sm font-semibold">Consistency feels visible</span>
+            </div>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              “The calendar and rings make it obvious when I’ve been slacking. It’s motivating without being gimmicky.”
+            </p>
+            <div class="mt-4 text-xs text-white/50">— Beta user</div>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="flex items-center gap-3 text-white/80">
+              <i class="fa-solid fa-quote-left text-iron-red"></i>
+              <span class="text-sm font-semibold">Fast logging, no friction</span>
+            </div>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              “I actually log workouts now because it’s quick. I’m not stuck typing on my phone between sets.”
+            </p>
+            <div class="mt-4 text-xs text-white/50">— Beta user</div>
+          </div>
+
+          <div class="glass-strong rounded-3xl p-6">
+            <div class="flex items-center gap-3 text-white/80">
+              <i class="fa-solid fa-quote-left text-iron-red"></i>
+              <span class="text-sm font-semibold">Sharing feels earned</span>
+            </div>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              “The share cards look clean and show the work. Friends actually ask about it.”
+            </p>
+            <div class="mt-4 text-xs text-white/50">— Beta user</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl">
+          <h2 class="brand text-3xl sm:text-4xl font-bold">FAQ</h2>
+          <p class="mt-3 text-white/75">
+            Short, honest answers. Keep it simple.
+          </p>
+        </div>
+
+        <div class="mt-10 grid lg:grid-cols-2 gap-5">
+          <details class="glass-strong rounded-3xl p-6 group">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-4">
+              <span class="text-white font-semibold">Do I need a barbell?</span>
+              <i class="fa-solid fa-plus text-white/60 group-open:rotate-45 transition"></i>
+            </summary>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              No. IronFyt loves barbells, but workouts can be scaled to dumbbells, machines, cables, or minimal equipment.
+              The goal is capability, not perfection.
+            </p>
+          </details>
+
+          <details class="glass-strong rounded-3xl p-6 group">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-4">
+              <span class="text-white font-semibold">Is this for beginners?</span>
+              <i class="fa-solid fa-plus text-white/60 group-open:rotate-45 transition"></i>
+            </summary>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              Yes. The programming is scalable for every age and level. Modify movements, reduce load, and build up over time.
+            </p>
+          </details>
+
+          <details class="glass-strong rounded-3xl p-6 group">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-4">
+              <span class="text-white font-semibold">What does IronFyt track?</span>
+              <i class="fa-solid fa-plus text-white/60 group-open:rotate-45 transition"></i>
+            </summary>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              Workouts, sets, reps, load ranges, total volume moved, and trends over time—plus weekly and monthly consistency.
+            </p>
+          </details>
+
+          <details class="glass-strong rounded-3xl p-6 group">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-4">
+              <span class="text-white font-semibold">How does Premium work?</span>
+              <i class="fa-solid fa-plus text-white/60 group-open:rotate-45 transition"></i>
+            </summary>
+            <p class="mt-3 text-sm text-white/70 leading-relaxed">
+              Premium unlocks full history, advanced movement analytics, PR tracking, and unlimited share cards. You can cancel anytime.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Final CTA -->
+    <section class="py-16 sm:py-20">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="glass-strong rounded-3xl p-8 sm:p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+          <div class="max-w-2xl">
+            <h2 class="brand text-3xl sm:text-4xl font-bold">
+              Strength is a lifelong practice.
+            </h2>
+            <p class="mt-3 text-white/75">
+              Download IronFyt and build fitness that supports how you actually live—today, next year, and decades from now.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <a href="APP_STORE_URL" class="inline-flex w-full lg:w-auto items-center justify-center btn-red focus-ring rounded-2xl px-7 py-4 font-semibold text-white transition">
+              <i class="fa-brands fa-apple mr-3 text-lg"></i>
+              Download on the App Store
+            </a>
+            <a href="#top" class="inline-flex w-full lg:w-auto items-center justify-center btn-dark focus-ring rounded-2xl px-7 py-4 font-semibold text-white transition">
+              Back to top
+              <i class="fa-solid fa-arrow-up ml-3 text-white/70"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-8 text-xs text-white/45">
+          <p>
+            © <span id="year"></span> IronFyt. All rights reserved.
+            <span class="mx-2">•</span>
+            <a href="mailto:YOUR_EMAIL@DOMAIN.com" class="hover:text-white focus-ring rounded">Contact</a>
+            <span class="mx-2">•</span>
+            <a href="#" class="hover:text-white focus-ring rounded">Privacy</a>
+            <span class="mx-2">•</span>
+            <a href="#" class="hover:text-white focus-ring rounded">Terms</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
