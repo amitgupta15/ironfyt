@@ -87,7 +87,7 @@
                 
                 <div class="flex justify-center lg:justify-end">
                     <div class="relative">
-                        <img src="images/dashboard.png" alt="IronFyt App Interface" class="rounded-3xl shadow-2xl max-w-sm w-full">
+                        <img src="images/dashboard.png" alt="IronFyt App Interface" class="rounded-3xl shadow-2xl w-full max-w-[260px] sm:max-w-[280px] lg:max-w-[320px] max-h-[75vh] object-contain mx-auto lg:mr-0">
                         <div class="absolute -inset-4 bg-red-600/20 blur-3xl -z-10"></div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="order-2 lg:order-1">
-                    <img src="images/wods.png" alt="Daily WOD Interface" class="rounded-3xl shadow-2xl border border-zinc-800">
+                    <img src="images/wods.png" alt="Daily WOD Interface" class="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px] max-h-[75vh] object-contain mx-auto rounded-3xl shadow-2xl border border-zinc-800">
                 </div>
                 
                 <div class="order-1 lg:order-2">
@@ -239,7 +239,7 @@
                 </div>
                 
                 <div>
-                    <img src="images/analytics.png" alt="Analytics Dashboard" class="rounded-3xl shadow-2xl border border-zinc-800">
+                    <img src="images/analytics.png" alt="Analytics Dashboard" class="w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px] max-h-[75vh] object-contain mx-auto rounded-3xl shadow-2xl border border-zinc-800">
                 </div>
             </div>
         </div>
@@ -362,7 +362,7 @@
                         </div>
                     </div>
                     
-                    <div class="mb-8">
+                    <!-- <div class="mb-8">
                         <h3 class="text-2xl font-bold mb-6 text-center">Choose Your Plan</h3>
                         
                         <div class="bg-zinc-900 rounded-2xl p-6 mb-4 border border-zinc-800">
@@ -392,8 +392,43 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
+                    </div> -->
+                    <div class="mb-8">
+    <h3 class="text-2xl font-bold mb-6 text-center">Choose Your Plan</h3>
+    
+    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        
+        <div class="bg-zinc-900 rounded-2xl p-6 border border-zinc-800 flex flex-col justify-center">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="text-xl font-bold mb-1">Monthly</h4>
+                    <p class="text-gray-400 text-sm">Access detailed analytics</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-black">$4.99</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-br from-red-900/30 to-zinc-900 rounded-2xl p-6 border-2 border-red-600/50 relative flex flex-col justify-center mt-4 md:mt-0">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span class="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-bold whitespace-nowrap">7-Day Free Trial</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="text-xl font-bold mb-1">Annual</h4>
+                    <p class="text-gray-400 text-sm">Save 16% over monthly</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-black">$49.99</div>
+                    <div class="text-sm text-gray-400">$4.17/mo</div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
                     <div class="text-center w-full">
                         <a href="https://apps.apple.com/us/app/ironfyt/id6446331989" class="inline-block bg-red-600 hover:bg-red-700 text-white px-12 py-5 rounded-2xl font-bold text-xl transition-all transform hover:scale-105 shadow-2xl shadow-red-600/50 block w-full sm:w-auto">
                             Start 7-Day Free Trial
